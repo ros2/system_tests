@@ -52,7 +52,6 @@ if(AMENT_ENABLE_TESTING)
   foreach(middleware_impl ${middleware_implementations})
     # get typesupport of rmw implementation to include / link against the corresponding interfaces
     get_rmw_typesupport(typesupport_impl "${middleware_impl}")
-    #message(FATAL_ERROR "middleware_impl ${middleware_impl}   typesupport_impl ${typesupport_impl}")
 
     # executables publish / subscribe primitives
     add_executable(test_publisher_cpp__${middleware_impl} "test/test_publisher.cpp")
@@ -74,8 +73,6 @@ if(AMENT_ENABLE_TESTING)
       "${middleware_impl}"
       "rclcpp")
 
-    # skip Connext XTypes for now
-    #if(NOT "${middleware_impl} " STREQUAL "rmw_connext_dynamic_cpp ")
     # executables requester / replier
     add_executable(test_requester_cpp__${middleware_impl} "test/test_requester.cpp")
     add_dependencies(test_requester_cpp__${middleware_impl} ${PROJECT_NAME})
@@ -92,7 +89,6 @@ if(AMENT_ENABLE_TESTING)
     ament_target_dependencies(test_replier_cpp__${middleware_impl}
       "${middleware_impl}"
       "rclcpp")
-    #endif()
   endforeach()
 
   # create tests for each combination of rmw implementation
