@@ -1,0 +1,28 @@
+from launch import LaunchDescriptor
+from launch.exit_handler import primary_exit_handler
+from launch.launcher import DefaultLauncher
+
+
+def test_requester_replier():
+    ld = LaunchDescriptor()
+
+    ld.add_process(
+        cmd=['@TEST_REPLIER_EXECUTABLE@', '@TEST_SERVICE_TYPE@'],
+        name='test_replier',
+    )
+
+    ld.add_process(
+        cmd=['@TEST_REQUESTER_EXECUTABLE@', '@TEST_SERVICE_TYPE@'],
+        name='test_requester',
+        exit_handler=primary_exit_handler,
+    )
+
+    launcher = DefaultLauncher()
+    launcher.add_launch_descriptor(ld)
+    rc = launcher.launch()
+
+    assert rc == 0, 'The requester did not receive any replies'
+
+
+if __name__ == '__main__':
+    test_requester_replier()
