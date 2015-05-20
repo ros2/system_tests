@@ -19,6 +19,7 @@ if(AMENT_ENABLE_TESTING)
   set(message_files
     "msg/Empty.msg"
     "msg/Primitives.msg"
+    "msg/StaticArrayPrimitives.msg"
   )
   set(service_files
     "srv/EmptyService.srv"
