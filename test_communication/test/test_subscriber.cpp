@@ -85,6 +85,7 @@ int main(int argc, char ** argv)
   auto messages_empty = get_messages_empty();
   auto messages_primitives = get_messages_primitives();
   auto messages_static_array_primitives = get_messages_static_array_primitives();
+  auto messages_dynamic_array_primitives = get_messages_dynamic_array_primitives();
 
   rclcpp::subscription::SubscriptionBase::SharedPtr subscriber;
   std::vector<bool> received_messages;  // collect flags about received messages
@@ -97,6 +98,9 @@ int main(int argc, char ** argv)
   } else if (message == "staticarrayprimitives") {
     subscriber = subscribe<test_communication::StaticArrayPrimitives>(
       node, message, messages_static_array_primitives, received_messages);
+  } else if (message == "dynamicarrayprimitives") {
+    subscriber = subscribe<test_communication::DynamicArrayPrimitives>(
+      node, message, messages_dynamic_array_primitives, received_messages);
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
     return 1;

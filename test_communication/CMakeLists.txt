@@ -17,6 +17,7 @@ if(AMENT_ENABLE_TESTING)
   find_package(rosidl_default_generators REQUIRED)
 
   set(message_files
+    "msg/DynamicArrayPrimitives.msg"
     "msg/Empty.msg"
     "msg/Primitives.msg"
     "msg/StaticArrayPrimitives.msg"

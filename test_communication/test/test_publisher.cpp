@@ -74,6 +74,8 @@ int main(int argc, char ** argv)
     rc = publish<test_communication::Primitives>(node, message, get_messages_primitives());
   } else if (message == "staticarrayprimitives") {
     rc = publish<test_communication::StaticArrayPrimitives>(node, message, get_messages_static_array_primitives());
+  } else if (message == "dynamicarrayprimitives") {
+    rc = publish<test_communication::DynamicArrayPrimitives>(node, message, get_messages_dynamic_array_primitives());
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
     return 1;
