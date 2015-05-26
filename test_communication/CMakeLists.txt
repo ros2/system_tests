@@ -19,6 +19,7 @@ if(AMENT_ENABLE_TESTING)
   set(message_files
     "msg/DynamicArrayPrimitives.msg"
     "msg/Empty.msg"
+    "msg/Nested.msg"
     "msg/Primitives.msg"
     "msg/StaticArrayPrimitives.msg"
   )
