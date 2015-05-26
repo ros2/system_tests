@@ -17,8 +17,10 @@
 
 #include <vector>
 
+#include <test_communication/Builtins.h>
 #include <test_communication/DynamicArrayPrimitives.h>
 #include <test_communication/Empty.h>
+#include <test_communication/Nested.h>
 #include <test_communication/Primitives.h>
 #include <test_communication/StaticArrayPrimitives.h>
 
@@ -179,6 +181,34 @@ get_messages_dynamic_array_primitives()
     msg->int64_values[2] = -9223372036854775808UL;
     msg->uint64_values = {{0, 18446744073709551615UL}};
     msg->string_values = {{"", "max value", "optional min value"}};
+    messages.push_back(msg);
+  }
+  return messages;
+}
+
+std::vector<test_communication::Nested::Ptr>
+get_messages_nested()
+{
+  std::vector<test_communication::Nested::Ptr> messages;
+  auto primitive_msgs = get_messages_primitives();
+  for (auto primitive_msg : primitive_msgs) {
+    auto msg = std::make_shared<test_communication::Nested>();
+    msg->primitive_values = *primitive_msg;
+    messages.push_back(msg);
+  }
+  return messages;
+}
+
+std::vector<test_communication::Builtins::Ptr>
+get_messages_builtins()
+{
+  std::vector<test_communication::Builtins::Ptr> messages;
+  {
+    auto msg = std::make_shared<test_communication::Builtins>();
+    msg->duration_value.sec = -1234567890;
+    msg->duration_value.nanosec = 123456789;
+    msg->time_value.sec = -1234567890;
+    msg->time_value.nanosec = 987654321;
     messages.push_back(msg);
   }
   return messages;
