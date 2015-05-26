@@ -78,6 +78,8 @@ int main(int argc, char ** argv)
     rc = publish<test_communication::DynamicArrayPrimitives>(node, message, get_messages_dynamic_array_primitives());
   } else if (message == "nested") {
     rc = publish<test_communication::Nested>(node, message, get_messages_nested());
+  } else if (message == "builtins") {
+    rc = publish<test_communication::Builtins>(node, message, get_messages_builtins());
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
     return 1;
