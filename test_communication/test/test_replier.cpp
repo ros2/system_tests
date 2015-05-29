@@ -78,11 +78,11 @@ int main(int argc, char ** argv)
   auto services_empty = get_services_empty();
   auto services_primitives = get_services_primitives();
 
-  if (service == "emptyservice") {
-    reply<test_communication::EmptyService>(
+  if (service == "empty") {
+    reply<test_communication::srv::Empty>(
       node, service, services_empty);
-  } else if (service == "primitivesservice") {
-    reply<test_communication::PrimitivesService>(
+  } else if (service == "primitives") {
+    reply<test_communication::srv::Primitives>(
       node, service, services_primitives);
   } else {
     fprintf(stderr, "Unknown service argument '%s'\n", service.c_str());

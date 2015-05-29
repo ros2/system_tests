@@ -69,17 +69,17 @@ int main(int argc, char ** argv)
 
   int rc;
   if (message == "empty") {
-    rc = publish<test_communication::Empty>(node, message, get_messages_empty());
+    rc = publish<test_communication::msg::Empty>(node, message, get_messages_empty());
   } else if (message == "primitives") {
-    rc = publish<test_communication::Primitives>(node, message, get_messages_primitives());
+    rc = publish<test_communication::msg::Primitives>(node, message, get_messages_primitives());
   } else if (message == "staticarrayprimitives") {
-    rc = publish<test_communication::StaticArrayPrimitives>(node, message, get_messages_static_array_primitives());
+    rc = publish<test_communication::msg::StaticArrayPrimitives>(node, message, get_messages_static_array_primitives());
   } else if (message == "dynamicarrayprimitives") {
-    rc = publish<test_communication::DynamicArrayPrimitives>(node, message, get_messages_dynamic_array_primitives());
+    rc = publish<test_communication::msg::DynamicArrayPrimitives>(node, message, get_messages_dynamic_array_primitives());
   } else if (message == "nested") {
-    rc = publish<test_communication::Nested>(node, message, get_messages_nested());
+    rc = publish<test_communication::msg::Nested>(node, message, get_messages_nested());
   } else if (message == "builtins") {
-    rc = publish<test_communication::Builtins>(node, message, get_messages_builtins());
+    rc = publish<test_communication::msg::Builtins>(node, message, get_messages_builtins());
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
     return 1;

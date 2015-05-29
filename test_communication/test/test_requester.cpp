@@ -104,11 +104,11 @@ int main(int argc, char ** argv)
   auto node = rclcpp::Node::make_shared(std::string("test_requester_") + service);
 
   int rc;
-  if (service == "emptyservice") {
-    rc = request<test_communication::EmptyService>(
+  if (service == "empty") {
+    rc = request<test_communication::srv::Empty>(
       node, service, get_services_empty());
-  } else if (service == "primitivesservice") {
-    rc = request<test_communication::PrimitivesService>(
+  } else if (service == "primitives") {
+    rc = request<test_communication::srv::Primitives>(
       node, service, get_services_primitives());
   } else {
     fprintf(stderr, "Unknown service argument '%s'\n", service.c_str());
