@@ -25,8 +25,8 @@ if(AMENT_ENABLE_TESTING)
     "msg/StaticArrayPrimitives.msg"
   )
   set(service_files
-    "srv/EmptyService.srv"
-    "srv/PrimitivesService.srv"
+    "srv/Empty.srv"
+    "srv/Primitives.srv"
   )
   rosidl_generate_interfaces(${PROJECT_NAME}
     ${message_files}
