@@ -26,13 +26,13 @@ template<typename T>
 rclcpp::subscription::SubscriptionBase::SharedPtr subscribe(
   rclcpp::Node::SharedPtr node,
   const std::string & message_type,
-  std::vector<typename T::Ptr> & expected_messages,
+  std::vector<typename T::SharedPtr> & expected_messages,
   std::vector<bool> & received_messages)
 {
   received_messages.assign(expected_messages.size(), false);
 
   auto callback =
-    [&expected_messages, &received_messages](const typename T::Ptr received_message) -> void
+    [&expected_messages, &received_messages](const typename T::SharedPtr received_message) -> void
     {
       // find received message in vector of expected messages
       auto received = received_messages.begin();

@@ -26,8 +26,8 @@ int request(
   const std::string & service_type,
   std::vector<
     std::pair<
-      typename T::Request::Ptr,
-      typename T::Response::Ptr
+      typename T::Request::SharedPtr,
+      typename T::Response::SharedPtr
     >
   > services,
   size_t number_of_cycles = 5)

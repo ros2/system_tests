@@ -24,7 +24,7 @@ template<typename T>
 int publish(
   rclcpp::Node::SharedPtr node,
   const std::string & message_type,
-  std::vector<typename T::Ptr> messages,
+  std::vector<typename T::SharedPtr> messages,
   size_t number_of_cycles = 5)
 {
   auto start = std::chrono::steady_clock::now();

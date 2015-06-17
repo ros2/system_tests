@@ -27,16 +27,16 @@ void reply(
   const std::string & service_type,
   const std::vector<
     std::pair<
-      typename T::Request::Ptr,
-      typename T::Response::Ptr
+      typename T::Request::SharedPtr,
+      typename T::Response::SharedPtr
     >
   >& expected_services
 )
 {
   auto callback = \
     [&expected_services](
-      const typename T::Request::Ptr received_request,
-      typename T::Response::Ptr response
+      const typename T::Request::SharedPtr received_request,
+      typename T::Response::SharedPtr response
     ) -> void
     {
       // find received request in vector of expected services
