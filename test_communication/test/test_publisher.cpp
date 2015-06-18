@@ -21,7 +21,7 @@
 #include "message_fixtures.hpp"
 
 template<typename T>
-int publish(
+void publish(
   rclcpp::Node::SharedPtr node,
   const std::string & message_type,
   std::vector<typename T::SharedPtr> messages,
@@ -52,8 +52,6 @@ int publish(
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);
   std::cout << "published for " << diff.count() << " seconds" << std::endl;
-
-  return 0;
 }
 
 int main(int argc, char ** argv)
@@ -67,22 +65,21 @@ int main(int argc, char ** argv)
   std::string message = argv[1];
   auto node = rclcpp::Node::make_shared(std::string("test_publisher_") + message);
 
-  int rc;
   if (message == "empty") {
-    rc = publish<test_communication::msg::Empty>(node, message, get_messages_empty());
+    publish<test_communication::msg::Empty>(node, message, get_messages_empty());
   } else if (message == "primitives") {
-    rc = publish<test_communication::msg::Primitives>(node, message, get_messages_primitives());
+    publish<test_communication::msg::Primitives>(node, message, get_messages_primitives());
   } else if (message == "staticarrayprimitives") {
-    rc = publish<test_communication::msg::StaticArrayPrimitives>(node, message, get_messages_static_array_primitives());
+    publish<test_communication::msg::StaticArrayPrimitives>(node, message, get_messages_static_array_primitives());
   } else if (message == "dynamicarrayprimitives") {
-    rc = publish<test_communication::msg::DynamicArrayPrimitives>(node, message, get_messages_dynamic_array_primitives());
+    publish<test_communication::msg::DynamicArrayPrimitives>(node, message, get_messages_dynamic_array_primitives());
   } else if (message == "nested") {
-    rc = publish<test_communication::msg::Nested>(node, message, get_messages_nested());
+    publish<test_communication::msg::Nested>(node, message, get_messages_nested());
   } else if (message == "builtins") {
-    rc = publish<test_communication::msg::Builtins>(node, message, get_messages_builtins());
+    publish<test_communication::msg::Builtins>(node, message, get_messages_builtins());
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
     return 1;
   }
-  return rc;
+  return 0;
 }
