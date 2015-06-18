@@ -10,7 +10,7 @@ find_package(ament_cmake REQUIRED)
 
 if(AMENT_ENABLE_TESTING)
   find_package(ament_cmake_nose REQUIRED)
-  find_package(builtin_msgs REQUIRED)
+  find_package(builtin_interfaces REQUIRED)
   find_package(rclcpp REQUIRED)
   find_package(rmw REQUIRED)
   find_package(rmw_implementation REQUIRED)
@@ -31,7 +31,7 @@ if(AMENT_ENABLE_TESTING)
   rosidl_generate_interfaces(${PROJECT_NAME}
     ${message_files}
     ${service_files}
-    DEPENDENCIES builtin_msgs
+    DEPENDENCIES builtin_interfaces
     SKIP_INSTALL
   )
 
