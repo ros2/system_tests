@@ -57,7 +57,34 @@ if(AMENT_ENABLE_TESTING)
     # get typesupport of rmw implementation to include / link against the corresponding interfaces
     get_rmw_typesupport(typesupport_impl "${middleware_impl}")
 
-    # executables publish / subscribe primitives
+    # executables publisher combined with a subscriber
+    add_executable(test_publisher_subscriber_cpp__${middleware_impl} "test/test_publisher_subscriber.cpp")
+    target_link_libraries(test_publisher_subscriber_cpp__${middleware_impl}
+      ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
+      ${_AMENT_EXPORT_LIBRARY_TARGETS})
+    add_dependencies(test_publisher_subscriber_cpp__${middleware_impl} ${PROJECT_NAME})
+    rosidl_target_interfaces(test_publisher_subscriber_cpp__${middleware_impl}
+      ${PROJECT_NAME} ${typesupport_impl})
+    ament_target_dependencies(test_publisher_subscriber_cpp__${middleware_impl}
+      "${middleware_impl}"
+      "rclcpp")
+    # register executable as a test
+    get_target_property(target_path test_publisher_subscriber_cpp__${middleware_impl} RUNTIME_OUTPUT_DIRECTORY)
+    if(NOT target_path)
+      set(target_path "${CMAKE_CURRENT_BINARY_DIR}")
+    endif()
+    # testing this with a single message type should be enough
+    ament_add_test(
+      "test_publisher_subscriber_cpp__${middleware_impl}"
+      COMMAND "${target_path}/test_publisher_subscriber_cpp__${middleware_impl}" empty
+      TIMEOUT 15
+    )
+    set_tests_properties(
+      test_publisher_subscriber_cpp__${middleware_impl}
+      PROPERTIES REQUIRED_FILES "${target_path}/test_publisher_subscriber_cpp__${middleware_impl}"
+    )
+
+    # executables publisher / subscriber
     add_executable(test_publisher_cpp__${middleware_impl} "test/test_publisher.cpp")
     target_link_libraries(test_publisher_cpp__${middleware_impl}
       ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
