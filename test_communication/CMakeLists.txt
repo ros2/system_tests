@@ -78,6 +78,7 @@ if(AMENT_ENABLE_TESTING)
       "test_publisher_subscriber_cpp__${middleware_impl}"
       COMMAND "${target_path}/test_publisher_subscriber_cpp__${middleware_impl}" empty
       TIMEOUT 15
+      GENERATE_RESULT_FOR_RETURN_CODE_ZERO
     )
     set_tests_properties(
       test_publisher_subscriber_cpp__${middleware_impl}
