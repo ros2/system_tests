@@ -77,6 +77,8 @@ int main(int argc, char ** argv)
     publish<test_communication::msg::Nested>(node, message, get_messages_nested());
   } else if (message == "dynamicarraynested") {
     publish<test_communication::msg::DynamicArrayNested>(node, message, get_messages_dynamic_array_nested());
+  } else if (message == "staticarraynested") {
+    publish<test_communication::msg::StaticArrayNested>(node, message, get_messages_static_array_nested());
   } else if (message == "builtins") {
     publish<test_communication::msg::Builtins>(node, message, get_messages_builtins());
   } else {

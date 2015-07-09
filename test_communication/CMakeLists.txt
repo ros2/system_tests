@@ -23,6 +23,7 @@ if(AMENT_ENABLE_TESTING)
     "msg/Empty.msg"
     "msg/Nested.msg"
     "msg/Primitives.msg"
+    "msg/StaticArrayNested.msg"
     "msg/StaticArrayPrimitives.msg"
   )
   set(service_files
