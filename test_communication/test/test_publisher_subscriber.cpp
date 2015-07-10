@@ -118,6 +118,8 @@ int main(int argc, char ** argv)
   auto messages_static_array_primitives = get_messages_static_array_primitives();
   auto messages_dynamic_array_primitives = get_messages_dynamic_array_primitives();
   auto messages_nested = get_messages_nested();
+  auto messages_dynamic_array_nested = get_messages_dynamic_array_nested();
+  auto messages_static_array_nested = get_messages_static_array_nested();
   auto messages_builtins = get_messages_builtins();
 
   if (message == "empty") {
@@ -140,6 +142,14 @@ int main(int argc, char ** argv)
     subscriber = subscribe<test_communication::msg::Nested>(
       node, message, messages_nested, received_messages);
     publish<test_communication::msg::Nested>(node, message, messages_nested);
+  } else if (message == "dynamicarraynested") {
+    subscriber = subscribe<test_communication::msg::DynamicArrayNested>(
+      node, message, messages_dynamic_array_nested, received_messages);
+    publish<test_communication::msg::DynamicArrayNested>(node, message, messages_dynamic_array_nested);
+  } else if (message == "staticarraynested") {
+    subscriber = subscribe<test_communication::msg::StaticArrayNested>(
+      node, message, messages_static_array_nested, received_messages);
+    publish<test_communication::msg::StaticArrayNested>(node, message, messages_static_array_nested);
   } else if (message == "builtins") {
     subscriber = subscribe<test_communication::msg::Builtins>(
       node, message, messages_builtins, received_messages);

@@ -22,8 +22,8 @@ def test_publisher_subscriber():
     rc = launcher.launch()
 
     assert rc == 0, \
-        "The subscriber failed with exit code '" + str(rc) + "'. " \
-        'May be it did not receive any messages?'
+        "The launch file failed with exit code '" + str(rc) + "'. " \
+        'May be the subscriber did not receive any messages?'
 
 
 if __name__ == '__main__':
