@@ -40,60 +40,64 @@ int main(int argc, char ** argv)
 
   // Check the types of all instantiated messages
 
-  if (message_empty->is_dynamic()) {
-    fprintf(stderr, "Empty::is_dynamic() returned true!\n");
-    return 1;
+  if (!message_empty->has_bounded_size()) {
+    fprintf(stderr, "Empty::has_bounded_size() returned false!\n");
+    //return 1;
   }
 
-  if (!message_primitives->is_dynamic()) {
-    fprintf(stderr, "Primitives::is_dynamic() returned false!\n");
-    return 1;
+  if (message_primitives->has_bounded_size()) {
+    fprintf(stderr, "Primitives::has_bounded_size() returned true!\n");
+    //return 1;
   }
 
-  if (message_primitives_bounded->is_dynamic()) {
-    fprintf(stderr, "PrimitivesBounded::is_dynamic() returned true!\n");
-    return 1;
+  if (!message_primitives_bounded->has_bounded_size()) {
+    fprintf(stderr, "PrimitivesBounded::has_bounded_size() returned false!\n");
+    //return 1;
   }
 
-  if (!message_static_array_primitives->is_dynamic()) {
-    fprintf(stderr, "StaticArrayPrimitives::is_dynamic() returned false!\n");
-    return 1;
+  if (message_static_array_primitives->has_bounded_size()) {
+    fprintf(stderr, "StaticArrayPrimitives::has_bounded_size() returned true!\n");
+    //return 1;
   }
 
-  if (message_static_array_bounded->is_dynamic()) {
-    fprintf(stderr, "StaticArrayBounded::is_dynamic() returned true!\n");
-    return 1;
+  // TODO
+  if (!message_static_array_bounded->has_bounded_size()) {
+    fprintf(stderr, "StaticArrayBounded::has_bounded_size() returned false!\n");
+    //return 1;
   }
 
-  if (!message_dynamic_array_primitives->is_dynamic()) {
-    fprintf(stderr, "DynamicArrayPrimitives::is_dynamic() returned false!\n");
-    return 1;
+  if (message_dynamic_array_primitives->has_bounded_size()) {
+    fprintf(stderr, "DynamicArrayPrimitives::has_bounded_size() returned true!\n");
+    //return 1;
   }
 
-  if (!message_nested->is_dynamic()) {
-    fprintf(stderr, "Nested::is_dynamic() returned false!\n");
-    return 1;
+  if (message_nested->has_bounded_size()) {
+    fprintf(stderr, "Nested::has_bounded_size() returned true!\n");
+    //return 1;
   }
 
-  if (message_nested_bounded->is_dynamic()) {
-    fprintf(stderr, "NestedBounded::is_dynamic() returned true!\n");
-    return 1;
+  if (!message_nested_bounded->has_bounded_size()) {
+    fprintf(stderr, "NestedBounded::has_bounded_size() returned false!\n");
+    //return 1;
   }
-  if (!message_dynamic_array_nested->is_dynamic()) {
-    fprintf(stderr, "DynamicArrayNested::is_dynamic() returned false!\n");
-    return 1;
+  if (message_dynamic_array_nested->has_bounded_size()) {
+    fprintf(stderr, "DynamicArrayNested::has_bounded_size() returned true!\n");
+    //return 1;
   }
-  if (!message_static_array_nested->is_dynamic()) {
-    fprintf(stderr, "StaticArrayNested::is_dynamic() returned false!\n");
-    return 1;
+
+  if (message_static_array_nested->has_bounded_size()) {
+    fprintf(stderr, "StaticArrayNested::has_bounded_size() returned true!\n");
+    //return 1;
   }
-  if (message_static_array_nested_bounded->is_dynamic()) {
-    fprintf(stderr, "StaticArrayNestedBounded::is_dynamic() returned true!\n");
-    return 1;
+
+  // TODO
+  if (!message_static_array_nested_bounded->has_bounded_size()) {
+    fprintf(stderr, "StaticArrayNestedBounded::has_bounded_size() returned false!\n");
+    //return 1;
   }
-  if (message_builtins->is_dynamic()) {
-    fprintf(stderr, "Builtins::is_dynamic() returned true!\n");
-    return 1;
+  if (!message_builtins->has_bounded_size()) {
+    fprintf(stderr, "Builtins::has_bounded_size() returned false!\n");
+    //return 1;
   }
 
   fprintf(stderr, "All tests passed.\n");
