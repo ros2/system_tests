@@ -22,9 +22,13 @@ if(AMENT_ENABLE_TESTING)
     "msg/DynamicArrayPrimitives.msg"
     "msg/Empty.msg"
     "msg/Nested.msg"
+    "msg/NestedBounded.msg"
     "msg/Primitives.msg"
+    "msg/PrimitivesBounded.msg"
     "msg/StaticArrayNested.msg"
+    "msg/StaticArrayNestedBounded.msg"
     "msg/StaticArrayPrimitives.msg"
+    "msg/StaticArrayBounded.msg"
   )
   set(service_files
     "srv/Empty.srv"
@@ -121,6 +125,15 @@ if(AMENT_ENABLE_TESTING)
     rosidl_target_interfaces(test_replier_cpp__${middleware_impl}
       ${PROJECT_NAME} ${typesupport_impl})
     ament_target_dependencies(test_replier_cpp__${middleware_impl}
+      "${middleware_impl}"
+      "rclcpp")
+
+    # executables messages
+    add_executable(test_messages_cpp__${middleware_impl} "test/test_messages.cpp")
+    add_dependencies(test_messages_cpp__${middleware_impl} ${PROJECT_NAME})
+    rosidl_target_interfaces(test_messages_cpp__${middleware_impl}
+      ${PROJECT_NAME} ${typesupport_impl})
+    ament_target_dependencies(test_messages_cpp__${middleware_impl}
       "${middleware_impl}"
       "rclcpp")
   endforeach()
