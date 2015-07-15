@@ -34,8 +34,10 @@ int main(int argc, char ** argv)
   auto message_builtins = get_messages_builtins()[0];
 
   auto message_primitives_bounded = std::make_shared<test_communication::msg::PrimitivesBounded>();
-  auto message_static_array_bounded = std::make_shared<test_communication::msg::StaticArrayBounded>();
-  auto message_static_array_nested_bounded = std::make_shared<test_communication::msg::StaticArrayNestedBounded>();
+  auto message_static_array_bounded =
+    std::make_shared<test_communication::msg::StaticArrayBounded>();
+  auto message_static_array_nested_bounded =
+    std::make_shared<test_communication::msg::StaticArrayNestedBounded>();
   auto message_nested_bounded = std::make_shared<test_communication::msg::NestedBounded>();
 
   // Check the types of all instantiated messages
@@ -99,8 +101,9 @@ int main(int argc, char ** argv)
     retcode = 1;
   }
 
-  if (retcode == 0)
+  if (retcode == 0) {
     fprintf(stderr, "All tests passed.\n");
+  }
 
   return retcode;
 }
