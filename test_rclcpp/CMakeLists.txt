@@ -40,17 +40,19 @@ if(AMENT_ENABLE_TESTING)
       "test/test_subscription.cpp"
       TIMEOUT 15
     )
-    target_link_libraries(gtest_subscription__${middleware_impl}
-      ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-      ${_AMENT_EXPORT_LIBRARY_TARGETS})
-    target_compile_definitions(gtest_subscription__${middleware_impl}
-      PUBLIC "RMW_IMPLEMENTATION=${middleware_impl}")
-    add_dependencies(gtest_subscription__${middleware_impl} ${PROJECT_NAME})
-    rosidl_target_interfaces(gtest_subscription__${middleware_impl}
-      ${PROJECT_NAME} ${typesupport_impl})
-    ament_target_dependencies(gtest_subscription__${middleware_impl}
-      "${middleware_impl}"
-      "rclcpp")
+    if(TARGET gtest_subscription__${middleware_impl})
+      target_link_libraries(gtest_subscription__${middleware_impl}
+        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
+        ${_AMENT_EXPORT_LIBRARY_TARGETS})
+      target_compile_definitions(gtest_subscription__${middleware_impl}
+        PUBLIC "RMW_IMPLEMENTATION=${middleware_impl}")
+      add_dependencies(gtest_subscription__${middleware_impl} ${PROJECT_NAME})
+      rosidl_target_interfaces(gtest_subscription__${middleware_impl}
+        ${PROJECT_NAME} ${typesupport_impl})
+      ament_target_dependencies(gtest_subscription__${middleware_impl}
+        "${middleware_impl}"
+        "rclcpp")
+    endif()
   endforeach()
 endif()  # AMENT_ENABLE_TESTING
 
