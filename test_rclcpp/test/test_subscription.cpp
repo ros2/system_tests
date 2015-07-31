@@ -91,17 +91,30 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
   ASSERT_EQ(1, counter);
 
   // while four messages have been published one callback should be triggered here
-  std::cout << "spin_node_once() - callback (2) expected" << std::endl;
+  std::cout << "spin_node_once(nonblocking) - callback (2) expected" << std::endl;
   executor.spin_node_once(node, true);
   ASSERT_EQ(2, counter);
 
   // check for next pending call
-  std::cout << "spin_node_once() - callback (3) expected" << std::endl;
+  std::cout << "spin_node_once(nonblocking) - callback (3) expected" << std::endl;
   executor.spin_node_once(node, true);
+  if (counter == 2) {
+    // give the executor thread time to process the event
+    std::this_thread::sleep_for(std::chrono::milliseconds(25));
+    std::cout << "spin_node_once(nonblocking) - callback (3) expected - trying again" << std::endl;
+    executor.spin_node_once(node, true);
+  }
   ASSERT_EQ(3, counter);
 
   // check for all remaning calls
   std::cout << "spin_node_some() - callbacks (4 and 5) expected" << std::endl;
   executor.spin_node_some(node);
+  if (counter == 3 || counter == 4) {
+    // give the executor thread time to process the event
+    std::this_thread::sleep_for(std::chrono::milliseconds(25));
+    std::cout << "spin_node_some() - callback (" << (counter == 3 ? "4 and 5" : "5") <<
+      ") expected - trying again" << std::endl;
+    executor.spin_node_once(node, true);
+  }
   ASSERT_EQ(5, counter);
 }
