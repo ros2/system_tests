@@ -53,6 +53,25 @@ if(AMENT_ENABLE_TESTING)
         "${middleware_impl}"
         "rclcpp")
     endif()
+
+    # test_timer
+    ament_add_gtest(
+      gtest_timer__${middleware_impl}
+      "test/test_timer.cpp"
+      TIMEOUT 30
+    )
+    if(TARGET gtest_timer__${middleware_impl})
+      target_link_libraries(gtest_timer__${middleware_impl}
+        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
+        ${_AMENT_EXPORT_LIBRARY_TARGETS}
+        ${GTEST_MAIN_LIBRARIES})
+      add_dependencies(gtest_timer__${middleware_impl} ${PROJECT_NAME})
+      rosidl_target_interfaces(gtest_timer__${middleware_impl}
+        ${PROJECT_NAME} ${typesupport_impl})
+      ament_target_dependencies(gtest_timer__${middleware_impl}
+        "${middleware_impl}"
+        "rclcpp")
+    endif()
   endforeach()
 endif()  # AMENT_ENABLE_TESTING
 
