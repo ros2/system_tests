@@ -26,18 +26,14 @@ void reply(
   rclcpp::Node::SharedPtr node,
   const std::string & service_type,
   const std::vector<
-    std::pair<
-      typename T::Request::SharedPtr,
-      typename T::Response::SharedPtr
-    >
-  >& expected_services
+    std::pair<typename T::Request::SharedPtr, typename T::Response::SharedPtr>> & expected_services
 )
 {
-  auto callback = \
+  // *INDENT-OFF* (prevent uncrustify from making unecessary indents here)
+  auto callback =
     [&expected_services](
       const typename T::Request::SharedPtr received_request,
-      typename T::Response::SharedPtr response
-    ) -> void
+      typename T::Response::SharedPtr response) -> void
     {
       // find received request in vector of expected services
       bool known_request = false;
@@ -58,6 +54,7 @@ void reply(
         throw std::runtime_error("received request does not match any expected request");
       }
     };
+  // *INDENT-ON*
 
   node->create_service<T>(std::string("test_service_") + service_type, callback);
 }

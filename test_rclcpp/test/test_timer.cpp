@@ -19,8 +19,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-TEST(test_time, timer_fire_regularly)
-{
+TEST(test_time, timer_fire_regularly) {
   rclcpp::init(0, nullptr);
 
   auto node = rclcpp::Node::make_shared("test_timer_fire_regularly");
@@ -76,8 +75,7 @@ TEST(test_time, timer_fire_regularly)
   printf("running for %.3f seconds\n", diff.count());
 }
 
-TEST(test_time, timer_during_wait)
-{
+TEST(test_time, timer_during_wait) {
   rclcpp::init(0, nullptr);
 
   auto node = rclcpp::Node::make_shared("test_timer_during_wait");

@@ -9,11 +9,8 @@ endif()
 find_package(ament_cmake REQUIRED)
 
 if(AMENT_ENABLE_TESTING)
-  find_package(ament_cmake_gtest REQUIRED)
-  find_package(rclcpp REQUIRED)
-  find_package(rmw REQUIRED)
-  find_package(rmw_implementation REQUIRED)
-  find_package(rosidl_default_generators REQUIRED)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
 
   set(message_files
     "msg/UInt32.msg"

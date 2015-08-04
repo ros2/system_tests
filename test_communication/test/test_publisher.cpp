@@ -70,15 +70,19 @@ int main(int argc, char ** argv)
   } else if (message == "primitives") {
     publish<test_communication::msg::Primitives>(node, message, get_messages_primitives());
   } else if (message == "staticarrayprimitives") {
-    publish<test_communication::msg::StaticArrayPrimitives>(node, message, get_messages_static_array_primitives());
+    publish<test_communication::msg::StaticArrayPrimitives>(
+      node, message, get_messages_static_array_primitives());
   } else if (message == "dynamicarrayprimitives") {
-    publish<test_communication::msg::DynamicArrayPrimitives>(node, message, get_messages_dynamic_array_primitives());
+    publish<test_communication::msg::DynamicArrayPrimitives>(
+      node, message, get_messages_dynamic_array_primitives());
   } else if (message == "nested") {
     publish<test_communication::msg::Nested>(node, message, get_messages_nested());
   } else if (message == "dynamicarraynested") {
-    publish<test_communication::msg::DynamicArrayNested>(node, message, get_messages_dynamic_array_nested());
+    publish<test_communication::msg::DynamicArrayNested>(
+      node, message, get_messages_dynamic_array_nested());
   } else if (message == "staticarraynested") {
-    publish<test_communication::msg::StaticArrayNested>(node, message, get_messages_static_array_nested());
+    publish<test_communication::msg::StaticArrayNested>(
+      node, message, get_messages_static_array_nested());
   } else if (message == "builtins") {
     publish<test_communication::msg::Builtins>(node, message, get_messages_builtins());
   } else {

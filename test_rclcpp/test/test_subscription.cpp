@@ -28,8 +28,7 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
-TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning)
-{
+TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning) {
   rclcpp::init(0, nullptr);
 
   auto node = rclcpp::Node::make_shared("test_subscription");
