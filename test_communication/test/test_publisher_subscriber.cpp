@@ -133,11 +133,13 @@ int main(int argc, char ** argv)
   } else if (message == "staticarrayprimitives") {
     subscriber = subscribe<test_communication::msg::StaticArrayPrimitives>(
       node, message, messages_static_array_primitives, received_messages);
-    publish<test_communication::msg::StaticArrayPrimitives>(node, message, messages_static_array_primitives);
+    publish<test_communication::msg::StaticArrayPrimitives>(node, message,
+      messages_static_array_primitives);
   } else if (message == "dynamicarrayprimitives") {
     subscriber = subscribe<test_communication::msg::DynamicArrayPrimitives>(
       node, message, messages_dynamic_array_primitives, received_messages);
-    publish<test_communication::msg::DynamicArrayPrimitives>(node, message, messages_dynamic_array_primitives);
+    publish<test_communication::msg::DynamicArrayPrimitives>(node, message,
+      messages_dynamic_array_primitives);
   } else if (message == "nested") {
     subscriber = subscribe<test_communication::msg::Nested>(
       node, message, messages_nested, received_messages);
@@ -145,11 +147,13 @@ int main(int argc, char ** argv)
   } else if (message == "dynamicarraynested") {
     subscriber = subscribe<test_communication::msg::DynamicArrayNested>(
       node, message, messages_dynamic_array_nested, received_messages);
-    publish<test_communication::msg::DynamicArrayNested>(node, message, messages_dynamic_array_nested);
+    publish<test_communication::msg::DynamicArrayNested>(node, message,
+      messages_dynamic_array_nested);
   } else if (message == "staticarraynested") {
     subscriber = subscribe<test_communication::msg::StaticArrayNested>(
       node, message, messages_static_array_nested, received_messages);
-    publish<test_communication::msg::StaticArrayNested>(node, message, messages_static_array_nested);
+    publish<test_communication::msg::StaticArrayNested>(node, message,
+      messages_static_array_nested);
   } else if (message == "builtins") {
     subscriber = subscribe<test_communication::msg::Builtins>(
       node, message, messages_builtins, received_messages);
