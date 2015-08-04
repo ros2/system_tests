@@ -41,86 +41,99 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
     [&counter](const test_rclcpp::msg::UInt32::SharedPtr msg) -> void
     {
       ++counter;
-      std::cout << "  callback() " << counter << " with message data " << msg->data << std::endl;
+      printf("  callback() %lu with message data %u\n", counter, msg->data);
       ASSERT_EQ(counter, msg->data);
     };
-
-  auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
-    "test_subscription", 10, callback);
 
   auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
   msg->data = 0;
   rclcpp::executors::SingleThreadedExecutor executor;
 
-  // start condition
-  ASSERT_EQ(0, counter);
+  {
+    auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
+      "test_subscription", 10, callback);
 
-  // nothing should be pending here
-  std::cout << "spin_node_once(nonblocking) - no callback expected" << std::endl;
-  executor.spin_node_once(node, true);
-  ASSERT_EQ(0, counter);
-  std::cout << "spin_node_some() - no callback expected" << std::endl;
-  executor.spin_node_some(node);
-  ASSERT_EQ(0, counter);
+    // start condition
+    ASSERT_EQ(0, counter);
 
-  msg->data = 1;
-  publisher->publish(msg);
-  ASSERT_EQ(0, counter);
-
-  // wait for the first callback
-  std::cout << "spin_node_once() - callback (1) expected" << std::endl;
-  executor.spin_node_once(node);
-  ASSERT_EQ(1, counter);
-
-  // nothing should be pending here
-  std::cout << "spin_node_once(nonblocking) - no callback expected" << std::endl;
-  executor.spin_node_once(node, true);
-  ASSERT_EQ(1, counter);
-  std::cout << "spin_node_some() - no callback expected" << std::endl;
-  executor.spin_node_some(node);
-  ASSERT_EQ(1, counter);
-
-  msg->data = 2;
-  publisher->publish(msg);
-  msg->data = 3;
-  publisher->publish(msg);
-  msg->data = 4;
-  publisher->publish(msg);
-  msg->data = 5;
-  publisher->publish(msg);
-  ASSERT_EQ(1, counter);
-
-  // while four messages have been published one callback should be triggered here
-  std::cout << "spin_node_once(nonblocking) - callback (2) expected" << std::endl;
-  executor.spin_node_once(node, true);
-  if (counter == 1) {
-    // give the executor thread time to process the event
-    std::this_thread::sleep_for(std::chrono::milliseconds(25));
-    std::cout << "spin_node_once(nonblocking) - callback (2) expected - trying again" << std::endl;
+    // nothing should be pending here
+    printf("spin_node_once(nonblocking) - no callback expected\n");
     executor.spin_node_once(node, true);
-  }
-  ASSERT_EQ(2, counter);
+    ASSERT_EQ(0, counter);
+    printf("spin_node_some() - no callback expected\n");
+    executor.spin_node_some(node);
+    ASSERT_EQ(0, counter);
 
-  // check for next pending call
-  std::cout << "spin_node_once(nonblocking) - callback (3) expected" << std::endl;
-  executor.spin_node_once(node, true);
-  if (counter == 2) {
-    // give the executor thread time to process the event
-    std::this_thread::sleep_for(std::chrono::milliseconds(25));
-    std::cout << "spin_node_once(nonblocking) - callback (3) expected - trying again" << std::endl;
+    msg->data = 1;
+    publisher->publish(msg);
+    ASSERT_EQ(0, counter);
+
+    // wait for the first callback
+    printf("spin_node_once() - callback (1) expected\n");
+    executor.spin_node_once(node);
+    ASSERT_EQ(1, counter);
+
+    // nothing should be pending here
+    printf("spin_node_once(nonblocking) - no callback expected\n");
     executor.spin_node_once(node, true);
-  }
-  ASSERT_EQ(3, counter);
+    ASSERT_EQ(1, counter);
+    printf("spin_node_some() - no callback expected\n");
+    executor.spin_node_some(node);
+    ASSERT_EQ(1, counter);
 
-  // check for all remaning calls
-  std::cout << "spin_node_some() - callbacks (4 and 5) expected" << std::endl;
+    msg->data = 2;
+    publisher->publish(msg);
+    msg->data = 3;
+    publisher->publish(msg);
+    msg->data = 4;
+    publisher->publish(msg);
+    msg->data = 5;
+    publisher->publish(msg);
+    ASSERT_EQ(1, counter);
+
+    // while four messages have been published one callback should be triggered here
+    printf("spin_node_once(nonblocking) - callback (2) expected\n");
+    executor.spin_node_once(node, true);
+    if (counter == 1) {
+      // give the executor thread time to process the event
+      std::this_thread::sleep_for(std::chrono::milliseconds(25));
+      printf("spin_node_once(nonblocking) - callback (2) expected - trying again\n");
+      executor.spin_node_once(node, true);
+    }
+    ASSERT_EQ(2, counter);
+
+    // check for next pending call
+    printf("spin_node_once(nonblocking) - callback (3) expected\n");
+    executor.spin_node_once(node, true);
+    if (counter == 2) {
+      // give the executor thread time to process the event
+      std::this_thread::sleep_for(std::chrono::milliseconds(25));
+      printf("spin_node_once(nonblocking) - callback (3) expected - trying again\n");
+      executor.spin_node_once(node, true);
+    }
+    ASSERT_EQ(3, counter);
+
+    // check for all remaning calls
+    printf("spin_node_some() - callbacks (4 and 5) expected\n");
+    executor.spin_node_some(node);
+    if (counter == 3 || counter == 4) {
+      // give the executor thread time to process the event
+      std::this_thread::sleep_for(std::chrono::milliseconds(25));
+      printf("spin_node_some() - callback (%s) expected - trying again\n",
+        counter == 3 ? "4 and 5" : "5");
+      executor.spin_node_once(node, true);
+    }
+    ASSERT_EQ(5, counter);
+  }
+  // the subscriber goes out of scope and should be not receive any callbacks anymore
+
+  msg->data = 6;
+  publisher->publish(msg);
+
+  std::this_thread::sleep_for(std::chrono::milliseconds(25));
+
+  // check that no further callbacks have been invoked
+  printf("spin_node_some() - no callbacks expected\n");
   executor.spin_node_some(node);
-  if (counter == 3 || counter == 4) {
-    // give the executor thread time to process the event
-    std::this_thread::sleep_for(std::chrono::milliseconds(25));
-    std::cout << "spin_node_some() - callback (" << (counter == 3 ? "4 and 5" : "5") <<
-      ") expected - trying again" << std::endl;
-    executor.spin_node_once(node, true);
-  }
   ASSERT_EQ(5, counter);
 }
