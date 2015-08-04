@@ -30,39 +30,50 @@ TEST(test_time, timer_fire_regularly)
     [&counter]() -> void
     {
       ++counter;
-      std::cout << "  callback() " << counter << std::endl;
+      printf("  callback() %lu\n", counter);
     };
 
   rclcpp::executors::SingleThreadedExecutor executor;
-
-  std::chrono::milliseconds period(1000);
-  auto timer = node->create_wall_timer(
-    std::chrono::duration_cast<std::chrono::nanoseconds>(period), callback);
 
   // start condition
   ASSERT_EQ(0, counter);
 
   auto start = std::chrono::steady_clock::now();
 
-  // before the first callback
-  std::cout << "sleep for half interval - no callback expected" << std::endl;
-  std::this_thread::sleep_for(period / 2);
-  ASSERT_EQ(0, counter);
+  std::chrono::milliseconds period(1000);
 
-  // spin for several periods
-  std::cout << "spin_node_some() for 4s" << std::endl;
-  while (std::chrono::steady_clock::now() < start + 4.5 * period) {
-    executor.spin_node_some(node);
-    std::this_thread::sleep_for(period / 25);
+  {
+    auto timer = node->create_wall_timer(
+      std::chrono::duration_cast<std::chrono::nanoseconds>(period), callback);
+
+    // before the first callback
+    printf("sleep for half interval - no callback expected\n");
+    std::this_thread::sleep_for(period / 2);
+    ASSERT_EQ(0, counter);
+
+    // spin for several periods
+    printf("spin_node_some() for 4s\n");
+    while (std::chrono::steady_clock::now() < start + 4.5 * period) {
+      executor.spin_node_some(node);
+      std::this_thread::sleep_for(period / 25);
+    }
+
+    // check number of callbacks
+    printf("expecting 4 callbacks\n");
+    ASSERT_EQ(4, counter);
   }
+  // the timer goes out of scope and should be not receive any callbacks anymore
 
-  // check number of callbacks
-  std::cout << "expecting 4 callbacks" << std::endl;
+  std::this_thread::sleep_for(1.5 * period);
+
+  // check that no further callbacks have been invoked
+  printf("spin_node_some() - no callbacks expected\n");
+  executor.spin_node_some(node);
   ASSERT_EQ(4, counter);
 
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);
-  std::cout << "running for " << diff.count() << " seconds" << std::endl;
+  printf("running for %.3f seconds\n", diff.count());
 }
 
 TEST(test_time, timer_during_wait)
@@ -76,7 +87,7 @@ TEST(test_time, timer_during_wait)
     [&counter]() -> void
     {
       ++counter;
-      std::cout << "  callback() " << counter << std::endl;
+      printf("  callback() %lu", counter);
     };
 
   rclcpp::executors::SingleThreadedExecutor executor;
@@ -91,30 +102,30 @@ TEST(test_time, timer_during_wait)
   auto start = std::chrono::steady_clock::now();
 
   // before the first callback
-  std::cout << "sleep for half interval - no callback expected" << std::endl;
+  printf("sleep for half interval - no callback expected\n");
   std::this_thread::sleep_for(period / 2);
   ASSERT_EQ(0, counter);
 
   auto spinner =
     [&executor, &node]() -> void
     {
-      std::cout << "spin() until shutdown" << std::endl;
+      printf("spin() until shutdown\n");
       executor.add_node(node, false);
       executor.spin();
     };
 
   auto thread = std::thread(spinner);
-  std::cout << "sleeping for 4 periods" << std::endl;
+  printf("sleeping for 4 periods\n");
   std::this_thread::sleep_for(4 * period);
-  std::cout << "shutdown()" << std::endl;
+  printf("shutdown()\n");
   rclcpp::shutdown();
   thread.join();
 
   // check number of callbacks
-  std::cout << "expecting 4 callbacks" << std::endl;
+  printf("expecting 4 callbacks\n");
   ASSERT_EQ(4, counter);
 
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);
-  std::cout << "running for " << diff.count() << " seconds" << std::endl;
+  printf("running for %.3f seconds\n", diff.count());
 }
