@@ -35,29 +35,40 @@ TEST(test_time, timer_fire_regularly)
 
   rclcpp::executors::SingleThreadedExecutor executor;
 
-  std::chrono::milliseconds period(1000);
-  auto timer = node->create_wall_timer(
-    std::chrono::duration_cast<std::chrono::nanoseconds>(period), callback);
-
   // start condition
   ASSERT_EQ(0, counter);
 
   auto start = std::chrono::steady_clock::now();
 
-  // before the first callback
-  printf("sleep for half interval - no callback expected\n");
-  std::this_thread::sleep_for(period / 2);
-  ASSERT_EQ(0, counter);
+  std::chrono::milliseconds period(1000);
 
-  // spin for several periods
-  printf("spin_node_some() for 4s\n");
-  while (std::chrono::steady_clock::now() < start + 4.5 * period) {
-    executor.spin_node_some(node);
-    std::this_thread::sleep_for(period / 25);
+  {
+    auto timer = node->create_wall_timer(
+      std::chrono::duration_cast<std::chrono::nanoseconds>(period), callback);
+
+    // before the first callback
+    printf("sleep for half interval - no callback expected\n");
+    std::this_thread::sleep_for(period / 2);
+    ASSERT_EQ(0, counter);
+
+    // spin for several periods
+    printf("spin_node_some() for 4s\n");
+    while (std::chrono::steady_clock::now() < start + 4.5 * period) {
+      executor.spin_node_some(node);
+      std::this_thread::sleep_for(period / 25);
+    }
+
+    // check number of callbacks
+    printf("expecting 4 callbacks\n");
+    ASSERT_EQ(4, counter);
   }
+  // the timer goes out of scope and should be not receive any callbacks anymore
 
-  // check number of callbacks
-  printf("expecting 4 callbacks\n");
+  std::this_thread::sleep_for(1.5 * period);
+
+  // check that no further callbacks have been invoked
+  printf("spin_node_some() - no callbacks expected\n");
+  executor.spin_node_some(node);
   ASSERT_EQ(4, counter);
 
   auto end = std::chrono::steady_clock::now();
