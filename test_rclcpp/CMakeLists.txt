@@ -60,8 +60,7 @@ if(AMENT_ENABLE_TESTING)
     if(TARGET gtest_timer__${middleware_impl})
       target_link_libraries(gtest_timer__${middleware_impl}
         ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-        ${_AMENT_EXPORT_LIBRARY_TARGETS}
-        ${GTEST_MAIN_LIBRARIES})
+        ${_AMENT_EXPORT_LIBRARY_TARGETS})
       add_dependencies(gtest_timer__${middleware_impl} ${PROJECT_NAME})
       rosidl_target_interfaces(gtest_timer__${middleware_impl}
         ${PROJECT_NAME} ${typesupport_impl})
