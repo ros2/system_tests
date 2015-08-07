@@ -33,7 +33,11 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
 
   auto node = rclcpp::Node::make_shared("test_subscription");
 
-  auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>("test_subscription", 10);
+  rmw_qos_profile_t custom_qos_profile = rmw_qos_profile_default;
+  custom_qos_profile.depth = 10;
+
+  auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(
+    "test_subscription", custom_qos_profile);
 
   size_t counter = 0;
   auto callback =
@@ -50,7 +54,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
 
   {
     auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
-      "test_subscription", 10, callback);
+      "test_subscription", custom_qos_profile, callback);
 
     // start condition
     ASSERT_EQ(0, counter);

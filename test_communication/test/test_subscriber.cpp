@@ -64,8 +64,11 @@ rclcpp::subscription::SubscriptionBase::SharedPtr subscribe(
       rclcpp::shutdown();
     };
 
+  rmw_qos_profile_t custom_qos_profile = rmw_qos_profile_default;
+  custom_qos_profile.depth = expected_messages.size();
+
   auto subscriber = node->create_subscription<T>(
-    std::string("test_message_") + message_type, expected_messages.size(), callback);
+    std::string("test_message_") + message_type, custom_qos_profile, callback);
   return subscriber;
 }
 
