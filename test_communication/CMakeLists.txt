@@ -22,12 +22,16 @@ if(AMENT_ENABLE_TESTING)
     "msg/StaticArrayNested.msg"
     "msg/StaticArrayPrimitives.msg"
   )
+  set(other_message_files
+    "msg/UInt32.msg"
+  )
   set(service_files
     "srv/Empty.srv"
     "srv/Primitives.srv"
   )
   rosidl_generate_interfaces(${PROJECT_NAME}
     ${message_files}
+    ${other_message_files}
     ${service_files}
     DEPENDENCIES builtin_interfaces
     SKIP_INSTALL
@@ -81,6 +85,34 @@ if(AMENT_ENABLE_TESTING)
     set_tests_properties(
       test_publisher_subscriber_cpp__${middleware_impl}
       PROPERTIES REQUIRED_FILES "${target_path}/test_publisher_subscriber_cpp__${middleware_impl}"
+    )
+
+    # executables subcription valid data
+    add_executable(test_subscription_valid_data_cpp__${middleware_impl} "test/test_subscription_valid_data.cpp")
+    target_link_libraries(test_subscription_valid_data_cpp__${middleware_impl}
+      ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
+      ${_AMENT_EXPORT_LIBRARY_TARGETS})
+    add_dependencies(test_subscription_valid_data_cpp__${middleware_impl} ${PROJECT_NAME})
+    rosidl_target_interfaces(test_subscription_valid_data_cpp__${middleware_impl}
+      ${PROJECT_NAME} ${typesupport_impl})
+    ament_target_dependencies(test_subscription_valid_data_cpp__${middleware_impl}
+      "${middleware_impl}"
+      "rclcpp")
+    # register executable as a test
+    get_target_property(target_path test_subscription_valid_data_cpp__${middleware_impl} RUNTIME_OUTPUT_DIRECTORY)
+    if(NOT target_path)
+      set(target_path "${CMAKE_CURRENT_BINARY_DIR}")
+    endif()
+    # testing this with a single message type should be enough
+    ament_add_test(
+      "test_subscription_valid_data_cpp__${middleware_impl}"
+      COMMAND "${target_path}/test_subscription_valid_data_cpp__${middleware_impl}"
+      TIMEOUT 15
+      GENERATE_RESULT_FOR_RETURN_CODE_ZERO
+    )
+    set_tests_properties(
+      test_subscription_valid_data_cpp__${middleware_impl}
+      PROPERTIES REQUIRED_FILES "${target_path}/test_subscription_valid_data_cpp__${middleware_impl}"
     )
 
     # executables publisher / subscriber

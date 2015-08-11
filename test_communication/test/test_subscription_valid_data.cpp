@@ -1,0 +1,75 @@
+// Copyright 2015 Open Source Robotics Foundation, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#include <chrono>
+#include <iostream>
+#include <string>
+
+#include <rclcpp/rclcpp.hpp>
+
+#include <test_communication/msg/u_int32.hpp>
+
+int main(int, char **)
+{
+  auto start = std::chrono::steady_clock::now();
+
+  auto node = rclcpp::Node::make_shared("test_subscription_valid_data");
+
+  auto callback =
+    [](const test_communication::msg::UInt32::SharedPtr received_message) -> void
+    {
+      printf("received message #%u\n", received_message->data);
+      if (received_message->data == 0) {
+        fprintf(stderr, "received message data was never sent\n");
+        rclcpp::shutdown();
+        throw std::runtime_error("received message data was never sent");
+      }
+    };
+
+  auto subscriber = node->create_subscription<test_communication::msg::UInt32>(
+    "test_subscription_valid_data", rmw_qos_profile_default, callback);
+
+  rclcpp::WallRate time_between_messages(5);
+  {
+    auto publisher = node->create_publisher<test_communication::msg::UInt32>(
+      "test_subscription_valid_data", rmw_qos_profile_default);
+
+    time_between_messages.sleep();
+
+    uint32_t index = 1;
+    // publish a few messages, all with data > 0
+    while (rclcpp::ok() && index <= 5) {
+      printf("publishing message #%u\n", index);
+      auto msg = std::make_shared<test_communication::msg::UInt32>();
+      msg->data = index;
+      publisher->publish(msg);
+      ++index;
+      time_between_messages.sleep();
+      rclcpp::spin_some(node);
+    }
+
+    time_between_messages.sleep();
+    rclcpp::spin_some(node);
+  }
+  // the publisher goes out of scope and the subscriber should be not receive any callbacks anymore
+
+  time_between_messages.sleep();
+  rclcpp::spin_some(node);
+
+  auto end = std::chrono::steady_clock::now();
+  std::chrono::duration<float> diff = (end - start);
+  std::cout << "published and subscribed for " << diff.count() << " seconds" << std::endl;
+
+  return 0;
+}
