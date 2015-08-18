@@ -89,6 +89,26 @@ if(AMENT_ENABLE_TESTING)
         "rclcpp")
     endif()
 
+    # test_intra_process
+    ament_add_gtest(
+      gtest_intra_process__${middleware_impl}
+      "test/test_intra_process.cpp"
+      TIMEOUT 15
+    )
+    if(TARGET gtest_intra_process__${middleware_impl})
+      target_link_libraries(gtest_intra_process__${middleware_impl}
+        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
+        ${_AMENT_EXPORT_LIBRARY_TARGETS})
+      target_compile_definitions(gtest_intra_process__${middleware_impl}
+        PUBLIC "RMW_IMPLEMENTATION=${middleware_impl}")
+      add_dependencies(gtest_intra_process__${middleware_impl} ${PROJECT_NAME})
+      rosidl_target_interfaces(gtest_intra_process__${middleware_impl}
+        ${PROJECT_NAME} ${typesupport_impl})
+      ament_target_dependencies(gtest_intra_process__${middleware_impl}
+        "${middleware_impl}"
+        "rclcpp")
+    endif()
+
   endforeach()
 endif()  # AMENT_ENABLE_TESTING
 
