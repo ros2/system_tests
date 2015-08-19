@@ -89,6 +89,14 @@ if(AMENT_ENABLE_TESTING)
         "rclcpp")
     endif()
 
+    ament_add_gtest(double_init_cpp__${middleware_impl} "test/double_init.cpp")
+    add_dependencies(double_init_cpp__${middleware_impl} ${PROJECT_NAME})
+    rosidl_target_interfaces(double_init_cpp__${middleware_impl}
+      ${PROJECT_NAME} ${typesupport_impl})
+    ament_target_dependencies(double_init_cpp__${middleware_impl}
+      "${middleware_impl}"
+      "rclcpp")
+
   endforeach()
 endif()  # AMENT_ENABLE_TESTING
 
