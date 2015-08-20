@@ -1,0 +1,35 @@
+import os
+
+from launch import LaunchDescriptor
+from launch.exit_handler import primary_exit_handler
+from launch.launcher import DefaultLauncher
+
+
+def test_qos():
+    ld = LaunchDescriptor()
+
+    env = dict(os.environ)
+    env['RMW_IMPLEMENTATION'] = '@TEST_QOS_RMW@'
+
+    ld.add_process(
+        cmd=['@TEST_QOS_PUBLISHER_EXECUTABLE@'],
+        name='test_qos_publisher',
+        env=env,
+    )
+
+    ld.add_process(
+        cmd=['@TEST_QOS_SUBSCRIBER_EXECUTABLE@'],
+        name='test_qos_subscriber',
+        exit_handler=primary_exit_handler,
+        env=env,
+    )
+
+    launcher = DefaultLauncher()
+    launcher.add_launch_descriptor(ld)
+    rc = launcher.launch()
+
+    assert rc == 0, 'The requester did not receive any replies'
+
+
+if __name__ == '__main__':
+    test_qos()

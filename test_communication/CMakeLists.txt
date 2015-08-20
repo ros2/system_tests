@@ -477,6 +477,11 @@ if(BUILD_TESTING)
     "test/test_publisher.cpp")
   custom_executable(test_subscriber_cpp
     "test/test_subscriber.cpp")
+  # executables qos_publisher / qos_subscriber
+  custom_executable(test_qos_publisher_cpp
+    "test/test_qos_publisher.cpp")
+  custom_executable(test_qos_subscriber_cpp
+    "test/test_qos_subscriber.cpp")
   # executables requester / replier
   custom_executable(test_requester_cpp
     "test/test_requester.cpp")
@@ -487,6 +492,16 @@ if(BUILD_TESTING)
     "test/test_secure_publisher.cpp")
   custom_executable(test_secure_subscriber_cpp
     "test/test_secure_subscriber.cpp")
+
+  # Launch file for QoS tests
+  set(TEST_QOS_PUBLISHER_EXECUTABLE "$<TARGET_FILE:test_qos_publisher_cpp>")
+  set(TEST_QOS_SUBSCRIBER_EXECUTABLE "$<TARGET_FILE:test_qos_subscriber_cpp>")
+  set(TEST_QOS_RMW ${rmw_implementation})
+  configure_file(
+    test/test_qos.py.in
+    test_qos_cpp${test_suffix}.py.configured
+    @ONLY
+  )
 
   macro(targets)
     custom_test_c(test_messages_c
