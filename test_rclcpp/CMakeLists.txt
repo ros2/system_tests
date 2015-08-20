@@ -61,6 +61,8 @@ if(AMENT_ENABLE_TESTING)
       target_link_libraries(gtest_timer__${middleware_impl}
         ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
         ${_AMENT_EXPORT_LIBRARY_TARGETS})
+      target_compile_definitions(gtest_timer__${middleware_impl}
+        PUBLIC "RMW_IMPLEMENTATION=${middleware_impl}")
       add_dependencies(gtest_timer__${middleware_impl} ${PROJECT_NAME})
       rosidl_target_interfaces(gtest_timer__${middleware_impl}
         ${PROJECT_NAME} ${typesupport_impl})
