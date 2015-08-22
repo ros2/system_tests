@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <iostream>
-
 #include <rclcpp/rclcpp.hpp>
 
 #include <test_rclcpp/srv/add_two_ints.hpp>
