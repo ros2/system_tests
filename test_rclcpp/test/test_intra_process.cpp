@@ -66,8 +66,18 @@ TEST(test_intra_process_within_one_node, nominal_usage) {
     ASSERT_EQ(0, counter);
 
     // wait for the first callback
-    printf("spin_node_once() - callback (1) expected\n");
-    executor.spin_node_once(node);
+    {
+      size_t i = 0;
+      while (counter == 0 && i < 10) {
+        printf("spin_node_once() - callback (1) expected - try %zu/10\n", i++);
+        executor.spin_node_once(node);
+        if (counter != 0) {
+          break;
+        }
+        // give the executor thread time to process the event
+        std::this_thread::sleep_for(std::chrono::milliseconds(25));
+      }
+    }
     ASSERT_EQ(1, counter);
 
     // nothing should be pending here
@@ -89,24 +99,26 @@ TEST(test_intra_process_within_one_node, nominal_usage) {
     ASSERT_EQ(1, counter);
 
     // while four messages have been published one callback should be triggered here
-    printf("spin_node_once(nonblocking) - callback (2) expected\n");
-    executor.spin_node_once(node, std::chrono::milliseconds(0));
-    if (counter == 1) {
-      // give the executor thread time to process the event
-      std::this_thread::sleep_for(std::chrono::milliseconds(25));
-      printf("spin_node_once(nonblocking) - callback (2) expected - trying again\n");
-      executor.spin_node_once(node, std::chrono::milliseconds(0));
+    {
+      size_t i = 0;
+      while (counter == 1 && i < 10) {
+        // give the executor thread time to process the event
+        std::this_thread::sleep_for(std::chrono::milliseconds(25));
+        printf("spin_node_once(nonblocking) - callback (2) expected - try %zu/10\n", i++);
+        executor.spin_node_once(node, std::chrono::milliseconds(0));
+      }
     }
     ASSERT_EQ(2, counter);
 
     // check for next pending call
-    printf("spin_node_once(nonblocking) - callback (3) expected\n");
-    executor.spin_node_once(node, std::chrono::milliseconds(0));
-    if (counter == 2) {
-      // give the executor thread time to process the event
-      std::this_thread::sleep_for(std::chrono::milliseconds(25));
-      printf("spin_node_once(nonblocking) - callback (3) expected - trying again\n");
-      executor.spin_node_once(node, std::chrono::milliseconds(0));
+    {
+      size_t i = 0;
+      while (counter == 2 && i < 10) {
+        // give the executor thread time to process the event
+        std::this_thread::sleep_for(std::chrono::milliseconds(25));
+        printf("spin_node_once(nonblocking) - callback (3) expected - try %zu/10\n", i++);
+        executor.spin_node_once(node, std::chrono::milliseconds(0));
+      }
     }
     ASSERT_EQ(3, counter);
 

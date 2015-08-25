@@ -4,6 +4,10 @@ project(test_communication)
 
 if(NOT WIN32)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra")
+else()
+  # /bigobj is needed to avoid error C1128:
+  #   https://msdn.microsoft.com/en-us/library/8578y171.aspx
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
 endif()
 
 find_package(ament_cmake REQUIRED)
