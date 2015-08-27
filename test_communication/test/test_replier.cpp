@@ -26,12 +26,15 @@ void reply(
   rclcpp::Node::SharedPtr node,
   const std::string & service_type,
   const std::vector<
-    std::pair<typename T::Request::SharedPtr, typename T::Response::SharedPtr>> & expected_services
+    std::pair<typename T::Request::SharedPtr, typename T::Response::SharedPtr>> & expected_services,
+  std::vector<bool> & received_messages
 )
 {
+  received_messages.assign(expected_services.size(), false);
+
   // *INDENT-OFF* (prevent uncrustify from making unecessary indents here)
   auto callback =
-    [&expected_services](
+    [&expected_services, &received_messages](
       const typename T::Request::SharedPtr received_request,
       typename T::Response::SharedPtr response) -> void
     {
@@ -44,6 +47,12 @@ void reply(
             expected_services.size() << std::endl;
           *response = *expected_service.second;
           known_request = true;
+          if (received_messages[index]) {
+            fprintf(stderr, "received the same request multiple times\n");
+            rclcpp::shutdown();
+            throw std::runtime_error("received the same request multiple times");
+          }
+          received_messages[index] = true;
           break;
         }
         ++index;
@@ -75,12 +84,14 @@ int main(int argc, char ** argv)
   auto services_empty = get_services_empty();
   auto services_primitives = get_services_primitives();
 
+  std::vector<bool> received_messages;
+
   if (service == "empty") {
     reply<test_communication::srv::Empty>(
-      node, service, services_empty);
+      node, service, services_empty, received_messages);
   } else if (service == "primitives") {
     reply<test_communication::srv::Primitives>(
-      node, service, services_primitives);
+      node, service, services_primitives, received_messages);
   } else {
     fprintf(stderr, "Unknown service argument '%s'\n", service.c_str());
     return 1;
