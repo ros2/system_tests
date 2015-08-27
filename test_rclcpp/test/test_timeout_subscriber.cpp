@@ -29,7 +29,7 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
-void callback(const test_rclcpp::msg::UInt32::ConstSharedPtr & /*msg*/)
+void callback(const test_rclcpp::msg::UInt32::SharedPtr /*msg*/)
 {
   throw std::runtime_error("Subscriber received a message and therefore didn't timeout!");
 }

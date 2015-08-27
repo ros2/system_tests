@@ -35,11 +35,15 @@ TEST(test_intra_process_within_one_node, nominal_usage) {
 
   size_t counter = 0;
   auto callback =
-    [&counter](const test_rclcpp::msg::UInt32::SharedPtr msg) -> void
+    [&counter](
+    const test_rclcpp::msg::UInt32::SharedPtr msg,
+    const rmw_message_info_t & message_info
+    ) -> void
     {
       ++counter;
       printf("  callback() %lu with message data %u\n", counter, msg->data);
       ASSERT_EQ(counter, msg->data);
+      ASSERT_TRUE(message_info.from_intra_process);
     };
 
   auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
@@ -68,8 +72,8 @@ TEST(test_intra_process_within_one_node, nominal_usage) {
     // wait for the first callback
     {
       size_t i = 0;
-      while (counter == 0 && i < 10) {
-        printf("spin_node_once() - callback (1) expected - try %zu/10\n", i++);
+      while (counter == 0 && i < 2) {
+        printf("spin_node_once() - callback (1) expected - try %zu/2\n", ++i);
         executor.spin_node_once(node);
         if (counter != 0) {
           break;
@@ -101,10 +105,10 @@ TEST(test_intra_process_within_one_node, nominal_usage) {
     // while four messages have been published one callback should be triggered here
     {
       size_t i = 0;
-      while (counter == 1 && i < 10) {
+      while (counter == 1 && i < 2) {
         // give the executor thread time to process the event
         std::this_thread::sleep_for(std::chrono::milliseconds(25));
-        printf("spin_node_once(nonblocking) - callback (2) expected - try %zu/10\n", i++);
+        printf("spin_node_once(nonblocking) - callback (2) expected - try %zu/2\n", ++i);
         executor.spin_node_once(node, std::chrono::milliseconds(0));
       }
     }
@@ -113,10 +117,10 @@ TEST(test_intra_process_within_one_node, nominal_usage) {
     // check for next pending call
     {
       size_t i = 0;
-      while (counter == 2 && i < 10) {
+      while (counter == 2 && i < 2) {
         // give the executor thread time to process the event
         std::this_thread::sleep_for(std::chrono::milliseconds(25));
-        printf("spin_node_once(nonblocking) - callback (3) expected - try %zu/10\n", i++);
+        printf("spin_node_once(nonblocking) - callback (3) expected - try %zu/2\n", ++i);
         executor.spin_node_once(node, std::chrono::milliseconds(0));
       }
     }
