@@ -1,0 +1,28 @@
+from launch import LaunchDescriptor
+from launch.exit_handler import primary_exit_handler
+from launch.launcher import DefaultLauncher
+
+
+def test_services():
+    ld = LaunchDescriptor()
+
+    ld.add_process(
+        cmd=['@TEST_SERVICES_SERVER_EXECUTABLE@'],
+        name='test_services_server',
+    )
+
+    ld.add_process(
+        cmd=['@TEST_SERVICES_CLIENT_EXECUTABLE@', 'test_services_server'],
+        name='test_services_client',
+        exit_handler=primary_exit_handler,
+    )
+
+    launcher = DefaultLauncher()
+    launcher.add_launch_descriptor(ld)
+    rc = launcher.launch()
+
+    assert rc == 0, 'The client did not receive any replies'
+
+
+if __name__ == '__main__':
+    test_services()
