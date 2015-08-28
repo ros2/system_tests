@@ -1,0 +1,28 @@
+from launch import LaunchDescriptor
+from launch.exit_handler import primary_exit_handler
+from launch.launcher import DefaultLauncher
+
+
+def test_remote_parameters():
+    ld = LaunchDescriptor()
+
+    ld.add_process(
+        cmd=['@TEST_PARAMETERS_SERVER_EXECUTABLE@'],
+        name='test_parameters_server',
+    )
+
+    ld.add_process(
+        cmd=['@TEST_REMOTE_PARAMETERS_EXECUTABLE@', 'test_parameters_server'],
+        name='test_remote_parameters',
+        exit_handler=primary_exit_handler,
+    )
+
+    launcher = DefaultLauncher()
+    launcher.add_launch_descriptor(ld)
+    rc = launcher.launch()
+
+    assert rc == 0, 'The requester did not receive any replies'
+
+
+if __name__ == '__main__':
+    test_remote_parameters()

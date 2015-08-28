@@ -135,6 +135,46 @@ if(AMENT_ENABLE_TESTING)
         "rclcpp")
     endif()
 
+    if(TARGET local_parameters_cpp__${middleware_impl})
+      ament_add_gtest(local_parameters_cpp__${middleware_impl} SKIP_LINKING_MAIN_LIBRARIES "test/local_parameters.cpp")
+      add_dependencies(local_parameters_cpp__${middleware_impl} ${PROJECT_NAME})
+      rosidl_target_interfaces(local_parameters_cpp__${middleware_impl}
+        ${PROJECT_NAME} ${typesupport_impl})
+      ament_target_dependencies(local_parameters_cpp__${middleware_impl}
+        "${middleware_impl}"
+        "rclcpp")
+    endif()
+
+    if(TARGET test_remote_parameters_cpp__${middleware_impl})
+      # Parameter tests single implementation
+      add_executable(test_remote_parameters_cpp__${middleware_impl} "test/test_remote_parameters.cpp")
+      target_link_libraries(test_remote_parameters_cpp__${middleware_impl} ${GTEST_LIBRARIES})
+      # the above could be replaced by a helper which won't register the gtest for running
+      # ament_add_gtest_subtest(test_remote_parameters_cpp__${middleware_impl} "test/test_remote_parameters.cpp")
+      add_dependencies(test_remote_parameters_cpp__${middleware_impl} ${PROJECT_NAME})
+      rosidl_target_interfaces(test_remote_parameters_cpp__${middleware_impl}
+        ${PROJECT_NAME} ${typesupport_impl})
+      ament_target_dependencies(test_remote_parameters_cpp__${middleware_impl}
+        "${middleware_impl}"
+        "rclcpp")
+      add_executable(test_parameters_server_cpp__${middleware_impl} "test/test_parameters_server.cpp")
+      add_dependencies(test_parameters_server_cpp__${middleware_impl} ${PROJECT_NAME})
+      rosidl_target_interfaces(test_parameters_server_cpp__${middleware_impl}
+        ${PROJECT_NAME} ${typesupport_impl})
+      ament_target_dependencies(test_parameters_server_cpp__${middleware_impl}
+        "${middleware_impl}"
+        "rclcpp")
+      set(TEST_PARAMETERS_SERVER_EXECUTABLE "${CMAKE_CURRENT_BINARY_DIR}${test_executable_subfolder}/test_parameters_server_cpp__${middleware_impl}${test_executable_extension}")
+      set(TEST_REMOTE_PARAMETERS_EXECUTABLE "${CMAKE_CURRENT_BINARY_DIR}${test_executable_subfolder}/test_remote_parameters_cpp__${middleware_impl}${test_executable_extension}")
+      configure_file(
+        test/test_parameters_server.py.in
+        test_parameters_server_cpp__${middleware_impl}.py
+        @ONLY
+      )
+      ament_add_nose_test(parameter_server_cpp__${middleware_impl} "${CMAKE_CURRENT_BINARY_DIR}/test_parameters_server_cpp__${middleware_impl}.py" TIMEOUT 15)
+        set_tests_properties(parameter_server_cpp__${middleware_impl} PROPERTIES DEPENDS "test_parameters_server_cpp__${middleware_impl} test_remote_parameters_cpp__${middleware_impl}")
+    endif()
+
   endforeach()
 endif()  # AMENT_ENABLE_TESTING
 
