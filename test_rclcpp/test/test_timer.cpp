@@ -70,7 +70,7 @@ TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_fire_regularly) {
   }
   // the timer goes out of scope and should be not receive any callbacks anymore
 
-  std::this_thread::sleep_for(1.5 * period);
+  std::this_thread::sleep_for(std::chrono::duration_cast<std::chrono::nanoseconds>(1.5 * period));
 
   // check that no further callbacks have been invoked
   printf("spin_node_some() - no callbacks expected\n");
