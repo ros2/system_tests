@@ -39,7 +39,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
   auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(
     "test_subscription", custom_qos_profile);
 
-  size_t counter = 0;
+  unsigned long counter = 0;
   auto callback =
     [&counter](const test_rclcpp::msg::UInt32::SharedPtr msg) -> void
     {

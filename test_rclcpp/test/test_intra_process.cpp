@@ -33,7 +33,7 @@ TEST(test_intra_process_within_one_node, nominal_usage) {
   auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(
     "test_intra_process", custom_qos_profile);
 
-  size_t counter = 0;
+  unsigned long counter = 0;
   auto callback =
     [&counter](
     const test_rclcpp::msg::UInt32::SharedPtr msg,

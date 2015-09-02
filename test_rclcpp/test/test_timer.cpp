@@ -31,7 +31,7 @@ TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_fire_regularly) {
 
   auto node = rclcpp::Node::make_shared("test_timer_fire_regularly");
 
-  size_t counter = 0;
+  unsigned long counter = 0;
   auto callback =
     [&counter]() -> void
     {
@@ -87,7 +87,7 @@ TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_during_wait) {
 
   auto node = rclcpp::Node::make_shared("test_timer_during_wait");
 
-  size_t counter = 0;
+  unsigned long counter = 0;
   auto callback =
     [&counter]() -> void
     {
