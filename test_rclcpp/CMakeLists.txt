@@ -148,6 +148,7 @@ if(AMENT_ENABLE_TESTING)
     if(TARGET test_remote_parameters_cpp__${middleware_impl})
       # Parameter tests single implementation
       add_executable(test_remote_parameters_cpp__${middleware_impl} "test/test_remote_parameters.cpp")
+      target_include_directories(test_remote_parameters_cpp__${middleware_impl} PUBLIC ${GTEST_INCLUDE_DIRS})
       target_link_libraries(test_remote_parameters_cpp__${middleware_impl} ${GTEST_LIBRARIES})
       # the above could be replaced by a helper which won't register the gtest for running
       # ament_add_gtest_subtest(test_remote_parameters_cpp__${middleware_impl} "test/test_remote_parameters.cpp")
