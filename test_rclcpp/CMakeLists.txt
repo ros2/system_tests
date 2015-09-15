@@ -79,6 +79,7 @@ if(AMENT_ENABLE_TESTING)
     ament_add_gtest(
       gtest_timer__${middleware_impl}
       "test/test_timer.cpp"
+      SKIP_LINKING_MAIN_LIBRARIES
       TIMEOUT 30
     )
     if(TARGET gtest_timer__${middleware_impl})
