@@ -27,8 +27,6 @@
 #endif
 
 TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_fire_regularly) {
-  rclcpp::init(0, nullptr);
-
   auto node = rclcpp::Node::make_shared("test_timer_fire_regularly");
 
   unsigned long counter = 0;
@@ -83,8 +81,6 @@ TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_fire_regularly) {
 }
 
 TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_during_wait) {
-  rclcpp::init(0, nullptr);
-
   auto node = rclcpp::Node::make_shared("test_timer_during_wait");
 
   unsigned long counter = 0;
@@ -133,4 +129,12 @@ TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_during_wait) {
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);
   printf("running for %.3f seconds\n", diff.count());
+}
+
+int main(int argc, char ** argv)
+{
+  // NOTE: use custom main to ensure that rclcpp::init is called only once
+  rclcpp::init(0, nullptr);
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
 }
