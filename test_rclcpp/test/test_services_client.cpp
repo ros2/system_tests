@@ -36,9 +36,45 @@ TEST(test_services_client, test_add) {
   EXPECT_EQ(3, result.get()->sum);
 }
 
+TEST(test_services_client, test_async_maintains_order) {
+  rclcpp::WallRate rate(30);
+
+  rclcpp::executors::SingleThreadedExecutor executor;
+
+  // Test that two consecutive requests are processed in the correct order
+  auto node = rclcpp::Node::make_shared("test_services_client");
+
+  auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("add_two_ints");
+  auto request1 = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
+  request1->a = 7;
+  request1->b = 8;
+
+  auto request2 = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
+  request2->a = 9;
+  request2->b = 10;
+
+  auto result1 = client->async_send_request(request1);
+
+  // NOTE(esteve): for some reason, we need to sleep for a short time to ensure that
+  // messages are sent to the server
+  rate.sleep();
+
+  auto result2 = client->async_send_request(request2);
+
+  rclcpp::executors::spin_node_until_future_complete(
+    executor, node, result2);
+
+  rclcpp::executors::spin_node_until_future_complete(
+    executor, node, result1);
+
+  EXPECT_EQ(15, result1.get()->sum);
+
+  EXPECT_EQ(19, result2.get()->sum);
+}
+
 int main(int argc, char ** argv)
 {
-  rclcpp::init(argc, argv);
+  rclcpp::init(0, nullptr);
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
