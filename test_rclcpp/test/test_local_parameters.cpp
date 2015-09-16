@@ -21,10 +21,17 @@
 
 #include "parameter_fixtures.hpp"
 
-TEST(parameters, to_string) {
+#ifdef RMW_IMPLEMENTATION
+# define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
+# define CLASSNAME(NAME, SUFFIX) CLASSNAME_(NAME, SUFFIX)
+#else
+# define CLASSNAME(NAME, SUFFIX) NAME
+#endif
+
+TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), to_string) {
   rclcpp::parameter::ParameterVariant pv("foo", "bar");
   rclcpp::parameter::ParameterVariant pv2("foo2", "bar2");
-  std::string json_dict = rclcpp::parameter::to_json(pv);
+  std::string json_dict = std::to_string(pv);
   EXPECT_STREQ(
     "{\"name\": \"foo\", \"type\": \"string\", \"value\": \"bar\"}",
     json_dict.c_str());
@@ -51,7 +58,7 @@ TEST(parameters, to_string) {
     std::to_string(pv).c_str());
 }
 
-TEST(parameters, local_synchronous) {
+TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous) {
   auto node = rclcpp::Node::make_shared(std::string("test_parameters_"));
   // TODO(esteve): Make the parameter service automatically start with the node.
   auto parameter_service = std::make_shared<rclcpp::parameter_service::ParameterService>(node);
@@ -60,7 +67,7 @@ TEST(parameters, local_synchronous) {
   verify_test_parameters(parameters_client);
 }
 
-TEST(parameters, local_asynchronous) {
+TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_asynchronous) {
   auto node = rclcpp::Node::make_shared(std::string("test_parameters_"));
   // TODO(esteve): Make the parameter service automatically start with the node.
   auto parameter_service = std::make_shared<rclcpp::parameter_service::ParameterService>(node);
@@ -71,6 +78,7 @@ TEST(parameters, local_asynchronous) {
 
 int main(int argc, char ** argv)
 {
+  // NOTE: use custom main to ensure that rclcpp::init is called only once
   rclcpp::init(argc, argv);
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
