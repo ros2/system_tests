@@ -21,6 +21,35 @@
 
 #include "parameter_fixtures.hpp"
 
+TEST(parameters, to_string) {
+  rclcpp::parameter::ParameterVariant pv("foo", "bar");
+  rclcpp::parameter::ParameterVariant pv2("foo2", "bar2");
+  std::string json_dict = rclcpp::parameter::to_json(pv);
+  EXPECT_STREQ(
+    "{\"name\": \"foo\", \"type\": \"string\", \"value\": \"bar\"}",
+    json_dict.c_str());
+  json_dict = rclcpp::parameter::_to_json_dict_entry(pv);
+  EXPECT_STREQ(
+    "\"foo\": {\"type\": \"string\", \"value\": \"bar\"}",
+    json_dict.c_str());
+  std::vector<rclcpp::parameter::ParameterVariant> vpv;
+  vpv.push_back(pv);
+  vpv.push_back(pv2);
+  json_dict = std::to_string(vpv);
+  EXPECT_STREQ(
+    "{\"foo\": {\"type\": \"string\", \"value\": \"bar\"}, \"foo2\": {\"type\": \"string\", \"value\": \"bar2\"}}",
+    json_dict.c_str());
+
+  pv = rclcpp::parameter::ParameterVariant("foo", 2.1);
+  //TODO(tfoote) convert the value to a float and use epsilon test.
+  EXPECT_STREQ(
+    "{\"name\": \"foo\", \"type\": \"double\", \"value\": \"2.100000\"}",
+    std::to_string(pv).c_str());
+  pv = rclcpp::parameter::ParameterVariant("foo", 8);
+  EXPECT_STREQ(
+    "{\"name\": \"foo\", \"type\": \"integer\", \"value\": \"8\"}",
+    std::to_string(pv).c_str());
+}
 
 TEST(parameters, local_synchronous) {
   auto node = rclcpp::Node::make_shared(std::string("test_parameters_"));
