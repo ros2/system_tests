@@ -31,7 +31,7 @@
 
 void callback(const test_rclcpp::msg::UInt32::SharedPtr /*msg*/)
 {
-  throw std::runtime_error("Subscriber received a message and therefore didn't timeout!");
+  throw std::runtime_error("The subscriber received a message but there should be no publisher!");
 }
 
 TEST(CLASSNAME(test_timeout_subscriber, RMW_IMPLEMENTATION), timeout_subscriber) {
@@ -54,12 +54,14 @@ TEST(CLASSNAME(test_timeout_subscriber, RMW_IMPLEMENTATION), timeout_subscriber)
   for (size_t i = 0; i < num_cycles; ++i) {
     auto tolerance = std::chrono::milliseconds(15);
 
+    // ensure that the non-blocking spin does return immediately
     auto nonblocking_start = std::chrono::steady_clock::now();
     executor.spin_node_once(node, std::chrono::milliseconds::zero());
     auto nonblocking_end = std::chrono::steady_clock::now();
     auto nonblocking_diff = nonblocking_end - nonblocking_start;
     EXPECT_LT(nonblocking_diff, tolerance);
 
+    // ensure that the blocking spin does return after the specified timeout
     auto blocking_timeout = std::chrono::milliseconds(100);
     auto blocking_start = std::chrono::steady_clock::now();
     executor.spin_node_once(node, blocking_timeout);
