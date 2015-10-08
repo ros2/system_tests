@@ -48,9 +48,9 @@ void reply(
           *response = *expected_service.second;
           known_request = true;
           if (received_messages[index]) {
-            fprintf(stderr, "received the same request multiple times\n");
-            rclcpp::shutdown();
-            throw std::runtime_error("received the same request multiple times");
+            // This can happen when the requester gives up listening for the reply.
+            fprintf(stderr, "[warning] received the same request multiple times\n");
+            fprintf(stderr, "[warning] can be due to a race condition, or could be a problem\n");
           }
           received_messages[index] = true;
           break;
