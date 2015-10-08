@@ -37,7 +37,7 @@ int request(
 
   auto requester = node->create_client<T>(std::string("test_service_") + service_type);
 
-  rclcpp::WallRate time_between_cycles(1);
+  rclcpp::WallRate cycle_rate(1);
   auto wait_between_services = std::chrono::milliseconds(100);
   size_t cycle_index = 0;
   size_t service_index = 0;
@@ -72,7 +72,7 @@ int request(
       if (service_index == 0) {
         // retry first request up to number_of_cycles times
         ++cycle_index;
-        time_between_cycles.sleep();
+        cycle_rate.sleep();
       } else {
         // for not-first requests the reply must arrive without retrying
         rc = 3;

@@ -40,12 +40,12 @@ int main(int, char **)
   auto subscriber = node->create_subscription<test_communication::msg::UInt32>(
     "test_subscription_valid_data", rmw_qos_profile_default, callback);
 
-  rclcpp::WallRate time_between_messages(5);
+  rclcpp::WallRate message_rate(5);
   {
     auto publisher = node->create_publisher<test_communication::msg::UInt32>(
       "test_subscription_valid_data", rmw_qos_profile_default);
 
-    time_between_messages.sleep();
+    message_rate.sleep();
 
     uint32_t index = 1;
     // publish a few messages, all with data > 0
@@ -55,16 +55,16 @@ int main(int, char **)
       msg->data = index;
       publisher->publish(msg);
       ++index;
-      time_between_messages.sleep();
+      message_rate.sleep();
       rclcpp::spin_some(node);
     }
 
-    time_between_messages.sleep();
+    message_rate.sleep();
     rclcpp::spin_some(node);
   }
   // the publisher goes out of scope and the subscriber should be not receive any callbacks anymore
 
-  time_between_messages.sleep();
+  message_rate.sleep();
   rclcpp::spin_some(node);
 
   auto end = std::chrono::steady_clock::now();
