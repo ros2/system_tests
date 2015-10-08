@@ -41,7 +41,7 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete) {
       }
       ++i;
     };
-  auto timer = node->create_wall_timer(std::chrono::milliseconds(500), callback);
+  auto timer = node->create_wall_timer(std::chrono::milliseconds(25), callback);
 
   ASSERT_EQ(rclcpp::spin_until_future_complete(node, future),
     rclcpp::executors::FutureReturnCode::SUCCESS);
@@ -63,13 +63,13 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete_timeou
       }
       ++i;
     };
-  auto timer = node->create_wall_timer(std::chrono::seconds(1), callback);
+  auto timer = node->create_wall_timer(std::chrono::milliseconds(50), callback);
 
-  ASSERT_EQ(rclcpp::spin_until_future_complete(node, future, std::chrono::milliseconds(500)),
+  ASSERT_EQ(rclcpp::spin_until_future_complete(node, future, std::chrono::milliseconds(25)),
     rclcpp::executors::FutureReturnCode::TIMEOUT);
 
   // If we wait a little longer, we should complete the future
-  ASSERT_EQ(rclcpp::spin_until_future_complete(node, future, std::chrono::seconds(1)),
+  ASSERT_EQ(rclcpp::spin_until_future_complete(node, future, std::chrono::milliseconds(50)),
     rclcpp::executors::FutureReturnCode::SUCCESS);
 
   EXPECT_EQ(future.get(), true);
@@ -90,15 +90,15 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete_interr
       }
       ++i;
     };
-  auto timer = node->create_wall_timer(std::chrono::seconds(1), callback);
+  auto timer = node->create_wall_timer(std::chrono::milliseconds(50), callback);
 
   // Create a timer that will shut down rclcpp before
   auto shutdown_callback = []() {
       rclcpp::utilities::shutdown();
     };
-  auto shutdown_timer = node->create_wall_timer(std::chrono::milliseconds(500), shutdown_callback);
+  auto shutdown_timer = node->create_wall_timer(std::chrono::milliseconds(25), shutdown_callback);
 
-  ASSERT_EQ(rclcpp::spin_until_future_complete(node, future, std::chrono::milliseconds(500)),
+  ASSERT_EQ(rclcpp::spin_until_future_complete(node, future, std::chrono::milliseconds(50)),
     rclcpp::executors::FutureReturnCode::INTERRUPTED);
 }
 

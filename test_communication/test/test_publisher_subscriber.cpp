@@ -33,8 +33,8 @@ void publish(
   auto publisher = node->create_publisher<T>(
     std::string("test_message_") + message_type, custom_qos_profile);
 
-  rclcpp::WallRate time_between_cycles(1);
-  rclcpp::WallRate time_between_messages(10);
+  rclcpp::WallRate time_between_cycles(10);
+  rclcpp::WallRate time_between_messages(40);
   size_t cycle_index = 0;
   // publish all messages up to number_of_cycles times, longer sleep between each cycle
   while (rclcpp::ok() && cycle_index < number_of_cycles) {
