@@ -44,7 +44,7 @@ TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_fire_regularly) {
 
   auto start = std::chrono::steady_clock::now();
 
-  std::chrono::milliseconds period(1000);
+  std::chrono::milliseconds period(100);
 
   {
     auto timer = node->create_wall_timer(
@@ -56,10 +56,10 @@ TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_fire_regularly) {
     ASSERT_EQ(0, counter);
 
     // spin for several periods
-    printf("spin_node_some() for 4s\n");
+    printf("spin_node_some() for some time\n");
     while (std::chrono::steady_clock::now() < start + 4.5 * period) {
       executor.spin_node_some(node);
-      std::this_thread::sleep_for(period / 25);
+      std::this_thread::sleep_for(period / 10);
     }
 
     // check number of callbacks
@@ -93,7 +93,7 @@ TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_during_wait) {
 
   rclcpp::executors::SingleThreadedExecutor executor;
 
-  std::chrono::milliseconds period(1000);
+  std::chrono::milliseconds period(100);
   auto timer = node->create_wall_timer(
     std::chrono::duration_cast<std::chrono::nanoseconds>(period), callback);
 
