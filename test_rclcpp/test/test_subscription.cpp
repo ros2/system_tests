@@ -180,7 +180,55 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
 
   executor.spin_node_some(node);
   // spin up to 4 times with a 25 ms wait in between
-  for (size_t i = 0; i < 4 && counter == 0; ++i) {
+  for (unsigned long i = 0; i < 4 && counter == 0; ++i) {
+    printf("callback not called, sleeping and trying again\n");
+    std::this_thread::sleep_for(std::chrono::milliseconds(25));
+    executor.spin_node_some(node);
+  }
+  ASSERT_EQ(1, counter);
+}
+// Shortened version of the test for the ConstSharedPtr with info callback signature
+TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_const_with_info) {
+  auto node = rclcpp::Node::make_shared("test_subscription");
+
+  auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(
+    "test_subscription", rmw_qos_profile_default);
+
+  unsigned long counter = 0;
+  auto callback =
+    [&counter](test_rclcpp::msg::UInt32::ConstSharedPtr msg,
+      const rmw_message_info_t & info) -> void
+    {
+      ++counter;
+      printf("  callback() %lu with message data %u\n", counter, msg->data);
+      ASSERT_EQ(counter, msg->data);
+      ASSERT_FALSE(info.from_intra_process);
+    };
+
+  auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
+  msg->data = 0;
+  rclcpp::executors::SingleThreadedExecutor executor;
+
+  auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
+    "test_subscription", rmw_qos_profile_default, callback);
+
+  // start condition
+  ASSERT_EQ(0, counter);
+
+  // nothing should be pending here
+  executor.spin_node_some(node);
+  ASSERT_EQ(0, counter);
+
+  msg->data = 1;
+  publisher->publish(msg);
+  ASSERT_EQ(0, counter);
+
+  // wait for the first callback
+  printf("spin_node_some() - callback (1) expected\n");
+
+  executor.spin_node_some(node);
+  // spin up to 4 times with a 25 ms wait in between
+  for (unsigned long i = 0; i < 4 && counter == 0; ++i) {
     printf("callback not called, sleeping and trying again\n");
     std::this_thread::sleep_for(std::chrono::milliseconds(25));
     executor.spin_node_some(node);
