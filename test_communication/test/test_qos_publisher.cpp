@@ -21,7 +21,7 @@
 #include "message_fixtures.hpp"
 
 template<typename T>
-void publish(
+rclcpp::publisher::Publisher::SharedPtr publish(
   rclcpp::Node::SharedPtr node,
   std::vector<typename T::SharedPtr> messages,
   size_t number_of_cycles = 5)
@@ -30,7 +30,7 @@ void publish(
 
   rmw_qos_profile_t custom_qos_profile = rmw_qos_profile_default;
   custom_qos_profile.depth = messages.size();
-  custom_qos_profile.durability = RMW_QOS_POLICY_DURABILITY_PERSISTENT;
+  custom_qos_profile.durability = RMW_QOS_POLICY_TRANSIENT_LOCAL_DURABILITY;
 
   auto publisher = node->create_publisher<T>(
     std::string("test_qos_message_primitives"), custom_qos_profile);
@@ -55,6 +55,8 @@ void publish(
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);
   std::cout << "published for " << diff.count() << " seconds" << std::endl;
+
+  return publisher;
 }
 
 int main(int argc, char ** argv)
@@ -63,7 +65,12 @@ int main(int argc, char ** argv)
 
   auto node = rclcpp::Node::make_shared(std::string("test_qos_publisher_primitives"));
 
-  publish<test_communication::msg::Primitives>(node, get_messages_primitives(), 1);
+  auto publisher = publish<test_communication::msg::Primitives>(node, get_messages_primitives(), 1);
+
+  // Wait for a while before exiting
+  std::chrono::seconds wait_time(20);
+
+  std::this_thread::sleep_for(wait_time);
 
   return 0;
 }
