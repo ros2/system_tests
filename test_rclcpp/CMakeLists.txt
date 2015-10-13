@@ -19,10 +19,27 @@ if(AMENT_ENABLE_TESTING)
   set(message_files
     "msg/UInt32.msg"
   )
+
+  set(service_files
+    "srv/AddTwoInts.srv"
+  )
+
   rosidl_generate_interfaces(${PROJECT_NAME}
     ${message_files}
+    ${service_files}
     SKIP_INSTALL
   )
+
+  if(NOT WIN32)
+    set(test_executable_extension "")
+    set(test_executable_subfolder "")
+  else()
+    set(test_executable_extension ".exe")
+    set(test_executable_subfolder "/${CMAKE_BUILD_TYPE}")
+    if("${test_executable_subfolder}" STREQUAL "/")
+      set(test_executable_subfolder "/Debug")
+    endif()
+  endif()
 
   # get the rmw implementations ahead of time
   get_available_rmw_implementations(middleware_implementations)
@@ -197,6 +214,36 @@ if(AMENT_ENABLE_TESTING)
       ament_add_nose_test(parameter_server_cpp__${middleware_impl} "${CMAKE_CURRENT_BINARY_DIR}/test_parameters_server_cpp__${middleware_impl}.py" TIMEOUT 15)
         set_tests_properties(parameter_server_cpp__${middleware_impl} PROPERTIES DEPENDS "test_parameters_server_cpp__${middleware_impl} test_remote_parameters_cpp__${middleware_impl}")
     endif()
+
+    # Service tests single implementation
+    add_executable(test_services_client_cpp__${middleware_impl} "test/test_services_client.cpp")
+    target_link_libraries(test_services_client_cpp__${middleware_impl} ${GTEST_LIBRARIES})
+    # the above could be replaced by a helper which won't register the gtest for running
+    # ament_add_gtest_subtest(test_services_client_cpp__${middleware_impl} "test/test_services_client.cpp")
+    target_include_directories(test_services_client_cpp__${middleware_impl} PUBLIC
+      "${GTEST_INCLUDE_DIRS}")
+    add_dependencies(test_services_client_cpp__${middleware_impl} ${PROJECT_NAME})
+    rosidl_target_interfaces(test_services_client_cpp__${middleware_impl}
+      ${PROJECT_NAME} ${typesupport_impl})
+    ament_target_dependencies(test_services_client_cpp__${middleware_impl}
+      "${middleware_impl}"
+      "rclcpp")
+    add_executable(test_services_server_cpp__${middleware_impl} "test/test_services_server.cpp")
+    add_dependencies(test_services_server_cpp__${middleware_impl} ${PROJECT_NAME})
+    rosidl_target_interfaces(test_services_server_cpp__${middleware_impl}
+      ${PROJECT_NAME} ${typesupport_impl})
+    ament_target_dependencies(test_services_server_cpp__${middleware_impl}
+      "${middleware_impl}"
+      "rclcpp")
+    set(TEST_SERVICES_SERVER_EXECUTABLE "${CMAKE_CURRENT_BINARY_DIR}${test_executable_subfolder}/test_services_server_cpp__${middleware_impl}${test_executable_extension}")
+    set(TEST_SERVICES_CLIENT_EXECUTABLE "${CMAKE_CURRENT_BINARY_DIR}${test_executable_subfolder}/test_services_client_cpp__${middleware_impl}${test_executable_extension}")
+    configure_file(
+      test/test_services.py.in
+      test_services_cpp__${middleware_impl}.py
+      @ONLY
+    )
+    ament_add_nose_test(test_services_cpp__${middleware_impl} "${CMAKE_CURRENT_BINARY_DIR}/test_services_cpp__${middleware_impl}.py" TIMEOUT 30)
+    set_tests_properties(test_services_cpp__${middleware_impl} PROPERTIES DEPENDS "test_services_cpp__${middleware_impl} test_services_cpp__${middleware_impl}")
 
   endforeach()
 endif()  # AMENT_ENABLE_TESTING
