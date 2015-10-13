@@ -172,7 +172,9 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
   ASSERT_EQ(0, counter);
 
   msg->data = 1;
-  publisher->publish(msg);
+  // Create a ConstSharedPtr message to publish
+  test_rclcpp::msg::UInt32::ConstSharedPtr const_msg(msg);
+  publisher->publish(const_msg);
   ASSERT_EQ(0, counter);
 
   // wait for the first callback
