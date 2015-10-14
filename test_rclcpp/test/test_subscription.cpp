@@ -237,3 +237,13 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
   }
   ASSERT_EQ(1, counter);
 }
+
+// Test of the queue size create_subscription signature.
+TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), create_subscription_with_queue_size) {
+  auto node = rclcpp::Node::make_shared("test_subscription");
+
+  auto callback = [](test_rclcpp::msg::UInt32::ConstSharedPtr msg) -> void {};
+
+  auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
+    "test_subscription", 10, callback);
+}
