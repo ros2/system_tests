@@ -242,7 +242,9 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
 TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), create_subscription_with_queue_size) {
   auto node = rclcpp::Node::make_shared("test_subscription");
 
+  // *INDENT-OFF*
   auto callback = [](test_rclcpp::msg::UInt32::ConstSharedPtr msg) -> void {};
+  // *INDENT-ON*
 
   auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
     "test_subscription", 10, callback);
