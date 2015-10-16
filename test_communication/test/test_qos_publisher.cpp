@@ -21,7 +21,7 @@
 #include "message_fixtures.hpp"
 
 template<typename T>
-rclcpp::publisher::Publisher::SharedPtr publish(
+typename rclcpp::publisher::Publisher<T>::SharedPtr publish(
   rclcpp::Node::SharedPtr node,
   std::vector<typename T::SharedPtr> messages,
   size_t number_of_cycles = 5)
