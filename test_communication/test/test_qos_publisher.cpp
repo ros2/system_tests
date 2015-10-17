@@ -68,7 +68,7 @@ int main(int argc, char ** argv)
   auto publisher = publish<test_communication::msg::Primitives>(node, get_messages_primitives(), 1);
 
   // Wait for a while before exiting
-  std::chrono::seconds wait_time(20);
+  std::chrono::seconds wait_time(50);
 
   std::this_thread::sleep_for(wait_time);
 

@@ -88,7 +88,7 @@ int main(int argc, char ** argv)
   std::cout << "Wait for 20 seconds before subscribing" << std::endl;
 
   // Wait for a while before subscribing
-  std::chrono::seconds wait_time(20);
+  std::chrono::seconds wait_time(10);
 
   std::this_thread::sleep_for(wait_time);
 
