@@ -45,7 +45,7 @@ TEST(CLASSNAME(test_timeout_subscriber, RMW_IMPLEMENTATION), timeout_subscriber)
   custom_qos_profile.depth = 10;
 
   auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
-    "test_message_timeout_uint32", custom_qos_profile, callback);
+    "test_message_timeout_uint32", callback, custom_qos_profile);
 
   rclcpp::executors::SingleThreadedExecutor executor;
 

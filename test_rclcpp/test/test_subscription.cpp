@@ -54,7 +54,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
 
   {
     auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
-      "test_subscription", custom_qos_profile, callback);
+      "test_subscription", callback, custom_qos_profile);
 
     // start condition
     ASSERT_EQ(0, counter);
@@ -162,7 +162,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
   rclcpp::executors::SingleThreadedExecutor executor;
 
   auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
-    "test_subscription", rmw_qos_profile_default, callback);
+    "test_subscription", callback, rmw_qos_profile_default);
 
   // start condition
   ASSERT_EQ(0, counter);
@@ -212,7 +212,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
   rclcpp::executors::SingleThreadedExecutor executor;
 
   auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
-    "test_subscription", rmw_qos_profile_default, callback);
+    "test_subscription", callback, rmw_qos_profile_default);
 
   // start condition
   ASSERT_EQ(0, counter);
