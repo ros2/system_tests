@@ -52,7 +52,7 @@ TEST(test_intra_process_within_one_node, nominal_usage) {
 
   {
     auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
-      "test_intra_process", custom_qos_profile, callback, nullptr, true);
+      "test_intra_process", callback, custom_qos_profile, nullptr, true);
 
     // start condition
     ASSERT_EQ(0, counter);

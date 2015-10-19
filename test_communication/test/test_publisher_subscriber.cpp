@@ -99,7 +99,7 @@ rclcpp::subscription::SubscriptionBase::SharedPtr subscribe(
   custom_qos_profile.depth = expected_messages.size();
 
   auto subscriber = node->create_subscription<T>(
-    std::string("test_message_") + message_type, custom_qos_profile, callback);
+    std::string("test_message_") + message_type, callback, custom_qos_profile);
   return subscriber;
 }
 

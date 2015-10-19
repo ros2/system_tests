@@ -50,7 +50,7 @@ TEST(CLASSNAME(test_publisher, RMW_IMPLEMENTATION), publish_with_const_reference
   rclcpp::executors::SingleThreadedExecutor executor;
 
   auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
-    "test_publisher", rmw_qos_profile_default, callback);
+    "test_publisher", callback, rmw_qos_profile_default);
 
   // start condition
   ASSERT_EQ(0, counter);

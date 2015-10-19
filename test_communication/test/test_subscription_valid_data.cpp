@@ -38,7 +38,7 @@ int main(int, char **)
     };
 
   auto subscriber = node->create_subscription<test_communication::msg::UInt32>(
-    "test_subscription_valid_data", rmw_qos_profile_default, callback);
+    "test_subscription_valid_data", callback, rmw_qos_profile_default);
 
   rclcpp::WallRate message_rate(5);
   {
