@@ -15,11 +15,11 @@
 #include <chrono>
 #include <thread>
 
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
 
-#include <rclcpp/rclcpp.hpp>
+#include "rclcpp/rclcpp.hpp"
 
-#include <test_rclcpp/srv/add_two_ints.hpp>
+#include "test_rclcpp/srv/add_two_ints.hpp"
 
 TEST(test_services_client, test_add_noreqid) {
   auto node = rclcpp::Node::make_shared("test_services_client");

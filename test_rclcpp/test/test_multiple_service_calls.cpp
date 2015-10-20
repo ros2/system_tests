@@ -14,11 +14,11 @@
 
 #include <iostream>
 
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
 
-#include <rclcpp/rclcpp.hpp>
+#include "rclcpp/rclcpp.hpp"
 
-#include <test_rclcpp/srv/add_two_ints.hpp>
+#include "test_rclcpp/srv/add_two_ints.hpp"
 
 #ifdef RMW_IMPLEMENTATION
 # define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX

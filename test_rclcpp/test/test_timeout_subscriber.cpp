@@ -17,10 +17,10 @@
 #include <stdexcept>
 #include <string>
 
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
 
-#include <rclcpp/rclcpp.hpp>
-#include <test_rclcpp/msg/u_int32.hpp>
+#include "rclcpp/rclcpp.hpp"
+#include "test_rclcpp/msg/u_int32.hpp"
 
 #ifdef RMW_IMPLEMENTATION
 # define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX

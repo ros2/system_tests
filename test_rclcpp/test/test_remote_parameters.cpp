@@ -17,18 +17,16 @@
 #include <stdexcept>
 #include <string>
 
-#include <rclcpp/rclcpp.hpp>
+#include "rclcpp/rclcpp.hpp"
 
 #include "parameter_fixtures.hpp"
 
 TEST(parameters, test_remote_parameters) {
-
   std::string test_server_name = "test_parameters_server";
-  //TODO(tfoote) make test_server name parameterizable
+  // TODO(tfoote) make test_server name parameterizable
   // if (argc >= 2) {
   //   test_server_name = argv[1];
   // }
-
 
   auto node = rclcpp::Node::make_shared(std::string("test_remote_parameters"));
 

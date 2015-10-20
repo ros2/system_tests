@@ -15,11 +15,11 @@
 #include <chrono>
 #include <iostream>
 
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
 
-#include <rclcpp/rclcpp.hpp>
+#include "rclcpp/rclcpp.hpp"
 
-#include <test_rclcpp/msg/u_int32.hpp>
+#include "test_rclcpp/msg/u_int32.hpp"
 
 TEST(test_intra_process_within_one_node, nominal_usage) {
   rclcpp::init(0, nullptr);

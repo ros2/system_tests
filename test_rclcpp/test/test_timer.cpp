@@ -15,9 +15,9 @@
 #include <chrono>
 #include <iostream>
 
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
 
-#include <rclcpp/rclcpp.hpp>
+#include "rclcpp/rclcpp.hpp"
 
 #ifdef RMW_IMPLEMENTATION
 # define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX

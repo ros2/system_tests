@@ -16,8 +16,9 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
-#include <rclcpp/rclcpp.hpp>
+#include "rclcpp/rclcpp.hpp"
 
 #include "message_fixtures.hpp"
 
