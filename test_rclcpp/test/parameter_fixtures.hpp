@@ -89,10 +89,10 @@ void verify_test_parameters(
   for (auto & parameter : parameters_client->get_parameters({"foo", "bar", "baz"})) {
     //std::cout << "Parameter is:" << std::endl << parameter.to_yaml() << std::endl;
     if (parameter.get_name() == "foo") {
-      EXPECT_STREQ("2", parameter.to_string().c_str());
+      EXPECT_STREQ("2", std::to_string(parameter).c_str());
       EXPECT_STREQ("integer", parameter.get_type_name().c_str());
     } else if (parameter.get_name() == "bar") {
-      EXPECT_STREQ("hello", parameter.to_string().c_str());
+      EXPECT_STREQ("hello", std::to_string(parameter).c_str());
       EXPECT_STREQ("string", parameter.get_type_name().c_str());
     } else if (parameter.get_name() == "baz") {
       EXPECT_STREQ("double", parameter.get_type_name().c_str());
@@ -140,10 +140,10 @@ void verify_get_parameters_async(
   for (auto & parameter : result2.get()) {
     if (parameter.get_name() == "foo") {
       EXPECT_STREQ("foo", parameter.get_name().c_str());
-      EXPECT_STREQ("2", parameter.to_string().c_str());
+      EXPECT_STREQ("2", std::to_string(parameter).c_str());
       EXPECT_STREQ("integer", parameter.get_type_name().c_str());
     } else if (parameter.get_name() == "bar") {
-      EXPECT_STREQ("hello", parameter.to_string().c_str());
+      EXPECT_STREQ("hello", std::to_string(parameter).c_str());
       EXPECT_STREQ("string", parameter.get_type_name().c_str());
     } else if (parameter.get_name() == "baz") {
       EXPECT_STREQ("double", parameter.get_type_name().c_str());
