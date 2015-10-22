@@ -52,6 +52,26 @@ if(AMENT_ENABLE_TESTING)
     # get typesupport of rmw implementation to include / link against the corresponding interfaces
     get_rmw_typesupport(typesupport_impl "${middleware_impl}")
 
+    # test_allocator
+    ament_add_gtest(
+      gtest_allocator__${middleware_impl}
+      "test/test_allocator.cpp"
+      TIMEOUT 15
+    )
+    if(TARGET gtest_allocator__${middleware_impl})
+      target_link_libraries(gtest_allocator__${middleware_impl}
+        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
+        ${_AMENT_EXPORT_LIBRARY_TARGETS})
+      target_compile_definitions(gtest_allocator__${middleware_impl}
+        PUBLIC "RMW_IMPLEMENTATION=${middleware_impl}")
+      add_dependencies(gtest_allocator__${middleware_impl} ${PROJECT_NAME})
+      rosidl_target_interfaces(gtest_allocator__${middleware_impl}
+        ${PROJECT_NAME} ${typesupport_impl})
+      ament_target_dependencies(gtest_allocator__${middleware_impl}
+        "${middleware_impl}"
+        "rclcpp")
+    endif()
+
     # test_publisher
     ament_add_gtest(
       gtest_publisher__${middleware_impl}
