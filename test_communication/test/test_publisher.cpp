@@ -15,8 +15,9 @@
 #include <chrono>
 #include <iostream>
 #include <string>
+#include <vector>
 
-#include <rclcpp/rclcpp.hpp>
+#include "rclcpp/rclcpp.hpp"
 
 #include "message_fixtures.hpp"
 

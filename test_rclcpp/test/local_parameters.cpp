@@ -17,7 +17,7 @@
 #include <string>
 #include "gtest/gtest.h"
 
-#include <rclcpp/rclcpp.hpp>
+#include "rclcpp/rclcpp.hpp"
 
 #include "parameter_fixtures.hpp"
 

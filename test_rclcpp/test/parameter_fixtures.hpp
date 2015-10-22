@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef __test_communication__parameter_fixtures__hpp__
-#define __test_communication__parameter_fixtures__hpp__
+#ifndef PARAMETER_FIXTURES_HPP_
+#define PARAMETER_FIXTURES_HPP_
 
 #include <iostream>
 #include <stdexcept>
 #include <string>
 #include "gtest/gtest.h"
 
-#include <rclcpp/rclcpp.hpp>
+#include "rclcpp/rclcpp.hpp"
 
 const double test_epsilon = 1e-6;
 
@@ -87,7 +87,7 @@ void verify_test_parameters(
 
   // Get a few of the parameters just set.
   for (auto & parameter : parameters_client->get_parameters({"foo", "bar", "baz"})) {
-    //std::cout << "Parameter is:" << std::endl << parameter.to_yaml() << std::endl;
+    // std::cout << "Parameter is:" << std::endl << parameter.to_yaml() << std::endl;
     if (parameter.get_name() == "foo") {
       EXPECT_STREQ("2", std::to_string(parameter).c_str());
       EXPECT_STREQ("integer", parameter.get_type_name().c_str());
@@ -159,6 +159,6 @@ void verify_get_parameters_async(
   for (auto & parameter : result3.get()) {
     EXPECT_STREQ("There should be no matches", parameter.get_name().c_str());
   }
-
 }
-#endif  // __test_communication__parameter_fixtures__hpp__
+
+#endif  // PARAMETER_FIXTURES_HPP_
