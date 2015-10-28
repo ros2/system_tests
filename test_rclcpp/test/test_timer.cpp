@@ -29,12 +29,12 @@
 TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_fire_regularly) {
   auto node = rclcpp::Node::make_shared("test_timer_fire_regularly");
 
-  unsigned long counter = 0;
+  uint32_t counter = 0;
   auto callback =
     [&counter]() -> void
     {
       ++counter;
-      printf("  callback() %lu\n", counter);
+      printf("  callback() %4u\n", counter);
     };
 
   rclcpp::executors::SingleThreadedExecutor executor;
@@ -83,12 +83,12 @@ TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_fire_regularly) {
 TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_during_wait) {
   auto node = rclcpp::Node::make_shared("test_timer_during_wait");
 
-  unsigned long counter = 0;
+  uint32_t counter = 0;
   auto callback =
     [&counter]() -> void
     {
       ++counter;
-      printf("  callback() %lu", counter);
+      printf("  callback() %4u", counter);
     };
 
   rclcpp::executors::SingleThreadedExecutor executor;
