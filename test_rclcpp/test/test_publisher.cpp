@@ -34,13 +34,13 @@ TEST(CLASSNAME(test_publisher, RMW_IMPLEMENTATION), publish_with_const_reference
 
   auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>("test_publisher", 10);
 
-  unsigned long counter = 0;
+  uint32_t counter = 0;
   auto callback =
     [&counter](test_rclcpp::msg::UInt32::ConstSharedPtr msg,
       const rmw_message_info_t & info) -> void
     {
       ++counter;
-      printf("  callback() %lu with message data %u\n", counter, msg->data);
+      printf("  callback() %4u with message data %u\n", counter, msg->data);
       ASSERT_EQ(counter, msg->data);
       ASSERT_FALSE(info.from_intra_process);
     };
@@ -68,7 +68,7 @@ TEST(CLASSNAME(test_publisher, RMW_IMPLEMENTATION), publish_with_const_reference
 
   executor.spin_node_some(node);
   // spin up to 4 times with a 25 ms wait in between
-  for (unsigned long i = 0; i < 4 && counter == 0; ++i) {
+  for (uint32_t i = 0; i < 4 && counter == 0; ++i) {
     printf("callback not called, sleeping and trying again\n");
     std::this_thread::sleep_for(std::chrono::milliseconds(25));
     executor.spin_node_some(node);
