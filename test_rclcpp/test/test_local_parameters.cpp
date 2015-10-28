@@ -15,6 +15,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <vector>
 #include "gtest/gtest.h"
 
 #include "rclcpp/rclcpp.hpp"
@@ -44,11 +45,12 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), to_string) {
   vpv.push_back(pv2);
   json_dict = std::to_string(vpv);
   EXPECT_STREQ(
-    "{\"foo\": {\"type\": \"string\", \"value\": \"bar\"}, \"foo2\": {\"type\": \"string\", \"value\": \"bar2\"}}",
+    "{\"foo\": {\"type\": \"string\", \"value\": \"bar\"}, "
+    "\"foo2\": {\"type\": \"string\", \"value\": \"bar2\"}}",
     json_dict.c_str());
 
   pv = rclcpp::parameter::ParameterVariant("foo", 2.1);
-  //TODO(tfoote) convert the value to a float and use epsilon test.
+  // TODO(tfoote) convert the value to a float and use epsilon test.
   EXPECT_STREQ(
     "{\"name\": \"foo\", \"type\": \"double\", \"value\": \"2.100000\"}",
     std::to_string(pv).c_str());
