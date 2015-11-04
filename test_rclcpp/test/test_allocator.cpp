@@ -13,12 +13,12 @@
 // limitations under the License.
 
 #include <memory>
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
 
-#include <rclcpp/strategies/allocator_memory_strategy.hpp>
-#include <rclcpp/rclcpp.hpp>
+#include "rclcpp/strategies/allocator_memory_strategy.hpp"
+#include "rclcpp/rclcpp.hpp"
 
-#include <test_rclcpp/msg/u_int32.hpp>
+#include "test_rclcpp/msg/u_int32.hpp"
 
 #ifdef RMW_IMPLEMENTATION
 # define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
@@ -59,9 +59,9 @@ static inline bool check_stacktrace(const char ** tokens, size_t num_tokens, siz
 
   // allocate string which will be filled with the demangled function name
   size_t funcnamesize = 256;
-  char * funcname = (char *)malloc(funcnamesize);
+  char * funcname = static_cast<char *>(malloc(funcnamesize));
 
-  //fprintf(stderr, ">>>> stack trace:\n");
+  // fprintf(stderr, ">>>> stack trace:\n");
   // iterate over the returned symbol lines. skip the first, it is the
   // address of this function.
   for (int i = 1; i < addrlen; i++) {
@@ -98,7 +98,7 @@ static inline bool check_stacktrace(const char ** tokens, size_t num_tokens, siz
       char * ret = abi::__cxa_demangle(begin_name,
           funcname, &funcnamesize, &status);
       if (status == 0) {
-        funcname = ret; // use possibly realloc()-ed string
+        funcname = ret;  // use possibly realloc()-ed string
         for (size_t j = 0; j < num_tokens; ++j) {
           if (strstr(symbollist[i],
             tokens[j]) != nullptr || strstr(funcname, tokens[j]) != nullptr)
@@ -107,7 +107,7 @@ static inline bool check_stacktrace(const char ** tokens, size_t num_tokens, siz
             break;
           }
         }
-        //fprintf(stderr, "  %s : %s+%s\n", symbollist[i], funcname, begin_offset);
+        // fprintf(stderr, "  %s : %s+%s\n", symbollist[i], funcname, begin_offset);
       } else {
         // demangling failed. Output function name as a C function with
         // no arguments.
@@ -119,7 +119,7 @@ static inline bool check_stacktrace(const char ** tokens, size_t num_tokens, siz
             break;
           }
         }
-        //fprintf(stderr, "  %s : %s()+%s\n", symbollist[i], begin_name, begin_offset);
+        // fprintf(stderr, "  %s : %s()+%s\n", symbollist[i], begin_name, begin_offset);
       }
     } else {
       // couldn't parse the line? print the whole line.
@@ -129,7 +129,7 @@ static inline bool check_stacktrace(const char ** tokens, size_t num_tokens, siz
           break;
         }
       }
-      //fprintf(stderr, "  %s\n", symbollist[i]);
+      // fprintf(stderr, "  %s\n", symbollist[i]);
     }
   }
 
@@ -253,13 +253,13 @@ public:
     std::free(ptr);
   }
 
-  // construct and destroy should not be required to implement allocator_traits, this is a bug in gcc 4.8
-  // for usage in std::pair, std::map
+  // construct and destroy should not be required to implement allocator_traits,
+  // this is a bug in gcc 4.8 for usage in std::pair, std::map
   template<typename _Up, typename ... _Args>
   void
   construct(_Up * __p, _Args && ... __args)
   {
-    ::new((void *)__p)_Up(std::forward<_Args>(__args) ...);
+    ::new(static_cast<void *>(__p))_Up(std::forward<_Args>(__args) ...);
   }
 
   template<typename _Up>
@@ -293,7 +293,8 @@ constexpr bool operator!=(const InstrumentedAllocator<T> &,
 
 const size_t iterations = 1;
 
-using namespace rclcpp::memory_strategies::allocator_memory_strategy;
+using rclcpp::memory_strategies::allocator_memory_strategy::AllocatorMemoryStrategy;
+using rclcpp::message_memory_strategy::MessageMemoryStrategy;
 
 TEST(CLASSNAME(test_allocator, RMW_IMPLEMENTATION), shared_ptr) {
   rclcpp::init(0, nullptr);
@@ -308,7 +309,7 @@ TEST(CLASSNAME(test_allocator, RMW_IMPLEMENTATION), shared_ptr) {
 
   auto alloc = std::make_shared<InstrumentedAllocator<void>>();
   auto msg_mem_strat =
-    std::make_shared<rclcpp::message_memory_strategy::MessageMemoryStrategy<test_rclcpp::msg::UInt32,
+    std::make_shared<MessageMemoryStrategy<test_rclcpp::msg::UInt32,
     InstrumentedAllocator<void>>>(alloc);
   auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>("test_allocator_shared_ptr", 10,
       alloc);
@@ -385,7 +386,7 @@ TEST(CLASSNAME(test_allocator, RMW_IMPLEMENTATION), unique_ptr) {
 
   auto alloc = std::make_shared<UInt32Allocator>();
   auto msg_mem_strat =
-    std::make_shared<rclcpp::message_memory_strategy::MessageMemoryStrategy<test_rclcpp::msg::UInt32,
+    std::make_shared<MessageMemoryStrategy<test_rclcpp::msg::UInt32,
     UInt32Allocator>>(alloc);
   auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>("test_allocator_unique_ptr", 10,
       alloc);
@@ -404,9 +405,8 @@ TEST(CLASSNAME(test_allocator, RMW_IMPLEMENTATION), unique_ptr) {
   // After test_initialization, global new should only be called from within InstrumentedAllocator.
   test_init = true;
   for (uint32_t i = 0; i < iterations; i++) {
-    auto msg =
-      std::unique_ptr<test_rclcpp::msg::UInt32, UInt32Deleter>(std::allocator_traits<UInt32Allocator>::allocate(
-          *alloc.get(), 1));
+    auto msg = std::unique_ptr<test_rclcpp::msg::UInt32, UInt32Deleter>(
+      std::allocator_traits<UInt32Allocator>::allocate(*alloc.get(), 1));
     msg->data = i;
     publisher->publish(msg);
     rclcpp::utilities::sleep_for(std::chrono::milliseconds(1));
