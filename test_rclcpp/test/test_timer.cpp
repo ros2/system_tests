@@ -88,7 +88,7 @@ TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_during_wait) {
     [&counter]() -> void
     {
       ++counter;
-      printf("  callback() %4u", counter);
+      printf("  callback() %4u\n", counter);
     };
 
   rclcpp::executors::SingleThreadedExecutor executor;
@@ -96,6 +96,7 @@ TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_during_wait) {
   std::chrono::milliseconds period(100);
   auto timer = node->create_wall_timer(
     std::chrono::duration_cast<std::chrono::nanoseconds>(period), callback);
+  executor.add_node(node, false);
 
   // start condition
   ASSERT_EQ(0, counter);
@@ -108,16 +109,15 @@ TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_during_wait) {
   ASSERT_EQ(0, counter);
 
   auto spinner =
-    [&executor, &node]() -> void
+    [&executor]() -> void
     {
       printf("spin() until shutdown\n");
-      executor.add_node(node, false);
       executor.spin();
     };
 
   auto thread = std::thread(spinner);
-  printf("sleeping for 4 periods\n");
-  std::this_thread::sleep_for(4 * period);
+  printf("sleeping for 3.5 more periods\n");
+  std::this_thread::sleep_for(std::chrono::duration_cast<std::chrono::nanoseconds>(3.5 * period));
   printf("shutdown()\n");
   rclcpp::shutdown();
   thread.join();
