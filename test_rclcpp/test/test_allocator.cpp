@@ -255,18 +255,19 @@ public:
 
   // construct and destroy should not be required to implement allocator_traits,
   // this is a bug in gcc 4.8 for usage in std::pair, std::map
-  template<typename _Up, typename ... _Args>
+  template<typename U, typename ... Args,
+  typename std::enable_if<!std::is_const<U>::value>::type * = nullptr>
   void
-  construct(_Up * __p, _Args && ... __args)
+  construct(U * ptr, Args && ... args)
   {
-    ::new(static_cast<void *>(__p))_Up(std::forward<_Args>(__args) ...);
+    ::new(ptr)U(std::forward<Args>(args) ...);
   }
 
-  template<typename _Up>
+  template<typename U>
   void
-  destroy(_Up * __p)
+  destroy(U * ptr)
   {
-    __p->~_Up();
+    ptr->~U();
   }
 
   // rebind should not be required to implement allocator_traits, this is a bug in gcc 4.8
