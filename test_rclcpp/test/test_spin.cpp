@@ -34,12 +34,8 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete) {
   std::shared_future<bool> future(promise.get_future());
 
   // Make a timer to complete the promise in the future
-  int i = 0;
-  auto callback = [&promise, &i]() {
-      if (i > 0) {
-        promise.set_value(true);
-      }
-      ++i;
+  auto callback = [&promise]() {
+      promise.set_value(true);
     };
   auto timer = node->create_wall_timer(std::chrono::milliseconds(25), callback);
 
@@ -56,12 +52,8 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete_timeou
   std::shared_future<bool> future(promise.get_future());
 
   // Make a timer to complete the promise in the future
-  int i = 0;
-  auto callback = [&promise, &i]() {
-      if (i > 0) {
-        promise.set_value(true);
-      }
-      ++i;
+  auto callback = [&promise]() {
+      promise.set_value(true);
     };
   auto timer = node->create_wall_timer(std::chrono::milliseconds(50), callback);
 
@@ -83,12 +75,8 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete_interr
   std::shared_future<bool> future(promise.get_future());
 
   // Make a timer to complete the promise in the future
-  int i = 0;
-  auto callback = [&promise, &i]() {
-      if (i > 0) {
-        promise.set_value(true);
-      }
-      ++i;
+  auto callback = [&promise]() {
+      promise.set_value(true);
     };
   auto timer = node->create_wall_timer(std::chrono::milliseconds(50), callback);
 
