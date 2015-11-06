@@ -366,7 +366,7 @@ TEST(CLASSNAME(test_allocator, RMW_IMPLEMENTATION), shared_ptr) {
 
 TEST(CLASSNAME(test_allocator, RMW_IMPLEMENTATION), unique_ptr) {
   using UInt32Allocator = InstrumentedAllocator<test_rclcpp::msg::UInt32>;
-  using UInt32Deleter = allocator::Deleter<UInt32Allocator, test_rclcpp::msg::UInt32>;
+  using UInt32Deleter = rclcpp::allocator::Deleter<UInt32Allocator, test_rclcpp::msg::UInt32>;
 
   rclcpp::init(0, nullptr);
   auto context = rclcpp::contexts::default_context::get_global_default_context();
