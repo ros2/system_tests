@@ -60,10 +60,10 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
     ASSERT_EQ(0, counter);
 
     // nothing should be pending here
-    printf("spin_node_once(nonblocking) - no callback expected\n");
+    // printf("spin_node_once(nonblocking) - no callback expected\n");
     executor.spin_node_once(node, std::chrono::milliseconds(0));
     ASSERT_EQ(0, counter);
-    printf("spin_node_some() - no callback expected\n");
+    // printf("spin_node_some() - no callback expected\n");
     executor.spin_node_some(node);
     ASSERT_EQ(0, counter);
 
@@ -72,20 +72,21 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
     ASSERT_EQ(0, counter);
 
     // wait for the first callback
-    printf("spin_node_once() - callback (1) expected\n");
+    // printf("spin_node_once() - callback (1) expected\n");
     executor.spin_node_once(node);
     size_t i = 0;
     while (counter < 1 && i < 2) {
       executor.spin_node_once(node, std::chrono::milliseconds(25));
-      printf("spin_node_once(blocking for 25 ms) - callback (2) expected - try %zu/2\n", ++i);
+      // printf("spin_node_once(blocking for 25 ms) - callback (2) expected - try %zu/2\n", ++i);
+      ++i;
     }
     ASSERT_EQ(1, counter);
 
     // nothing should be pending here
-    printf("spin_node_once(nonblocking) - no callback expected\n");
+    //printf("spin_node_once(nonblocking) - no callback expected\n");
     executor.spin_node_once(node, std::chrono::milliseconds(0));
     ASSERT_EQ(1, counter);
-    printf("spin_node_some() - no callback expected\n");
+    //printf("spin_node_some() - no callback expected\n");
     executor.spin_node_some(node);
     ASSERT_EQ(1, counter);
 
@@ -100,32 +101,32 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
     ASSERT_EQ(1, counter);
 
     // while four messages have been published one callback should be triggered here
-    printf("spin_node_once(nonblocking) - callback (2) expected\n");
+    //printf("spin_node_once(nonblocking) - callback (2) expected\n");
     executor.spin_node_once(node, std::chrono::milliseconds(0));
     if (counter == 1) {
       // give the executor thread time to process the event
-      printf("spin_node_once(blocking for 25 ms) - callback (2) expected - trying again\n");
+      //printf("spin_node_once(blocking for 25 ms) - callback (2) expected - trying again\n");
       executor.spin_node_once(node, std::chrono::milliseconds(25));
     }
     ASSERT_EQ(2, counter);
 
     // check for next pending call
-    printf("spin_node_once(nonblocking) - callback (3) expected\n");
+    //printf("spin_node_once(nonblocking) - callback (3) expected\n");
     executor.spin_node_once(node, std::chrono::milliseconds(0));
     if (counter == 2) {
       // give the executor thread time to process the event
-      printf("spin_node_once(blocking for 25 ms) - callback (3) expected - trying again\n");
+      //printf("spin_node_once(blocking for 25 ms) - callback (3) expected - trying again\n");
       executor.spin_node_once(node, std::chrono::milliseconds(25));
     }
     ASSERT_EQ(3, counter);
 
     // check for all remaning calls
-    printf("spin_node_some() - callbacks (4 and 5) expected\n");
+    //printf("spin_node_some() - callbacks (4 and 5) expected\n");
     executor.spin_node_some(node);
     if (counter == 3 || counter == 4) {
       // give the executor thread time to process the event
-      printf("spin_node_some() - callback (%s) expected - trying again\n",
-        counter == 3 ? "4 and 5" : "5");
+      /*printf("spin_node_some() - callback (%s) expected - trying again\n",
+        counter == 3 ? "4 and 5" : "5");*/
       executor.spin_node_once(node, std::chrono::milliseconds(25));
     }
     ASSERT_EQ(5, counter);
@@ -138,7 +139,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
   std::this_thread::sleep_for(std::chrono::milliseconds(25));
 
   // check that no further callbacks have been invoked
-  printf("spin_node_some() - no callbacks expected\n");
+  //printf("spin_node_some() - no callbacks expected\n");
   executor.spin_node_some(node);
   ASSERT_EQ(5, counter);
 }
@@ -170,8 +171,10 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
   ASSERT_EQ(0, counter);
 
   // nothing should be pending here
-  printf("spin_node_some() - no callback expected\n");
+  //printf("spin_node_some() - no callback expected\n");
   executor.spin_node_some(node);
+  ASSERT_EQ(0, counter);
+  executor.spin_node_once(node, std::chrono::milliseconds(0));
   ASSERT_EQ(0, counter);
 
   msg->data = 1;
@@ -181,14 +184,16 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
   ASSERT_EQ(0, counter);
 
   // wait for the first callback
-  printf("spin_node_some() - callback (1) expected\n");
-
+  //printf("spin_node_some() - callback (1) expected\n");
   executor.spin_node_some(node);
+
   size_t i = 0;
-  while (counter < 1 && i < 4) {
+  //while (counter < 1 && i < 4) {
+  while (counter < 1 && i < 2) {
     std::this_thread::sleep_for(std::chrono::milliseconds(25));
     executor.spin_node_once(node, std::chrono::milliseconds(0));
-    printf("spin_node_once(nonblocking) - callback (1) expected - try %zu/4\n", ++i);
+    //printf("spin_node_once(nonblocking) - callback (1) expected - try %zu/4\n", ++i);
+    ++i;
   }
 
   ASSERT_EQ(1, counter);
@@ -223,8 +228,10 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
   ASSERT_EQ(0, counter);
 
   // nothing should be pending here
-  printf("spin_node_some() - no callback expected\n");
+  //printf("spin_node_some() - no callback expected\n");
   executor.spin_node_some(node);
+  ASSERT_EQ(0, counter);
+  executor.spin_node_once(node, std::chrono::milliseconds(0));
   ASSERT_EQ(0, counter);
 
   msg->data = 1;
@@ -232,13 +239,16 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
   ASSERT_EQ(0, counter);
 
   // wait for the first callback
-  printf("spin_node_some() - callback (1) expected\n");
+  //printf("spin_node_some() - callback (1) expected\n");
+  executor.spin_node_some(node);
 
   size_t i = 0;
-  while (counter < 1 && i < 4) {
+  //while (counter < 1 && i < 4) {
+  while (counter < 1 && i < 2) {
     std::this_thread::sleep_for(std::chrono::milliseconds(25));
     executor.spin_node_once(node, std::chrono::milliseconds(0));
-    printf("spin_node_once(nonblocking) - callback (1) expected - try %zu/4\n", ++i);
+    //printf("spin_node_once(nonblocking) - callback (1) expected - try %zu/4\n", ++i);
+    ++i;
   }
   ASSERT_EQ(1, counter);
 }
