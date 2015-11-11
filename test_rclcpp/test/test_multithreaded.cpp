@@ -145,7 +145,7 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     for (auto & pair : client_request_pairs) {
       results.push_back(pair.first->async_send_request(pair.second));
       // spin_once will send the request
-      // need this line for spin_until_future_complete to work
+      // need this for spin_until_future_complete to work
       executor.spin_once();
     }
     // Wait on the future produced by the first request
@@ -170,8 +170,10 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     for (auto & pair : client_request_pairs) {
       results.push_back(pair.first->async_send_request(pair.second));
       // spin_once will send the request
-      // need this line for spin() to work else it blocks indefinitely
-      executor.spin_once();
+      // need this for spin() to work else it blocks indefinitely
+      // I can see why it's needed above, but I think it shouldn't be needed in this case.
+      // possible race condition.
+      //executor.spin_once();
     }
     auto timer_callback = [&results]() {
         bool all_ready = true;
@@ -194,4 +196,3 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     EXPECT_EQ(counter, client_request_pairs.size());
   }
 }
-
