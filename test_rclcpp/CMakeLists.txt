@@ -254,6 +254,27 @@ if(AMENT_ENABLE_TESTING)
         "rclcpp")
     endif()
 
+    # test_multithreaded
+    ament_add_gtest(
+      gtest_multithreaded__${middleware_impl}
+      "test/test_multithreaded.cpp"
+      SKIP_LINKING_MAIN_LIBRARIES
+      TIMEOUT 30
+    )
+    if(TARGET gtest_multithreaded__${middleware_impl})
+      target_link_libraries(gtest_multithreaded__${middleware_impl}
+        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
+        ${_AMENT_EXPORT_LIBRARY_TARGETS})
+      target_compile_definitions(gtest_multithreaded__${middleware_impl}
+        PUBLIC "RMW_IMPLEMENTATION=${middleware_impl}")
+      add_dependencies(gtest_multithreaded__${middleware_impl} ${PROJECT_NAME})
+      rosidl_target_interfaces(gtest_multithreaded__${middleware_impl}
+        ${PROJECT_NAME} ${typesupport_impl})
+      ament_target_dependencies(gtest_multithreaded__${middleware_impl}
+        "${middleware_impl}"
+        "rclcpp")
+    endif()
+
     # test_local_parameters
     ament_add_gtest(
       gtest_local_parameters__${middleware_impl}
