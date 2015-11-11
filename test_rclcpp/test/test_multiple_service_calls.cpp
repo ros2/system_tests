@@ -13,6 +13,8 @@
 // limitations under the License.
 
 #include <iostream>
+#include <utility>
+#include <vector>
 
 #include "gtest/gtest.h"
 
@@ -34,15 +36,15 @@ void handle_add_two_ints(
   response->sum = request->a + request->b;
 }
 
-TEST(CLASSNAME(test_multiple_service_calls, RMW_IMPLEMENTATION), multiple_service_calls) {
+TEST(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), two_service_calls) {
   rclcpp::init(0, nullptr);
 
-  auto node = rclcpp::Node::make_shared("test_multiple_service_calls");
+  auto node = rclcpp::Node::make_shared("test_two_service_calls");
 
   node->create_service<test_rclcpp::srv::AddTwoInts>(
-    "test_multiple_service_calls", handle_add_two_ints);
+    "test_two_service_calls", handle_add_two_ints);
 
-  auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("test_multiple_service_calls");
+  auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("test_two_service_calls");
 
   auto request1 = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
   request1->a = 1;
@@ -69,4 +71,64 @@ TEST(CLASSNAME(test_multiple_service_calls, RMW_IMPLEMENTATION), multiple_servic
   rclcpp::spin_until_future_complete(node, result2);
   printf("Received second reply\n");
   EXPECT_EQ(2, result2.get()->sum);
+  // The first result should still be 1.
+  EXPECT_EQ(1, result1.get()->sum);
+}
+
+TEST(CLASSNAME(test_multiple_service_calls, RMW_IMPLEMENTATION), multiple_clients) {
+  const uint32_t n = 5;
+
+  rclcpp::init(0, nullptr);
+
+  auto node = rclcpp::Node::make_shared("test_multiple_clients");
+  rclcpp::executors::SingleThreadedExecutor executor;
+
+  node->create_service<test_rclcpp::srv::AddTwoInts>(
+    "test_multiple_clients", handle_add_two_ints);
+
+  using ClientRequestPair = std::pair<
+      rclcpp::client::Client<test_rclcpp::srv::AddTwoInts>::SharedPtr,
+      test_rclcpp::srv::AddTwoInts::Request::SharedPtr>;
+  using SharedFuture = rclcpp::client::Client<test_rclcpp::srv::AddTwoInts>::SharedFuture;
+
+  std::vector<ClientRequestPair> client_request_pairs;
+  for (uint32_t i = 0; i < n; ++i) {
+    auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("test_multiple_clients");
+    auto request = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
+    request->a = i;
+    request->b = i + 1;
+    client_request_pairs.push_back(ClientRequestPair(client, request));
+  }
+
+  std::vector<SharedFuture> results;
+
+  printf("Sending %u requests...\n", n);
+  fflush(stdout);
+  // Send all the requests
+  for (auto & pair : client_request_pairs) {
+    results.push_back(pair.first->async_send_request(pair.second));
+  }
+
+  auto timer_callback = [&executor, &results]() {
+      bool all_ready = true;
+      for (auto & result : results) {
+        all_ready &= result.wait_for(std::chrono::seconds(0)) == std::future_status::ready;
+      }
+      if (all_ready) {
+        executor.cancel();
+      }
+    };
+  auto timer = node->create_wall_timer(std::chrono::nanoseconds(3000000), timer_callback);
+
+  executor.add_node(node);
+
+  executor.spin();
+
+  // Check the status of all futures
+  for (uint32_t i = 0; i < results.size(); ++i) {
+    ASSERT_EQ(std::future_status::ready, results[i].wait_for(std::chrono::seconds(0)));
+    EXPECT_EQ(results[i].get()->sum, 2 * i + 1);
+    printf("Got response #%u with value %u\n", i, results[i].get()->sum);
+    fflush(stdout);
+  }
 }
