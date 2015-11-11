@@ -17,6 +17,7 @@
 #include "rclcpp/executors.hpp"
 
 #include "test_rclcpp/msg/u_int32.hpp"
+#include "test_rclcpp/srv/add_two_ints.hpp"
 
 #ifdef RMW_IMPLEMENTATION
 # define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
@@ -25,8 +26,6 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
-// TODO test for utilization on all cores? maybe just test time?
-
 static inline void multi_consumer_pub_sub_test(bool intra_process) {
   rclcpp::init(0, nullptr);
 
@@ -34,7 +33,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process) {
   auto pub = node->create_publisher<test_rclcpp::msg::UInt32>("test_multithreaded", 10);
 
   std::vector<rclcpp::Subscription<test_rclcpp::msg::UInt32>::SharedPtr> subscriptions;
-  std::size_t counter = 0;
+  uint32_t counter = 0;
 
   auto callback =
     [&counter, &intra_process](test_rclcpp::msg::UInt32::ConstSharedPtr msg,
@@ -47,7 +46,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process) {
 
   rclcpp::executors::MultiThreadedExecutor executor;
   // Try to saturate the MultithreadedExecutor's thread pool with subscriptions
-  for (std::size_t i = 0; i < 2*executor.get_number_of_threads(); i++) {
+  for (uint32_t i = 0; i < 2*executor.get_number_of_threads(); i++) {
     auto sub = node->create_subscription<test_rclcpp::msg::UInt32>("test_multithreaded", 10, callback);
     subscriptions.push_back(sub);
   }
@@ -58,33 +57,21 @@ static inline void multi_consumer_pub_sub_test(bool intra_process) {
   // wait a moment for everything to initialize (TODO: fix nondeterministic startup behavior)
   rclcpp::utilities::sleep_for(1_ms);
 
-  // test spin_once
+  // sanity check that no callbacks have fired
   executor.spin_once();
   EXPECT_EQ(0, counter);
+
   ++msg->data;
   pub->publish(msg);
 
   // test spin_some
-  // Expectation: The message was published and some number of subscriptions have fired the callback.
-  // Should we expect all subscriptions to be have been serviced?
+  // Expectation: The message was published and all subscriptions fired the callback.
   executor.spin_some();
   EXPECT_EQ(counter, subscriptions.size());
 
-  counter = 0;
-
-  ++msg->data;
-  pub->publish(msg);
-
-  // What's the expected behavior after spin_once?
-  // Should rclcpp execute one executable? (expect counter == 1)
-  // Or should work be distributed to each thread, and each thread executes one executable (expect counter == # of threads);
-  for (std::size_t i = 1; i <= subscriptions.size(); i++) {
-    executor.spin_once();
-    EXPECT_EQ(i, counter);
-  }
-  // We don't expect any more callbacks once all subscriptions were serviced
-  executor.spin_once();
-  EXPECT_EQ(subscriptions.size(), counter);
+  // Expectation: no further messages were received.
+  executor.spin_some();
+  EXPECT_EQ(counter, subscriptions.size());
 
   // reset counter
   counter = 0;
@@ -93,18 +80,19 @@ static inline void multi_consumer_pub_sub_test(bool intra_process) {
   auto publish_callback = [&msg, &pub]() -> void
     {
       ++msg->data;
-      if (msg->data > 10) {
-        rclcpp::sleep_for(5_ms);
+      if (msg->data > 5) {
         rclcpp::shutdown();
         return;
       }
-      pub->publish(msg);
+      if (rclcpp::ok()) {
+        pub->publish(msg);
+      }
     };
-  auto timer = node->create_wall_timer(std::chrono::nanoseconds(10000), publish_callback);
+  // small timer values cause unreliability
+  auto timer = node->create_wall_timer(std::chrono::nanoseconds(3000000), publish_callback);
 
   executor.spin();
-  //publish_thread.join();
-  EXPECT_EQ(counter, 10*subscriptions.size());
+  EXPECT_EQ(counter, 5*subscriptions.size());
 }
 
 TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_single_producer) {
@@ -120,11 +108,90 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_intraproc
 TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) {
   // multiple clients, single server
   auto node = rclcpp::Node::make_shared("test_multithreaded");
-  // TODO 
-  //auto service = node->
-
-
   rclcpp::executors::MultiThreadedExecutor executor;
+  // TODO 
+  uint32_t counter = 0;
+  auto callback = [&counter](const std::shared_ptr<test_rclcpp::srv::AddTwoInts::Request> request,
+    std::shared_ptr<test_rclcpp::srv::AddTwoInts::Response> response)
+    {
+      ++counter;
+      response->sum = request->a + request->b;
+    };
+  auto service = node->create_service<test_rclcpp::srv::AddTwoInts>("test_multithreaded", callback);
+
+  using ClientRequestPair = std::pair<rclcpp::client::Client<test_rclcpp::srv::AddTwoInts>::SharedPtr,
+    test_rclcpp::srv::AddTwoInts::Request::SharedPtr>;
+  using SharedFuture = rclcpp::client::Client<test_rclcpp::srv::AddTwoInts>::SharedFuture;
+
+  std::vector<ClientRequestPair> client_request_pairs;
+  for (uint32_t i = 0; i < 2*executor.get_number_of_threads(); ++i) {
+    auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("test_multithreaded");
+    auto request = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
+    request->a = i;
+    request->b = i+1;
+    client_request_pairs.push_back(ClientRequestPair(client, request));
+  }
+
   executor.add_node(node);
+  rclcpp::utilities::sleep_for(5_ms);
+
+  executor.spin_once();
+  // No callbacks should have fired
+  EXPECT_EQ(0, counter);
+
+  {
+    std::vector<SharedFuture> results;
+    // Send all the requests
+    for (auto & pair : client_request_pairs) {
+      results.push_back(pair.first->async_send_request(pair.second));
+      // spin_once will send the request
+      // need this line for spin_until_future_complete to work
+      executor.spin_once();
+    }
+    // Wait on the future produced by the first request
+    auto result = executor.spin_until_future_complete(results.back());
+
+    ASSERT_EQ(result, rclcpp::executor::FutureReturnCode::SUCCESS);
+
+    // Check the status of all futures
+    for (uint32_t i = 0; i < results.size(); i++) {
+      ASSERT_EQ(std::future_status::ready, results[i].wait_for(std::chrono::seconds(0)));
+      EXPECT_EQ(results[i].get()->sum, 2*i + 1);
+    }
+
+    EXPECT_EQ(counter, client_request_pairs.size());
+  }
+
+  // Reset the counter and try again with spin
+  counter = 0;
+  {
+    std::vector<SharedFuture> results;
+    // Send all the requests again
+    for (auto & pair : client_request_pairs) {
+      results.push_back(pair.first->async_send_request(pair.second));
+      // spin_once will send the request
+      // need this line for spin() to work else it blocks indefinitely
+      executor.spin_once();
+    }
+    auto timer_callback = [&results]() {
+        bool all_ready = true;
+        for (auto & result : results) {
+          all_ready &= result.wait_for(std::chrono::seconds(0)) == std::future_status::ready;
+        }
+        if (all_ready) {
+          rclcpp::shutdown();
+        }
+      };
+    auto timer = node->create_wall_timer(std::chrono::nanoseconds(3000000), timer_callback);
+
+    executor.spin();
+
+    // Check the status of all futures
+    for (uint32_t i = 0; i < results.size(); i++) {
+      ASSERT_EQ(std::future_status::ready, results[i].wait_for(std::chrono::seconds(0)));
+      EXPECT_EQ(results[i].get()->sum, 2*i + 1);
+    }
+    EXPECT_EQ(counter, client_request_pairs.size());
+  }
 }
 
