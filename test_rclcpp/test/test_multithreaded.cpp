@@ -4,8 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
+//     http://www.apache.org/licenses/LICENSE-2.0 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,7 +27,7 @@
 
 // TODO test for utilization on all cores? maybe just test time?
 
-inline void multi_consumer_pub_sub_test(bool intra_process) {
+static inline void multi_consumer_pub_sub_test(bool intra_process) {
   rclcpp::init(0, nullptr);
 
   auto node = rclcpp::Node::make_shared("test_multithreaded", intra_process);
@@ -61,7 +60,7 @@ inline void multi_consumer_pub_sub_test(bool intra_process) {
 
   // test spin_once
   executor.spin_once();
-  ASSERT_EQ(0, counter);
+  EXPECT_EQ(0, counter);
   ++msg->data;
   pub->publish(msg);
 
@@ -69,7 +68,7 @@ inline void multi_consumer_pub_sub_test(bool intra_process) {
   // Expectation: The message was published and some number of subscriptions have fired the callback.
   // Should we expect all subscriptions to be have been serviced?
   executor.spin_some();
-  ASSERT_EQ(counter, subscriptions.size());
+  EXPECT_EQ(counter, subscriptions.size());
 
   counter = 0;
 
@@ -81,31 +80,31 @@ inline void multi_consumer_pub_sub_test(bool intra_process) {
   // Or should work be distributed to each thread, and each thread executes one executable (expect counter == # of threads);
   for (std::size_t i = 1; i <= subscriptions.size(); i++) {
     executor.spin_once();
-    ASSERT_EQ(i, counter);
+    EXPECT_EQ(i, counter);
   }
   // We don't expect any more callbacks once all subscriptions were serviced
   executor.spin_once();
-  ASSERT_EQ(subscriptions.size(), counter);
+  EXPECT_EQ(subscriptions.size(), counter);
 
   // reset counter
   counter = 0;
+  msg->data = 0;
 
-  std::thread publish_thread(
-    [&pub, &msg]() {
-      // sleep and publish 10 times, then quit
-      for (std::size_t i = 1; i <= 10; i++) {
-        msg->data = i;
-        pub->publish(msg);
-        rclcpp::utilities::sleep_for(1_ms);
+  auto publish_callback = [&msg, &pub]() -> void
+    {
+      ++msg->data;
+      if (msg->data > 10) {
+        rclcpp::sleep_for(5_ms);
+        rclcpp::shutdown();
+        return;
       }
-      rclcpp::shutdown();
-    }
-  );
+      pub->publish(msg);
+    };
+  auto timer = node->create_wall_timer(std::chrono::nanoseconds(10000), publish_callback);
 
-  // test spin (with timeout controlled by publish_thread)
   executor.spin();
-  publish_thread.join();
-  ASSERT_EQ(counter, 10*subscriptions.size());
+  //publish_thread.join();
+  EXPECT_EQ(counter, 10*subscriptions.size());
 }
 
 TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_single_producer) {

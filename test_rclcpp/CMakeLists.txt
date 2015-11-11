@@ -258,7 +258,6 @@ if(AMENT_ENABLE_TESTING)
     ament_add_gtest(
       gtest_multithreaded__${middleware_impl}
       "test/test_multithreaded.cpp"
-      SKIP_LINKING_MAIN_LIBRARIES
       TIMEOUT 30
     )
     if(TARGET gtest_multithreaded__${middleware_impl})
