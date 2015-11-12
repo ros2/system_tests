@@ -11,6 +11,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <string>
+#include <utility>
+#include <vector>
+
 #include "gtest/gtest.h"
 
 #include "rclcpp/rclcpp.hpp"
@@ -26,8 +30,11 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
-static inline void multi_consumer_pub_sub_test(bool intra_process) {
-  rclcpp::init(0, nullptr);
+static inline void multi_consumer_pub_sub_test(bool intra_process)
+{
+  if (!rclcpp::ok()) {
+    rclcpp::init(0, nullptr);
+  }
   std::string node_topic_name = "multi_consumer";
   if (intra_process) {
     node_topic_name += "_intra_process";
@@ -50,7 +57,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process) {
 
   rclcpp::executors::MultiThreadedExecutor executor;
   // Try to saturate the MultithreadedExecutor's thread pool with subscriptions
-  for (uint32_t i = 0; i < 2*executor.get_number_of_threads(); i++) {
+  for (uint32_t i = 0; i < 2 * executor.get_number_of_threads(); i++) {
     auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(node_topic_name, 10, callback);
     subscriptions.push_back(sub);
   }
@@ -58,7 +65,8 @@ static inline void multi_consumer_pub_sub_test(bool intra_process) {
   executor.add_node(node);
   auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
 
-  // wait a moment for everything to initialize (TODO: fix nondeterministic startup behavior)
+  // wait a moment for everything to initialize
+  // TODO(jacquelinekay): fix nondeterministic startup behavior
   rclcpp::utilities::sleep_for(1_ms);
 
   // sanity check that no callbacks have fired
@@ -70,6 +78,8 @@ static inline void multi_consumer_pub_sub_test(bool intra_process) {
 
   // test spin_some
   // Expectation: The message was published and all subscriptions fired the callback.
+  // Use spin_once to block until published message triggers an event
+  executor.spin_once();
   executor.spin_some();
   EXPECT_EQ(counter, subscriptions.size());
 
@@ -96,7 +106,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process) {
   auto timer = node->create_wall_timer(std::chrono::nanoseconds(3000000), publish_callback);
 
   executor.spin();
-  EXPECT_EQ(counter, 5*subscriptions.size());
+  EXPECT_EQ(counter, 5 * subscriptions.size());
 }
 
 TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_single_producer) {
@@ -110,32 +120,42 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_intraproc
 }
 
 TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) {
+  if (!rclcpp::ok()) {
+    rclcpp::init(0, nullptr);
+  }
   // multiple clients, single server
   auto node = rclcpp::Node::make_shared("multi_consumer_clients");
   rclcpp::executors::MultiThreadedExecutor executor;
-  // TODO 
+
   uint32_t counter = 0;
   auto callback = [&counter](const std::shared_ptr<test_rclcpp::srv::AddTwoInts::Request> request,
-    std::shared_ptr<test_rclcpp::srv::AddTwoInts::Response> response)
+      std::shared_ptr<test_rclcpp::srv::AddTwoInts::Response> response)
     {
       printf("Called service callback: %lu\n", counter);
       ++counter;
       response->sum = request->a + request->b;
     };
-  auto callback_group = node->create_callback_group(rclcpp::callback_group::CallbackGroupType::Reentrant);
-  auto service = node->create_service<test_rclcpp::srv::AddTwoInts>("multi_consumer_clients", callback, callback_group);
 
-  using ClientRequestPair = std::pair<rclcpp::client::Client<test_rclcpp::srv::AddTwoInts>::SharedPtr,
-    test_rclcpp::srv::AddTwoInts::Request::SharedPtr>;
+  rmw_qos_profile_t qos_profile = rmw_qos_profile_services_default;
+  qos_profile.depth = executor.get_number_of_threads() * 2;
+  auto callback_group = node->create_callback_group(
+    rclcpp::callback_group::CallbackGroupType::Reentrant);
+  auto service = node->create_service<test_rclcpp::srv::AddTwoInts>(
+    "multi_consumer_clients", callback, qos_profile, callback_group);
+
+  using ClientRequestPair =
+      std::pair<rclcpp::client::Client<test_rclcpp::srv::AddTwoInts>::SharedPtr,
+      test_rclcpp::srv::AddTwoInts::Request::SharedPtr>;
   using SharedFuture = rclcpp::client::Client<test_rclcpp::srv::AddTwoInts>::SharedFuture;
 
 
   std::vector<ClientRequestPair> client_request_pairs;
-  for (uint32_t i = 0; i < 8; ++i) {
-    auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("multi_consumer_clients", callback_group);
+  for (uint32_t i = 0; i < 2 * executor.get_number_of_threads(); ++i) {
+    auto client = node->create_client<test_rclcpp::srv::AddTwoInts>(
+      "multi_consumer_clients", qos_profile, callback_group);
     auto request = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
     request->a = i;
-    request->b = i+1;
+    request->b = i + 1;
     client_request_pairs.push_back(ClientRequestPair(client, request));
   }
 
@@ -151,8 +171,6 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     // Send all the requests
     for (auto & pair : client_request_pairs) {
       results.push_back(pair.first->async_send_request(pair.second));
-      // spin_once will send the request
-      // need this for spin_until_future_complete to work
     }
     // Wait on the future produced by the first request
     auto result = executor.spin_until_future_complete(results.back());
@@ -162,7 +180,7 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     // Check the status of all futures
     for (uint32_t i = 0; i < results.size(); i++) {
       ASSERT_EQ(std::future_status::ready, results[i].wait_for(std::chrono::seconds(0)));
-      EXPECT_EQ(results[i].get()->sum, 2*i + 1);
+      EXPECT_EQ(results[i].get()->sum, 2 * i + 1);
     }
 
     EXPECT_EQ(counter, client_request_pairs.size());
@@ -178,8 +196,9 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     }
     auto timer_callback = [&results]() {
         for (auto & result : results) {
-          if (result.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
+          if (result.wait_for(std::chrono::seconds(0)) != std::future_status::ready) {
             return;
+          }
         }
         rclcpp::shutdown();
       };
@@ -190,7 +209,7 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     // Check the status of all futures
     for (uint32_t i = 0; i < results.size(); i++) {
       ASSERT_EQ(std::future_status::ready, results[i].wait_for(std::chrono::seconds(0)));
-      EXPECT_EQ(results[i].get()->sum, 2*i + 1);
+      EXPECT_EQ(results[i].get()->sum, 2 * i + 1);
     }
     EXPECT_EQ(counter, client_request_pairs.size());
   }
