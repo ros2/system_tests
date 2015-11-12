@@ -28,9 +28,13 @@
 
 static inline void multi_consumer_pub_sub_test(bool intra_process) {
   rclcpp::init(0, nullptr);
+  std::string node_topic_name = "multi_consumer";
+  if (intra_process) {
+    node_topic_name += "_intra_process";
+  }
 
-  auto node = rclcpp::Node::make_shared("test_multithreaded", intra_process);
-  auto pub = node->create_publisher<test_rclcpp::msg::UInt32>("test_multithreaded", 10);
+  auto node = rclcpp::Node::make_shared(node_topic_name, intra_process);
+  auto pub = node->create_publisher<test_rclcpp::msg::UInt32>(node_topic_name, 10);
 
   std::vector<rclcpp::Subscription<test_rclcpp::msg::UInt32>::SharedPtr> subscriptions;
   uint32_t counter = 0;
@@ -47,7 +51,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process) {
   rclcpp::executors::MultiThreadedExecutor executor;
   // Try to saturate the MultithreadedExecutor's thread pool with subscriptions
   for (uint32_t i = 0; i < 2*executor.get_number_of_threads(); i++) {
-    auto sub = node->create_subscription<test_rclcpp::msg::UInt32>("test_multithreaded", 10, callback);
+    auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(node_topic_name, 10, callback);
     subscriptions.push_back(sub);
   }
 
@@ -107,25 +111,28 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_intraproc
 
 TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) {
   // multiple clients, single server
-  auto node = rclcpp::Node::make_shared("test_multithreaded");
+  auto node = rclcpp::Node::make_shared("multi_consumer_clients");
   rclcpp::executors::MultiThreadedExecutor executor;
   // TODO 
   uint32_t counter = 0;
   auto callback = [&counter](const std::shared_ptr<test_rclcpp::srv::AddTwoInts::Request> request,
     std::shared_ptr<test_rclcpp::srv::AddTwoInts::Response> response)
     {
+      printf("Called service callback: %lu\n", counter);
       ++counter;
       response->sum = request->a + request->b;
     };
-  auto service = node->create_service<test_rclcpp::srv::AddTwoInts>("test_multithreaded", callback);
+  auto callback_group = node->create_callback_group(rclcpp::callback_group::CallbackGroupType::Reentrant);
+  auto service = node->create_service<test_rclcpp::srv::AddTwoInts>("multi_consumer_clients", callback, callback_group);
 
   using ClientRequestPair = std::pair<rclcpp::client::Client<test_rclcpp::srv::AddTwoInts>::SharedPtr,
     test_rclcpp::srv::AddTwoInts::Request::SharedPtr>;
   using SharedFuture = rclcpp::client::Client<test_rclcpp::srv::AddTwoInts>::SharedFuture;
 
+
   std::vector<ClientRequestPair> client_request_pairs;
-  for (uint32_t i = 0; i < 2*executor.get_number_of_threads(); ++i) {
-    auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("test_multithreaded");
+  for (uint32_t i = 0; i < 8; ++i) {
+    auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("multi_consumer_clients", callback_group);
     auto request = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
     request->a = i;
     request->b = i+1;
@@ -146,7 +153,6 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
       results.push_back(pair.first->async_send_request(pair.second));
       // spin_once will send the request
       // need this for spin_until_future_complete to work
-      executor.spin_once();
     }
     // Wait on the future produced by the first request
     auto result = executor.spin_until_future_complete(results.back());
@@ -169,20 +175,13 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     // Send all the requests again
     for (auto & pair : client_request_pairs) {
       results.push_back(pair.first->async_send_request(pair.second));
-      // spin_once will send the request
-      // need this for spin() to work else it blocks indefinitely
-      // I can see why it's needed above, but I think it shouldn't be needed in this case.
-      // possible race condition.
-      //executor.spin_once();
     }
     auto timer_callback = [&results]() {
-        bool all_ready = true;
         for (auto & result : results) {
-          all_ready &= result.wait_for(std::chrono::seconds(0)) == std::future_status::ready;
+          if (result.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
+            return;
         }
-        if (all_ready) {
-          rclcpp::shutdown();
-        }
+        rclcpp::shutdown();
       };
     auto timer = node->create_wall_timer(std::chrono::nanoseconds(3000000), timer_callback);
 
