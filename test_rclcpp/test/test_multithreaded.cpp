@@ -209,38 +209,58 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
   }
 }
 
-TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_access_publisher) {
+static inline void multi_access_publisher(bool intra_process) {
   // Try to access the same publisher simultaneously
-  auto node = rclcpp::Node::make_shared("multi_access_publisher", true);
+  std::string node_topic_name = "multi_access_publisher";
+  if (intra_process) {
+    node_topic_name += "_intra_process";
+  }
+
+  auto node = rclcpp::Node::make_shared(node_topic_name, intra_process);
   rclcpp::executors::MultiThreadedExecutor executor;
-  auto pub = node->create_publisher<test_rclcpp::msg::UInt32>("multi_access_publisher");
+
+  auto pub = node->create_publisher<test_rclcpp::msg::UInt32>(node_topic_name);
   // callback groups?
   auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
   uint32_t timer_counter = 0;
-  auto timer_callback = [&executor, &pub, &msg, &timer_counter]()
+
+  std::mutex timer_mutex;
+  auto timer_callback = [&executor, &pub, &msg, &timer_counter, &timer_mutex]()
     {
-      if (timer_counter == 10 * executor.get_number_of_threads()) {
+      if (timer_counter == 100 * executor.get_number_of_threads()) {
         executor.cancel();
         return;
       }
-      msg->data = timer_counter++;
-      pub->publish(msg);
+      {
+        //std::lock_guard<std::mutex> lock(timer_mutex);
+        msg->data = timer_counter++;
+        pub->publish(msg);
+      }
     };
   std::vector<rclcpp::timer::WallTimer::SharedPtr> timers;
   // timers will fire simultaneously in each thread
   for (uint32_t i = 0; i < executor.get_number_of_threads(); i++) {
-    timers.push_back(node->create_wall_timer(std::chrono::milliseconds(5), timer_callback));
+    timers.push_back(node->create_wall_timer(std::chrono::milliseconds(1), timer_callback));
   }
   uint32_t subscription_counter = 0;
   auto sub_callback = [&subscription_counter](test_rclcpp::msg::UInt32::SharedPtr)
     {
       ++subscription_counter;
     };
-  auto sub = node->create_subscription<test_rclcpp::msg::UInt32>("multi_access_publisher", sub_callback);
+  auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(node_topic_name, sub_callback);
   executor.add_node(node);
   executor.spin();
   // dubious assertion
   ASSERT_EQ(timer_counter, subscription_counter);
+
+}
+
+TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_access_publisher) {
+  multi_access_publisher(false);
+}
+
+TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_access_publisher_intra_process) {
+  multi_access_publisher(true);
 }
 
 
