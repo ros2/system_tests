@@ -194,13 +194,13 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     for (auto & pair : client_request_pairs) {
       results.push_back(pair.first->async_send_request(pair.second));
     }
-    auto timer_callback = [&results]() {
+    auto timer_callback = [&executor, &results]() {
         for (auto & result : results) {
           if (result.wait_for(std::chrono::seconds(0)) != std::future_status::ready) {
             return;
           }
         }
-        rclcpp::shutdown();
+        executor.cancel();
       };
     auto timer = node->create_wall_timer(std::chrono::nanoseconds(3000000), timer_callback);
 
