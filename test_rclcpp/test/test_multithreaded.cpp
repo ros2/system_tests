@@ -91,11 +91,11 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   counter = 0;
   msg->data = 0;
 
-  auto publish_callback = [&msg, &pub]() -> void
+  auto publish_callback = [&msg, &pub, &executor]() -> void
     {
       ++msg->data;
       if (msg->data > 5) {
-        rclcpp::shutdown();
+        executor.cancel();
         return;
       }
       if (rclcpp::ok()) {
