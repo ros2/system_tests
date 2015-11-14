@@ -217,32 +217,33 @@ static inline void multi_access_publisher(bool intra_process) {
   }
 
   auto node = rclcpp::Node::make_shared(node_topic_name, intra_process);
+  auto callback_group = node->create_callback_group(
+    rclcpp::callback_group::CallbackGroupType::Reentrant);
+
   rclcpp::executors::MultiThreadedExecutor executor;
 
   auto pub = node->create_publisher<test_rclcpp::msg::UInt32>(node_topic_name);
   // callback groups?
   auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
-  uint32_t timer_counter = 0;
+  std::atomic<uint32_t> timer_counter;
+  timer_counter = 0;
 
-  std::mutex timer_mutex;
-  auto timer_callback = [&executor, &pub, &msg, &timer_counter, &timer_mutex]()
+  auto timer_callback = [&executor, &pub, &msg, &timer_counter]()
     {
       if (timer_counter == 100 * executor.get_number_of_threads()) {
         executor.cancel();
         return;
       }
-      {
-        //std::lock_guard<std::mutex> lock(timer_mutex);
-        msg->data = timer_counter++;
-        pub->publish(msg);
-      }
+      msg->data = ++timer_counter;
+      pub->publish(msg);
     };
   std::vector<rclcpp::timer::WallTimer::SharedPtr> timers;
   // timers will fire simultaneously in each thread
   for (uint32_t i = 0; i < executor.get_number_of_threads(); i++) {
     timers.push_back(node->create_wall_timer(std::chrono::milliseconds(1), timer_callback));
   }
-  uint32_t subscription_counter = 0;
+  std::atomic<uint32_t> subscription_counter;
+  subscription_counter = 0;
   auto sub_callback = [&subscription_counter](test_rclcpp::msg::UInt32::SharedPtr)
     {
       ++subscription_counter;
