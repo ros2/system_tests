@@ -51,6 +51,25 @@ TEST(test_services_client, test_add_reqid) {
   EXPECT_EQ(9, result.get()->sum);
 }
 
+TEST(test_services_client, test_return_request) {
+  auto node = rclcpp::Node::make_shared("test_services_client");
+
+  auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("add_two_ints_reqid");
+  auto request = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
+  request->a = 4;
+  request->b = 5;
+
+  auto result = client->async_send_request(
+    request,
+    [](rclcpp::client::Client<test_rclcpp::srv::AddTwoInts>::SharedFutureWithRequest future) {
+    EXPECT_EQ(4, future.get().first->a);
+    EXPECT_EQ(5, future.get().first->b);
+    EXPECT_EQ(9, future.get().second->sum);
+  });
+
+  rclcpp::spin_until_future_complete(node, result);  // Wait for the result.
+}
+
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
