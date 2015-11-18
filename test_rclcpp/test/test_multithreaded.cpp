@@ -38,7 +38,9 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   }
 
   auto node = rclcpp::Node::make_shared(node_topic_name, intra_process);
-  auto pub = node->create_publisher<test_rclcpp::msg::UInt32>(node_topic_name, 10);
+  auto callback_group = node->create_callback_group(
+    rclcpp::callback_group::CallbackGroupType::Reentrant);
+  auto pub = node->create_publisher<test_rclcpp::msg::UInt32>(node_topic_name, 16);
 
   std::vector<rclcpp::Subscription<test_rclcpp::msg::UInt32>::SharedPtr> subscriptions;
   uint32_t counter = 0;
@@ -54,8 +56,8 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
 
   rclcpp::executors::MultiThreadedExecutor executor;
   // Try to saturate the MultithreadedExecutor's thread pool with subscriptions
-  for (uint32_t i = 0; i < 2 * executor.get_number_of_threads(); i++) {
-    auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(node_topic_name, 10, callback);
+  for (uint32_t i = 0; i < executor.get_number_of_threads(); i++) {
+    auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(node_topic_name, 16, callback, callback_group);
     subscriptions.push_back(sub);
   }
 
@@ -67,7 +69,6 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   rclcpp::utilities::sleep_for(1_ms);
 
   // sanity check that no callbacks have fired
-  executor.spin_once();
   EXPECT_EQ(0, counter);
 
   ++msg->data;
@@ -76,12 +77,12 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   // test spin_some
   // Expectation: The message was published and all subscriptions fired the callback.
   // Use spin_once to block until published message triggers an event
-  executor.spin_once();
+  //executor.spin_once();
   executor.spin_some();
   EXPECT_EQ(counter, subscriptions.size());
 
   // Expectation: no further messages were received.
-  executor.spin_some();
+  executor.spin_once(std::chrono::nanoseconds(0));
   EXPECT_EQ(counter, subscriptions.size());
 
   // reset counter
@@ -95,9 +96,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
         executor.cancel();
         return;
       }
-      if (rclcpp::ok()) {
-        pub->publish(msg);
-      }
+      pub->publish(msg);
     };
   // small timer values cause unreliability
   auto timer = node->create_wall_timer(std::chrono::milliseconds(3), publish_callback);
