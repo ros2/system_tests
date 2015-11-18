@@ -110,7 +110,7 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_single_pr
   multi_consumer_pub_sub_test(false);
 }
 
-TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_intraprocess) {
+TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_intra_process) {
   // multiple subscriptions, single publisher, intra-process
   multi_consumer_pub_sub_test(true);
 }
@@ -236,6 +236,7 @@ static inline void multi_access_publisher(bool intra_process) {
         return;
       }
       msg->data = ++timer_counter;
+      printf("Publishing message %u\n", timer_counter.load());
       std::lock_guard<std::mutex> lock(publisher_mutex);
       pub->publish(msg);
     };
@@ -249,13 +250,13 @@ static inline void multi_access_publisher(bool intra_process) {
   auto sub_callback = [&subscription_counter](test_rclcpp::msg::UInt32::SharedPtr)
     {
       ++subscription_counter;
+      printf("Subscription callback %u\n", subscription_counter.load());
     };
   auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(node_topic_name, sub_callback, rmw_qos_profile_default, callback_group);
   executor.add_node(node);
   executor.spin();
   ASSERT_EQ(timer_counter, 5*executor.get_number_of_threads());
   ASSERT_EQ(timer_counter, subscription_counter);
-
 }
 
 TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_access_publisher) {
