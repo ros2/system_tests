@@ -19,6 +19,8 @@
 
 #include "rclcpp/rclcpp.hpp"
 
+#include "test_rclcpp/msg/u_int32.hpp"
+
 #ifdef RMW_IMPLEMENTATION
 # define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
 # define CLASSNAME(NAME, SUFFIX) CLASSNAME_(NAME, SUFFIX)
@@ -90,6 +92,31 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete_interr
 
   ASSERT_EQ(rclcpp::spin_until_future_complete(node, future, std::chrono::milliseconds(50)),
     rclcpp::executor::FutureReturnCode::INTERRUPTED);
+}
+
+TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), cancel) {
+  auto node = rclcpp::Node::make_shared("cancel");
+  rclcpp::executors::SingleThreadedExecutor executor;
+  auto pub = node->create_publisher<test_rclcpp::msg::UInt32>("cancel", 10);
+  auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
+
+  auto subscription_callback = [](test_rclcpp::msg::UInt32::ConstSharedPtr)
+    {
+      fprintf(stderr, "Failure: subscription callback received before cancel\n");
+      FAIL();
+    };
+  auto subscription = node->create_subscription<test_rclcpp::msg::UInt32>(
+    "cancel", 10, subscription_callback);
+
+  auto cancel_callback = [&executor, &pub, &msg]()
+    {
+      executor.cancel();
+      // Try to publish after canceling. The callback should never trigger.
+      pub->publish(msg);
+    };
+  auto timer = node->create_wall_timer(std::chrono::milliseconds(5), cancel_callback);
+  executor.add_node(node);
+  executor.spin();
 }
 
 int main(int argc, char ** argv)
