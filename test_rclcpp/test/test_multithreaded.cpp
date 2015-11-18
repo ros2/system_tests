@@ -218,7 +218,7 @@ static inline void multi_access_publisher(bool intra_process) {
 
   auto node = rclcpp::Node::make_shared(node_topic_name, intra_process);
   auto callback_group = node->create_callback_group(
-    rclcpp::callback_group::CallbackGroupType::Reentrant);
+    rclcpp::callback_group::CallbackGroupType::MutuallyExclusive);
 
   rclcpp::executors::MultiThreadedExecutor executor;
 
@@ -228,13 +228,16 @@ static inline void multi_access_publisher(bool intra_process) {
   std::atomic<uint32_t> timer_counter;
   timer_counter = 0;
 
-  auto timer_callback = [&executor, &pub, &msg, &timer_counter]()
+  std::mutex publisher_mutex;
+  auto timer_callback = [&executor, &pub, &publisher_mutex, &msg, &timer_counter]()
     {
-      if (timer_counter == 100 * executor.get_number_of_threads()) {
+      if (timer_counter >= 5 * executor.get_number_of_threads()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(2));
         executor.cancel();
         return;
       }
       msg->data = ++timer_counter;
+      std::lock_guard<std::mutex> lock(publisher_mutex);
       pub->publish(msg);
     };
   std::vector<rclcpp::timer::WallTimer::SharedPtr> timers;
@@ -248,10 +251,10 @@ static inline void multi_access_publisher(bool intra_process) {
     {
       ++subscription_counter;
     };
-  auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(node_topic_name, sub_callback);
+  auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(node_topic_name, sub_callback, rmw_qos_profile_default, callback_group);
   executor.add_node(node);
   executor.spin();
-  // dubious assertion
+  ASSERT_EQ(timer_counter, 5*executor.get_number_of_threads());
   ASSERT_EQ(timer_counter, subscription_counter);
 
 }

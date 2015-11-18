@@ -12,6 +12,9 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 
+#set (CMAKE_CXX_COMPILER "clang++")
+#set (CMAKE_LINKER "llvm-ld")
+
 if(AMENT_ENABLE_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
