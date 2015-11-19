@@ -227,11 +227,12 @@ static inline void multi_access_publisher(bool intra_process) {
   std::atomic<uint32_t> timer_counter;
   timer_counter = 0;
 
+  const size_t iterations = 5 * executor.get_number_of_threads();
   std::mutex publisher_mutex;
-  auto timer_callback = [&executor, &pub, &publisher_mutex, &msg, &timer_counter]()
+  auto timer_callback = [&executor, &pub, &publisher_mutex, &msg, &timer_counter, &iterations]()
     {
-      if (timer_counter >= 5 * executor.get_number_of_threads()) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(2));
+      if (timer_counter >= iterations) {
+        //std::this_thread::sleep_for(std::chrono::milliseconds(2));
         executor.cancel();
         return;
       }
@@ -255,7 +256,7 @@ static inline void multi_access_publisher(bool intra_process) {
   auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(node_topic_name, sub_callback, rmw_qos_profile_default, callback_group);
   executor.add_node(node);
   executor.spin();
-  ASSERT_EQ(timer_counter, 5*executor.get_number_of_threads());
+  ASSERT_EQ(timer_counter, iterations);
   ASSERT_EQ(timer_counter, subscription_counter);
 }
 
