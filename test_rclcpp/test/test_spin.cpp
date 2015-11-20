@@ -36,8 +36,9 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete) {
   std::shared_future<bool> future(promise.get_future());
 
   // Make a timer to complete the promise in the future
-  auto callback = [&promise]() {
+  auto callback = [&promise](rclcpp::timer::TimerBase & timer) {
       promise.set_value(true);
+      timer.cancel();
     };
   auto timer = node->create_wall_timer(std::chrono::milliseconds(25), callback);
 

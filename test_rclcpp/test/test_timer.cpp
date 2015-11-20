@@ -131,6 +131,40 @@ TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_during_wait) {
   printf("running for %.3f seconds\n", diff.count());
 }
 
+
+TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), finite_timer) {
+  auto node = rclcpp::Node::make_shared("finite_timer");
+
+  uint32_t counter = 0;
+  auto callback =
+    [&counter](rclcpp::timer::TimerBase & timer) -> void
+    {
+      ++counter;
+      printf("  callback() %4u\n", counter);
+      // After spinning 3 times, cancel the timer
+      if (counter == 2) {
+        timer.cancel();
+      }
+    };
+
+  // start condition
+  ASSERT_EQ(0, counter);
+
+  std::chrono::milliseconds period(10);
+
+  {
+    auto timer = node->create_wall_timer(
+      std::chrono::duration_cast<std::chrono::nanoseconds>(period), callback);
+    // spin a few times
+    for (uint32_t i = 0; i < 6; ++i) {
+      std::this_thread::sleep_for(period);
+      rclcpp::spin_some(node);
+    }
+
+    EXPECT_EQ(counter, 2);
+  }
+}
+
 int main(int argc, char ** argv)
 {
   // NOTE: use custom main to ensure that rclcpp::init is called only once
