@@ -210,13 +210,16 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
 
 static inline void multi_access_publisher(bool intra_process) {
   // Try to access the same publisher simultaneously
+  auto context = std::make_shared<rclcpp::context::Context>();
   std::string node_topic_name = "multi_access_publisher";
   if (intra_process) {
     node_topic_name += "_intra_process";
   }
 
-  auto node = rclcpp::Node::make_shared(node_topic_name, intra_process);
-  auto callback_group = node->create_callback_group(
+  auto node = rclcpp::Node::make_shared(node_topic_name, context, intra_process);
+  auto timer_callback_group = node->create_callback_group(
+    rclcpp::callback_group::CallbackGroupType::MutuallyExclusive);
+  auto sub_callback_group = node->create_callback_group(
     rclcpp::callback_group::CallbackGroupType::MutuallyExclusive);
 
   rclcpp::executors::MultiThreadedExecutor executor;
@@ -224,12 +227,11 @@ static inline void multi_access_publisher(bool intra_process) {
   auto pub = node->create_publisher<test_rclcpp::msg::UInt32>(node_topic_name);
   // callback groups?
   auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
-  std::atomic<uint32_t> timer_counter;
-  timer_counter = 0;
+  uint32_t timer_counter = 0;
 
   const size_t iterations = 5 * executor.get_number_of_threads();
-  std::mutex publisher_mutex;
-  auto timer_callback = [&executor, &pub, &publisher_mutex, &msg, &timer_counter, &iterations]()
+  //std::mutex publisher_mutex;
+  auto timer_callback = [&executor, &pub, /*&publisher_mutex,*/ &msg, &timer_counter, &iterations]()
     {
       if (timer_counter >= iterations) {
         //std::this_thread::sleep_for(std::chrono::milliseconds(2));
@@ -237,23 +239,22 @@ static inline void multi_access_publisher(bool intra_process) {
         return;
       }
       msg->data = ++timer_counter;
-      printf("Publishing message %u\n", timer_counter.load());
-      std::lock_guard<std::mutex> lock(publisher_mutex);
+      //printf("Publishing message %u\n", timer_counter);
+      //std::lock_guard<std::mutex> lock(publisher_mutex);
       pub->publish(msg);
     };
   std::vector<rclcpp::timer::WallTimer::SharedPtr> timers;
   // timers will fire simultaneously in each thread
   for (uint32_t i = 0; i < executor.get_number_of_threads(); i++) {
-    timers.push_back(node->create_wall_timer(std::chrono::milliseconds(1), timer_callback));
+    timers.push_back(node->create_wall_timer(std::chrono::milliseconds(1), timer_callback, timer_callback_group));
   }
-  std::atomic<uint32_t> subscription_counter;
-  subscription_counter = 0;
-  auto sub_callback = [&subscription_counter](test_rclcpp::msg::UInt32::SharedPtr)
+  uint32_t subscription_counter = 0;
+  auto sub_callback = [&subscription_counter](const test_rclcpp::msg::UInt32::SharedPtr)
     {
       ++subscription_counter;
-      printf("Subscription callback %u\n", subscription_counter.load());
+      //printf("Subscription callback %u\n", subscription_counter);
     };
-  auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(node_topic_name, sub_callback, rmw_qos_profile_default, callback_group);
+  auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(node_topic_name, sub_callback, rmw_qos_profile_default, sub_callback_group);
   executor.add_node(node);
   executor.spin();
   ASSERT_EQ(timer_counter, iterations);
