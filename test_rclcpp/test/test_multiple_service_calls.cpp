@@ -118,7 +118,7 @@ TEST(CLASSNAME(test_multiple_service_calls, RMW_IMPLEMENTATION), multiple_client
         executor.cancel();
       }
     };
-  auto timer = node->create_wall_timer(std::chrono::nanoseconds(3000000), timer_callback);
+  auto timer = node->create_wall_timer(std::chrono::milliseconds(3), timer_callback);
 
   executor.add_node(node);
 
@@ -128,7 +128,7 @@ TEST(CLASSNAME(test_multiple_service_calls, RMW_IMPLEMENTATION), multiple_client
   for (uint32_t i = 0; i < results.size(); ++i) {
     ASSERT_EQ(std::future_status::ready, results[i].wait_for(std::chrono::seconds(0)));
     EXPECT_EQ(results[i].get()->sum, 2 * i + 1);
-    printf("Got response #%u with value %u\n", i, results[i].get()->sum);
+    printf("Got response #%u with value %zu\n", i, results[i].get()->sum);
     fflush(stdout);
   }
 }
