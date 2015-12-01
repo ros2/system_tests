@@ -243,7 +243,7 @@ static inline void multi_access_publisher(bool intra_process) {
       //std::lock_guard<std::mutex> lock(publisher_mutex);
       pub->publish(msg);
     };
-  std::vector<rclcpp::timer::WallTimer::SharedPtr> timers;
+  std::vector<rclcpp::timer::TimerBase::SharedPtr> timers;
   // timers will fire simultaneously in each thread
   for (uint32_t i = 0; i < executor.get_number_of_threads(); i++) {
     timers.push_back(node->create_wall_timer(std::chrono::milliseconds(1), timer_callback, timer_callback_group));
