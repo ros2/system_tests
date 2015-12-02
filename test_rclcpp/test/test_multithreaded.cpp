@@ -4,7 +4,8 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0 //
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -57,7 +58,8 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   rclcpp::executors::MultiThreadedExecutor executor;
   // Try to saturate the MultithreadedExecutor's thread pool with subscriptions
   for (uint32_t i = 0; i < executor.get_number_of_threads(); i++) {
-    auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(node_topic_name, 16, callback, callback_group);
+    auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(
+      node_topic_name, 16, callback, callback_group);
     subscriptions.push_back(sub);
   }
 
@@ -77,7 +79,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   // test spin_some
   // Expectation: The message was published and all subscriptions fired the callback.
   // Use spin_once to block until published message triggers an event
-  //executor.spin_once();
+  // executor.spin_once();
   executor.spin_some();
   EXPECT_EQ(counter, subscriptions.size());
 
@@ -208,7 +210,8 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
   }
 }
 
-static inline void multi_access_publisher(bool intra_process) {
+static inline void multi_access_publisher(bool intra_process)
+{
   // Try to access the same publisher simultaneously
   auto context = std::make_shared<rclcpp::context::Context>();
   std::string node_topic_name = "multi_access_publisher";
@@ -230,31 +233,33 @@ static inline void multi_access_publisher(bool intra_process) {
   uint32_t timer_counter = 0;
 
   const size_t iterations = 5 * executor.get_number_of_threads();
-  //std::mutex publisher_mutex;
+  // std::mutex publisher_mutex;
   auto timer_callback = [&executor, &pub, /*&publisher_mutex,*/ &msg, &timer_counter, &iterations]()
     {
       if (timer_counter >= iterations) {
-        //std::this_thread::sleep_for(std::chrono::milliseconds(2));
+        // std::this_thread::sleep_for(std::chrono::milliseconds(2));
         executor.cancel();
         return;
       }
       msg->data = ++timer_counter;
-      //printf("Publishing message %u\n", timer_counter);
-      //std::lock_guard<std::mutex> lock(publisher_mutex);
+      // printf("Publishing message %u\n", timer_counter);
+      // std::lock_guard<std::mutex> lock(publisher_mutex);
       pub->publish(msg);
     };
   std::vector<rclcpp::timer::TimerBase::SharedPtr> timers;
   // timers will fire simultaneously in each thread
   for (uint32_t i = 0; i < executor.get_number_of_threads(); i++) {
-    timers.push_back(node->create_wall_timer(std::chrono::milliseconds(1), timer_callback, timer_callback_group));
+    timers.push_back(node->create_wall_timer(
+      std::chrono::milliseconds(1), timer_callback, timer_callback_group));
   }
   uint32_t subscription_counter = 0;
   auto sub_callback = [&subscription_counter](const test_rclcpp::msg::UInt32::SharedPtr)
     {
       ++subscription_counter;
-      //printf("Subscription callback %u\n", subscription_counter);
+      // printf("Subscription callback %u\n", subscription_counter);
     };
-  auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(node_topic_name, sub_callback, rmw_qos_profile_default, sub_callback_group);
+  auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(
+    node_topic_name, sub_callback, rmw_qos_profile_default, sub_callback_group);
   executor.add_node(node);
   executor.spin();
   ASSERT_EQ(timer_counter, iterations);
