@@ -58,8 +58,8 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   rclcpp::executors::MultiThreadedExecutor executor;
   // Try to saturate the MultithreadedExecutor's thread pool with subscriptions
   for (uint32_t i = 0; i < executor.get_number_of_threads(); i++) {
-    auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(node_topic_name, 16, callback,
-        callback_group);
+    auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(
+      node_topic_name, 16, callback, callback_group);
     subscriptions.push_back(sub);
   }
 
@@ -249,8 +249,8 @@ static inline void multi_access_publisher(bool intra_process)
   std::vector<rclcpp::timer::TimerBase::SharedPtr> timers;
   // timers will fire simultaneously in each thread
   for (uint32_t i = 0; i < executor.get_number_of_threads(); i++) {
-    timers.push_back(node->create_wall_timer(std::chrono::milliseconds(1), timer_callback,
-      timer_callback_group));
+    timers.push_back(node->create_wall_timer(
+      std::chrono::milliseconds(1), timer_callback, timer_callback_group));
   }
   uint32_t subscription_counter = 0;
   auto sub_callback = [&subscription_counter](const test_rclcpp::msg::UInt32::SharedPtr)
@@ -258,8 +258,8 @@ static inline void multi_access_publisher(bool intra_process)
       ++subscription_counter;
       // printf("Subscription callback %u\n", subscription_counter);
     };
-  auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(node_topic_name, sub_callback,
-      rmw_qos_profile_default, sub_callback_group);
+  auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(
+    node_topic_name, sub_callback, rmw_qos_profile_default, sub_callback_group);
   executor.add_node(node);
   executor.spin();
   ASSERT_EQ(timer_counter, iterations);
