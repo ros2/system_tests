@@ -371,7 +371,7 @@ TEST(CLASSNAME(test_allocator, RMW_IMPLEMENTATION), unique_ptr) {
   rclcpp::init(0, nullptr);
   auto context = rclcpp::contexts::default_context::get_global_default_context();
   auto intra_process_manager_state =
-    std::make_shared<rclcpp::intra_process_manager::IntraProcessManagerState<UInt32Allocator>>();
+    std::make_shared<rclcpp::intra_process_manager::IntraProcessManagerImpl<UInt32Allocator>>();
   context->get_sub_context<rclcpp::intra_process_manager::IntraProcessManager>(
     intra_process_manager_state);
   // Use intra-process
