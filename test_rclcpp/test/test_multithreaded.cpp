@@ -264,6 +264,7 @@ static inline void multi_access_publisher(bool intra_process)
           ++i <= executor.get_number_of_threads() * 2)
         {
           rclcpp::utilities::sleep_for(1_ms);
+          ++i;
         }
         executor.cancel();
         return;
