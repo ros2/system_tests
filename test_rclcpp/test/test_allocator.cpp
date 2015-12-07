@@ -422,7 +422,7 @@ int main(int argc, char ** argv)
     return 0;
   }
   verbose = std::find(args.begin(), args.end(), "--verbose") != args.end();
-  ignore_middleware_tokens = std::find(args.begin(), args.end(), "--all-tokens") != args.end();
+  ignore_middleware_tokens = std::find(args.begin(), args.end(), "--all-tokens") == args.end();
 
   return RUN_ALL_TESTS();
 }
