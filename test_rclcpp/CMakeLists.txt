@@ -48,314 +48,116 @@ if(AMENT_ENABLE_TESTING)
     find_package("${middleware_impl}" REQUIRED)
   endforeach()
 
-  # create executables
-  foreach(middleware_impl ${middleware_implementations})
+  macro(custom_gtest target)
     # get typesupport of rmw implementation to include / link against the corresponding interfaces
-    get_rmw_typesupport(typesupport_impl "${middleware_impl}")
+    get_rmw_typesupport(typesupport_impl "${rmw_implementation}")
 
-    # test_allocator
-    ament_add_gtest(
-      gtest_allocator__${middleware_impl}
+    ament_add_gtest(${target}${target_suffix} ${ARGN})
+    if(TARGET ${target}${target_suffix})
+      target_link_libraries(${target}${target_suffix}
+        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
+        ${_AMENT_EXPORT_LIBRARY_TARGETS})
+      target_compile_definitions(${target}${target_suffix}
+        PUBLIC "RMW_IMPLEMENTATION=${middleware_impl}")
+      add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
+      rosidl_target_interfaces(${target}${target_suffix}
+        ${PROJECT_NAME} ${typesupport_impl})
+      ament_target_dependencies(${target}${target_suffix}
+        "rclcpp${target_suffix}")
+    endif()
+  endmacro()
+
+  function(custom_executable target)
+    # get typesupport of rmw implementation to include / link against the corresponding interfaces
+    get_rmw_typesupport(typesupport_impl "${rmw_implementation}")
+
+    add_executable(${target}${target_suffix} ${ARGN})
+    add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
+    rosidl_target_interfaces(${target}${target_suffix}
+      ${PROJECT_NAME} ${typesupport_impl})
+    ament_target_dependencies(${target}${target_suffix}
+      "rclcpp${target_suffix}")
+  endfunction()
+
+  macro(custom_launch_test test_name executable1 executable2)
+    set(TEST_NAME "${test_name}")
+    set(TEST_EXECUTABLE1 "${CMAKE_CURRENT_BINARY_DIR}${test_executable_subfolder}/${executable1}${target_suffix}${test_executable_extension}")
+    set(TEST_EXECUTABLE1_NAME "${executable1}")
+    set(TEST_EXECUTABLE2 "${CMAKE_CURRENT_BINARY_DIR}${test_executable_subfolder}/${executable2}${target_suffix}${test_executable_extension}")
+    set(TEST_EXECUTABLE2_NAME "${executable2}")
+    configure_file(
+      test/test_two_executables.py.in
+      ${test_name}${target_suffix}.py
+      @ONLY
+    )
+    ament_add_nose_test(${test_name}${target_suffix} "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}.py" ${ARGN})
+    set_tests_properties(${test_name}${target_suffix} PROPERTIES DEPENDS "${executable1}${target_suffix} ${executable2}${target_suffix}")
+  endmacro()
+
+  macro(targets)
+    get_rclcpp_information("${rmw_implementation}" "rclcpp${target_suffix}")
+
+    custom_gtest(gtest_allocator
       "test/test_allocator.cpp"
-      TIMEOUT 15
-    )
-    if(TARGET gtest_allocator__${middleware_impl})
-      target_link_libraries(gtest_allocator__${middleware_impl}
-        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-        ${_AMENT_EXPORT_LIBRARY_TARGETS})
-      target_compile_definitions(gtest_allocator__${middleware_impl}
-        PUBLIC "RMW_IMPLEMENTATION=${middleware_impl}")
-      add_dependencies(gtest_allocator__${middleware_impl} ${PROJECT_NAME})
-      rosidl_target_interfaces(gtest_allocator__${middleware_impl}
-        ${PROJECT_NAME} ${typesupport_impl})
-      ament_target_dependencies(gtest_allocator__${middleware_impl}
-        "${middleware_impl}"
-        "rclcpp")
-    endif()
-
-    # test_publisher
-    ament_add_gtest(
-      gtest_publisher__${middleware_impl}
+      TIMEOUT 15)
+    custom_gtest(gtest_publisher
       "test/test_publisher.cpp"
-      TIMEOUT 15
-    )
-    if(TARGET gtest_publisher__${middleware_impl})
-      target_link_libraries(gtest_publisher__${middleware_impl}
-        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-        ${_AMENT_EXPORT_LIBRARY_TARGETS})
-      target_compile_definitions(gtest_publisher__${middleware_impl}
-        PUBLIC "RMW_IMPLEMENTATION=${middleware_impl}")
-      add_dependencies(gtest_publisher__${middleware_impl} ${PROJECT_NAME})
-      rosidl_target_interfaces(gtest_publisher__${middleware_impl}
-        ${PROJECT_NAME} ${typesupport_impl})
-      ament_target_dependencies(gtest_publisher__${middleware_impl}
-        "${middleware_impl}"
-        "rclcpp")
-    endif()
-
-    # test_publisher
-    ament_add_gtest(
-      gtest_executor__${middleware_impl}
+      TIMEOUT 15)
+    custom_gtest(gtest_executor
       "test/test_executor.cpp"
-      TIMEOUT 15
-    )
-    if(TARGET gtest_executor__${middleware_impl})
-      target_link_libraries(gtest_executor__${middleware_impl}
-        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-        ${_AMENT_EXPORT_LIBRARY_TARGETS})
-      target_compile_definitions(gtest_executor__${middleware_impl}
-        PUBLIC "RMW_IMPLEMENTATION=${middleware_impl}")
-      add_dependencies(gtest_executor__${middleware_impl} ${PROJECT_NAME})
-      rosidl_target_interfaces(gtest_executor__${middleware_impl}
-        ${PROJECT_NAME} ${typesupport_impl})
-      ament_target_dependencies(gtest_executor__${middleware_impl}
-        "${middleware_impl}"
-        "rclcpp")
-    endif()
-
-    # test_repeated_publisher_subscriber
-    ament_add_gtest(
-      gtest_repeated_publisher_subscriber__${middleware_impl}
+      TIMEOUT 15)
+    custom_gtest(gtest_repeated_publisher_subscriber
       "test/test_repeated_publisher_subscriber.cpp"
-      TIMEOUT 15
-    )
-    if(TARGET gtest_repeated_publisher_subscriber__${middleware_impl})
-      target_link_libraries(gtest_repeated_publisher_subscriber__${middleware_impl}
-        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-        ${_AMENT_EXPORT_LIBRARY_TARGETS})
-      target_compile_definitions(gtest_repeated_publisher_subscriber__${middleware_impl}
-        PUBLIC "RMW_IMPLEMENTATION=${middleware_impl}")
-      add_dependencies(gtest_repeated_publisher_subscriber__${middleware_impl} ${PROJECT_NAME})
-      rosidl_target_interfaces(gtest_repeated_publisher_subscriber__${middleware_impl}
-        ${PROJECT_NAME} ${typesupport_impl})
-      ament_target_dependencies(gtest_repeated_publisher_subscriber__${middleware_impl}
-        "${middleware_impl}"
-        "rclcpp")
-    endif()
-
-    # test_spin
-    ament_add_gtest(
-      gtest_spin__${middleware_impl}
+      TIMEOUT 15)
+    custom_gtest(gtest_spin
       "test/test_spin.cpp"
-      SKIP_LINKING_MAIN_LIBRARIES
-      TIMEOUT 30
-    )
-    if(TARGET gtest_spin__${middleware_impl})
-      target_link_libraries(gtest_spin__${middleware_impl}
-        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-        ${_AMENT_EXPORT_LIBRARY_TARGETS})
-      target_compile_definitions(gtest_spin__${middleware_impl}
-        PUBLIC "RMW_IMPLEMENTATION=${middleware_impl}")
-      add_dependencies(gtest_spin__${middleware_impl} ${PROJECT_NAME})
-      rosidl_target_interfaces(gtest_spin__${middleware_impl}
-        ${PROJECT_NAME} ${typesupport_impl})
-      ament_target_dependencies(gtest_spin__${middleware_impl}
-        "${middleware_impl}"
-        "rclcpp")
-    endif()
-
-    # test_subscription
-    ament_add_gtest(
-      gtest_subscription__${middleware_impl}
+      TIMEOUT 30)
+    custom_gtest(gtest_subscription
       "test/test_subscription.cpp"
-      TIMEOUT 15
-    )
-    if(TARGET gtest_subscription__${middleware_impl})
-      target_link_libraries(gtest_subscription__${middleware_impl}
-        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-        ${_AMENT_EXPORT_LIBRARY_TARGETS})
-      target_compile_definitions(gtest_subscription__${middleware_impl}
-        PUBLIC "RMW_IMPLEMENTATION=${middleware_impl}")
-      add_dependencies(gtest_subscription__${middleware_impl} ${PROJECT_NAME})
-      rosidl_target_interfaces(gtest_subscription__${middleware_impl}
-        ${PROJECT_NAME} ${typesupport_impl})
-      ament_target_dependencies(gtest_subscription__${middleware_impl}
-        "${middleware_impl}"
-        "rclcpp")
-    endif()
-
-    # test_multiple_service_calls
-    ament_add_gtest(
-      gtest_multiple_service_calls__${middleware_impl}
+      TIMEOUT 15)
+    custom_gtest(gtest_multiple_service_calls
       "test/test_multiple_service_calls.cpp"
-      TIMEOUT 15
-    )
-    if(TARGET gtest_multiple_service_calls__${middleware_impl})
-      target_link_libraries(gtest_multiple_service_calls__${middleware_impl}
-        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-        ${_AMENT_EXPORT_LIBRARY_TARGETS})
-      target_compile_definitions(gtest_multiple_service_calls__${middleware_impl}
-        PUBLIC "RMW_IMPLEMENTATION=${middleware_impl}")
-      add_dependencies(gtest_multiple_service_calls__${middleware_impl} ${PROJECT_NAME})
-      rosidl_target_interfaces(gtest_multiple_service_calls__${middleware_impl}
-        ${PROJECT_NAME} ${typesupport_impl})
-      ament_target_dependencies(gtest_multiple_service_calls__${middleware_impl}
-        "${middleware_impl}"
-        "rclcpp")
-    endif()
-
-    # test_timer
-    ament_add_gtest(
-      gtest_timer__${middleware_impl}
+      TIMEOUT 15)
+    custom_gtest(gtest_timer
       "test/test_timer.cpp"
-      SKIP_LINKING_MAIN_LIBRARIES
-      TIMEOUT 30
-    )
-    if(TARGET gtest_timer__${middleware_impl})
-      target_link_libraries(gtest_timer__${middleware_impl}
-        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-        ${_AMENT_EXPORT_LIBRARY_TARGETS})
-      target_compile_definitions(gtest_timer__${middleware_impl}
-        PUBLIC "RMW_IMPLEMENTATION=${middleware_impl}")
-      add_dependencies(gtest_timer__${middleware_impl} ${PROJECT_NAME})
-      rosidl_target_interfaces(gtest_timer__${middleware_impl}
-        ${PROJECT_NAME} ${typesupport_impl})
-      ament_target_dependencies(gtest_timer__${middleware_impl}
-        "${middleware_impl}"
-        "rclcpp")
-    endif()
-
-    # test_timeout_subscriber
-    ament_add_gtest(
-      gtest_timeout_subscriber__${middleware_impl}
+      TIMEOUT 30)
+    custom_gtest(gtest_timeout_subscriber
       "test/test_timeout_subscriber.cpp"
-      TIMEOUT 30
-    )
-    if(TARGET gtest_timeout_subscriber__${middleware_impl})
-      target_link_libraries(gtest_timeout_subscriber__${middleware_impl}
-        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-        ${_AMENT_EXPORT_LIBRARY_TARGETS})
-      target_compile_definitions(gtest_timeout_subscriber__${middleware_impl}
-        PUBLIC "RMW_IMPLEMENTATION=${middleware_impl}")
-      add_dependencies(gtest_timeout_subscriber__${middleware_impl} ${PROJECT_NAME})
-      rosidl_target_interfaces(gtest_timeout_subscriber__${middleware_impl}
-        ${PROJECT_NAME} ${typesupport_impl})
-      ament_target_dependencies(gtest_timeout_subscriber__${middleware_impl}
-        "${middleware_impl}"
-        "rclcpp")
-    endif()
-
-    # test_intra_process
-    ament_add_gtest(
-      gtest_intra_process__${middleware_impl}
+      TIMEOUT 30)
+    custom_gtest(gtest_intra_process
       "test/test_intra_process.cpp"
-      TIMEOUT 15
-    )
-    if(TARGET gtest_intra_process__${middleware_impl})
-      target_link_libraries(gtest_intra_process__${middleware_impl}
-        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-        ${_AMENT_EXPORT_LIBRARY_TARGETS})
-      target_compile_definitions(gtest_intra_process__${middleware_impl}
-        PUBLIC "RMW_IMPLEMENTATION=${middleware_impl}")
-      add_dependencies(gtest_intra_process__${middleware_impl} ${PROJECT_NAME})
-      rosidl_target_interfaces(gtest_intra_process__${middleware_impl}
-        ${PROJECT_NAME} ${typesupport_impl})
-      ament_target_dependencies(gtest_intra_process__${middleware_impl}
-        "${middleware_impl}"
-        "rclcpp")
-    endif()
-
-    # test_multithreaded
-    ament_add_gtest(
-      gtest_multithreaded__${middleware_impl}
+      TIMEOUT 15)
+    custom_gtest(gtest_multithreaded
       "test/test_multithreaded.cpp"
-      TIMEOUT 30
-    )
-    if(TARGET gtest_multithreaded__${middleware_impl})
-      target_link_libraries(gtest_multithreaded__${middleware_impl}
-        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-        ${_AMENT_EXPORT_LIBRARY_TARGETS})
-      target_compile_definitions(gtest_multithreaded__${middleware_impl}
-        PUBLIC "RMW_IMPLEMENTATION=${middleware_impl}")
-      add_dependencies(gtest_multithreaded__${middleware_impl} ${PROJECT_NAME})
-      rosidl_target_interfaces(gtest_multithreaded__${middleware_impl}
-        ${PROJECT_NAME} ${typesupport_impl})
-      ament_target_dependencies(gtest_multithreaded__${middleware_impl}
-        "${middleware_impl}"
-        "rclcpp")
-    endif()
-
-    # test_local_parameters
-    ament_add_gtest(
-      gtest_local_parameters__${middleware_impl}
+      TIMEOUT 30)
+    custom_gtest(gtest_local_parameters
       "test/test_local_parameters.cpp"
-      SKIP_LINKING_MAIN_LIBRARIES
-      TIMEOUT 30
-    )
-    if(TARGET gtest_local_parameters__${middleware_impl})
-      target_link_libraries(gtest_local_parameters__${middleware_impl}
-        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-        ${_AMENT_EXPORT_LIBRARY_TARGETS})
-      target_compile_definitions(gtest_local_parameters__${middleware_impl}
-        PUBLIC "RMW_IMPLEMENTATION=${middleware_impl}")
-      add_dependencies(gtest_local_parameters__${middleware_impl} ${PROJECT_NAME})
-      rosidl_target_interfaces(gtest_local_parameters__${middleware_impl}
-        ${PROJECT_NAME} ${typesupport_impl})
-      ament_target_dependencies(gtest_local_parameters__${middleware_impl}
-        "${middleware_impl}"
-        "rclcpp")
-    endif()
+      TIMEOUT 30)
 
     # Parameter tests single implementation
-    add_executable(test_remote_parameters_cpp__${middleware_impl} "test/test_remote_parameters.cpp")
-    target_include_directories(test_remote_parameters_cpp__${middleware_impl} PUBLIC ${GTEST_INCLUDE_DIRS})
-    target_link_libraries(test_remote_parameters_cpp__${middleware_impl} ${GTEST_LIBRARIES})
-    # the above could be replaced by a helper which won't register the gtest for running
-    # ament_add_gtest_subtest(test_remote_parameters_cpp__${middleware_impl} "test/test_remote_parameters.cpp")
-    add_dependencies(test_remote_parameters_cpp__${middleware_impl} ${PROJECT_NAME})
-    rosidl_target_interfaces(test_remote_parameters_cpp__${middleware_impl}
-      ${PROJECT_NAME} ${typesupport_impl})
-    ament_target_dependencies(test_remote_parameters_cpp__${middleware_impl}
-      "${middleware_impl}"
-      "rclcpp")
-    add_executable(test_parameters_server_cpp__${middleware_impl} "test/test_parameters_server.cpp")
-    add_dependencies(test_parameters_server_cpp__${middleware_impl} ${PROJECT_NAME})
-    rosidl_target_interfaces(test_parameters_server_cpp__${middleware_impl}
-      ${PROJECT_NAME} ${typesupport_impl})
-    ament_target_dependencies(test_parameters_server_cpp__${middleware_impl}
-      "${middleware_impl}"
-      "rclcpp")
-    set(TEST_PARAMETERS_SERVER_EXECUTABLE "${CMAKE_CURRENT_BINARY_DIR}${test_executable_subfolder}/test_parameters_server_cpp__${middleware_impl}${test_executable_extension}")
-    set(TEST_REMOTE_PARAMETERS_EXECUTABLE "${CMAKE_CURRENT_BINARY_DIR}${test_executable_subfolder}/test_remote_parameters_cpp__${middleware_impl}${test_executable_extension}")
-    configure_file(
-      test/test_parameters_server.py.in
-      test_parameters_server_cpp__${middleware_impl}.py
-      @ONLY
-    )
-    ament_add_nose_test(parameter_server_cpp__${middleware_impl} "${CMAKE_CURRENT_BINARY_DIR}/test_parameters_server_cpp__${middleware_impl}.py" TIMEOUT 15)
-    set_tests_properties(parameter_server_cpp__${middleware_impl} PROPERTIES DEPENDS "test_parameters_server_cpp__${middleware_impl} test_remote_parameters_cpp__${middleware_impl}")
+    custom_executable(test_parameters_server_cpp "test/test_parameters_server.cpp")
+    custom_executable(test_remote_parameters_cpp "test/test_remote_parameters.cpp")
+    target_include_directories(test_remote_parameters_cpp${target_suffix}
+      PUBLIC ${GTEST_INCLUDE_DIRS})
+    target_link_libraries(test_remote_parameters_cpp${target_suffix}
+      ${GTEST_LIBRARIES})
+    custom_launch_test(test_parameter_server_cpp
+      test_parameters_server_cpp test_remote_parameters_cpp
+      TIMEOUT 15)
 
     # Service tests single implementation
-    add_executable(test_services_client_cpp__${middleware_impl} "test/test_services_client.cpp")
-    target_link_libraries(test_services_client_cpp__${middleware_impl} ${GTEST_LIBRARIES})
-    # the above could be replaced by a helper which won't register the gtest for running
-    # ament_add_gtest_subtest(test_services_client_cpp__${middleware_impl} "test/test_services_client.cpp")
-    target_include_directories(test_services_client_cpp__${middleware_impl} PUBLIC
-      "${GTEST_INCLUDE_DIRS}")
-    add_dependencies(test_services_client_cpp__${middleware_impl} ${PROJECT_NAME})
-    rosidl_target_interfaces(test_services_client_cpp__${middleware_impl}
-      ${PROJECT_NAME} ${typesupport_impl})
-    ament_target_dependencies(test_services_client_cpp__${middleware_impl}
-      "${middleware_impl}"
-      "rclcpp")
-    add_executable(test_services_server_cpp__${middleware_impl} "test/test_services_server.cpp")
-    add_dependencies(test_services_server_cpp__${middleware_impl} ${PROJECT_NAME})
-    rosidl_target_interfaces(test_services_server_cpp__${middleware_impl}
-      ${PROJECT_NAME} ${typesupport_impl})
-    ament_target_dependencies(test_services_server_cpp__${middleware_impl}
-      "${middleware_impl}"
-      "rclcpp")
-    set(TEST_SERVICES_SERVER_EXECUTABLE "${CMAKE_CURRENT_BINARY_DIR}${test_executable_subfolder}/test_services_server_cpp__${middleware_impl}${test_executable_extension}")
-    set(TEST_SERVICES_CLIENT_EXECUTABLE "${CMAKE_CURRENT_BINARY_DIR}${test_executable_subfolder}/test_services_client_cpp__${middleware_impl}${test_executable_extension}")
-    configure_file(
-      test/test_services.py.in
-      test_services_cpp__${middleware_impl}.py
-      @ONLY
-    )
-    ament_add_nose_test(test_services_cpp__${middleware_impl} "${CMAKE_CURRENT_BINARY_DIR}/test_services_cpp__${middleware_impl}.py" TIMEOUT 30)
-    set_tests_properties(test_services_cpp__${middleware_impl} PROPERTIES DEPENDS "test_services_cpp__${middleware_impl} test_services_cpp__${middleware_impl}")
+    custom_executable(test_services_server_cpp "test/test_services_server.cpp")
+    custom_executable(test_services_client_cpp "test/test_services_client.cpp")
+    target_include_directories(test_services_client_cpp${target_suffix}
+      PUBLIC ${GTEST_INCLUDE_DIRS})
+    target_link_libraries(test_services_client_cpp${target_suffix}
+      ${GTEST_LIBRARIES})
+    custom_launch_test(test_services_cpp
+      test_services_server_cpp test_services_client_cpp
+      TIMEOUT 30)
+  endmacro()
 
-  endforeach()
+  call_for_each_rmw_implementation(targets)
 endif()  # AMENT_ENABLE_TESTING
 
 # TODO should not install anything

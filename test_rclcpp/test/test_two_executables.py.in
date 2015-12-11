@@ -1,19 +1,21 @@
+# generated from test_rclcpp/test/test_two_executables.py.in
+
 from launch import LaunchDescriptor
 from launch.exit_handler import primary_exit_handler
 from launch.launcher import DefaultLauncher
 
 
-def test_remote_parameters():
+def @TEST_NAME@():
     ld = LaunchDescriptor()
 
     ld.add_process(
-        cmd=['@TEST_PARAMETERS_SERVER_EXECUTABLE@'],
-        name='test_parameters_server',
+        cmd=['@TEST_EXECUTABLE1@'],
+        name='@TEST_EXECUTABLE1_NAME@',
     )
 
     ld.add_process(
-        cmd=['@TEST_REMOTE_PARAMETERS_EXECUTABLE@', 'test_parameters_server'],
-        name='test_remote_parameters',
+        cmd=['@TEST_EXECUTABLE2@', '@TEST_EXECUTABLE1_NAME@'],
+        name='@TEST_EXECUTABLE2_NAME@',
         exit_handler=primary_exit_handler,
     )
 
@@ -21,8 +23,8 @@ def test_remote_parameters():
     launcher.add_launch_descriptor(ld)
     rc = launcher.launch()
 
-    assert rc == 0, 'The requester did not receive any replies'
+    assert rc == 0, "The launch file failed with exit code '" + str(rc) + "'. "
 
 
 if __name__ == '__main__':
-    test_remote_parameters()
+    @TEST_NAME@()
