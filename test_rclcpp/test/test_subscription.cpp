@@ -124,7 +124,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
       std::this_thread::sleep_for(std::chrono::milliseconds(25));
       printf("spin_node_some() - callback (%s) expected - trying again\n",
         counter == 3 ? "4 and 5" : "5");
-      executor.spin_node_once(node, std::chrono::milliseconds(0));
+      executor.spin_node_some(node);
     }
     ASSERT_EQ(5, counter);
   }

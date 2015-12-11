@@ -77,6 +77,8 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   ++msg->data;
   pub->publish(msg);
 
+  rclcpp::utilities::sleep_for(subscriptions.size() * 5_ms);
+
   // test spin_some
   // Expectation: The message was published and all subscriptions fired the callback.
   // Use spin_once to block until published message triggers an event
@@ -98,7 +100,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
         timer.cancel();
         // wait for the last callback to fire before cancelling
         // Wait for pending subscription callbacks to trigger.
-        std::this_thread::sleep_for(std::chrono::milliseconds(executor.get_number_of_threads()));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10 * executor.get_number_of_threads()));
         executor.cancel();
         return;
       }
@@ -249,7 +251,7 @@ static inline void multi_access_publisher(bool intra_process)
         while (subscription_counter < timer_counter &&
           ++i <= executor.get_number_of_threads() * 2)
         {
-          rclcpp::utilities::sleep_for(1_ms);
+          rclcpp::utilities::sleep_for(20_ms);
         }
         executor.cancel();
         return;
