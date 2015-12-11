@@ -31,7 +31,7 @@ TEST(test_services_client, test_add_noreqid) {
 
   // wait a moment for everything to initialize
   // TODO(richiprosima): fix nondeterministic startup behavior
-  rclcpp::utilities::sleep_for(1_ms);
+  rclcpp::utilities::sleep_for(5_ms);
 
 
   auto result = client->async_send_request(request);
@@ -51,7 +51,7 @@ TEST(test_services_client, test_add_reqid) {
 
   // wait a moment for everything to initialize
   // TODO(richiprosima): fix nondeterministic startup behavior
-  rclcpp::utilities::sleep_for(1_ms);
+  rclcpp::utilities::sleep_for(5_ms);
 
   auto result = client->async_send_request(request);
 
@@ -67,6 +67,10 @@ TEST(test_services_client, test_return_request) {
   auto request = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
   request->a = 4;
   request->b = 5;
+
+  // wait a moment for everything to initialize
+  // TODO(richiprosima): fix nondeterministic startup behavior
+  rclcpp::utilities::sleep_for(5_ms);
 
   auto result = client->async_send_request(
     request,
