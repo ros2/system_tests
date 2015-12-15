@@ -371,6 +371,50 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
   ASSERT_EQ(1, counter);
 }
 
+// Shortened version of the test for subscribing after spinning has started.
+TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), spin_before_subscription) {
+  auto node = rclcpp::Node::make_shared("test_subscription");
+
+  auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(
+    "test_subscription", rmw_qos_profile_default);
+
+  uint32_t counter = 0;
+  auto callback =
+    [&counter](test_rclcpp::msg::UInt32::ConstSharedPtr msg) -> void
+    {
+      ++counter;
+      printf("  callback() %4u with message data %u\n", counter, msg->data);
+      ASSERT_EQ(counter, msg->data);
+    };
+
+  auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
+  msg->data = 0;
+  rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(node);
+
+  std::thread executor_thread(std::bind(&rclcpp::executors::SingleThreadedExecutor::spin,
+    &executor));
+
+  auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
+    "test_subscription", callback, rmw_qos_profile_default);
+
+  // start condition
+  ASSERT_EQ(0, counter);
+
+  msg->data = 1;
+  // Create a ConstSharedPtr message to publish
+  test_rclcpp::msg::UInt32::ConstSharedPtr const_msg(msg);
+  publisher->publish(const_msg);
+
+  // wait for the first callback
+  printf("callback (1) expected\n");
+  std::this_thread::sleep_for(std::chrono::seconds(1));
+
+  ASSERT_EQ(1, counter);
+  executor.cancel();
+  executor_thread.join();
+}
+
 // Test of the queue size create_subscription signature.
 TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), create_subscription_with_queue_size) {
   auto node = rclcpp::Node::make_shared("test_subscription");
