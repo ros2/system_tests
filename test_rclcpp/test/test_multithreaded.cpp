@@ -77,6 +77,8 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   ++msg->data;
   pub->publish(msg);
 
+  rclcpp::utilities::sleep_for(subscriptions.size() * 5_ms);
+
   // test spin_some
   // Expectation: The message was published and all subscriptions fired the callback.
   // Use spin_once to block until published message triggers an event
@@ -98,7 +100,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
         timer.cancel();
         // wait for the last callback to fire before cancelling
         // Wait for pending subscription callbacks to trigger.
-        std::this_thread::sleep_for(std::chrono::milliseconds(executor.get_number_of_threads()));
+        std::this_thread::sleep_for(std::chrono::milliseconds(20 * executor.get_number_of_threads()));
         executor.cancel();
         return;
       }
@@ -231,11 +233,25 @@ static inline void multi_access_publisher(bool intra_process)
   rclcpp::executors::MultiThreadedExecutor executor;
 
   auto pub = node->create_publisher<test_rclcpp::msg::UInt32>(node_topic_name);
+
+  std::atomic_uint subscription_counter(0);
+  auto sub_callback = [&subscription_counter](const test_rclcpp::msg::UInt32::SharedPtr)
+    {
+      ++subscription_counter;
+      printf("Subscription callback %u\n", subscription_counter.load());
+    };
+  auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(node_topic_name, sub_callback,
+      rmw_qos_profile_default,
+      sub_callback_group);
+
+  // wait a moment for everything to initialize
+  // TODO(richiprosima): fix nondeterministic startup behavior
+  rclcpp::utilities::sleep_for(10_ms);
+
   // callback groups?
   auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
   // use atomic
   std::atomic_uint timer_counter(0);
-  std::atomic_uint subscription_counter(0);
 
   const size_t iterations = 5 * executor.get_number_of_threads();
   auto timer_callback =
@@ -249,7 +265,7 @@ static inline void multi_access_publisher(bool intra_process)
         while (subscription_counter < timer_counter &&
           ++i <= executor.get_number_of_threads() * 2)
         {
-          rclcpp::utilities::sleep_for(1_ms);
+          rclcpp::utilities::sleep_for(40_ms);
         }
         executor.cancel();
         return;
@@ -264,14 +280,6 @@ static inline void multi_access_publisher(bool intra_process)
     timers.push_back(node->create_wall_timer(std::chrono::milliseconds(1), timer_callback));
   }
 
-  auto sub_callback = [&subscription_counter](const test_rclcpp::msg::UInt32::SharedPtr)
-    {
-      ++subscription_counter;
-      printf("Subscription callback %u\n", subscription_counter.load());
-    };
-  auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(node_topic_name, sub_callback,
-      rmw_qos_profile_default,
-      sub_callback_group);
   executor.add_node(node);
   executor.spin();
   ASSERT_EQ(timer_counter.load(), iterations);
