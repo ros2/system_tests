@@ -189,6 +189,112 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
   }
   ASSERT_EQ(1, counter);
 }
+
+class CallbackHolder
+{
+public:
+  uint32_t counter;
+  void callback(test_rclcpp::msg::UInt32::ConstSharedPtr msg)
+  {
+    ++counter;
+    ASSERT_EQ(counter, msg->data);
+  }
+  CallbackHolder()
+  : counter(0)
+  {}
+};
+
+// Shortened version of the test for the ConstSharedPtr callback signature in a method
+TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
+  subscription_shared_ptr_const_method_std_function) {
+  CallbackHolder cb_holder;
+
+  auto node = rclcpp::Node::make_shared("test_subscription");
+
+  auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(
+    "test_subscription", rmw_qos_profile_default);
+
+  std::function<void(test_rclcpp::msg::UInt32::ConstSharedPtr)> cb_std_function = std::bind(
+    &CallbackHolder::callback, &cb_holder, std::placeholders::_1);
+
+  auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
+  msg->data = 0;
+  rclcpp::executors::SingleThreadedExecutor executor;
+
+  auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
+    "test_subscription", cb_std_function, rmw_qos_profile_default);
+
+  // start condition
+  ASSERT_EQ(0, cb_holder.counter);
+
+  // nothing should be pending here
+  executor.spin_node_some(node);
+  ASSERT_EQ(0, cb_holder.counter);
+
+  msg->data = 1;
+  // Create a ConstSharedPtr message to publish
+  test_rclcpp::msg::UInt32::ConstSharedPtr const_msg(msg);
+  publisher->publish(const_msg);
+  ASSERT_EQ(0, cb_holder.counter);
+
+  // wait for the first callback
+  printf("spin_node_some() - callback (1) expected\n");
+
+  executor.spin_node_some(node);
+  // spin up to 4 times with a 25 ms wait in between
+  for (uint32_t i = 0; i < 4 && cb_holder.counter == 0; ++i) {
+    printf("callback not called, sleeping and trying again\n");
+    std::this_thread::sleep_for(std::chrono::milliseconds(25));
+    executor.spin_node_some(node);
+  }
+  ASSERT_EQ(1, cb_holder.counter);
+}
+
+// Shortened version of the test for the ConstSharedPtr callback signature in a method
+TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
+  subscription_shared_ptr_const_method_direct) {
+  CallbackHolder cb_holder;
+
+  auto node = rclcpp::Node::make_shared("test_subscription");
+
+  auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(
+    "test_subscription", rmw_qos_profile_default);
+
+  auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
+  msg->data = 0;
+  rclcpp::executors::SingleThreadedExecutor executor;
+
+  auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
+    "test_subscription",
+    std::bind(&CallbackHolder::callback, &cb_holder, std::placeholders::_1),
+    rmw_qos_profile_default);
+
+  // start condition
+  ASSERT_EQ(0, cb_holder.counter);
+
+  // nothing should be pending here
+  executor.spin_node_some(node);
+  ASSERT_EQ(0, cb_holder.counter);
+
+  msg->data = 1;
+  // Create a ConstSharedPtr message to publish
+  test_rclcpp::msg::UInt32::ConstSharedPtr const_msg(msg);
+  publisher->publish(const_msg);
+  ASSERT_EQ(0, cb_holder.counter);
+
+  // wait for the first callback
+  printf("spin_node_some() - callback (1) expected\n");
+
+  executor.spin_node_some(node);
+  // spin up to 4 times with a 25 ms wait in between
+  for (uint32_t i = 0; i < 4 && cb_holder.counter == 0; ++i) {
+    printf("callback not called, sleeping and trying again\n");
+    std::this_thread::sleep_for(std::chrono::milliseconds(25));
+    executor.spin_node_some(node);
+  }
+  ASSERT_EQ(1, cb_holder.counter);
+}
+
 // Shortened version of the test for the ConstSharedPtr with info callback signature
 TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_const_with_info) {
   auto node = rclcpp::Node::make_shared("test_subscription");
