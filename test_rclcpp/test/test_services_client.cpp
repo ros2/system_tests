@@ -31,7 +31,7 @@ TEST(test_services_client, test_add_noreqid) {
 
   // wait a moment for everything to initialize
   // TODO(richiprosima): fix nondeterministic startup behavior
-  rclcpp::utilities::sleep_for(5_ms);
+  rclcpp::utilities::sleep_for(20_ms);
 
 
   auto result = client->async_send_request(request);
@@ -51,7 +51,7 @@ TEST(test_services_client, test_add_reqid) {
 
   // wait a moment for everything to initialize
   // TODO(richiprosima): fix nondeterministic startup behavior
-  rclcpp::utilities::sleep_for(5_ms);
+  rclcpp::utilities::sleep_for(20_ms);
 
   auto result = client->async_send_request(request);
 
@@ -70,7 +70,7 @@ TEST(test_services_client, test_return_request) {
 
   // wait a moment for everything to initialize
   // TODO(richiprosima): fix nondeterministic startup behavior
-  rclcpp::utilities::sleep_for(5_ms);
+  rclcpp::utilities::sleep_for(20_ms);
 
   auto result = client->async_send_request(
     request,

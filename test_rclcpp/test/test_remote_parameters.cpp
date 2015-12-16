@@ -33,6 +33,10 @@ TEST(parameters, test_remote_parameters) {
   auto parameters_client = std::make_shared<rclcpp::parameter_client::AsyncParametersClient>(node,
       test_server_name);
 
+  // wait a moment for everything to initialize
+  // TODO(richiprosima): fix nondeterministic startup behavior
+  rclcpp::utilities::sleep_for(100_ms);
+
   verify_set_parameters_async(node, parameters_client);
 
   verify_get_parameters_async(node, parameters_client);
