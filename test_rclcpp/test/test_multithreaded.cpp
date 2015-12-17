@@ -230,19 +230,19 @@ static inline void multi_access_publisher(bool intra_process)
 
   rclcpp::executors::MultiThreadedExecutor executor;
 
-  auto pub = node->create_publisher<test_rclcpp::msg::UInt32>(node_topic_name);
+  const size_t num_messages = 5 * executor.get_number_of_threads();
+  auto pub = node->create_publisher<test_rclcpp::msg::UInt32>(node_topic_name, num_messages);
   // callback groups?
   auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
   // use atomic
   std::atomic_uint timer_counter(0);
   std::atomic_uint subscription_counter(0);
 
-  const size_t iterations = 5 * executor.get_number_of_threads();
   auto timer_callback =
-    [&executor, &pub, &msg, &timer_counter, &subscription_counter, &iterations](
+    [&executor, &pub, &msg, &timer_counter, &subscription_counter, &num_messages](
     rclcpp::timer::TimerBase & timer)
     {
-      if (timer_counter.load() >= iterations) {
+      if (timer_counter.load() >= num_messages) {
         timer.cancel();
         std::atomic_uint i(0);
         // Wait for pending subscription callbacks to trigger.
@@ -274,7 +274,7 @@ static inline void multi_access_publisher(bool intra_process)
       sub_callback_group);
   executor.add_node(node);
   executor.spin();
-  ASSERT_EQ(timer_counter.load(), iterations);
+  ASSERT_EQ(timer_counter.load(), num_messages);
   ASSERT_EQ(timer_counter.load(), subscription_counter);
 }
 
