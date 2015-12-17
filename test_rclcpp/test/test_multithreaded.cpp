@@ -50,7 +50,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
     [&counter, &intra_process](test_rclcpp::msg::UInt32::ConstSharedPtr msg,
       const rmw_message_info_t & info) -> void
     {
-      ++counter;
+      counter.fetch_add(1);
       printf("callback() %4u with message data %u\n", counter.load(), msg->data);
       ASSERT_EQ(intra_process, info.from_intra_process);
     };
@@ -80,7 +80,16 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   // test spin_some
   // Expectation: The message was published and all subscriptions fired the callback.
   // Use spin_once to block until published message triggers an event
-  executor.spin_some();
+  // Note that we have no guarantee that spinning once will deliver all
+  // messages. So we put a heuristic upper bound (2s) on how long we're willing to
+  // wait for delivery to occur.
+  const std::chrono::milliseconds sleep_per_loop(10);
+  const int max_loops = 200;
+  int loop = 0;
+  while ((counter.load() != subscriptions.size()) && (loop++ < max_loops)) {
+    rclcpp::utilities::sleep_for(sleep_per_loop);
+    executor.spin_some();
+  }
   EXPECT_EQ(counter.load(), subscriptions.size());
 
   // Expectation: no further messages were received.
@@ -88,17 +97,22 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   EXPECT_EQ(counter.load(), subscriptions.size());
 
   // reset counter
-  counter = 0;
+  counter.store(0);
   msg->data = 0;
 
-  auto publish_callback = [&msg, &pub, &executor](rclcpp::timer::TimerBase & timer) -> void
+  auto publish_callback = [
+    msg, &pub, &executor, &counter, &subscriptions, &sleep_per_loop, &max_loops](
+    rclcpp::timer::TimerBase & timer) -> void
     {
       ++msg->data;
       if (msg->data > 5) {
         timer.cancel();
         // wait for the last callback to fire before cancelling
         // Wait for pending subscription callbacks to trigger.
-        std::this_thread::sleep_for(std::chrono::milliseconds(executor.get_number_of_threads()));
+        int loop = 0;
+        while ((counter.load() != (5 * subscriptions.size())) && (loop++ < max_loops)) {
+          std::this_thread::sleep_for(sleep_per_loop);
+        }
         executor.cancel();
         return;
       }
