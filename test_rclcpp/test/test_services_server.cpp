@@ -44,6 +44,9 @@ int main(int argc, char ** argv)
   node->create_service<test_rclcpp::srv::AddTwoInts>(
     "add_two_ints_reqid", handle_add_two_ints_reqid);
 
+  node->create_service<test_rclcpp::srv::AddTwoInts>(
+    "add_two_ints_reqid_return_request", handle_add_two_ints_reqid);
+
   rclcpp::spin(node);
 
   return 0;
