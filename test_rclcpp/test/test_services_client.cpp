@@ -21,7 +21,14 @@
 
 #include "test_rclcpp/srv/add_two_ints.hpp"
 
-TEST(test_services_client, test_add_noreqid) {
+#ifdef RMW_IMPLEMENTATION
+# define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
+# define CLASSNAME(NAME, SUFFIX) CLASSNAME_(NAME, SUFFIX)
+#else
+# define CLASSNAME(NAME, SUFFIX) NAME
+#endif
+
+TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_noreqid) {
   auto node = rclcpp::Node::make_shared("test_services_client_no_reqid");
 
   auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("add_two_ints_noreqid");
@@ -36,7 +43,7 @@ TEST(test_services_client, test_add_noreqid) {
   EXPECT_EQ(3, result.get()->sum);
 }
 
-TEST(test_services_client, test_add_reqid) {
+TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_reqid) {
   auto node = rclcpp::Node::make_shared("test_services_client_add_reqid");
 
   auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("add_two_ints_reqid");
@@ -51,7 +58,7 @@ TEST(test_services_client, test_add_reqid) {
   EXPECT_EQ(9, result.get()->sum);
 }
 
-TEST(test_services_client, test_return_request) {
+TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_return_request) {
   auto node = rclcpp::Node::make_shared("test_services_client_return_request");
 
   auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("add_two_ints_reqid_return_request");
