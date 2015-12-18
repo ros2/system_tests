@@ -97,9 +97,6 @@ if(AMENT_ENABLE_TESTING)
   macro(targets)
     get_rclcpp_information("${rmw_implementation}" "rclcpp${target_suffix}")
 
-    custom_gtest(gtest_allocator
-      "test/test_allocator.cpp"
-      TIMEOUT 15)
     custom_gtest(gtest_publisher
       "test/test_publisher.cpp"
       TIMEOUT 15)
