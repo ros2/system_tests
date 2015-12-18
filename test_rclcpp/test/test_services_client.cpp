@@ -61,7 +61,8 @@ TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_reqid) {
 TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_return_request) {
   auto node = rclcpp::Node::make_shared("test_services_client_return_request");
 
-  auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("add_two_ints_reqid_return_request");
+  auto client = node->create_client<test_rclcpp::srv::AddTwoInts>(
+    "add_two_ints_reqid_return_request");
   auto request = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
   request->a = 4;
   request->b = 5;
