@@ -72,6 +72,8 @@ if(AMENT_ENABLE_TESTING)
     get_rmw_typesupport(typesupport_impl "${rmw_implementation}")
 
     add_executable(${target}${target_suffix} ${ARGN})
+    target_compile_definitions(${target}${target_suffix}
+      PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
     add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
     rosidl_target_interfaces(${target}${target_suffix}
       ${PROJECT_NAME} ${typesupport_impl})
