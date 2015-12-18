@@ -58,7 +58,7 @@ if(AMENT_ENABLE_TESTING)
         ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
         ${_AMENT_EXPORT_LIBRARY_TARGETS})
       target_compile_definitions(${target}${target_suffix}
-        PUBLIC "RMW_IMPLEMENTATION=${middleware_impl}")
+        PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
       add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
       rosidl_target_interfaces(${target}${target_suffix}
         ${PROJECT_NAME} ${typesupport_impl})
