@@ -36,6 +36,8 @@ TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_noreqid) {
   request->a = 1;
   request->b = 2;
 
+  rclcpp::utilities::sleep_for(10_ms);
+
   auto result = client->async_send_request(request);
 
   rclcpp::spin_until_future_complete(node, result);  // Wait for the result.
@@ -50,6 +52,8 @@ TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_reqid) {
   auto request = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
   request->a = 4;
   request->b = 5;
+
+  rclcpp::utilities::sleep_for(10_ms);
 
   auto result = client->async_send_request(request);
 
@@ -66,6 +70,8 @@ TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_return_request) {
   auto request = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
   request->a = 4;
   request->b = 5;
+
+  rclcpp::utilities::sleep_for(10_ms);
 
   auto result = client->async_send_request(
     request,
