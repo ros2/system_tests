@@ -151,9 +151,12 @@ if(AMENT_ENABLE_TESTING)
       PUBLIC ${GTEST_INCLUDE_DIRS})
     target_link_libraries(test_services_client_cpp${target_suffix}
       ${GTEST_LIBRARIES})
-    custom_launch_test(test_services_cpp
-      test_services_server_cpp test_services_client_cpp
-      TIMEOUT 30)
+    # https://github.com/eProsima/ROS-RMW-Fast-RTPS-cpp/issues/11
+    if(NOT ${rmw_implementation} STREQUAL "rmw_fastrtps_cpp")
+      custom_launch_test(test_services_cpp
+        test_services_server_cpp test_services_client_cpp
+        TIMEOUT 30)
+    endif()
   endmacro()
 
   call_for_each_rmw_implementation(targets)
