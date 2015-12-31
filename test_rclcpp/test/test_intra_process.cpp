@@ -21,6 +21,9 @@
 
 #include "test_rclcpp/msg/u_int32.hpp"
 
+static const std::chrono::milliseconds sleep_per_loop(10);
+static const int max_loops = 200;
+
 TEST(test_intra_process_within_one_node, nominal_usage) {
   rclcpp::init(0, nullptr);
 
@@ -65,21 +68,22 @@ TEST(test_intra_process_within_one_node, nominal_usage) {
     executor.spin_node_some(node);
     ASSERT_EQ(0, counter);
 
+    // wait a moment for everything to initialize
+    // TODO(gerkey): fix nondeterministic startup behavior
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
     msg->data = 1;
     publisher->publish(msg);
     ASSERT_EQ(0, counter);
 
     // wait for the first callback
     {
-      size_t i = 0;
-      while (counter == 0 && i < 2) {
-        printf("spin_node_once() - callback (1) expected - try %zu/2\n", ++i);
-        executor.spin_node_once(node);
-        if (counter != 0) {
-          break;
-        }
-        // give the executor thread time to process the event
-        std::this_thread::sleep_for(std::chrono::milliseconds(25));
+      int i = 0;
+      executor.spin_node_once(node, std::chrono::milliseconds(0));
+      while (counter == 0 && i < max_loops) {
+        printf("spin_node_once() - callback (1) expected - try %d/%d\n", ++i, max_loops);
+        std::this_thread::sleep_for(sleep_per_loop);
+        executor.spin_node_once(node, std::chrono::milliseconds(0));
       }
     }
     ASSERT_EQ(1, counter);
@@ -104,11 +108,11 @@ TEST(test_intra_process_within_one_node, nominal_usage) {
 
     // while four messages have been published one callback should be triggered here
     {
-      size_t i = 0;
-      while (counter == 1 && i < 2) {
-        // give the executor thread time to process the event
-        std::this_thread::sleep_for(std::chrono::milliseconds(25));
-        printf("spin_node_once(nonblocking) - callback (2) expected - try %zu/2\n", ++i);
+      int i = 0;
+      executor.spin_node_once(node, std::chrono::milliseconds(0));
+      while (counter == 1 && i < max_loops) {
+        printf("spin_node_once(nonblocking) - callback (2) expected - try %d/%d\n", ++i, max_loops);
+        std::this_thread::sleep_for(sleep_per_loop);
         executor.spin_node_once(node, std::chrono::milliseconds(0));
       }
     }
@@ -116,25 +120,27 @@ TEST(test_intra_process_within_one_node, nominal_usage) {
 
     // check for next pending call
     {
-      size_t i = 0;
-      while (counter == 2 && i < 2) {
-        // give the executor thread time to process the event
-        std::this_thread::sleep_for(std::chrono::milliseconds(25));
-        printf("spin_node_once(nonblocking) - callback (3) expected - try %zu/2\n", ++i);
+      int i = 0;
+      executor.spin_node_once(node, std::chrono::milliseconds(0));
+      while (counter == 2 && i < max_loops) {
+        printf("spin_node_once(nonblocking) - callback (3) expected - try %d/%d\n", ++i, max_loops);
+        std::this_thread::sleep_for(sleep_per_loop);
         executor.spin_node_once(node, std::chrono::milliseconds(0));
       }
     }
     ASSERT_EQ(3, counter);
 
     // check for all remaning calls
-    printf("spin_node_some() - callbacks (4 and 5) expected\n");
-    executor.spin_node_some(node);
-    if (counter == 3 || counter == 4) {
-      // give the executor thread time to process the event
-      std::this_thread::sleep_for(std::chrono::milliseconds(25));
-      printf("spin_node_some() - callback (%s) expected - trying again\n",
-        counter == 3 ? "4 and 5" : "5");
+    {
+      printf("spin_node_some() - callbacks (4 and 5) expected\n");
+      int i = 0;
       executor.spin_node_once(node, std::chrono::milliseconds(0));
+      while ((counter == 3 || counter == 4) && i < max_loops) {
+        printf("spin_node_some() - callback (%s) expected - try %d/%d\n",
+          counter == 3 ? "4 and 5" : "5", ++i, max_loops);
+        std::this_thread::sleep_for(sleep_per_loop);
+        executor.spin_node_once(node, std::chrono::milliseconds(0));
+      }
     }
     ASSERT_EQ(5, counter);
   }
