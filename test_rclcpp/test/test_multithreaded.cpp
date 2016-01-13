@@ -84,8 +84,8 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   // messages. So we put a heuristic upper bound (2s) on how long we're willing to
   // wait for delivery to occur.
   const std::chrono::milliseconds sleep_per_loop(10);
-  const int max_loops = 200;
-  int loop = 0;
+  const uint32_t max_loops = 200;
+  std::atomic_uint loop(0);
   while ((counter.load() != subscriptions.size()) && (loop++ < max_loops)) {
     rclcpp::utilities::sleep_for(sleep_per_loop);
     executor.spin_some();
@@ -109,7 +109,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
         timer.cancel();
         // wait for the last callback to fire before cancelling
         // Wait for pending subscription callbacks to trigger.
-        int loop = 0;
+        std::atomic_uint loop(0);
         while ((counter.load() != (5 * subscriptions.size())) && (loop++ < max_loops)) {
           std::this_thread::sleep_for(sleep_per_loop);
         }
@@ -174,7 +174,7 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
   executor.add_node(node);
   rclcpp::utilities::sleep_for(5_ms);
 
-  executor.spin_once();
+  executor.spin_some();
   // No callbacks should have fired
   EXPECT_EQ(0, counter.load());
 
@@ -261,7 +261,7 @@ static inline void multi_access_publisher(bool intra_process)
         std::atomic_uint i(0);
         // Wait for pending subscription callbacks to trigger.
         while (subscription_counter < timer_counter &&
-          ++i <= executor.get_number_of_threads() * 2)
+          ++i <= num_messages)
         {
           rclcpp::utilities::sleep_for(1_ms);
         }

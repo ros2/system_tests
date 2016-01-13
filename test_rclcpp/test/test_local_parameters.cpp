@@ -61,7 +61,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), to_string) {
 }
 
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous) {
-  auto node = rclcpp::Node::make_shared(std::string("test_parameters_"));
+  auto node = rclcpp::Node::make_shared("test_parameters_local_synchronous");
   // TODO(esteve): Make the parameter service automatically start with the node.
   auto parameter_service = std::make_shared<rclcpp::parameter_service::ParameterService>(node);
   auto parameters_client = std::make_shared<rclcpp::parameter_client::SyncParametersClient>(node);
@@ -70,7 +70,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous) {
 }
 
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_asynchronous) {
-  auto node = rclcpp::Node::make_shared(std::string("test_parameters_"));
+  auto node = rclcpp::Node::make_shared(std::string("test_parameters_local_asynchronous"));
   // TODO(esteve): Make the parameter service automatically start with the node.
   auto parameter_service = std::make_shared<rclcpp::parameter_service::ParameterService>(node);
   auto parameters_client = std::make_shared<rclcpp::parameter_client::AsyncParametersClient>(node);
