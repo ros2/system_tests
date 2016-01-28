@@ -61,15 +61,17 @@ if(AMENT_ENABLE_TESTING)
 
   function(custom_test target)
     # get typesupport of rmw implementation to include / link against the corresponding interfaces
-    get_rmw_typesupport(typesupport_impl "${rmw_implementation}")
+    get_rmw_typesupport(typesupport_impls "${rmw_implementation}")
 
     add_executable(${target}${target_suffix} ${ARGN})
     target_link_libraries(${target}${target_suffix}
       ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
       ${_AMENT_EXPORT_LIBRARY_TARGETS})
     add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
-    rosidl_target_interfaces(${target}${target_suffix}
-      ${PROJECT_NAME} ${typesupport_impl})
+    foreach(typesupport_impl ${typesupport_impls})
+      rosidl_target_interfaces(${target}${target_suffix}
+        ${PROJECT_NAME} ${typesupport_impl})
+    endforeach()
     ament_target_dependencies(${target}${target_suffix}
       "rclcpp${target_suffix}")
     # register executable as a test
@@ -93,15 +95,17 @@ if(AMENT_ENABLE_TESTING)
 
   function(custom_executable target)
     # get typesupport of rmw implementation to include / link against the corresponding interfaces
-    get_rmw_typesupport(typesupport_impl "${rmw_implementation}")
+    get_rmw_typesupport(typesupport_impls "${rmw_implementation}")
 
     add_executable(${target}${target_suffix} ${ARGN})
     target_link_libraries(${target}${target_suffix}
       ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
       ${_AMENT_EXPORT_LIBRARY_TARGETS})
     add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
-    rosidl_target_interfaces(${target}${target_suffix}
-      ${PROJECT_NAME} ${typesupport_impl})
+    foreach(typesupport_impl ${typesupport_impls})
+      rosidl_target_interfaces(${target}${target_suffix}
+        ${PROJECT_NAME} ${typesupport_impl})
+    endforeach()
     ament_target_dependencies(${target}${target_suffix}
       "rclcpp${target_suffix}")
   endfunction()
