@@ -50,7 +50,7 @@ if(AMENT_ENABLE_TESTING)
 
   macro(custom_gtest target)
     # get typesupport of rmw implementation to include / link against the corresponding interfaces
-    get_rmw_typesupport(typesupport_impl "${rmw_implementation}")
+    get_rmw_typesupport(typesupport_impls "${rmw_implementation}")
 
     ament_add_gtest(${target}${target_suffix} ${ARGN})
     if(TARGET ${target}${target_suffix})
@@ -60,8 +60,10 @@ if(AMENT_ENABLE_TESTING)
       target_compile_definitions(${target}${target_suffix}
         PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
       add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
-      rosidl_target_interfaces(${target}${target_suffix}
-        ${PROJECT_NAME} ${typesupport_impl})
+      foreach(typesupport_impl ${typesupport_impls})
+        rosidl_target_interfaces(${target}${target_suffix}
+          ${PROJECT_NAME} ${typesupport_impl})
+      endforeach()
       ament_target_dependencies(${target}${target_suffix}
         "rclcpp${target_suffix}")
     endif()
@@ -69,14 +71,16 @@ if(AMENT_ENABLE_TESTING)
 
   function(custom_executable target)
     # get typesupport of rmw implementation to include / link against the corresponding interfaces
-    get_rmw_typesupport(typesupport_impl "${rmw_implementation}")
+    get_rmw_typesupport(typesupport_impls "${rmw_implementation}")
 
     add_executable(${target}${target_suffix} ${ARGN})
     target_compile_definitions(${target}${target_suffix}
       PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
     add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
-    rosidl_target_interfaces(${target}${target_suffix}
-      ${PROJECT_NAME} ${typesupport_impl})
+    foreach(typesupport_impl ${typesupport_impls})
+      rosidl_target_interfaces(${target}${target_suffix}
+        ${PROJECT_NAME} ${typesupport_impl})
+    endforeach()
     ament_target_dependencies(${target}${target_suffix}
       "rclcpp${target_suffix}")
   endfunction()
