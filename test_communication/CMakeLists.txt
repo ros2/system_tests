@@ -48,17 +48,6 @@ if(AMENT_ENABLE_TESTING)
     SKIP_INSTALL
   )
 
-  if(NOT WIN32)
-    set(test_executable_extension "")
-    set(test_executable_subfolder "")
-  else()
-    set(test_executable_extension ".exe")
-    set(test_executable_subfolder "/${CMAKE_BUILD_TYPE}")
-    if("${test_executable_subfolder}" STREQUAL "/")
-      set(test_executable_subfolder "/Release")
-    endif()
-  endif()
-
   function(custom_test target)
     # get typesupport of rmw implementation to include / link against the corresponding interfaces
     get_rmw_typesupport(typesupport_impls "${rmw_implementation}")
@@ -117,19 +106,23 @@ if(AMENT_ENABLE_TESTING)
     else()
       set(suffix "__${rmw_implementation1}__${rmw_implementation2}")
     endif()
-    set(TEST_PUBLISHER_EXECUTABLE "${CMAKE_CURRENT_BINARY_DIR}${test_executable_subfolder}/test_publisher_cpp__${rmw_implementation1}${test_executable_extension}")
-    set(TEST_SUBSCRIBER_EXECUTABLE "${CMAKE_CURRENT_BINARY_DIR}${test_executable_subfolder}/test_subscriber_cpp__${rmw_implementation2}${test_executable_extension}")
+    set(TEST_PUBLISHER_EXECUTABLE "$<TARGET_FILE:test_publisher_cpp__${rmw_implementation1}>")
+    set(TEST_SUBSCRIBER_EXECUTABLE "$<TARGET_FILE:test_subscriber_cpp__${rmw_implementation2}>")
     foreach(message_file ${message_files})
       get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
       string(TOLOWER "${TEST_MESSAGE_TYPE}" TEST_MESSAGE_TYPE)
       set(test_suffix "__${TEST_MESSAGE_TYPE}${suffix}")
       configure_file(
         test/test_publisher_subscriber.py.in
-        test_publisher_subscriber_cpp${test_suffix}.py
+        test_publisher_subscriber_cpp${test_suffix}.py.configured
         @ONLY
       )
+      file(GENERATE
+        OUTPUT "test_publisher_subscriber_cpp${test_suffix}_$<CONFIGURATION>.py"
+        INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber_cpp${test_suffix}.py.configured"
+      )
 
-      ament_add_nose_test(publisher_subscriber_cpp${test_suffix} "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber_cpp${test_suffix}.py" TIMEOUT 15)
+      ament_add_nose_test(publisher_subscriber_cpp${test_suffix} "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber_cpp${test_suffix}_$<CONFIGURATION>.py" TIMEOUT 15)
       set_tests_properties(
         publisher_subscriber_cpp${test_suffix}
         PROPERTIES DEPENDS "test_publisher_cpp__${rmw_implementation1};test_subscriber_cpp__${rmw_implementation2}"
@@ -139,19 +132,23 @@ if(AMENT_ENABLE_TESTING)
     # TODO different vendors can't talk to each other right now
     if((NOT "${rmw_implementation1} " STREQUAL "rmw_opensplice_cpp " AND NOT "${rmw_implementation2} " STREQUAL "rmw_opensplice_cpp ") OR "${rmw_implementation1} " STREQUAL "${rmw_implementation2} ")
     # test requester / replier
-    set(TEST_REQUESTER_EXECUTABLE "${CMAKE_CURRENT_BINARY_DIR}${test_executable_subfolder}/test_requester_cpp__${rmw_implementation1}${test_executable_extension}")
-    set(TEST_REPLIER_EXECUTABLE "${CMAKE_CURRENT_BINARY_DIR}${test_executable_subfolder}/test_replier_cpp__${rmw_implementation2}${test_executable_extension}")
+    set(TEST_REQUESTER_EXECUTABLE "$<TARGET_FILE:test_requester_cpp__${rmw_implementation1}>")
+    set(TEST_REPLIER_EXECUTABLE "$<TARGET_FILE:test_replier_cpp__${rmw_implementation2}>")
     foreach(service_file ${service_files})
       get_filename_component(TEST_SERVICE_TYPE "${service_file}" NAME_WE)
       string(TOLOWER "${TEST_SERVICE_TYPE}" TEST_SERVICE_TYPE)
       set(test_suffix "__${TEST_SERVICE_TYPE}${suffix}")
       configure_file(
         test/test_requester_replier.py.in
-        test_requester_replier_cpp${test_suffix}.py
+        test_requester_replier_cpp${test_suffix}.py.configured
         @ONLY
       )
+      file(GENERATE
+        OUTPUT "test_requester_replier_cpp${test_suffix}_$<CONFIGURATION>.py"
+        INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier_cpp${test_suffix}.py.configured"
+      )
 
-      ament_add_nose_test(requester_replier_cpp${test_suffix} "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier_cpp${test_suffix}.py" TIMEOUT 15)
+      ament_add_nose_test(requester_replier_cpp${test_suffix} "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier_cpp${test_suffix}_$<CONFIGURATION>.py" TIMEOUT 15)
       set_tests_properties(
         requester_replier_cpp${test_suffix}
         PROPERTIES DEPENDS "test_requester_cpp__${rmw_implementation1};test_replier_cpp__${rmw_implementation2}"

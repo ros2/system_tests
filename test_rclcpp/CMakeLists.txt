@@ -30,17 +30,6 @@ if(AMENT_ENABLE_TESTING)
     SKIP_INSTALL
   )
 
-  if(NOT WIN32)
-    set(test_executable_extension "")
-    set(test_executable_subfolder "")
-  else()
-    set(test_executable_extension ".exe")
-    set(test_executable_subfolder "/${CMAKE_BUILD_TYPE}")
-    if("${test_executable_subfolder}" STREQUAL "/")
-      set(test_executable_subfolder "/Release")
-    endif()
-  endif()
-
   # get the rmw implementations ahead of time
   find_package(rmw_implementation_cmake REQUIRED)
   get_available_rmw_implementations(middleware_implementations)
@@ -87,16 +76,20 @@ if(AMENT_ENABLE_TESTING)
 
   macro(custom_launch_test test_name executable1 executable2)
     set(TEST_NAME "${test_name}")
-    set(TEST_EXECUTABLE1 "${CMAKE_CURRENT_BINARY_DIR}${test_executable_subfolder}/${executable1}${target_suffix}${test_executable_extension}")
+    set(TEST_EXECUTABLE1 "$<TARGET_FILE:${executable1}${target_suffix}>")
     set(TEST_EXECUTABLE1_NAME "${executable1}")
-    set(TEST_EXECUTABLE2 "${CMAKE_CURRENT_BINARY_DIR}${test_executable_subfolder}/${executable2}${target_suffix}${test_executable_extension}")
+    set(TEST_EXECUTABLE2 "$<TARGET_FILE:${executable2}${target_suffix}>")
     set(TEST_EXECUTABLE2_NAME "${executable2}")
     configure_file(
       test/test_two_executables.py.in
-      ${test_name}${target_suffix}.py
+      ${test_name}${target_suffix}.py.configure
       @ONLY
     )
-    ament_add_nose_test(${test_name}${target_suffix} "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}.py" ${ARGN})
+    file(GENERATE
+      OUTPUT "${test_name}${target_suffix}_$<CONFIGURATION>.py"
+      INPUT "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}.py.configure"
+    )
+    ament_add_nose_test(${test_name}${target_suffix} "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIGURATION>.py" ${ARGN})
     set_tests_properties(${test_name}${target_suffix} PROPERTIES DEPENDS "${executable1}${target_suffix} ${executable2}${target_suffix}")
   endmacro()
 
