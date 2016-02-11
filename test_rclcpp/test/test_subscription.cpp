@@ -14,6 +14,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <string>
 
 #include "gtest/gtest.h"
 
@@ -24,12 +25,42 @@
 #ifdef RMW_IMPLEMENTATION
 # define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
 # define CLASSNAME(NAME, SUFFIX) CLASSNAME_(NAME, SUFFIX)
+
 #else
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
+#define STRING_(s) #s
+#define STRING(s) STRING_(s)
+
 static const std::chrono::milliseconds sleep_per_loop(10);
-static const int max_loops = 200;
+static const size_t max_loops = 200;
+
+// Sleep for timeout ms or until a subscriber has registered for the topic
+void busy_wait_for_subscriber(
+  std::shared_ptr<const rclcpp::Node> node,
+  const std::string & topic_name,
+  std::chrono::milliseconds timeout = std::chrono::milliseconds(1),
+  std::chrono::microseconds sleep_period = std::chrono::microseconds(100))
+{
+#ifdef RMW_IMPLEMENTATION
+  if (strcmp(STRING(RMW_IMPLEMENTATION), "rmw_fastrtps_cpp") == 0) {
+    printf("FastRTPS detected, sleeping for a fixed interval\n");
+    (void)topic_name;
+    (void)node;
+    (void)sleep_period;
+    std::this_thread::sleep_for(timeout);
+    return;
+  }
+#endif
+  std::chrono::microseconds time_slept(0);
+  while (node->count_subscribers(topic_name) == 0 &&
+    time_slept < std::chrono::duration_cast<std::chrono::microseconds>(timeout))
+  {
+    std::this_thread::sleep_for(sleep_period);
+    time_slept += sleep_period;
+  }
+}
 
 TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning) {
   rclcpp::init(0, nullptr);
@@ -172,8 +203,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
     "test_subscription", callback, rmw_qos_profile_default);
 
   // wait a moment for everything to initialize
-  // TODO(gerkey): fix nondeterministic startup behavior
-  rclcpp::utilities::sleep_for(1_ms);
+  busy_wait_for_subscriber(node, "test_subscription");
 
   // start condition
   ASSERT_EQ(0, counter);
@@ -193,7 +223,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
 
   executor.spin_node_some(node);
   // spin for up to 2s
-  int loop = 0;
+  size_t loop = 0;
   while ((counter != 1) && (loop++ < max_loops)) {
     printf("callback not called, sleeping and trying again\n");
     std::this_thread::sleep_for(sleep_per_loop);
@@ -237,8 +267,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
     "test_subscription", cb_std_function, rmw_qos_profile_default);
 
   // wait a moment for everything to initialize
-  // TODO(gerkey): fix nondeterministic startup behavior
-  rclcpp::utilities::sleep_for(1_ms);
+  busy_wait_for_subscriber(node, "test_subscription");
 
   // start condition
   ASSERT_EQ(0, cb_holder.counter);
@@ -258,7 +287,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
 
   executor.spin_node_some(node);
   // spin for up to 2s
-  int loop = 0;
+  size_t loop = 0;
   while ((cb_holder.counter != 1) && (loop++ < max_loops)) {
     printf("callback not called, sleeping and trying again\n");
     std::this_thread::sleep_for(sleep_per_loop);
@@ -287,8 +316,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
     rmw_qos_profile_default);
 
   // wait a moment for everything to initialize
-  // TODO(gerkey): fix nondeterministic startup behavior
-  rclcpp::utilities::sleep_for(1_ms);
+  busy_wait_for_subscriber(node, "test_subscription");
 
   // start condition
   ASSERT_EQ(0, cb_holder.counter);
@@ -308,7 +336,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
 
   executor.spin_node_some(node);
   // spin for up to 2s
-  int loop = 0;
+  size_t loop = 0;
   while ((cb_holder.counter != 1) && (loop++ < max_loops)) {
     printf("callback not called, sleeping and trying again\n");
     std::this_thread::sleep_for(std::chrono::milliseconds(sleep_per_loop));
@@ -342,9 +370,8 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
   auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
     "test_subscription", callback, rmw_qos_profile_default);
 
-  // wait a moment for everything to initialize
-  // TODO(gerkey): fix nondeterministic startup behavior
-  rclcpp::utilities::sleep_for(1_ms);
+  // wait a moment for the subscriber to register
+  busy_wait_for_subscriber(node, "test_subscription");
 
   // start condition
   ASSERT_EQ(0, counter);
@@ -362,12 +389,62 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
 
   executor.spin_node_some(node);
   // spin for up to 2s
-  int loop = 0;
+  size_t loop = 0;
   while ((counter != 1) && (loop++ < max_loops)) {
     printf("callback not called, sleeping and trying again\n");
     std::this_thread::sleep_for(sleep_per_loop);
     executor.spin_node_some(node);
   }
+  ASSERT_EQ(1, counter);
+}
+
+// Shortened version of the test for subscribing after spinning has started.
+TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), spin_before_subscription) {
+  auto node = rclcpp::Node::make_shared("spin_before_subscription");
+
+  auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(
+    "spin_before_subscription", rmw_qos_profile_default);
+
+  uint32_t counter = 0;
+  auto callback =
+    [&counter](test_rclcpp::msg::UInt32::ConstSharedPtr msg) -> void
+    {
+      ++counter;
+      printf("  callback() %4u with message data %u\n", counter, msg->data);
+      ASSERT_EQ(counter, msg->data);
+    };
+
+  auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
+  msg->data = 0;
+  rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(node);
+
+  executor.spin_some();
+
+  auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
+    "spin_before_subscription", callback, rmw_qos_profile_default);
+
+  // start condition
+  ASSERT_EQ(0, counter);
+
+  busy_wait_for_subscriber(node, "spin_before_subscription");
+
+  msg->data = 1;
+  // Create a ConstSharedPtr message to publish
+  test_rclcpp::msg::UInt32::ConstSharedPtr const_msg(msg);
+  publisher->publish(const_msg);
+
+  // wait for the first callback
+  printf("callback (1) expected\n");
+
+  size_t loop = 0;
+  executor.spin_some();
+  while ((counter != 1) && (loop++ < max_loops)) {
+    printf("callback not called, sleeping and trying again\n");
+    std::this_thread::sleep_for(sleep_per_loop);
+    executor.spin_some();
+  }
+
   ASSERT_EQ(1, counter);
 }
 
