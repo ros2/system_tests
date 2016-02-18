@@ -113,14 +113,16 @@ void verify_test_parameters(
 
   // List all of the parameters, using an empty prefix list
   parameters_and_prefixes = parameters_client->list_parameters({}, 0);
-  std::vector<std::string> all_names =
-    {"foo", "bar", "barstr", "baz", "foo.first", "foo.second", "foobar"};
+  std::vector<std::string> all_names = {
+    "foo", "bar", "barstr", "baz", "foo.first", "foo.second", "foobar"
+  };
   EXPECT_EQ(parameters_and_prefixes.names.size(), all_names.size());
   for (auto & name : all_names) {
-    EXPECT_NE(std::find(parameters_and_prefixes.names.cbegin(),
-                        parameters_and_prefixes.names.cend(),
-                        name),
-              parameters_and_prefixes.names.cend());
+    EXPECT_NE(std::find(
+        parameters_and_prefixes.names.cbegin(),
+        parameters_and_prefixes.names.cend(),
+        name),
+      parameters_and_prefixes.names.cend());
   }
 }
 
@@ -178,6 +180,22 @@ void verify_get_parameters_async(
   rclcpp::spin_until_future_complete(node, result3);
   for (auto & parameter : result3.get()) {
     EXPECT_STREQ("There should be no matches", parameter.get_name().c_str());
+  }
+
+  // List all of the parameters, using an empty prefix list
+  auto result5 = parameters_client->list_parameters({}, 0);
+  rclcpp::spin_until_future_complete(node, result5);
+  parameters_and_prefixes = result5.get();
+  std::vector<std::string> all_names = {
+    "foo", "bar", "barstr", "baz", "foo.first", "foo.second", "foobar"
+  };
+  EXPECT_EQ(parameters_and_prefixes.names.size(), all_names.size());
+  for (auto & name : all_names) {
+    EXPECT_NE(std::find(
+        parameters_and_prefixes.names.cbegin(),
+        parameters_and_prefixes.names.cend(),
+        name),
+      parameters_and_prefixes.names.cend());
   }
 }
 
