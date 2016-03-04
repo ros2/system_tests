@@ -29,12 +29,12 @@
 TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_fire_regularly) {
   auto node = rclcpp::Node::make_shared("test_timer_fire_regularly");
 
-  uint32_t counter = 0;
+  int counter = 0;
   auto callback =
     [&counter]() -> void
     {
       ++counter;
-      printf("  callback() %4u\n", counter);
+      printf("  callback() %d\n", counter);
     };
 
   rclcpp::executors::SingleThreadedExecutor executor;
@@ -83,12 +83,12 @@ TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_fire_regularly) {
 TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_during_wait) {
   auto node = rclcpp::Node::make_shared("test_timer_during_wait");
 
-  uint32_t counter = 0;
+  int counter = 0;
   auto callback =
     [&counter]() -> void
     {
       ++counter;
-      printf("  callback() %4u", counter);
+      printf("  callback() %d", counter);
     };
 
   rclcpp::executors::SingleThreadedExecutor executor;
@@ -135,12 +135,12 @@ TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_during_wait) {
 TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), finite_timer) {
   auto node = rclcpp::Node::make_shared("finite_timer");
 
-  uint32_t counter = 0;
+  int counter = 0;
   auto callback =
     [&counter](rclcpp::timer::TimerBase & timer) -> void
     {
       ++counter;
-      printf("  callback() %4u\n", counter);
+      printf("  callback() %d\n", counter);
       // After spinning 3 times, cancel the timer
       if (counter == 2) {
         timer.cancel();

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <chrono>
+#include <future>
 #include <iostream>
 #include <string>
 
@@ -60,6 +61,9 @@ void busy_wait_for_subscriber(
     std::this_thread::sleep_for(sleep_period);
     time_slept += sleep_period;
   }
+  printf("Waited %lli microseconds for the subscriber to connect to topic '%s'\n",
+    std::chrono::duration_cast<std::chrono::microseconds>(time_slept).count(),
+    topic_name.c_str());
 }
 
 template<typename DurationT>
@@ -208,13 +212,14 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
   auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(
     "test_subscription", rmw_qos_profile_default);
 
-  uint32_t counter = 0;
+  int counter = 0;
   auto callback =
     [&counter](test_rclcpp::msg::UInt32::ConstSharedPtr msg) -> void
     {
       ++counter;
-      printf("  callback() %4u with message data %u\n", counter, msg->data);
-      ASSERT_EQ(counter, msg->data);
+      printf("  callback() %d with message data %u\n", counter, msg->data);
+      ASSERT_TRUE(counter >= 0);
+      ASSERT_EQ(static_cast<unsigned int>(counter), msg->data);
     };
 
   auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
@@ -257,11 +262,12 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
 class CallbackHolder
 {
 public:
-  uint32_t counter;
+  int counter;
   void callback(test_rclcpp::msg::UInt32::ConstSharedPtr msg)
   {
     ++counter;
-    ASSERT_EQ(counter, msg->data);
+    ASSERT_TRUE(counter >= 0);
+    ASSERT_EQ(static_cast<unsigned int>(counter), msg->data);
   }
   CallbackHolder()
   : counter(0)
@@ -374,14 +380,15 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
   auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(
     "test_subscription", rmw_qos_profile_default);
 
-  uint32_t counter = 0;
+  int counter = 0;
   auto callback =
     [&counter](test_rclcpp::msg::UInt32::ConstSharedPtr msg,
       const rmw_message_info_t & info) -> void
     {
       ++counter;
-      printf("  callback() %4u with message data %u\n", counter, msg->data);
-      ASSERT_EQ(counter, msg->data);
+      printf("  callback() %d with message data %u\n", counter, msg->data);
+      ASSERT_TRUE(counter >= 0);
+      ASSERT_EQ(static_cast<unsigned int>(counter), msg->data);
       ASSERT_FALSE(info.from_intra_process);
     };
 
@@ -427,13 +434,14 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), spin_before_subscription)
   auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(
     "spin_before_subscription", rmw_qos_profile_default);
 
-  uint32_t counter = 0;
+  int counter = 0;
   auto callback =
     [&counter](test_rclcpp::msg::UInt32::ConstSharedPtr msg) -> void
     {
       ++counter;
-      printf("  callback() %4u with message data %u\n", counter, msg->data);
-      ASSERT_EQ(counter, msg->data);
+      printf("  callback() %d with message data %u\n", counter, msg->data);
+      ASSERT_TRUE(counter >= 0);
+      ASSERT_EQ(static_cast<unsigned int>(counter), msg->data);
     };
 
   auto msg = std::make_shared<test_rclcpp::msg::UInt32>();

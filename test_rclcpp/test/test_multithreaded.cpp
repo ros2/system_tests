@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <limits>
 #include <string>
 #include <utility>
 #include <vector>
@@ -44,14 +45,14 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   auto pub = node->create_publisher<test_rclcpp::msg::UInt32>(node_topic_name, 16);
 
   std::vector<rclcpp::Subscription<test_rclcpp::msg::UInt32>::SharedPtr> subscriptions;
-  std::atomic_uint counter(0);
+  std::atomic_int counter(0);
 
   auto callback =
     [&counter, &intra_process](test_rclcpp::msg::UInt32::ConstSharedPtr msg,
       const rmw_message_info_t & info) -> void
     {
       counter.fetch_add(1);
-      printf("callback() %4u with message data %u\n", counter.load(), msg->data);
+      printf("callback() %d with message data %u\n", counter.load(), msg->data);
       ASSERT_EQ(intra_process, info.from_intra_process);
     };
 
@@ -62,6 +63,8 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
         callback_group);
     subscriptions.push_back(sub);
   }
+  ASSERT_TRUE(std::numeric_limits<int>::max() > subscriptions.size());
+  int subscriptions_size = static_cast<int>(subscriptions.size());
 
   executor.add_node(node);
   auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
@@ -84,24 +87,27 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   // messages. So we put a heuristic upper bound (2s) on how long we're willing to
   // wait for delivery to occur.
   const std::chrono::milliseconds sleep_per_loop(10);
-  const uint32_t max_loops = 200;
+  const unsigned int max_loops = 200;
   std::atomic_uint loop(0);
-  while ((counter.load() != subscriptions.size()) && (loop++ < max_loops)) {
+  while ((counter.load() != subscriptions_size) && (loop++ < max_loops)) {
     rclcpp::utilities::sleep_for(sleep_per_loop);
     executor.spin_some();
   }
-  EXPECT_EQ(counter.load(), subscriptions.size());
+  EXPECT_EQ(counter.load(), subscriptions_size);
 
   // Expectation: no further messages were received.
   executor.spin_once(std::chrono::milliseconds(0));
-  EXPECT_EQ(counter.load(), subscriptions.size());
+  EXPECT_EQ(counter.load(), subscriptions_size);
 
   // reset counter
   counter.store(0);
   msg->data = 0;
 
+  ASSERT_TRUE(std::numeric_limits<int>::max() > (5 * subscriptions.size()));
+  int expected_count = static_cast<int>(5 * subscriptions.size());
+
   auto publish_callback = [
-    msg, &pub, &executor, &counter, &subscriptions, &sleep_per_loop, &max_loops](
+    msg, &pub, &executor, &counter, &expected_count, &sleep_per_loop, &max_loops](
     rclcpp::timer::TimerBase & timer) -> void
     {
       ++msg->data;
@@ -110,7 +116,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
         // wait for the last callback to fire before cancelling
         // Wait for pending subscription callbacks to trigger.
         std::atomic_uint loop(0);
-        while ((counter.load() != (5 * subscriptions.size())) && (loop++ < max_loops)) {
+        while ((counter.load() != expected_count) && (loop++ < max_loops)) {
           std::this_thread::sleep_for(sleep_per_loop);
         }
         executor.cancel();
@@ -121,7 +127,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   auto timer = node->create_wall_timer(std::chrono::milliseconds(1), publish_callback);
 
   executor.spin();
-  EXPECT_EQ(counter.load(), 5 * subscriptions.size());
+  EXPECT_EQ(counter.load(), expected_count);
 }
 
 TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_single_producer) {
@@ -139,11 +145,11 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
   auto node = rclcpp::Node::make_shared("multi_consumer_clients");
   rclcpp::executors::MultiThreadedExecutor executor;
 
-  std::atomic_uint counter(0);
+  std::atomic_int counter(0);
   auto callback = [&counter](const std::shared_ptr<test_rclcpp::srv::AddTwoInts::Request> request,
       std::shared_ptr<test_rclcpp::srv::AddTwoInts::Response> response)
     {
-      printf("Called service callback: %u\n", counter.load());
+      printf("Called service callback: %d\n", counter.load());
       ++counter;
       response->sum = request->a + request->b;
     };
@@ -170,6 +176,8 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     request->b = i + 1;
     client_request_pairs.push_back(ClientRequestPair(client, request));
   }
+  ASSERT_TRUE(std::numeric_limits<int>::max() > client_request_pairs.size());
+  int client_request_pairs_size = static_cast<int>(client_request_pairs.size());
 
   executor.add_node(node);
   rclcpp::utilities::sleep_for(5_ms);
@@ -195,7 +203,7 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
       EXPECT_EQ(results[i].get()->sum, 2 * i + 1);
     }
 
-    EXPECT_EQ(counter.load(), client_request_pairs.size());
+    EXPECT_EQ(counter.load(), client_request_pairs_size);
   }
 
   // Reset the counter and try again with spin
@@ -223,7 +231,7 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
       ASSERT_EQ(std::future_status::ready, results[i].wait_for(std::chrono::seconds(0)));
       EXPECT_EQ(results[i].get()->sum, 2 * i + 1);
     }
-    EXPECT_EQ(counter.load(), client_request_pairs.size());
+    EXPECT_EQ(counter.load(), client_request_pairs_size);
   }
 }
 
