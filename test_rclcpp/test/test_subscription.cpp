@@ -62,6 +62,25 @@ void busy_wait_for_subscriber(
   }
 }
 
+template<typename DurationT>
+void wait_for_future(
+  rclcpp::executor::Executor & executor,
+  std::shared_future<void> & future,
+  DurationT & timeout)
+{
+  using rclcpp::executor::FutureReturnCode;
+  rclcpp::executor::FutureReturnCode future_ret;
+  auto start_time = std::chrono::steady_clock::now();
+  future_ret = executor.spin_until_future_complete(future, timeout);
+  auto elapsed_time = std::chrono::steady_clock::now() - start_time;
+  // *INDENT-OFF*
+  EXPECT_EQ(FutureReturnCode::SUCCESS, future_ret)
+    << "future failed to be set after: "
+    << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed_time).count()
+    << " milliseconds\n";
+  // *INDENT-ON*
+}
+
 TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning) {
   rclcpp::init(0, nullptr);
 
@@ -69,53 +88,63 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
 
   rmw_qos_profile_t custom_qos_profile = rmw_qos_profile_default;
   custom_qos_profile.depth = 10;
+  std::string topic = "test_subscription";
 
   auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(
-    "test_subscription", custom_qos_profile);
+    topic, custom_qos_profile);
 
-  uint32_t counter = 0;
+  int counter = 0;
+  std::promise<void> sub_called;
+  std::shared_future<void> sub_called_future(sub_called.get_future());
+  auto fail_after_timeout = 5_s;
   auto callback =
-    [&counter](const test_rclcpp::msg::UInt32::SharedPtr msg) -> void
+    [&counter, &sub_called](const test_rclcpp::msg::UInt32::SharedPtr msg) -> void
     {
       ++counter;
-      printf("  callback() %4u with message data %u\n", counter, msg->data);
-      ASSERT_EQ(counter, msg->data);
+      printf("  callback() %d with message data %u\n", counter, msg->data);
+      ASSERT_GE(counter, 0);
+      ASSERT_EQ(static_cast<unsigned int>(counter), msg->data);
+      sub_called.set_value();
     };
 
   auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
   msg->data = 0;
   rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(node);
 
   {
     auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
-      "test_subscription", callback, custom_qos_profile);
+      topic, callback, custom_qos_profile);
+
+    // wait for discovery and the subscriber to connect
+    busy_wait_for_subscriber(node, topic);
 
     // start condition
     ASSERT_EQ(0, counter);
 
     // nothing should be pending here
-    printf("spin_node_once(nonblocking) - no callback expected\n");
-    executor.spin_node_once(node, std::chrono::milliseconds(0));
+    printf("spin_once(nonblocking) - no callback expected\n");
+    executor.spin_once(0_s);
     ASSERT_EQ(0, counter);
-    printf("spin_node_some() - no callback expected\n");
-    executor.spin_node_some(node);
+    printf("spin_some() - no callback expected\n");
+    executor.spin_some();
     ASSERT_EQ(0, counter);
 
     msg->data = 1;
     publisher->publish(msg);
     ASSERT_EQ(0, counter);
 
-    // wait for the first callback
-    printf("spin_node_once() - callback (1) expected\n");
-    executor.spin_node_once(node);
+    // spin until the subscription is called or a timeout occurs
+    printf("spin_until_future_complete(sub_called_future) - callback (1) expected\n");
+    wait_for_future(executor, sub_called_future, fail_after_timeout);
     ASSERT_EQ(1, counter);
 
-    // nothing should be pending here
-    printf("spin_node_once(nonblocking) - no callback expected\n");
-    executor.spin_node_once(node, std::chrono::milliseconds(0));
+    // no additional calls to the subscription should be pending here
+    printf("spin_once(nonblocking) - no callback expected\n");
+    executor.spin_once(0_s);
     ASSERT_EQ(1, counter);
-    printf("spin_node_some() - no callback expected\n");
-    executor.spin_node_some(node);
+    printf("spin_some() - no callback expected\n");
+    executor.spin_some();
     ASSERT_EQ(1, counter);
 
     msg->data = 2;
@@ -129,53 +158,46 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
     ASSERT_EQ(1, counter);
 
     // while four messages have been published one callback should be triggered here
-    printf("spin_node_once(nonblocking) - callback (2) expected\n");
-    executor.spin_node_once(node, std::chrono::milliseconds(0));
-    if (counter == 1) {
-      // give the executor thread time to process the event
-      std::this_thread::sleep_for(std::chrono::milliseconds(25));
-      printf("spin_node_once(nonblocking) - callback (2) expected - trying again\n");
-      executor.spin_node_once(node, std::chrono::milliseconds(0));
-    }
+    printf("spin_until_future_complete(short timeout) - callback (2) expected\n");
+    sub_called = std::promise<void>();
+    sub_called_future = sub_called.get_future();
+    wait_for_future(executor, sub_called_future, 10_ms);
     ASSERT_EQ(2, counter);
 
     // check for next pending call
-    printf("spin_node_once(nonblocking) - callback (3) expected\n");
-    executor.spin_node_once(node, std::chrono::milliseconds(0));
-    if (counter == 2) {
-      // give the executor thread time to process the event
-      std::this_thread::sleep_for(std::chrono::milliseconds(25));
-      printf("spin_node_once(nonblocking) - callback (3) expected - trying again\n");
-      executor.spin_node_once(node, std::chrono::milliseconds(0));
-    }
+    printf("spin_until_future_complete(short timeout) - callback (3) expected\n");
+    sub_called = std::promise<void>();
+    sub_called_future = sub_called.get_future();
+    wait_for_future(executor, sub_called_future, 10_ms);
     ASSERT_EQ(3, counter);
 
-    // check for all remaning calls
-    printf("spin_node_some() - callbacks (4 and 5) expected\n");
-    executor.spin_node_some(node);
-    if (counter == 3 || counter == 4) {
-      // give the executor thread time to process the event
-      std::this_thread::sleep_for(std::chrono::milliseconds(25));
-      printf("spin_node_some() - callback (%s) expected - trying again\n",
-        counter == 3 ? "4 and 5" : "5");
-      executor.spin_node_once(node, std::chrono::milliseconds(0));
-    }
+    // check for next pending call
+    printf("spin_until_future_complete(short timeout) - callback (4) expected\n");
+    sub_called = std::promise<void>();
+    sub_called_future = sub_called.get_future();
+    wait_for_future(executor, sub_called_future, 10_ms);
+    ASSERT_EQ(4, counter);
+
+    // check for last pending call (blocking)
+    printf("spin_until_future_complete() - callback (5) expected\n");
+    sub_called = std::promise<void>();
+    sub_called_future = sub_called.get_future();
+    wait_for_future(executor, sub_called_future, fail_after_timeout);
     ASSERT_EQ(5, counter);
   }
   // the subscriber goes out of scope and should be not receive any callbacks anymore
 
-  // wait a moment for everything to initialize
-  // TODO(gerkey): fix nondeterministic startup behavior
-  rclcpp::utilities::sleep_for(1_ms);
-
   msg->data = 6;
   publisher->publish(msg);
 
-  std::this_thread::sleep_for(std::chrono::milliseconds(25));
-
   // check that no further callbacks have been invoked
-  printf("spin_node_some() - no callbacks expected\n");
-  executor.spin_node_some(node);
+  printf("spin_until_future_complete(short timeout) - no callbacks expected\n");
+  sub_called = std::promise<void>();
+  sub_called_future = sub_called.get_future();
+  using rclcpp::executor::FutureReturnCode;
+  rclcpp::executor::FutureReturnCode future_ret =
+    executor.spin_until_future_complete(sub_called_future, 100_ms);
+  EXPECT_EQ(FutureReturnCode::TIMEOUT, future_ret);
   ASSERT_EQ(5, counter);
 }
 
