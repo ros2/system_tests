@@ -34,14 +34,15 @@ TEST(CLASSNAME(test_publisher, RMW_IMPLEMENTATION), publish_with_const_reference
 
   auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>("test_publisher", 10);
 
-  uint32_t counter = 0;
+  int counter = 0;
   auto callback =
     [&counter](test_rclcpp::msg::UInt32::ConstSharedPtr msg,
       const rmw_message_info_t & info) -> void
     {
       ++counter;
-      printf("  callback() %4u with message data %u\n", counter, msg->data);
-      ASSERT_EQ(counter, msg->data);
+      printf("  callback() %d with message data %u\n", counter, msg->data);
+      ASSERT_GE(0, counter);
+      ASSERT_EQ(static_cast<unsigned int>(counter), msg->data);
       ASSERT_FALSE(info.from_intra_process);
     };
 

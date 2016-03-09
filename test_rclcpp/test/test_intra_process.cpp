@@ -36,7 +36,7 @@ TEST(test_intra_process_within_one_node, nominal_usage) {
   auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(
     "test_intra_process", custom_qos_profile);
 
-  uint32_t counter = 0;
+  int counter = 0;
   auto callback =
     [&counter](
     const test_rclcpp::msg::UInt32::SharedPtr msg,
@@ -44,8 +44,9 @@ TEST(test_intra_process_within_one_node, nominal_usage) {
     ) -> void
     {
       ++counter;
-      printf("  callback() %4u with message data %u\n", counter, msg->data);
-      ASSERT_EQ(counter, msg->data);
+      printf("  callback() %d with message data %u\n", counter, msg->data);
+      ASSERT_GE(counter, 0);
+      ASSERT_EQ(static_cast<unsigned int>(counter), msg->data);
       ASSERT_TRUE(message_info.from_intra_process);
     };
 
