@@ -218,7 +218,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
     {
       ++counter;
       printf("  callback() %d with message data %u\n", counter, msg->data);
-      ASSERT_TRUE(counter >= 0);
+      ASSERT_GE(counter, 0);
       ASSERT_EQ(static_cast<unsigned int>(counter), msg->data);
     };
 
@@ -266,7 +266,7 @@ public:
   void callback(test_rclcpp::msg::UInt32::ConstSharedPtr msg)
   {
     ++counter;
-    ASSERT_TRUE(counter >= 0);
+    ASSERT_GE(counter, 0);
     ASSERT_EQ(static_cast<unsigned int>(counter), msg->data);
   }
   CallbackHolder()
@@ -387,7 +387,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
     {
       ++counter;
       printf("  callback() %d with message data %u\n", counter, msg->data);
-      ASSERT_TRUE(counter >= 0);
+      ASSERT_GE(counter, 0);
       ASSERT_EQ(static_cast<unsigned int>(counter), msg->data);
       ASSERT_FALSE(info.from_intra_process);
     };
@@ -440,7 +440,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), spin_before_subscription)
     {
       ++counter;
       printf("  callback() %d with message data %u\n", counter, msg->data);
-      ASSERT_TRUE(counter >= 0);
+      ASSERT_GE(counter, 0);
       ASSERT_EQ(static_cast<unsigned int>(counter), msg->data);
     };
 
