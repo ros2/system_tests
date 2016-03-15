@@ -41,7 +41,7 @@ TEST(CLASSNAME(test_publisher, RMW_IMPLEMENTATION), publish_with_const_reference
     {
       ++counter;
       printf("  callback() %d with message data %u\n", counter, msg->data);
-      ASSERT_GE(0, counter);
+      ASSERT_GE(counter, 0);
       ASSERT_EQ(static_cast<unsigned int>(counter), msg->data);
       ASSERT_FALSE(info.from_intra_process);
     };

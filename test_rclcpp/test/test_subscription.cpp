@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <chrono>
+#include <cinttypes>
 #include <future>
 #include <iostream>
 #include <string>
@@ -61,8 +62,10 @@ void busy_wait_for_subscriber(
     std::this_thread::sleep_for(sleep_period);
     time_slept += sleep_period;
   }
-  printf("Waited %lli microseconds for the subscriber to connect to topic '%s'\n",
-    std::chrono::duration_cast<std::chrono::microseconds>(time_slept).count(),
+  int64_t time_slept_count =
+    std::chrono::duration_cast<std::chrono::microseconds>(time_slept).count();
+  printf("Waited %" PRId64 " microseconds for the subscriber to connect to topic '%s'\n",
+    time_slept_count,
     topic_name.c_str());
 }
 
