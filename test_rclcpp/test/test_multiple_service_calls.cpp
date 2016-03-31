@@ -37,8 +37,6 @@ void handle_add_two_ints(
 }
 
 TEST(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), two_service_calls) {
-  rclcpp::init(0, nullptr);
-
   auto node = rclcpp::Node::make_shared("test_two_service_calls");
 
   node->create_service<test_rclcpp::srv::AddTwoInts>(
@@ -77,8 +75,6 @@ TEST(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), two_service_calls) {
 
 TEST(CLASSNAME(test_multiple_service_calls, RMW_IMPLEMENTATION), multiple_clients) {
   const uint32_t n = 5;
-
-  rclcpp::init(0, nullptr);
 
   auto node = rclcpp::Node::make_shared("test_multiple_clients");
   rclcpp::executors::SingleThreadedExecutor executor;
@@ -131,4 +127,11 @@ TEST(CLASSNAME(test_multiple_service_calls, RMW_IMPLEMENTATION), multiple_client
     printf("Got response #%u with value %zd\n", i, results[i].get()->sum);
     fflush(stdout);
   }
+}
+
+int main(int argc, char ** argv)
+{
+  rclcpp::init(argc, argv);
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
 }
