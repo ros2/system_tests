@@ -13,6 +13,8 @@
 // limitations under the License.
 
 #include <atomic>
+#include <cinttypes>
+#include <future>
 #include <stdexcept>
 
 #include "gtest/gtest.h"
@@ -28,6 +30,40 @@
 #else
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
+
+#define STRING_(s) #s
+#define STRING(s) STRING_(s)
+
+// Sleep for timeout ms or until a subscriber has registered for the topic
+void busy_wait_for_subscriber(
+  std::shared_ptr<const rclcpp::Node> node,
+  const std::string & topic_name,
+  std::chrono::milliseconds timeout = std::chrono::milliseconds(1),
+  std::chrono::microseconds sleep_period = std::chrono::microseconds(100))
+{
+#ifdef RMW_IMPLEMENTATION
+  if (strcmp(STRING(RMW_IMPLEMENTATION), "rmw_fastrtps_cpp") == 0) {
+    printf("FastRTPS detected, sleeping for a fixed interval\n");
+    (void)topic_name;
+    (void)node;
+    (void)sleep_period;
+    std::this_thread::sleep_for(timeout);
+    return;
+  }
+#endif
+  std::chrono::microseconds time_slept(0);
+  while (node->count_subscribers(topic_name) == 0 &&
+    time_slept < std::chrono::duration_cast<std::chrono::microseconds>(timeout))
+  {
+    std::this_thread::sleep_for(sleep_period);
+    time_slept += sleep_period;
+  }
+  int64_t time_slept_count =
+    std::chrono::duration_cast<std::chrono::microseconds>(time_slept).count();
+  printf("Waited %" PRId64 " microseconds for the subscriber to connect to topic '%s'\n",
+    time_slept_count,
+    topic_name.c_str());
+}
 
 TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), recursive_spin_call) {
   rclcpp::executors::SingleThreadedExecutor executor;
@@ -132,18 +168,20 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), notify) {
   executor.add_node(node);
   {
     std::thread spin_thread(executor_spin_lambda);
-    bool timer_triggered = false;
+    std::promise<void> timer_promise;
+    std::shared_future<void> timer_future(timer_promise.get_future());
+
     auto timer = node->create_wall_timer(
       1_ms,
-      [&executor, &timer_triggered](rclcpp::TimerBase & timer)
+      [&timer_promise](rclcpp::TimerBase & timer)
     {
-      timer_triggered = true;
-      executor.cancel();
+      timer_promise.set_value();
       timer.cancel();
     });
+    EXPECT_EQ(std::future_status::ready, timer_future.wait_for(10_ms));
+    executor.cancel();
 
     spin_thread.join();
-    EXPECT_TRUE(timer_triggered);
   }
 
   {
@@ -156,16 +194,26 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), notify) {
         EXPECT_EQ(msg->data, 42);
         executor.cancel();
       };
+
     auto subscription = node->create_subscription<test_rclcpp::msg::UInt32>(
       "test_executor_notify_subscription",
       sub_callback,
       rmw_qos_profile_default);
+    busy_wait_for_subscriber(node, "test_executor_notify_subscription");
+
 
     auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(
       "test_executor_notify_subscription", rmw_qos_profile_default);
-    test_rclcpp::msg::UInt32 pub_msg;
-    pub_msg.data = 42;
-    publisher->publish(pub_msg);
+    auto timer = node->create_wall_timer(
+      1_ms,
+      [&publisher]()
+      {
+        test_rclcpp::msg::UInt32 pub_msg;
+        pub_msg.data = 42;
+        publisher->publish(pub_msg);
+      }
+    );
+
     spin_thread.join();
 
     EXPECT_TRUE(subscription_triggered);
