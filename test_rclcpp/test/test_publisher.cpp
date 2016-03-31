@@ -30,6 +30,7 @@
 
 // Short test for the const reference publish signature.
 TEST(CLASSNAME(test_publisher, RMW_IMPLEMENTATION), publish_with_const_reference) {
+  rclcpp::init(0, nullptr);
   auto node = rclcpp::Node::make_shared("test_publisher");
 
   auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>("test_publisher", 10);
