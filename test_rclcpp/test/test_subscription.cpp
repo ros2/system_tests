@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include <chrono>
-#include <cinttypes>
 #include <future>
 #include <iostream>
 #include <string>
@@ -21,6 +20,8 @@
 #include "gtest/gtest.h"
 
 #include "rclcpp/rclcpp.hpp"
+
+#include "test_rclcpp/utils.hpp"
 
 #include "test_rclcpp/msg/u_int32.hpp"
 
@@ -32,42 +33,9 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
-#define STRING_(s) #s
-#define STRING(s) STRING_(s)
-
 static const std::chrono::milliseconds sleep_per_loop(10);
 static const size_t max_loops = 200;
 
-// Sleep for timeout ms or until a subscriber has registered for the topic
-void busy_wait_for_subscriber(
-  std::shared_ptr<const rclcpp::Node> node,
-  const std::string & topic_name,
-  std::chrono::milliseconds timeout = std::chrono::milliseconds(1),
-  std::chrono::microseconds sleep_period = std::chrono::microseconds(100))
-{
-#ifdef RMW_IMPLEMENTATION
-  if (strcmp(STRING(RMW_IMPLEMENTATION), "rmw_fastrtps_cpp") == 0) {
-    printf("FastRTPS detected, sleeping for a fixed interval\n");
-    (void)topic_name;
-    (void)node;
-    (void)sleep_period;
-    std::this_thread::sleep_for(timeout);
-    return;
-  }
-#endif
-  std::chrono::microseconds time_slept(0);
-  while (node->count_subscribers(topic_name) == 0 &&
-    time_slept < std::chrono::duration_cast<std::chrono::microseconds>(timeout))
-  {
-    std::this_thread::sleep_for(sleep_period);
-    time_slept += sleep_period;
-  }
-  int64_t time_slept_count =
-    std::chrono::duration_cast<std::chrono::microseconds>(time_slept).count();
-  printf("Waited %" PRId64 " microseconds for the subscriber to connect to topic '%s'\n",
-    time_slept_count,
-    topic_name.c_str());
-}
 
 template<typename DurationT>
 void wait_for_future(
@@ -124,7 +92,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
       topic, callback, custom_qos_profile);
 
     // wait for discovery and the subscriber to connect
-    busy_wait_for_subscriber(node, topic);
+    test_rclcpp::busy_wait_for_subscriber(node, topic);
 
     // start condition
     ASSERT_EQ(0, counter);
@@ -233,7 +201,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
     "test_subscription", callback, rmw_qos_profile_default);
 
   // wait a moment for everything to initialize
-  busy_wait_for_subscriber(node, "test_subscription");
+  test_rclcpp::busy_wait_for_subscriber(node, "test_subscription");
 
   // start condition
   ASSERT_EQ(0, counter);
@@ -298,7 +266,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
     "test_subscription", cb_std_function, rmw_qos_profile_default);
 
   // wait a moment for everything to initialize
-  busy_wait_for_subscriber(node, "test_subscription");
+  test_rclcpp::busy_wait_for_subscriber(node, "test_subscription");
 
   // start condition
   ASSERT_EQ(0, cb_holder.counter);
@@ -347,7 +315,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
     rmw_qos_profile_default);
 
   // wait a moment for everything to initialize
-  busy_wait_for_subscriber(node, "test_subscription");
+  test_rclcpp::busy_wait_for_subscriber(node, "test_subscription");
 
   // start condition
   ASSERT_EQ(0, cb_holder.counter);
@@ -403,7 +371,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
     "test_subscription", callback, rmw_qos_profile_default);
 
   // wait a moment for the subscriber to register
-  busy_wait_for_subscriber(node, "test_subscription");
+  test_rclcpp::busy_wait_for_subscriber(node, "test_subscription");
 
   // start condition
   ASSERT_EQ(0, counter);
@@ -460,7 +428,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), spin_before_subscription)
   // start condition
   ASSERT_EQ(0, counter);
 
-  busy_wait_for_subscriber(node, "spin_before_subscription");
+  test_rclcpp::busy_wait_for_subscriber(node, "spin_before_subscription");
 
   msg->data = 1;
   // Create a ConstSharedPtr message to publish

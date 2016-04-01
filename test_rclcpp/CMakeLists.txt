@@ -55,6 +55,7 @@ if(AMENT_ENABLE_TESTING)
       endforeach()
       ament_target_dependencies(${target}${target_suffix}
         "rclcpp${target_suffix}")
+      target_include_directories(${target}${target_suffix} PUBLIC include)
     endif()
   endmacro()
 

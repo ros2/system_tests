@@ -16,10 +16,13 @@
 #include <cinttypes>
 #include <future>
 #include <stdexcept>
+#include <string>
 
 #include "gtest/gtest.h"
 
 #include "rclcpp/rclcpp.hpp"
+
+#include "test_rclcpp/utils.hpp"
 
 #include "test_rclcpp/msg/u_int32.hpp"
 #include "test_rclcpp/srv/add_two_ints.hpp"
@@ -31,39 +34,6 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
-#define STRING_(s) #s
-#define STRING(s) STRING_(s)
-
-// Sleep for timeout ms or until a subscriber has registered for the topic
-void busy_wait_for_subscriber(
-  std::shared_ptr<const rclcpp::Node> node,
-  const std::string & topic_name,
-  std::chrono::milliseconds timeout = std::chrono::milliseconds(1),
-  std::chrono::microseconds sleep_period = std::chrono::microseconds(100))
-{
-#ifdef RMW_IMPLEMENTATION
-  if (strcmp(STRING(RMW_IMPLEMENTATION), "rmw_fastrtps_cpp") == 0) {
-    printf("FastRTPS detected, sleeping for a fixed interval\n");
-    (void)topic_name;
-    (void)node;
-    (void)sleep_period;
-    std::this_thread::sleep_for(timeout);
-    return;
-  }
-#endif
-  std::chrono::microseconds time_slept(0);
-  while (node->count_subscribers(topic_name) == 0 &&
-    time_slept < std::chrono::duration_cast<std::chrono::microseconds>(timeout))
-  {
-    std::this_thread::sleep_for(sleep_period);
-    time_slept += sleep_period;
-  }
-  int64_t time_slept_count =
-    std::chrono::duration_cast<std::chrono::microseconds>(time_slept).count();
-  printf("Waited %" PRId64 " microseconds for the subscriber to connect to topic '%s'\n",
-    time_slept_count,
-    topic_name.c_str());
-}
 
 TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), recursive_spin_call) {
   rclcpp::executors::SingleThreadedExecutor executor;
@@ -199,7 +169,7 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), notify) {
       "test_executor_notify_subscription",
       sub_callback,
       rmw_qos_profile_default);
-    busy_wait_for_subscriber(node, "test_executor_notify_subscription");
+    test_rclcpp::busy_wait_for_subscriber(node, "test_executor_notify_subscription");
 
 
     auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(
@@ -207,12 +177,12 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), notify) {
     auto timer = node->create_wall_timer(
       1_ms,
       [&publisher]()
-      {
-        test_rclcpp::msg::UInt32 pub_msg;
-        pub_msg.data = 42;
-        publisher->publish(pub_msg);
-      }
-    );
+    {
+      test_rclcpp::msg::UInt32 pub_msg;
+      pub_msg.data = 42;
+      publisher->publish(pub_msg);
+    }
+      );
 
     spin_thread.join();
 
