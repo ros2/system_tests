@@ -20,7 +20,7 @@
 
 #include "test_communication/msg/u_int32.hpp"
 
-int main(int argv, char ** argv)
+int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
   auto start = std::chrono::steady_clock::now();
