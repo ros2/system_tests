@@ -55,6 +55,7 @@ if(AMENT_ENABLE_TESTING)
       endforeach()
       ament_target_dependencies(${target}${target_suffix}
         "rclcpp${target_suffix}")
+      target_include_directories(${target}${target_suffix} PUBLIC include)
     endif()
   endmacro()
 
@@ -101,7 +102,7 @@ if(AMENT_ENABLE_TESTING)
       TIMEOUT 15)
     custom_gtest(gtest_executor
       "test/test_executor.cpp"
-      TIMEOUT 15)
+      TIMEOUT 20)
     custom_gtest(gtest_repeated_publisher_subscriber
       "test/test_repeated_publisher_subscriber.cpp"
       TIMEOUT 15)

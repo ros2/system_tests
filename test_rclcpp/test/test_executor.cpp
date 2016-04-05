@@ -13,11 +13,19 @@
 // limitations under the License.
 
 #include <atomic>
+#include <cinttypes>
+#include <future>
 #include <stdexcept>
+#include <string>
 
 #include "gtest/gtest.h"
 
 #include "rclcpp/rclcpp.hpp"
+
+#include "test_rclcpp/utils.hpp"
+
+#include "test_rclcpp/msg/u_int32.hpp"
+#include "test_rclcpp/srv/add_two_ints.hpp"
 
 #ifdef RMW_IMPLEMENTATION
 # define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
@@ -25,6 +33,7 @@
 #else
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
+
 
 TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), recursive_spin_call) {
   rclcpp::executors::SingleThreadedExecutor executor;
@@ -117,6 +126,96 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), multiple_executors) {
   // Try to add node1 to executor2. It should throw, since node1 was already added to executor1.
   ASSERT_THROW(executor2.add_node(node1), std::runtime_error);
 }
+
+// Check that the executor is notified when a node adds a new timer, publisher, subscription,
+// service or client.
+TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), notify) {
+  rclcpp::executors::SingleThreadedExecutor executor;
+  auto executor_spin_lambda = [&executor]() {
+      executor.spin();
+    };
+  auto node = rclcpp::Node::make_shared("test_executor_notify");
+  executor.add_node(node);
+  {
+    std::thread spin_thread(executor_spin_lambda);
+    std::promise<void> timer_promise;
+    std::shared_future<void> timer_future(timer_promise.get_future());
+
+    auto timer = node->create_wall_timer(
+      1_ms,
+      [&timer_promise](rclcpp::TimerBase & timer)
+    {
+      timer_promise.set_value();
+      timer.cancel();
+    });
+    EXPECT_EQ(std::future_status::ready, timer_future.wait_for(10_ms));
+    executor.cancel();
+
+    spin_thread.join();
+  }
+
+  {
+    std::thread spin_thread(executor_spin_lambda);
+    bool subscription_triggered = false;
+    auto sub_callback =
+      [&executor, &subscription_triggered](test_rclcpp::msg::UInt32::ConstSharedPtr msg) -> void
+      {
+        subscription_triggered = true;
+        EXPECT_EQ(msg->data, 42);
+        executor.cancel();
+      };
+
+    auto subscription = node->create_subscription<test_rclcpp::msg::UInt32>(
+      "test_executor_notify_subscription",
+      sub_callback,
+      rmw_qos_profile_default);
+    test_rclcpp::busy_wait_for_subscriber(node, "test_executor_notify_subscription");
+
+
+    auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(
+      "test_executor_notify_subscription", rmw_qos_profile_default);
+    auto timer = node->create_wall_timer(
+      1_ms,
+      [&publisher]()
+    {
+      test_rclcpp::msg::UInt32 pub_msg;
+      pub_msg.data = 42;
+      publisher->publish(pub_msg);
+    }
+      );
+
+    spin_thread.join();
+
+    EXPECT_TRUE(subscription_triggered);
+  }
+
+  {
+    std::thread spin_thread(executor_spin_lambda);
+
+    auto service = node->create_service<test_rclcpp::srv::AddTwoInts>(
+      "test_executor_notify_service",
+      [](test_rclcpp::srv::AddTwoInts::Request::SharedPtr request,
+      test_rclcpp::srv::AddTwoInts::Response::SharedPtr response)
+    {
+      response->sum = request->a + request->b;
+    });
+
+    auto client = node->create_client<test_rclcpp::srv::AddTwoInts>(
+      "test_executor_notify_service"
+      );
+    auto request = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
+    request->a = 4;
+    request->b = 2;
+    auto future_result = client->async_send_request(request);
+    EXPECT_EQ(future_result.get()->sum, 6);
+    executor.cancel();
+    spin_thread.join();
+  }
+}
+
+// test removing a node
+
+// test notify with multiple nodes
 
 int main(int argc, char ** argv)
 {
