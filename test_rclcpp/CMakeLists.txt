@@ -39,7 +39,7 @@ if(AMENT_ENABLE_TESTING)
 
   macro(custom_gtest target)
     # get typesupport of rmw implementation to include / link against the corresponding interfaces
-    get_rmw_typesupport(typesupport_impls "${rmw_implementation}")
+    get_rmw_typesupport_cpp(typesupport_impls "${rmw_implementation}")
 
     ament_add_gtest(${target}${target_suffix} ${ARGN})
     if(TARGET ${target}${target_suffix})
