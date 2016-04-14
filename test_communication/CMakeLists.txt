@@ -50,7 +50,7 @@ if(AMENT_ENABLE_TESTING)
 
   function(custom_test target)
     # get typesupport of rmw implementation to include / link against the corresponding interfaces
-    get_rmw_typesupport(typesupport_impls "${rmw_implementation}" LANGUAGE "CPP")
+    get_rmw_typesupport(typesupport_impls "${rmw_implementation}" LANGUAGE "cpp")
 
     add_executable(${target}${target_suffix} ${ARGN})
     target_link_libraries(${target}${target_suffix}
@@ -84,7 +84,7 @@ if(AMENT_ENABLE_TESTING)
 
   function(custom_executable target)
     # get typesupport of rmw implementation to include / link against the corresponding interfaces
-    get_rmw_typesupport(typesupport_impls "${rmw_implementation}" LANGUAGE "CPP")
+    get_rmw_typesupport(typesupport_impls "${rmw_implementation}" LANGUAGE "cpp")
 
     add_executable(${target}${target_suffix} ${ARGN})
     target_link_libraries(${target}${target_suffix}
