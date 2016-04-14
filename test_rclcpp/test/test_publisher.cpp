@@ -21,6 +21,7 @@
 
 #include "test_rclcpp/utils.hpp"
 #include "test_rclcpp/msg/u_int32.hpp"
+#include "test_rclcpp/utils.hpp"
 
 #ifdef RMW_IMPLEMENTATION
 # define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
@@ -57,6 +58,7 @@ TEST(CLASSNAME(test_publisher, RMW_IMPLEMENTATION), publish_with_const_reference
 
   // start condition
   ASSERT_EQ(0, counter);
+  test_rclcpp::busy_wait_for_subscriber(node, "test_publisher");
 
   // nothing should be pending here
   executor.spin_node_some(node);
