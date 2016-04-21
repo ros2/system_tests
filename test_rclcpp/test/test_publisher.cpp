@@ -19,6 +19,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 
+#include "test_rclcpp/utils.hpp"
 #include "test_rclcpp/msg/u_int32.hpp"
 
 #ifdef RMW_IMPLEMENTATION
@@ -60,6 +61,7 @@ TEST(CLASSNAME(test_publisher, RMW_IMPLEMENTATION), publish_with_const_reference
   // nothing should be pending here
   executor.spin_node_some(node);
   ASSERT_EQ(0, counter);
+  test_rclcpp::busy_wait_for_subscriber(node, "test_publisher");
 
   msg.data = 1;
   publisher->publish(msg);
