@@ -22,6 +22,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp/executors.hpp"
 
+#include "test_rclcpp/utils.hpp"
 #include "test_rclcpp/msg/u_int32.hpp"
 #include "test_rclcpp/srv/add_two_ints.hpp"
 
@@ -71,8 +72,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   msg->data = 0;
 
   // wait a moment for everything to initialize
-  // TODO(jacquelinekay): fix nondeterministic startup behavior
-  rclcpp::utilities::sleep_for(1_ms);
+  test_rclcpp::busy_wait_for_subscriber(node, "multi_consumer");
 
   // sanity check that no callbacks have fired
   EXPECT_EQ(0, counter.load());
@@ -104,12 +104,14 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   msg->data = 0;
 
   ASSERT_TRUE(std::numeric_limits<int>::max() > (5 * subscriptions.size()));
-  int expected_count = static_cast<int>(5 * subscriptions.size());
+  const int expected_count = static_cast<int>(5 * subscriptions.size());
 
+  std::mutex publish_mutex;
   auto publish_callback = [
-    msg, &pub, &executor, &counter, &expected_count, &sleep_per_loop, &max_loops](
+    msg, &pub, &executor, &counter, &expected_count, &sleep_per_loop, &max_loops, &publish_mutex](
     rclcpp::timer::TimerBase & timer) -> void
     {
+      std::lock_guard<std::mutex> lock(publish_mutex);
       ++msg->data;
       if (msg->data > 5) {
         timer.cancel();
