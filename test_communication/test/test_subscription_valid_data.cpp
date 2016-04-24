@@ -20,8 +20,9 @@
 
 #include "test_communication/msg/u_int32.hpp"
 
-int main(int, char **)
+int main(int argc, char ** argv)
 {
+  rclcpp::init(argc, argv);
   auto start = std::chrono::steady_clock::now();
 
   auto node = rclcpp::Node::make_shared("test_subscription_valid_data");

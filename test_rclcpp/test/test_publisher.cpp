@@ -19,6 +19,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 
+#include "test_rclcpp/utils.hpp"
 #include "test_rclcpp/msg/u_int32.hpp"
 
 #ifdef RMW_IMPLEMENTATION
@@ -30,6 +31,7 @@
 
 // Short test for the const reference publish signature.
 TEST(CLASSNAME(test_publisher, RMW_IMPLEMENTATION), publish_with_const_reference) {
+  rclcpp::init(0, nullptr);
   auto node = rclcpp::Node::make_shared("test_publisher");
 
   auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>("test_publisher", 10);
@@ -59,6 +61,7 @@ TEST(CLASSNAME(test_publisher, RMW_IMPLEMENTATION), publish_with_const_reference
   // nothing should be pending here
   executor.spin_node_some(node);
   ASSERT_EQ(0, counter);
+  test_rclcpp::busy_wait_for_subscriber(node, "test_publisher");
 
   msg.data = 1;
   publisher->publish(msg);

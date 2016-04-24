@@ -124,7 +124,7 @@ TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_during_wait) {
 
   // check number of callbacks
   printf("expecting 4 callbacks\n");
-  ASSERT_EQ(4, counter);
+  EXPECT_EQ(4, counter);
 
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);
