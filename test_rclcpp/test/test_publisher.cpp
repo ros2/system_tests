@@ -19,7 +19,6 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "test_rclcpp/utils.hpp"
 #include "test_rclcpp/msg/u_int32.hpp"
 #include "test_rclcpp/utils.hpp"
 
