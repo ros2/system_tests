@@ -12,7 +12,7 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 
-if(AMENT_ENABLE_TESTING)
+if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 
@@ -188,7 +188,7 @@ if(AMENT_ENABLE_TESTING)
   endmacro()
 
   call_for_each_rmw_implementation(targets)
-endif()  # AMENT_ENABLE_TESTING
+endif()  # BUILD_TESTING
 
 # TODO should not install anything
 ament_package()
