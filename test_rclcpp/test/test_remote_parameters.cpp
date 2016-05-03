@@ -21,7 +21,14 @@
 
 #include "parameter_fixtures.hpp"
 
-TEST(parameters, test_remote_parameters) {
+#ifdef RMW_IMPLEMENTATION
+# define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
+# define CLASSNAME(NAME, SUFFIX) CLASSNAME_(NAME, SUFFIX)
+#else
+# define CLASSNAME(NAME, SUFFIX) NAME
+#endif
+
+TEST(CLASSNAME(parameters, rmw_implementation), test_remote_parameters) {
   std::string test_server_name = "test_parameters_server";
   // TODO(tfoote) make test_server name parameterizable
   // if (argc >= 2) {

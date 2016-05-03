@@ -21,10 +21,18 @@
 
 #include "test_rclcpp/msg/u_int32.hpp"
 
+#ifdef RMW_IMPLEMENTATION
+# define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
+# define CLASSNAME(NAME, SUFFIX) CLASSNAME_(NAME, SUFFIX)
+#else
+# define CLASSNAME(NAME, SUFFIX) NAME
+#endif
+
+
 static const std::chrono::milliseconds sleep_per_loop(10);
 static const int max_loops = 200;
 
-TEST(test_intra_process_within_one_node, nominal_usage) {
+TEST(CLASSNAME(test_intra_process_within_one_node, RMW_IMPLEMENTATION), nominal_usage) {
   rclcpp::init(0, nullptr);
 
   // use intra process = true
