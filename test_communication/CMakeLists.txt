@@ -28,6 +28,7 @@ if(BUILD_TESTING)
     "msg/DynamicArrayNested.msg"
     "msg/DynamicArrayPrimitives.msg"
     "msg/Empty.msg"
+    "msg/FieldsWithSameType.msg"
     "msg/Nested.msg"
     "msg/Primitives.msg"
     "msg/StaticArrayNested.msg"
