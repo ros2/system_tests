@@ -28,13 +28,13 @@ if(BUILD_TESTING)
     "msg/DynamicArrayNested.msg"
     "msg/DynamicArrayPrimitives.msg"
     "msg/Empty.msg"
-    "msg/FieldsWithSameType.msg"
     "msg/Nested.msg"
     "msg/Primitives.msg"
     "msg/StaticArrayNested.msg"
     "msg/StaticArrayPrimitives.msg"
   )
   set(other_message_files
+    "msg/FieldsWithSameType.msg"
     "msg/UInt32.msg"
   )
   set(service_files
