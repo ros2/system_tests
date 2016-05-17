@@ -41,7 +41,8 @@ if(BUILD_TESTING)
     # get typesupport of rmw implementation to include / link against the corresponding interfaces
     get_rmw_typesupport(typesupport_impls "${rmw_implementation}" LANGUAGE "cpp")
 
-    ament_add_gtest(${target}${target_suffix} ${ARGN})
+    ament_add_gtest(${target}${target_suffix} ${ARGN}
+      ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
     if(TARGET ${target}${target_suffix})
       target_link_libraries(${target}${target_suffix}
         ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
@@ -90,7 +91,8 @@ if(BUILD_TESTING)
       OUTPUT "${test_name}${target_suffix}_$<CONFIGURATION>.py"
       INPUT "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}.py.configure"
     )
-    ament_add_nose_test(${test_name}${target_suffix} "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIGURATION>.py" ${ARGN})
+    ament_add_nose_test(${test_name}${target_suffix} "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIGURATION>.py" ${ARGN}
+      ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
     set_tests_properties(${test_name}${target_suffix} PROPERTIES DEPENDS "${executable1}${target_suffix} ${executable2}${target_suffix}")
   endmacro()
 

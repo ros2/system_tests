@@ -76,7 +76,7 @@ if(BUILD_TESTING)
       COMMAND "${target_path}/${target}${target_suffix}" empty
       TIMEOUT 15
       GENERATE_RESULT_FOR_RETURN_CODE_ZERO
-    )
+      ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
     set_tests_properties(
       ${target}${target_suffix}
       PROPERTIES REQUIRED_FILES "${target_path}/${target}${target_suffix}"
@@ -123,7 +123,8 @@ if(BUILD_TESTING)
         INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber_cpp${test_suffix}.py.configured"
       )
 
-      ament_add_nose_test(publisher_subscriber_cpp${test_suffix} "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber_cpp${test_suffix}_$<CONFIGURATION>.py" TIMEOUT 15)
+      ament_add_nose_test(publisher_subscriber_cpp${test_suffix} "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber_cpp${test_suffix}_$<CONFIGURATION>.py" TIMEOUT 15
+        ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
       set_tests_properties(
         publisher_subscriber_cpp${test_suffix}
         PROPERTIES DEPENDS "test_publisher_cpp__${rmw_implementation1};test_subscriber_cpp__${rmw_implementation2}"
@@ -149,7 +150,8 @@ if(BUILD_TESTING)
         INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier_cpp${test_suffix}.py.configured"
       )
 
-      ament_add_nose_test(requester_replier_cpp${test_suffix} "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier_cpp${test_suffix}_$<CONFIGURATION>.py" TIMEOUT 15)
+      ament_add_nose_test(requester_replier_cpp${test_suffix} "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier_cpp${test_suffix}_$<CONFIGURATION>.py" TIMEOUT 15
+        ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
       set_tests_properties(
         requester_replier_cpp${test_suffix}
         PROPERTIES DEPENDS "test_requester_cpp__${rmw_implementation1};test_replier_cpp__${rmw_implementation2}"
