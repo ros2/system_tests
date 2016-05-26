@@ -30,8 +30,8 @@ def fill_msg(msg, message_name, i):
         msg.time_value.nanosec = int(1000 * i)
     elif 'Primitives' == message_name:
         msg.bool_value = True
-#        msg.byte_value = b'a'
-#        msg.char_value = 'a'
+        msg.byte_value = b'a'
+        msg.char_value = 'a'
         msg.float32_value = float(i)
         msg.float64_value = float(i)
         msg.int8_value = int(-i)
@@ -45,8 +45,8 @@ def fill_msg(msg, message_name, i):
         msg.string_value = str(i)
     elif 'FieldsWithSameType' == message_name:
         msg.primitive_values1.bool_value = True
-#        msg.primitive_values1.byte_value = b'a'
-#        msg.primitive_values1.char_value = 'a'
+        msg.primitive_values1.byte_value = b'z'
+        msg.primitive_values1.char_value = 'z'
         msg.primitive_values1.float32_value = float(i)
         msg.primitive_values1.float64_value = float(i)
         msg.primitive_values1.int8_value = int(-i)
@@ -59,8 +59,8 @@ def fill_msg(msg, message_name, i):
         msg.primitive_values1.uint64_value = int(i)
         msg.primitive_values1.string_value = str(i)
         msg.primitive_values2.bool_value = False
-#        msg.primitive_values2.byte_value = b'a'
-#        msg.primitive_values2.char_value = 'a'
+        msg.primitive_values2.byte_value = b'0'
+        msg.primitive_values2.char_value = '\0'
         msg.primitive_values2.float32_value = float(i + 1)
         msg.primitive_values2.float64_value = float(i + 1)
         msg.primitive_values2.int8_value = int(-(i + 1))
@@ -75,8 +75,8 @@ def fill_msg(msg, message_name, i):
     elif 'StaticArrayNested' == message_name:
         for j in range(len(msg.primitive_values)):
             msg.primitive_values[j].bool_value = True
-    #        msg.primitive_values[j].byte_value = b'a'
-    #        msg.primitive_values[j].char_value = 'a'
+            msg.primitive_values[j].byte_value = b'a'
+            msg.primitive_values[j].char_value = 'a'
             msg.primitive_values[j].float32_value = float(i + j)
             msg.primitive_values[j].float64_value = float(i + j)
             msg.primitive_values[j].int8_value = int(-(i + j))
@@ -90,8 +90,8 @@ def fill_msg(msg, message_name, i):
             msg.primitive_values[j].string_value = str(i + j)
     elif 'StaticArrayPrimitives' == message_name:
         msg.bool_values = [True for x in range(len(msg.bool_values))]
-#        msg.byte_values.append(b'a')
-#        msg.char_values.append('a')
+        msg.byte_values.append(b'a')
+        msg.char_values.append('a')
         msg.float32_values = [float(i + x) for x in range(len(msg.float32_values))]
         msg.float64_values = [float(i + x) for x in range(len(msg.float32_values))]
         msg.int8_values = [int(-(i + x)) for x in range(len(msg.int8_values))]
@@ -105,8 +105,8 @@ def fill_msg(msg, message_name, i):
         msg.string_values = [str(i + x) for x in range(len(msg.string_values))]
     elif 'DynamicArrayPrimitives' == message_name:
         msg.bool_values = [True for x in range(i + 3)]
-#        msg.byte_values.append(b'a')
-#        msg.char_values.append('a')
+        msg.byte_values.append(b'a')
+        msg.char_values.append('a')
         msg.float32_values = [float(i + x) for x in range(i + 3)]
         msg.float64_values = [float(i + x) for x in range(i + 3)]
         msg.int8_values = [int(-(i + x)) for x in range(i + 3)]
@@ -124,8 +124,8 @@ def fill_msg(msg, message_name, i):
         for x in range(i + 3):
             tmpprimitive = Primitives()
             tmpprimitive.bool_value = True
-   #        tmpprimitive.byte_value = b'a'
-   #        tmpprimitive.char_value = 'a'
+            tmpprimitive.byte_value = b'a'
+            tmpprimitive.char_value = 'a'
             tmpprimitive.float32_value = float(x)
             tmpprimitive.float64_value = float(x)
             tmpprimitive.int8_value = int(-x)
