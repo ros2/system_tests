@@ -20,6 +20,8 @@ import sys
 
 # this is needed to allow rclpy to be imported from the build folder
 sys.path.insert(0, os.getcwd())
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(
+    os.getcwd())), 'rclpy'))
 
 
 def listener_cb(msg, message_name, received_messages):
