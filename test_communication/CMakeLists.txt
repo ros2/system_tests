@@ -194,6 +194,7 @@ if(BUILD_TESTING)
 
   call_for_each_rmw_implementation(targets)
 
+  # adding python tests
   set(TEST_PUBLISHER_PY_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/publisher_py.py")
   set(TEST_SUBSCRIBER_PY_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/subscriber_py.py")
 
