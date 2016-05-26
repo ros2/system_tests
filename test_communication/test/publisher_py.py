@@ -90,8 +90,8 @@ def fill_msg(msg, message_name, i):
             msg.primitive_values[j].string_value = str(i + j)
     elif 'StaticArrayPrimitives' == message_name:
         msg.bool_values = [True for x in range(len(msg.bool_values))]
-        msg.byte_values.append(b'a')
-        msg.char_values.append('a')
+        msg.char_values = [str(i + x) for x in range(len(msg.char_values))]
+        msg.byte_values = [bytes(i + x) for x in range(len(msg.byte_values))]
         msg.float32_values = [float(i + x) for x in range(len(msg.float32_values))]
         msg.float64_values = [float(i + x) for x in range(len(msg.float32_values))]
         msg.int8_values = [int(-(i + x)) for x in range(len(msg.int8_values))]
