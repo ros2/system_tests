@@ -31,7 +31,7 @@ void reply(
     std::pair<typename T::Request::SharedPtr, typename T::Response::SharedPtr>> & expected_services
 )
 {
-  // *INDENT-OFF* (prevent uncrustify from making unecessary indents here)
+  // *INDENT-OFF* (prevent uncrustify from making unnecessary indents here)
   auto callback =
     [&expected_services](
       const typename T::Request::SharedPtr received_request,
