@@ -184,7 +184,7 @@ if(BUILD_TESTING)
     set(rmw_implementation1 "${rmw_implementation}")
     set(target_suffix1 "${target_suffix}")
 
-    foreach(rmw_implementation2 ${_rmw_implementations2})
+    foreach(rmw_implementation2 ${rmw_implementations2})
       set(target_suffix2 "__${rmw_implementation2}")
       multi_targets()
     endforeach()
