@@ -24,6 +24,8 @@ if(BUILD_TESTING)
   endforeach()
 
   set(message_files
+    "msg/BoundedArrayNested.msg"
+    "msg/BoundedArrayPrimitives.msg"
     "msg/Builtins.msg"
     "msg/DynamicArrayNested.msg"
     "msg/DynamicArrayPrimitives.msg"
