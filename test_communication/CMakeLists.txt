@@ -135,7 +135,7 @@ if(BUILD_TESTING)
     endforeach()
 
     # TODO different vendors can't talk to each other right now
-    if((NOT "${rmw_implementation1} " STREQUAL "rmw_opensplice_cpp " AND NOT "${rmw_implementation2} " STREQUAL "rmw_opensplice_cpp ") OR "${rmw_implementation1} " STREQUAL "${rmw_implementation2} ")
+    if("${rmw_implementation1} " STREQUAL "${rmw_implementation2} " OR ("${rmw_implementation1} " STREQUAL "rmw_connext_cpp " AND "${rmw_implementation2} " STREQUAL "rmw_connext_dynamic_cpp ") OR ("${rmw_implementation1} " STREQUAL "rmw_connext_dynamic_cpp " AND "${rmw_implementation2} " STREQUAL "rmw_connext_cpp "))
     # test requester / replier
     set(TEST_REQUESTER_EXECUTABLE "$<TARGET_FILE:test_requester_cpp__${rmw_implementation1}>")
     set(TEST_REPLIER_EXECUTABLE "$<TARGET_FILE:test_replier_cpp__${rmw_implementation2}>")
