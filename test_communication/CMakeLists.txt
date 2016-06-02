@@ -123,16 +123,19 @@ if(BUILD_TESTING)
         INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber_cpp${test_suffix}.py.configured"
       )
 
-      ament_add_nose_test(publisher_subscriber_cpp${test_suffix} "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber_cpp${test_suffix}_$<CONFIGURATION>.py" TIMEOUT 15
-        ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
-      set_tests_properties(
-        publisher_subscriber_cpp${test_suffix}
-        PROPERTIES DEPENDS "test_publisher_cpp__${rmw_implementation1};test_subscriber_cpp__${rmw_implementation2}"
-      )
+      # TODO(dirk-thomas) publishing DynamicArrayPrimitives in OpenSplice is buggy
+      # https://github.com/ros2/rclcpp/issues/219
+      if(NOT "${TEST_MESSAGE_TYPE}" STREQUAL "dynamicarrayprimitives" OR NOT "${rmw_implementation1}" STREQUAL "rmw_opensplice_cpp")
+        ament_add_nose_test(publisher_subscriber_cpp${test_suffix} "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber_cpp${test_suffix}_$<CONFIGURATION>.py" TIMEOUT 15)
+        set_tests_properties(
+          publisher_subscriber_cpp${test_suffix}
+          PROPERTIES DEPENDS "test_publisher_cpp__${rmw_implementation1};test_subscriber_cpp__${rmw_implementation2}"
+        )
+      endif()
     endforeach()
 
     # TODO different vendors can't talk to each other right now
-    if((NOT "${rmw_implementation1} " STREQUAL "rmw_opensplice_cpp " AND NOT "${rmw_implementation2} " STREQUAL "rmw_opensplice_cpp ") OR "${rmw_implementation1} " STREQUAL "${rmw_implementation2} ")
+    if("${rmw_implementation1} " STREQUAL "${rmw_implementation2} " OR ("${rmw_implementation1} " STREQUAL "rmw_connext_cpp " AND "${rmw_implementation2} " STREQUAL "rmw_connext_dynamic_cpp ") OR ("${rmw_implementation1} " STREQUAL "rmw_connext_dynamic_cpp " AND "${rmw_implementation2} " STREQUAL "rmw_connext_cpp "))
     # test requester / replier
     set(TEST_REQUESTER_EXECUTABLE "$<TARGET_FILE:test_requester_cpp__${rmw_implementation1}>")
     set(TEST_REPLIER_EXECUTABLE "$<TARGET_FILE:test_replier_cpp__${rmw_implementation2}>")
@@ -150,8 +153,7 @@ if(BUILD_TESTING)
         INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier_cpp${test_suffix}.py.configured"
       )
 
-      ament_add_nose_test(requester_replier_cpp${test_suffix} "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier_cpp${test_suffix}_$<CONFIGURATION>.py" TIMEOUT 15
-        ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
+      ament_add_nose_test(requester_replier_cpp${test_suffix} "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier_cpp${test_suffix}_$<CONFIGURATION>.py" TIMEOUT 15)
       set_tests_properties(
         requester_replier_cpp${test_suffix}
         PROPERTIES DEPENDS "test_requester_cpp__${rmw_implementation1};test_replier_cpp__${rmw_implementation2}"
@@ -184,7 +186,7 @@ if(BUILD_TESTING)
     set(rmw_implementation1 "${rmw_implementation}")
     set(target_suffix1 "${target_suffix}")
 
-    foreach(rmw_implementation2 ${_rmw_implementations2})
+    foreach(rmw_implementation2 ${rmw_implementations2})
       set(target_suffix2 "__${rmw_implementation2}")
       multi_targets()
     endforeach()
