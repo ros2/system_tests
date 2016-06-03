@@ -190,7 +190,7 @@ void init_message(test_communication__msg__Primitives * message)
   message->int64_value = -8;
   message->uint64_value = 8;
   // rosidl_generator_c__String__init(&message->string_value);
-  rosidl_generator_c__String__assignn(&message->string_value, "hello world", 11);
+  rosidl_generator_c__String__assign(&message->string_value, "hello world");
 }
 
 template<>
@@ -284,7 +284,7 @@ void init_message(test_communication__msg__DynamicArrayPrimitives * message)
     message->int64_values.data[i] = -8;
     message->uint64_values.data[i] = 8;
     // rosidl_generator_c__String__init(&message->string_values.data[i]);
-    rosidl_generator_c__String__assignn(&message->string_values.data[i], "hello world", 11);
+    rosidl_generator_c__String__assign(&message->string_values.data[i], "hello world");
   }
 }
 
@@ -339,7 +339,7 @@ void init_message(test_communication__msg__StaticArrayPrimitives * message)
     message->int64_values[i] = -8;
     message->uint64_values[i] = 8;
     // rosidl_generator_c__String__init(&message->string_values[i]);
-    rosidl_generator_c__String__assignn(&message->string_values[i], "hello world", 11);
+    rosidl_generator_c__String__assign(&message->string_values[i], "hello world");
   }
 }
 
