@@ -148,7 +148,7 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), notify) {
       timer_promise.set_value();
       timer.cancel();
     });
-    EXPECT_EQ(std::future_status::ready, timer_future.wait_for(10_ms));
+    EXPECT_EQ(std::future_status::ready, timer_future.wait_for(50_ms));
     executor.cancel();
 
     spin_thread.join();
