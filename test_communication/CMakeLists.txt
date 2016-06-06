@@ -76,15 +76,12 @@ if(BUILD_TESTING)
       string(TOLOWER "${TEST_MESSAGE_TYPE}" TEST_MESSAGE_TYPE)
       ament_add_test(
         "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
-#        "${target}${target_suffix}"
         COMMAND "${target_path}/${target}${target_suffix}" "${TEST_MESSAGE_TYPE}"
-#        COMMAND "${target_path}/${target}${target_suffix}" dynamicarrayprimitives
         TIMEOUT 15
         GENERATE_RESULT_FOR_RETURN_CODE_ZERO
         ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
       set_tests_properties(
         "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
-#        "${target}${target_suffix}"
         PROPERTIES REQUIRED_FILES "${target_path}/${target}${target_suffix}"
       )
     endforeach()
@@ -174,13 +171,16 @@ if(BUILD_TESTING)
     find_package(rmw_implementation_cmake REQUIRED)
     set(TEST_PUBLISHER_PY_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/publisher_py.py")
     set(TEST_SUBSCRIBER_PY_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/subscriber_py.py")
-    if(NOT  ("${rmw_implementation1}" STREQUAL "rmw_fastrtps_cpp" OR ${rmw_implementation1}))
+    if(NOT  ("${rmw_implementation1}" STREQUAL "rmw_fastrtps_cpp" OR ${rmw_implementation1} STREQUAL "rmw_connext_dynamic_cpp"))
       get_rmw_typesupport(typesupport_c_impl "${rmw_implementation1}" LANGUAGE "c")
       set(TEST_RMW_IMPLEMENTATION_PY "${rmw_implementation1}")
       if(NOT typesupport_c_impl STREQUAL " ")
         foreach(message_file ${message_files})
           get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
           string(TOLOWER "${TEST_MESSAGE_TYPE}" TEST_MESSAGE_TYPE)
+          # TODO(dirk-thomas) publishing DynamicArrayPrimitives in OpenSplice is buggy
+          # https://github.com/ros2/rclcpp/issues/219
+          if(NOT "${TEST_MESSAGE_TYPE}" STREQUAL "dynamicarrayprimitives" OR NOT "${rmw_implementation1}" STREQUAL "rmw_opensplice_cpp")
             set(test_suffix "__${TEST_MESSAGE_TYPE}__${rmw_implementation1}")
             configure_file(
               test/test_publisher_subscriber_python.py.in
@@ -204,6 +204,7 @@ if(BUILD_TESTING)
               APPEND_ENV AMENT_PREFIX_PATH=${ament_index_build_path}
               APPEND_LIBRARY_DIRS "${_append_library_dirs}"
               TIMEOUT 15)
+          endif()
         endforeach()
       endif()
     endif()
