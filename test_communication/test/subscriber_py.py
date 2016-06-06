@@ -26,7 +26,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(
 
 def listener_cb(msg, received_messages):
     print('received: %r' % msg)
-    if not msg in received_messages:
+    if msg not in received_messages:
         received_messages.append(msg)
 
 
@@ -108,8 +108,8 @@ def listener(message_name, rmw_implementation, number_of_cycles):
     spin_count = 1
     print('subscriber: beginning loop')
     expected_msgs = get_test_msg(message_name)
-    while (rclpy.ok() and spin_count < number_of_cycles
-           and len(received_messages) != len(expected_msgs)):
+    while (rclpy.ok() and spin_count < number_of_cycles and
+           len(received_messages) != len(expected_msgs)):
         rclpy.spin_once(node)
         spin_count += 1
     rclpy.shutdown()
@@ -119,8 +119,8 @@ def listener(message_name, rmw_implementation, number_of_cycles):
         print('%r\n' % exp)
     print('end expected msgs\n')
 
-    assert len(received_messages) > 0,\
-        'Should have received a {} message from talker'.format(message_name)
+    assert len(received_messages) == len(expected_msgs),\
+        'Should have received {} {} messages from talker'.format(len(expected_msgs), message_name)
     for msg in received_messages:
         msg_match = False
         for exp in expected_msgs:
