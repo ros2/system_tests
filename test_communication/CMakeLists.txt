@@ -131,6 +131,11 @@ if(BUILD_TESTING)
           publisher_subscriber_cpp${test_suffix}
           PROPERTIES DEPENDS "test_publisher_cpp__${rmw_implementation1};test_subscriber_cpp__${rmw_implementation2}"
         )
+        # Check the RCL_RMW_ID_MATCHES only on the same implementation
+        if("${rmw_implementation1} " STREQUAL "${rmw_implementation2} ")
+          set_tests_properties(publisher_subscriber_cpp${test_suffix}
+            PROPERTIES ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation1})
+        endif()
       endif()
     endforeach()
 
@@ -158,6 +163,11 @@ if(BUILD_TESTING)
         requester_replier_cpp${test_suffix}
         PROPERTIES DEPENDS "test_requester_cpp__${rmw_implementation1};test_replier_cpp__${rmw_implementation2}"
       )
+      # Check the RCL_RMW_ID_MATCHES only on the same implementation
+      if("${rmw_implementation1} " STREQUAL "${rmw_implementation2} ")
+        set_tests_properties(requester_replier_cpp${test_suffix}
+          PROPERTIES ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation1})
+      endif()
     endforeach()
     endif()
   endmacro()
