@@ -174,14 +174,13 @@ if(BUILD_TESTING)
     find_package(rmw_implementation_cmake REQUIRED)
     set(TEST_PUBLISHER_PY_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/publisher_py.py")
     set(TEST_SUBSCRIBER_PY_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/subscriber_py.py")
-    if(NOT (rmw_implementation1 STREQUAL "rmw_connext_dynamic_cpp" OR rmw_implementation1 STREQUAL "rmw_fastrtps_cpp"))
+    if(NOT  ("${rmw_implementation1}" STREQUAL "rmw_fastrtps_cpp" OR ${rmw_implementation1}))
       get_rmw_typesupport(typesupport_c_impl "${rmw_implementation1}" LANGUAGE "c")
       set(TEST_RMW_IMPLEMENTATION_PY "${rmw_implementation1}")
       if(NOT typesupport_c_impl STREQUAL " ")
         foreach(message_file ${message_files})
           get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
           string(TOLOWER "${TEST_MESSAGE_TYPE}" TEST_MESSAGE_TYPE)
-          if(${TEST_MESSAGE_TYPE} STREQUAL "primitives")
             set(test_suffix "__${TEST_MESSAGE_TYPE}__${rmw_implementation1}")
             configure_file(
               test/test_publisher_subscriber_python.py.in
@@ -205,7 +204,6 @@ if(BUILD_TESTING)
               APPEND_ENV AMENT_PREFIX_PATH=${ament_index_build_path}
               APPEND_LIBRARY_DIRS "${_append_library_dirs}"
               TIMEOUT 15)
-          endif()
         endforeach()
       endif()
     endif()
