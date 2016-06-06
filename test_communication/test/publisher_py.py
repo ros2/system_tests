@@ -125,7 +125,7 @@ if __name__ == '__main__':
     parser.add_argument('-r', '--rmw_implementation', default=rmw_implementations[0],
                         choices=rmw_implementations,
                         help='rmw_implementation identifier')
-    parser.add_argument('-n', '--number_of_cycles', type=int, default=5,
+    parser.add_argument('-n', '--number_of_cycles', type=int, default=10,
                         help='number of sending attempts')
     args = parser.parse_args()
     try:
