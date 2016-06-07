@@ -24,10 +24,24 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(
     os.getcwd())), 'rclpy'))
 
 
-def listener_cb(msg, received_messages):
-    print('received: %r' % msg)
-    if msg not in received_messages:
-        received_messages.append(msg)
+def listener_cb(msg, received_messages, expected_msgs):
+    known_msg = False
+    for exp in expected_msgs:
+        if msg.__repr__() == exp.__repr__():
+            print('received message #{} of {}'.format(
+                expected_msgs.index(exp) + 1, len(expected_msgs)))
+            known_msg = True
+            already_received = False
+            for rmsg in received_messages:
+                if rmsg.__repr__() == msg.__repr__():
+                    already_received = True
+                    break
+
+            if not already_received:
+                received_messages.append(msg)
+            break
+    if known_msg is False:
+        raise RuntimeError('received unexpected message %r' % msg)
 
 
 def listener(message_name, rmw_implementation, number_of_cycles):
@@ -49,9 +63,10 @@ def listener(message_name, rmw_implementation, number_of_cycles):
     node = rclpy.create_node('listener')
 
     received_messages = []
+    expected_msgs = get_test_msg(message_name)
 
     chatter_callback = functools.partial(
-        listener_cb, received_messages=received_messages)
+        listener_cb, received_messages=received_messages, expected_msgs=expected_msgs)
 
     if 'builtins' == message_name:
         from test_communication.msg import Builtins
@@ -107,29 +122,14 @@ def listener(message_name, rmw_implementation, number_of_cycles):
 
     spin_count = 1
     print('subscriber: beginning loop')
-    expected_msgs = get_test_msg(message_name)
     while (rclpy.ok() and spin_count < number_of_cycles and
            len(received_messages) != len(expected_msgs)):
         rclpy.spin_once(node)
         spin_count += 1
     rclpy.shutdown()
-    print(len(received_messages))
-    print(len(expected_msgs))
-    for exp in expected_msgs:
-        print('%r\n' % exp)
-    print('end expected msgs\n')
 
     assert len(received_messages) == len(expected_msgs),\
         'Should have received {} {} messages from talker'.format(len(expected_msgs), message_name)
-    for msg in received_messages:
-        msg_match = False
-        for exp in expected_msgs:
-            if msg.__repr__() == exp.__repr__():
-                msg_match = True
-                break
-        assert msg_match is True,\
-            'Received unexpected message {}'.format(
-                msg.__repr__())
 
 if __name__ == '__main__':
     from rclpy.impl.rmw_implementation_tools import get_rmw_implementations
