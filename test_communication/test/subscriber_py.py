@@ -47,11 +47,8 @@ def listener_cb(msg, received_messages, expected_msgs):
 def listener(message_name, rmw_implementation, number_of_cycles):
     import rclpy
     from rclpy.qos import qos_profile_default
-#    from rclpy.impl.rmw_implementation_tools import get_rmw_implementations
     from rclpy.impl.rmw_implementation_tools import select_rmw_implementation
 
-#    rmw_impls = get_rmw_implementations()
-#    if(not rmw_implementation in rmw_impls):
     select_rmw_implementation(rmw_implementation)
 
     rclpy.init([])
