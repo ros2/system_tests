@@ -69,25 +69,25 @@ int main(int argc, char ** argv)
   std::string message = argv[1];
   auto node = rclcpp::Node::make_shared(std::string("test_publisher_") + message);
 
-  if (message == "empty") {
+  if (message == "Empty") {
     publish<test_communication::msg::Empty>(node, message, get_messages_empty());
-  } else if (message == "primitives") {
+  } else if (message == "Primitives") {
     publish<test_communication::msg::Primitives>(node, message, get_messages_primitives());
-  } else if (message == "staticarrayprimitives") {
+  } else if (message == "StaticArrayPrimitives") {
     publish<test_communication::msg::StaticArrayPrimitives>(
       node, message, get_messages_static_array_primitives());
-  } else if (message == "dynamicarrayprimitives") {
+  } else if (message == "DynamicArrayPrimitives") {
     publish<test_communication::msg::DynamicArrayPrimitives>(
       node, message, get_messages_dynamic_array_primitives());
-  } else if (message == "nested") {
+  } else if (message == "Nested") {
     publish<test_communication::msg::Nested>(node, message, get_messages_nested());
-  } else if (message == "dynamicarraynested") {
+  } else if (message == "DynamicArrayNested") {
     publish<test_communication::msg::DynamicArrayNested>(
       node, message, get_messages_dynamic_array_nested());
-  } else if (message == "staticarraynested") {
+  } else if (message == "StaticArrayNested") {
     publish<test_communication::msg::StaticArrayNested>(
       node, message, get_messages_static_array_nested());
-  } else if (message == "builtins") {
+  } else if (message == "Builtins") {
     publish<test_communication::msg::Builtins>(node, message, get_messages_builtins());
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());

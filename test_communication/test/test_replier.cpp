@@ -77,10 +77,10 @@ int main(int argc, char ** argv)
   auto services_empty = get_services_empty();
   auto services_primitives = get_services_primitives();
 
-  if (service == "empty") {
+  if (service == "Empty") {
     reply<test_communication::srv::Empty>(
       node, service, services_empty);
-  } else if (service == "primitives") {
+  } else if (service == "Primitives") {
     reply<test_communication::srv::Primitives>(
       node, service, services_primitives);
   } else {

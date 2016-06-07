@@ -14,6 +14,7 @@
 
 import argparse
 import functools
+import importlib
 import os
 import sys
 
@@ -53,8 +54,12 @@ def listener(message_name, rmw_implementation, number_of_cycles):
 
     rclpy.init([])
 
+    message_pkg = 'test_communication'
     # TODO(wjwwood) move this import back to the module level when
     # it is possible to import the messages before rclpy.init().
+    module = importlib.import_module(message_pkg + '.msg')
+    msg_mod = getattr(module, message_name)
+    assert msg_mod.__class__._TYPE_SUPPORT is not None
     from message_fixtures import get_test_msg
 
     node = rclpy.create_node('listener')
@@ -65,57 +70,9 @@ def listener(message_name, rmw_implementation, number_of_cycles):
     chatter_callback = functools.partial(
         listener_cb, received_messages=received_messages, expected_msgs=expected_msgs)
 
-    if 'builtins' == message_name:
-        from test_communication.msg import Builtins
-        assert Builtins.__class__._TYPE_SUPPORT is not None
-        node.create_subscription(
-            Builtins, 'test_message_' + message_name, chatter_callback,
-            qos_profile_default)
-    elif 'empty' == message_name:
-        from test_communication.msg import Empty
-        assert Empty.__class__._TYPE_SUPPORT is not None
-        node.create_subscription(
-            Empty, 'test_message_' + message_name, chatter_callback, qos_profile_default)
-    elif 'primitives' == message_name:
-        from test_communication.msg import Primitives
-        assert Primitives.__class__._TYPE_SUPPORT is not None
-        node.create_subscription(
-            Primitives, 'test_message_' + message_name, chatter_callback, qos_profile_default)
-    elif 'nested' == message_name:
-        from test_communication.msg import Nested
-        assert Nested.__class__._TYPE_SUPPORT is not None
-        node.create_subscription(
-            Nested, 'test_message_' + message_name, chatter_callback, qos_profile_default)
-    elif 'fieldswithsametype' == message_name:
-        from test_communication.msg import FieldsWithSameType
-        assert FieldsWithSameType.__class__._TYPE_SUPPORT is not None
-        node.create_subscription(
-            FieldsWithSameType, 'test_message_' + message_name, chatter_callback,
-            qos_profile_default)
-    elif 'staticarraynested' == message_name:
-        from test_communication.msg import StaticArrayNested
-        assert StaticArrayNested.__class__._TYPE_SUPPORT is not None
-        node.create_subscription(
-            StaticArrayNested, 'test_message_' + message_name, chatter_callback,
-            qos_profile_default)
-    elif 'staticarrayprimitives' == message_name:
-        from test_communication.msg import StaticArrayPrimitives
-        assert StaticArrayPrimitives.__class__._TYPE_SUPPORT is not None
-        node.create_subscription(
-            StaticArrayPrimitives, 'test_message_' + message_name, chatter_callback,
-            qos_profile_default)
-    elif 'dynamicarrayprimitives' == message_name:
-        from test_communication.msg import DynamicArrayPrimitives
-        assert DynamicArrayPrimitives.__class__._TYPE_SUPPORT is not None
-        node.create_subscription(
-            DynamicArrayPrimitives, 'test_message_' + message_name, chatter_callback,
-            qos_profile_default)
-    elif 'dynamicarraynested' == message_name:
-        from test_communication.msg import DynamicArrayNested
-        assert DynamicArrayNested.__class__._TYPE_SUPPORT is not None
-        node.create_subscription(
-            DynamicArrayNested, 'test_message_' + message_name, chatter_callback,
-            qos_profile_default)
+    node.create_subscription(
+        msg_mod, 'test_message_' + message_name, chatter_callback,
+        qos_profile_default)
 
     spin_count = 1
     print('subscriber: beginning loop')
@@ -132,7 +89,7 @@ if __name__ == '__main__':
     from rclpy.impl.rmw_implementation_tools import get_rmw_implementations
     rmw_implementations = get_rmw_implementations()
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('message_name', default='primitives',
+    parser.add_argument('message_name', default='Primitives',
                         help='name of the ROS message')
     parser.add_argument('-r', '--rmw_implementation', default=rmw_implementations[0],
                         choices=rmw_implementations,
