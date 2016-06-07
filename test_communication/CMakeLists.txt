@@ -70,17 +70,24 @@ if(BUILD_TESTING)
     if(NOT target_path)
       set(target_path "${CMAKE_CURRENT_BINARY_DIR}")
     endif()
-    # testing this with a single message type should be enough
-    ament_add_test(
-      "${target}${target_suffix}"
-      COMMAND "${target_path}/${target}${target_suffix}" empty
-      TIMEOUT 15
-      GENERATE_RESULT_FOR_RETURN_CODE_ZERO
-      ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
-    set_tests_properties(
-      ${target}${target_suffix}
-      PROPERTIES REQUIRED_FILES "${target_path}/${target}${target_suffix}"
-    )
+    # adding back tests for all message types
+    foreach(message_file ${message_files})
+      get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
+      string(TOLOWER "${TEST_MESSAGE_TYPE}" TEST_MESSAGE_TYPE)
+      ament_add_test(
+        "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
+#        "${target}${target_suffix}"
+        COMMAND "${target_path}/${target}${target_suffix}" "${TEST_MESSAGE_TYPE}"
+#        COMMAND "${target_path}/${target}${target_suffix}" dynamicarrayprimitives
+        TIMEOUT 15
+        GENERATE_RESULT_FOR_RETURN_CODE_ZERO
+        ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
+      set_tests_properties(
+        "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
+#        "${target}${target_suffix}"
+        PROPERTIES REQUIRED_FILES "${target_path}/${target}${target_suffix}"
+      )
+    endforeach()
   endfunction()
 
   function(custom_executable target)
