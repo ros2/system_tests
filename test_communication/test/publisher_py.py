@@ -27,6 +27,12 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(
 def talker(message_name, rmw_implementation, number_of_cycles):
     import rclpy
     from rclpy.qos import qos_profile_default
+#    from rclpy.impl.rmw_implementation_tools import get_rmw_implementations
+    from rclpy.impl.rmw_implementation_tools import select_rmw_implementation
+
+#    rmw_impls = get_rmw_implementations()
+#    if(not rmw_implementation in rmw_impls):
+    select_rmw_implementation(rmw_implementation)
 
     rclpy.init([])
 
@@ -107,18 +113,25 @@ def talker(message_name, rmw_implementation, number_of_cycles):
             chatter_pub.publish(msg)
             print('talker sending: %r' % msg)
         time.sleep(1)
+        print('\n')
     rclpy.shutdown()
 
 if __name__ == '__main__':
+    from rclpy.impl.rmw_implementation_tools import get_rmw_implementations
+    rmw_implementations = get_rmw_implementations()
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('message_name', default='primitives',
                         help='name of the ROS message')
+    parser.add_argument('-r', '--rmw_implementation', default=rmw_implementations[0],
+                        choices=rmw_implementations,
+                        help='rmw_implementation identifier')
     parser.add_argument('-n', '--number_of_cycles', type=int, default=5,
                         help='number of sending attempts')
     args = parser.parse_args()
     try:
         talker(
             message_name=args.message_name,
+            rmw_implementation=args.rmw_implementation,
             number_of_cycles=args.number_of_cycles)
     except KeyboardInterrupt:
         print('talker stopped cleanly')

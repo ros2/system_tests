@@ -1,6 +1,6 @@
 import sys
 from launch import LaunchDescriptor
-from launch.exit_handler import primary_exit_handler, ignore_signal_exit_handler
+from launch.exit_handler import primary_exit_handler, default_exit_handler
 from launch.launcher import DefaultLauncher
 
 
@@ -10,16 +10,18 @@ def test_publisher_subscriber():
     ld.add_process(
         cmd=[sys.executable,
              '@TEST_PUBLISHER_PY_EXECUTABLE@',
-             '-m', '@TEST_MESSAGE_TYPE@'],
-        name='test_publisher_py',
-        exit_handler=ignore_signal_exit_handler,
+             '@TEST_MESSAGE_TYPE@',
+             '-r', '@TEST_RMW_IMPLEMENTATION_PY@'],
+        name='test_publisher_py__@TEST_RMW_IMPLEMENTATION_PY@__@TEST_MESSAGE_TYPE@',
+        exit_handler=default_exit_handler,
     )
 
     ld.add_process(
         cmd=[sys.executable,
              '@TEST_SUBSCRIBER_PY_EXECUTABLE@',
-             '-m', '@TEST_MESSAGE_TYPE@'],
-        name='test_subscriber_py',
+             '@TEST_MESSAGE_TYPE@',
+             '-r', '@TEST_RMW_IMPLEMENTATION_PY@'],
+        name='test_subscriber_py__@TEST_RMW_IMPLEMENTATION_PY@__@TEST_MESSAGE_TYPE@',
         exit_handler=primary_exit_handler,
     )
 
