@@ -1,4 +1,5 @@
 from launch import LaunchDescriptor
+from launch.exit_handler import ignore_signal_exit_handler_no_teardown
 from launch.exit_handler import primary_exit_handler
 from launch.launcher import DefaultLauncher
 
@@ -9,6 +10,7 @@ def test_publisher_subscriber():
     ld.add_process(
         cmd=['@TEST_PUBLISHER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@'],
         name='test_publisher',
+        exit_handler=ignore_signal_exit_handler_no_teardown,
     )
 
     ld.add_process(
