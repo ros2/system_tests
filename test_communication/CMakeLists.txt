@@ -209,31 +209,31 @@ if(BUILD_TESTING)
   macro(targets)
     get_rclcpp_information("${rmw_implementation}" "rclcpp${target_suffix}")
 
-#    # publisher combined with a subscriber
-#    custom_test(test_publisher_subscriber_cpp
-#      "test/test_publisher_subscriber.cpp")
-#    # subcription valid data
-#    custom_test(test_subscription_valid_data_cpp
-#      "test/test_subscription_valid_data.cpp")
+    # publisher combined with a subscriber
+    custom_test(test_publisher_subscriber_cpp
+      "test/test_publisher_subscriber.cpp")
+    # subcription valid data
+    custom_test(test_subscription_valid_data_cpp
+      "test/test_subscription_valid_data.cpp")
 
-#    # executables publisher / subscriber
-#    custom_executable(test_publisher_cpp
-#      "test/test_publisher.cpp")
-#    custom_executable(test_subscriber_cpp
-#      "test/test_subscriber.cpp")
-#    # executables requester / replier
-#    custom_executable(test_requester_cpp
-#      "test/test_requester.cpp")
-#    custom_executable(test_replier_cpp
-#      "test/test_replier.cpp")
+    # executables publisher / subscriber
+    custom_executable(test_publisher_cpp
+      "test/test_publisher.cpp")
+    custom_executable(test_subscriber_cpp
+      "test/test_subscriber.cpp")
+    # executables requester / replier
+    custom_executable(test_requester_cpp
+      "test/test_requester.cpp")
+    custom_executable(test_replier_cpp
+      "test/test_replier.cpp")
 
     set(rmw_implementation1 "${rmw_implementation}")
     set(target_suffix1 "${target_suffix}")
 
-#    foreach(rmw_implementation2 ${rmw_implementations2})
-#      set(target_suffix2 "__${rmw_implementation2}")
-#      multi_targets()
-#    endforeach()
+    foreach(rmw_implementation2 ${rmw_implementations2})
+      set(target_suffix2 "__${rmw_implementation2}")
+      multi_targets()
+    endforeach()
     custom_test_py()
   endmacro()
 
