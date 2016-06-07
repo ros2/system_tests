@@ -162,6 +162,42 @@ if(BUILD_TESTING)
     endif()
   endmacro()
 
+  macro(custom_test_py)
+    # adding python tests
+    find_package(rmw_implementation_cmake REQUIRED)
+    set(TEST_PUBLISHER_PY_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/publisher_py.py")
+    set(TEST_SUBSCRIBER_PY_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/subscriber_py.py")
+    if(NOT (rmw_implementation1 STREQUAL "rmw_connext_dynamic_cpp" OR rmw_implementation1 STREQUAL "rmw_fastrtps_cpp"))
+      get_rmw_typesupport(typesupport_c_impl "${rmw_implementation1}" LANGUAGE "c")
+      set(TEST_RMW_IMPLEMENTATION_PY "${rmw_implementation1}")
+      if(NOT typesupport_c_impl STREQUAL " ")
+        foreach(message_file ${message_files})
+          get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
+          string(TOLOWER "${TEST_MESSAGE_TYPE}" TEST_MESSAGE_TYPE)
+          if(${TEST_MESSAGE_TYPE} STREQUAL "primitives")
+            set(test_suffix "__${TEST_MESSAGE_TYPE}__${rmw_implementation1}")
+            configure_file(
+              test/test_publisher_subscriber_python.py.in
+              test_publisher_subscriber_python${test_suffix}.py.configured
+              @ONLY
+            )
+            file(GENERATE
+              OUTPUT "test_publisher_subscriber_python${test_suffix}_$<CONFIGURATION>.py"
+              INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber_python${test_suffix}.py.configured"
+            )
+
+            ament_add_nose_test(test_publisher_subscriber_py${test_suffix}
+              "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber_python${test_suffix}_$<CONFIGURATION>.py"
+              WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py"
+              APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}/../../rclpy"
+              APPEND_ENV AMENT_PREFIX_PATH=${ament_index_build_path}
+              TIMEOUT 15)
+          endif()
+        endforeach()
+      endif()
+    endif()
+  endmacro()
+
   macro(targets)
     get_rclcpp_information("${rmw_implementation}" "rclcpp${target_suffix}")
 
@@ -190,39 +226,11 @@ if(BUILD_TESTING)
       set(target_suffix2 "__${rmw_implementation2}")
       multi_targets()
     endforeach()
+    custom_test_py()
   endmacro()
 
   call_for_each_rmw_implementation(targets)
 
-  # adding python tests
-  set(TEST_PUBLISHER_PY_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/publisher_py.py")
-  set(TEST_SUBSCRIBER_PY_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/subscriber_py.py")
-
-  set(_append_library_dirs "")
-  if(WIN32)
-    set(_append_library_dirs "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>")
-  endif()
-  foreach(message_file ${message_files})
-    get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
-    string(TOLOWER "${TEST_MESSAGE_TYPE}" TEST_MESSAGE_TYPE_LOWER)
-    set(test_suffix "__${TEST_MESSAGE_TYPE_LOWER}")
-    configure_file(
-      test/test_publisher_subscriber_python.py.in
-      test_publisher_subscriber_python${test_suffix}.py.configured
-      @ONLY
-    )
-    file(GENERATE
-      OUTPUT "test_publisher_subscriber_python${test_suffix}_$<CONFIGURATION>.py"
-      INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber_python${test_suffix}.py.configured"
-    )
-
-    ament_add_nose_test(publisher_subscriber_py${test_suffix}
-      "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber_python${test_suffix}_$<CONFIGURATION>.py"
-      WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py"
-      APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}"
-      APPEND_ENV AMENT_PREFIX_PATH=${ament_index_build_path}
-      TIMEOUT 15)
-  endforeach()
 endif()  # BUILD_TESTING
 
 # TODO should not install anything
