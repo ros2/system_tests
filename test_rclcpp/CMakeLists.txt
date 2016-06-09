@@ -91,9 +91,14 @@ if(BUILD_TESTING)
       OUTPUT "${test_name}${target_suffix}_$<CONFIGURATION>.py"
       INPUT "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}.py.configure"
     )
-    ament_add_nose_test(${test_name}${target_suffix} "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIGURATION>.py" ${ARGN}
-      ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
-    set_tests_properties(${test_name}${target_suffix} PROPERTIES DEPENDS "${executable1}${target_suffix} ${executable2}${target_suffix}")
+    ament_add_nose_test(${test_name}${target_suffix}
+      "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIGURATION>.py"
+      ${ARGN}
+      ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
+    )
+    set_tests_properties(${test_name}${target_suffix}
+      PROPERTIES DEPENDS "${executable1}${target_suffix} ${executable2}${target_suffix}"
+    )
   endmacro()
 
   macro(targets)
@@ -116,7 +121,7 @@ if(BUILD_TESTING)
       TIMEOUT 30)
     custom_gtest(gtest_multiple_service_calls
       "test/test_multiple_service_calls.cpp"
-      TIMEOUT 15)
+      TIMEOUT 30)
     custom_gtest(gtest_timer
       "test/test_timer.cpp"
       TIMEOUT 30)
@@ -163,7 +168,7 @@ if(BUILD_TESTING)
       ${GTEST_LIBRARIES})
     custom_launch_test(test_client_scope_cpp
       test_client_scope_server_cpp test_client_scope_client_cpp
-      TIMEOUT 15)
+      TIMEOUT 30)
   endmacro()
 
   call_for_each_rmw_implementation(targets)

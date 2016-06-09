@@ -34,7 +34,7 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_regression_test
     printf("creating first client\n");
     std::cout.flush();
     auto client1 = node->create_client<test_rclcpp::srv::AddTwoInts>("client_scope");
-    ASSERT_TRUE(client1->wait_for_service(30_s)) << "service not available after waiting";
+    ASSERT_TRUE(client1->wait_for_service(20_s)) << "service not available after waiting";
     auto request1 = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
     request1->a = 1;
     request1->b = 2;
@@ -59,7 +59,7 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_regression_test
     printf("creating second client\n");
     std::cout.flush();
     auto client2 = node->create_client<test_rclcpp::srv::AddTwoInts>("client_scope");
-    ASSERT_TRUE(client2->wait_for_service(30_s)) << "service not available after waiting";
+    ASSERT_TRUE(client2->wait_for_service(20_s)) << "service not available after waiting";
     auto request2 = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
     request2->a = 2;
     request2->b = 3;

@@ -127,7 +127,10 @@ if(BUILD_TESTING)
       # TODO(dirk-thomas) publishing DynamicArrayPrimitives in OpenSplice is buggy
       # https://github.com/ros2/rclcpp/issues/219
       if(NOT TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives" OR NOT rmw_implementation1 STREQUAL "rmw_opensplice_cpp")
-        ament_add_nose_test(publisher_subscriber_cpp${test_suffix} "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber_cpp${test_suffix}_$<CONFIGURATION>.py" TIMEOUT 15)
+        ament_add_nose_test(
+          publisher_subscriber_cpp${test_suffix}
+          "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber_cpp${test_suffix}_$<CONFIGURATION>.py"
+          TIMEOUT 15)
         set_tests_properties(
           publisher_subscriber_cpp${test_suffix}
           PROPERTIES DEPENDS "test_publisher_cpp__${rmw_implementation1};test_subscriber_cpp__${rmw_implementation2}"
@@ -155,10 +158,15 @@ if(BUILD_TESTING)
         INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier_cpp${test_suffix}.py.configured"
       )
 
-      ament_add_nose_test(requester_replier_cpp${test_suffix} "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier_cpp${test_suffix}_$<CONFIGURATION>.py" TIMEOUT 15)
+      ament_add_nose_test(
+        requester_replier_cpp${test_suffix}
+        "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier_cpp${test_suffix}_$<CONFIGURATION>.py"
+        TIMEOUT 30
+      )
       set_tests_properties(
         requester_replier_cpp${test_suffix}
-        PROPERTIES DEPENDS "test_requester_cpp__${rmw_implementation1};test_replier_cpp__${rmw_implementation2}"
+        PROPERTIES DEPENDS
+          "test_requester_cpp__${rmw_implementation1};test_replier_cpp__${rmw_implementation2}"
       )
     endforeach()
     endif()

@@ -203,7 +203,7 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), notify) {
     auto client = node->create_client<test_rclcpp::srv::AddTwoInts>(
       "test_executor_notify_service"
       );
-    ASSERT_TRUE(client->wait_for_service(30_s)) << "service not available after waiting";
+    ASSERT_TRUE(client->wait_for_service(20_s)) << "service not available after waiting";
     auto request = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
     request->a = 4;
     request->b = 2;
