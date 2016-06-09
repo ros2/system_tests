@@ -192,6 +192,7 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     std::vector<SharedFuture> results;
     // Send all the requests
     for (auto & pair : client_request_pairs) {
+      ASSERT_TRUE(pair.first->wait_for_service(30_s)) << "service not available after waiting";
       results.push_back(pair.first->async_send_request(pair.second));
     }
     // Wait on the future produced by the first request
@@ -214,6 +215,7 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     std::vector<SharedFuture> results;
     // Send all the requests again
     for (auto & pair : client_request_pairs) {
+      ASSERT_TRUE(pair.first->wait_for_service(30_s)) << "service not available after waiting";
       results.push_back(pair.first->async_send_request(pair.second));
     }
     auto timer_callback = [&executor, &results]() {
