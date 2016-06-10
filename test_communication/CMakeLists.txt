@@ -109,13 +109,6 @@ if(BUILD_TESTING)
   endfunction()
 
   function(custom_test_c target)
-    # TODO(jacquelinekay): remove these when C type support is supported by typesupport_introspection.
-    #                after removing, we can also recombine the function and macro
-    if("${rmw_implementation} " STREQUAL "rmw_fastrtps_cpp ")
-      message(STATUS "Skipping tests for '${rmw_implementation}'")
-      return()
-    endif()
-
     # get typesupport of rmw implementation to include / link against the corresponding interfaces
     get_rmw_typesupport(typesupport_impls "${rmw_implementation}" LANGUAGE "c")
 
