@@ -20,9 +20,6 @@ import time
 
 # this is needed to allow import of test_communication messages
 sys.path.insert(0, os.getcwd())
-# this is needed to allow rclpy to be imported from the build folder
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(
-    os.getcwd())), 'rclpy'))
 
 
 def talker(message_name, rmw_implementation, number_of_cycles):
