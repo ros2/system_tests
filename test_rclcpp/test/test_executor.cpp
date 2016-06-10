@@ -161,7 +161,7 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), notify) {
       [&executor, &subscription_triggered](test_rclcpp::msg::UInt32::ConstSharedPtr msg) -> void
       {
         subscription_triggered = true;
-        EXPECT_EQ(msg->data, 42);
+        EXPECT_EQ(msg->data, 42u);
         executor.cancel();
       };
 
