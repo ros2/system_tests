@@ -1,3 +1,5 @@
+import os
+
 from launch import LaunchDescriptor
 from launch.exit_handler import primary_exit_handler
 from launch.launcher import DefaultLauncher
@@ -6,14 +8,20 @@ from launch.launcher import DefaultLauncher
 def test_publisher_subscriber():
     ld = LaunchDescriptor()
 
+    publisher_env = dict(os.environ)
+    publisher_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@PUBLISHER_RMW@'
     ld.add_process(
         cmd=['@TEST_PUBLISHER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@'],
         name='test_publisher',
+        env=publisher_env,
     )
 
+    subscriber_env = dict(os.environ)
+    subscriber_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@SUBSCRIBER_RMW@'
     ld.add_process(
         cmd=['@TEST_SUBSCRIBER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@'],
         name='test_subscriber',
+        env=subscriber_env,
         exit_handler=primary_exit_handler,
     )
 
