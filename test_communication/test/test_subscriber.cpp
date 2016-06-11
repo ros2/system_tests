@@ -97,28 +97,28 @@ int main(int argc, char ** argv)
 
   rclcpp::subscription::SubscriptionBase::SharedPtr subscriber;
   std::vector<bool> received_messages;  // collect flags about received messages
-  if (message == "empty") {
+  if (message == "Empty") {
     subscriber = subscribe<test_communication::msg::Empty>(
       node, message, messages_empty, received_messages);
-  } else if (message == "primitives") {
+  } else if (message == "Primitives") {
     subscriber = subscribe<test_communication::msg::Primitives>(
       node, message, messages_primitives, received_messages);
-  } else if (message == "staticarrayprimitives") {
+  } else if (message == "StaticArrayPrimitives") {
     subscriber = subscribe<test_communication::msg::StaticArrayPrimitives>(
       node, message, messages_static_array_primitives, received_messages);
-  } else if (message == "dynamicarrayprimitives") {
+  } else if (message == "DynamicArrayPrimitives") {
     subscriber = subscribe<test_communication::msg::DynamicArrayPrimitives>(
       node, message, messages_dynamic_array_primitives, received_messages);
-  } else if (message == "nested") {
+  } else if (message == "Nested") {
     subscriber = subscribe<test_communication::msg::Nested>(
       node, message, messages_nested, received_messages);
-  } else if (message == "dynamicarraynested") {
+  } else if (message == "DynamicArrayNested") {
     subscriber = subscribe<test_communication::msg::DynamicArrayNested>(
       node, message, messages_dynamic_array_nested, received_messages);
-  } else if (message == "staticarraynested") {
+  } else if (message == "StaticArrayNested") {
     subscriber = subscribe<test_communication::msg::StaticArrayNested>(
       node, message, messages_static_array_nested, received_messages);
-  } else if (message == "builtins") {
+  } else if (message == "Builtins") {
     subscriber = subscribe<test_communication::msg::Builtins>(
       node, message, messages_builtins, received_messages);
   } else {

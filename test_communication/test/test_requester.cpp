@@ -109,10 +109,10 @@ int main(int argc, char ** argv)
   std::this_thread::sleep_for(std::chrono::seconds(2));
 
   int rc;
-  if (service == "empty") {
+  if (service == "Empty") {
     rc = request<test_communication::srv::Empty>(
       node, service, get_services_empty());
-  } else if (service == "primitives") {
+  } else if (service == "Primitives") {
     rc = request<test_communication::srv::Primitives>(
       node, service, get_services_primitives());
   } else {
