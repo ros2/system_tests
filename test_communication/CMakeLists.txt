@@ -174,7 +174,7 @@ if(BUILD_TESTING)
     if(NOT  ("${rmw_implementation1}" STREQUAL "rmw_fastrtps_cpp" OR ${rmw_implementation1} STREQUAL "rmw_connext_dynamic_cpp"))
       get_rmw_typesupport(typesupport_c_impl "${rmw_implementation1}" LANGUAGE "c")
       set(TEST_RMW_IMPLEMENTATION_PY "${rmw_implementation1}")
-      if(NOT typesupport_c_impl STREQUAL " ")
+      if(NOT "${typesupport_c_impl} " STREQUAL " ")
         foreach(message_file ${message_files})
           get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
           # TODO(dirk-thomas) publishing DynamicArrayPrimitives in OpenSplice is buggy
