@@ -127,11 +127,15 @@ if(BUILD_TESTING)
       # TODO(dirk-thomas) publishing DynamicArrayPrimitives in OpenSplice is buggy
       # https://github.com/ros2/rclcpp/issues/219
       if(NOT TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives" OR NOT rmw_implementation1 STREQUAL "rmw_opensplice_cpp")
-        ament_add_nose_test(publisher_subscriber_cpp${test_suffix} "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber_cpp${test_suffix}_$<CONFIGURATION>.py" TIMEOUT 15)
-        set_tests_properties(
-          publisher_subscriber_cpp${test_suffix}
-          PROPERTIES DEPENDS "test_publisher_cpp__${rmw_implementation1};test_subscriber_cpp__${rmw_implementation2}"
-        )
+        # OpenSplice and FastRTPS can't talk on OSX
+        # https://github.com/ros2/ros2/issues/211
+        if(NOT APPLE OR ((NOT "${rmw_implementation1}" STREQUAL "rmw_opensplice_cpp" OR NOT "${rmw_implementation2}" STREQUAL "rmw_fastrtps_cpp") AND (NOT "${rmw_implementation1}" STREQUAL "rmw_fastrtps_cpp" OR NOT "${rmw_implementation2}" STREQUAL "rmw_opensplice_cpp")))
+          ament_add_nose_test(publisher_subscriber_cpp${test_suffix} "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber_cpp${test_suffix}_$<CONFIGURATION>.py" TIMEOUT 15)
+          set_tests_properties(
+            publisher_subscriber_cpp${test_suffix}
+            PROPERTIES DEPENDS "test_publisher_cpp__${rmw_implementation1};test_subscriber_cpp__${rmw_implementation2}"
+          )
+        endif()
       endif()
     endforeach()
 
