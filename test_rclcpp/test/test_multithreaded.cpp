@@ -14,6 +14,7 @@
 
 #include <limits>
 #include <string>
+#include <thread>  // TODO(wjwwood): remove me when fastrtps exclusion is removed
 #include <utility>
 #include <vector>
 
@@ -21,6 +22,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp/executors.hpp"
+#include "rmw/rmw.h"  // TODO(wjwwood): remove me when fastrtps exclusion is removed
 
 #include "test_rclcpp/utils.hpp"
 #include "test_rclcpp/msg/u_int32.hpp"
@@ -192,7 +194,13 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     std::vector<SharedFuture> results;
     // Send all the requests
     for (auto & pair : client_request_pairs) {
-      ASSERT_TRUE(pair.first->wait_for_service(20_s)) << "service not available after waiting";
+      {  // TODO(wjwwood): remove this block when fastrtps supports wait_for_service.
+        if (std::string(rmw_get_implementation_identifier()) != "rmw_fastrtps_cpp") {
+          ASSERT_TRUE(pair.first->wait_for_service(20_s)) << "service not available after waiting";
+        } else {
+          std::this_thread::sleep_for(1_s);
+        }
+      }
       results.push_back(pair.first->async_send_request(pair.second));
     }
     // Wait on the future produced by the first request
@@ -215,7 +223,13 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     std::vector<SharedFuture> results;
     // Send all the requests again
     for (auto & pair : client_request_pairs) {
-      ASSERT_TRUE(pair.first->wait_for_service(20_s)) << "service not available after waiting";
+      {  // TODO(wjwwood): remove this block when fastrtps supports wait_for_service.
+        if (std::string(rmw_get_implementation_identifier()) != "rmw_fastrtps_cpp") {
+          ASSERT_TRUE(pair.first->wait_for_service(20_s)) << "service not available after waiting";
+        } else {
+          std::this_thread::sleep_for(1_s);
+        }
+      }
       results.push_back(pair.first->async_send_request(pair.second));
     }
     auto timer_callback = [&executor, &results]() {
