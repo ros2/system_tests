@@ -107,6 +107,9 @@ if(BUILD_TESTING)
     custom_gtest(gtest_publisher
       "test/test_publisher.cpp"
       TIMEOUT 15)
+    custom_gtest(gtest_client_wait_for_service_shutdown
+      "test/test_client_wait_for_service_shutdown.cpp"
+      TIMEOUT 15)
     custom_gtest(gtest_executor
       "test/test_executor.cpp"
       TIMEOUT 30)
