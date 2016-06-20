@@ -18,6 +18,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <vector>
 #include "gtest/gtest.h"
 
 #include "rclcpp/rclcpp.hpp"
@@ -68,9 +69,10 @@ void verify_set_parameters_async(
 void verify_test_parameters(
   std::shared_ptr<rclcpp::parameter_client::SyncParametersClient> parameters_client)
 {
+  // Test recursive depth (=0)
   auto parameters_and_prefixes = parameters_client->list_parameters({"foo", "bar"}, 0);
   for (auto & name : parameters_and_prefixes.names) {
-    EXPECT_TRUE(name == "foo" || name == "bar");
+    EXPECT_TRUE(name == "foo" || name == "bar" || name == "foo.first" || name == "foo.second");
   }
   for (auto & prefix : parameters_and_prefixes.prefixes) {
     EXPECT_STREQ("foo", prefix.c_str());
@@ -79,9 +81,18 @@ void verify_test_parameters(
   // Test different depth
   auto parameters_and_prefixes4 = parameters_client->list_parameters({"foo"}, 1);
   for (auto & name : parameters_and_prefixes4.names) {
-    EXPECT_TRUE(name == "foo" || name == "foo.first" || name == "foo.second");
+    EXPECT_EQ(name, "foo");
   }
   for (auto & prefix : parameters_and_prefixes4.prefixes) {
+    EXPECT_STREQ("foo", prefix.c_str());
+  }
+
+  // Test different depth
+  auto parameters_and_prefixes5 = parameters_client->list_parameters({"foo"}, 2);
+  for (auto & name : parameters_and_prefixes5.names) {
+    EXPECT_TRUE(name == "foo" || name == "foo.first" || name == "foo.second");
+  }
+  for (auto & prefix : parameters_and_prefixes5.prefixes) {
     EXPECT_STREQ("foo", prefix.c_str());
   }
 
@@ -111,7 +122,7 @@ void verify_test_parameters(
     EXPECT_STREQ("There should be no matches", parameter.get_name().c_str());
   }
 
-  // List all of the parameters, using an empty prefix list
+  // List all of the parameters, using an empty prefix list and depth=0
   parameters_and_prefixes = parameters_client->list_parameters({}, 0);
   std::vector<std::string> all_names = {
     "foo", "bar", "barstr", "baz", "foo.first", "foo.second", "foobar"
@@ -124,17 +135,41 @@ void verify_test_parameters(
         name),
       parameters_and_prefixes.names.cend());
   }
+  // List all of the parameters, using an empty prefix list and large depth
+  parameters_and_prefixes = parameters_client->list_parameters({}, 100);
+  EXPECT_EQ(parameters_and_prefixes.names.size(), all_names.size());
+  for (auto & name : all_names) {
+    EXPECT_NE(std::find(
+        parameters_and_prefixes.names.cbegin(),
+        parameters_and_prefixes.names.cend(),
+        name),
+      parameters_and_prefixes.names.cend());
+  }
+  // List most of the parameters, using an empty prefix list and depth=1
+  parameters_and_prefixes = parameters_client->list_parameters({}, 1);
+  std::vector<std::string> depth_one_names = {
+    "foo", "bar", "barstr", "baz", "foobar"
+  };
+  EXPECT_EQ(parameters_and_prefixes.names.size(), depth_one_names.size());
+  for (auto & name : depth_one_names) {
+    EXPECT_NE(std::find(
+        parameters_and_prefixes.names.cbegin(),
+        parameters_and_prefixes.names.cend(),
+        name),
+      parameters_and_prefixes.names.cend());
+  }
 }
 
 void verify_get_parameters_async(
   std::shared_ptr<rclcpp::Node> node,
   std::shared_ptr<rclcpp::parameter_client::AsyncParametersClient> parameters_client)
 {
+  // Test recursive depth (=0)
   auto result = parameters_client->list_parameters({"foo", "bar"}, 0);
   rclcpp::spin_until_future_complete(node, result);
   auto parameters_and_prefixes = result.get();
   for (auto & name : parameters_and_prefixes.names) {
-    EXPECT_TRUE(name == "foo" || name == "bar");
+    EXPECT_TRUE(name == "foo" || name == "bar" || name == "foo.first" || name == "foo.second");
   }
   for (auto & prefix : parameters_and_prefixes.prefixes) {
     EXPECT_STREQ("foo", prefix.c_str());
@@ -145,9 +180,20 @@ void verify_get_parameters_async(
   rclcpp::spin_until_future_complete(node, result4);
   auto parameters_and_prefixes4 = result4.get();
   for (auto & name : parameters_and_prefixes4.names) {
-    EXPECT_TRUE(name == "foo" || name == "foo.first" || name == "foo.second");
+    EXPECT_EQ(name, "foo");
   }
   for (auto & prefix : parameters_and_prefixes4.prefixes) {
+    EXPECT_STREQ("foo", prefix.c_str());
+  }
+
+  // Test different depth
+  auto result4a = parameters_client->list_parameters({"foo"}, 2);
+  rclcpp::spin_until_future_complete(node, result4a);
+  auto parameters_and_prefixes4a = result4a.get();
+  for (auto & name : parameters_and_prefixes4a.names) {
+    EXPECT_TRUE(name == "foo" || name == "foo.first" || name == "foo.second");
+  }
+  for (auto & prefix : parameters_and_prefixes4a.prefixes) {
     EXPECT_STREQ("foo", prefix.c_str());
   }
 
