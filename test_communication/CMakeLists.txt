@@ -75,9 +75,9 @@ if(BUILD_TESTING)
     # adding test for each message type
     foreach(message_file ${message_files})
       get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
-      # TODO(dirk-thomas) publishing DynamicArrayPrimitives in OpenSplice is buggy
+      # TODO(dirk-thomas) publishing Bounded/DynamicArrayPrimitives in OpenSplice is buggy
       # https://github.com/ros2/rclcpp/issues/219
-      if(NOT TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives" OR NOT rmw_implementation STREQUAL "rmw_opensplice_cpp")
+      if((NOT TEST_MESSAGE_TYPE STREQUAL "BoundedArrayPrimitives" AND NOT TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives") OR NOT rmw_implementation STREQUAL "rmw_opensplice_cpp")
         ament_add_test(
           "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
           COMMAND "${target_path}/${target}${target_suffix}" "${TEST_MESSAGE_TYPE}"
@@ -133,9 +133,9 @@ if(BUILD_TESTING)
         INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber_cpp${test_suffix}.py.configured"
       )
 
-      # TODO(dirk-thomas) publishing DynamicArrayPrimitives in OpenSplice is buggy
+      # TODO(dirk-thomas) publishing Bounded/DynamicArrayPrimitives in OpenSplice is buggy
       # https://github.com/ros2/rclcpp/issues/219
-      if(NOT TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives" OR NOT rmw_implementation1 STREQUAL "rmw_opensplice_cpp")
+      if((NOT TEST_MESSAGE_TYPE STREQUAL "BoundedArrayPrimitives" AND NOT TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives") OR NOT rmw_implementation1 STREQUAL "rmw_opensplice_cpp")
         ament_add_nose_test(
           publisher_subscriber_cpp${test_suffix}
           "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber_cpp${test_suffix}_$<CONFIGURATION>.py"
@@ -198,9 +198,9 @@ if(BUILD_TESTING)
       if(NOT typesupport_c_impl STREQUAL "")
         foreach(message_file ${message_files})
           get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
-          # TODO(dirk-thomas) publishing DynamicArrayPrimitives in OpenSplice is buggy
+          # TODO(dirk-thomas) publishing Bounded/DynamicArrayPrimitives in OpenSplice is buggy
           # https://github.com/ros2/rclcpp/issues/219
-          if(NOT TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives" OR NOT rmw_implementation1 STREQUAL "rmw_opensplice_cpp")
+          if((NOT TEST_MESSAGE_TYPE STREQUAL "BoundedArrayPrimitives" AND NOT TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives") OR NOT rmw_implementation1 STREQUAL "rmw_opensplice_cpp")
             set(test_suffix "__${TEST_MESSAGE_TYPE}__${rmw_implementation1}")
             configure_file(
               test/test_publisher_subscriber_python.py.in
