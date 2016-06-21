@@ -46,18 +46,15 @@ def listener(message_name, rmw_implementation, number_of_cycles):
     import rclpy
     from rclpy.qos import qos_profile_default
     from rclpy.impl.rmw_implementation_tools import select_rmw_implementation
+    from message_fixtures import get_test_msg
+
+    message_pkg = 'test_communication'
+    module = importlib.import_module(message_pkg + '.msg')
+    msg_mod = getattr(module, message_name)
 
     select_rmw_implementation(rmw_implementation)
 
     rclpy.init([])
-
-    message_pkg = 'test_communication'
-    # TODO(wjwwood) move this import back to the module level when
-    # it is possible to import the messages before rclpy.init().
-    module = importlib.import_module(message_pkg + '.msg')
-    msg_mod = getattr(module, message_name)
-    assert msg_mod.__class__._TYPE_SUPPORT is not None
-    from message_fixtures import get_test_msg
 
     node = rclpy.create_node('listener')
 
