@@ -21,6 +21,7 @@
 #include <vector>
 #include "gtest/gtest.h"
 
+#include "rcl_interfaces/srv/list_parameters.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 const double test_epsilon = 1e-6;
@@ -70,7 +71,8 @@ void verify_test_parameters(
   std::shared_ptr<rclcpp::parameter_client::SyncParametersClient> parameters_client)
 {
   // Test recursive depth (=0)
-  auto parameters_and_prefixes = parameters_client->list_parameters({"foo", "bar"}, 0);
+  auto parameters_and_prefixes = parameters_client->list_parameters({"foo", "bar"},
+      rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE);
   for (auto & name : parameters_and_prefixes.names) {
     EXPECT_TRUE(name == "foo" || name == "bar" || name == "foo.first" || name == "foo.second");
   }
@@ -123,7 +125,8 @@ void verify_test_parameters(
   }
 
   // List all of the parameters, using an empty prefix list and depth=0
-  parameters_and_prefixes = parameters_client->list_parameters({}, 0);
+  parameters_and_prefixes = parameters_client->list_parameters({},
+      rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE);
   std::vector<std::string> all_names = {
     "foo", "bar", "barstr", "baz", "foo.first", "foo.second", "foobar"
   };
@@ -165,7 +168,8 @@ void verify_get_parameters_async(
   std::shared_ptr<rclcpp::parameter_client::AsyncParametersClient> parameters_client)
 {
   // Test recursive depth (=0)
-  auto result = parameters_client->list_parameters({"foo", "bar"}, 0);
+  auto result = parameters_client->list_parameters({"foo", "bar"},
+      rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE);
   rclcpp::spin_until_future_complete(node, result);
   auto parameters_and_prefixes = result.get();
   for (auto & name : parameters_and_prefixes.names) {
@@ -229,7 +233,8 @@ void verify_get_parameters_async(
   }
 
   // List all of the parameters, using an empty prefix list
-  auto result5 = parameters_client->list_parameters({}, 0);
+  auto result5 = parameters_client->list_parameters({},
+      rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE);
   rclcpp::spin_until_future_complete(node, result5);
   parameters_and_prefixes = result5.get();
   std::vector<std::string> all_names = {
