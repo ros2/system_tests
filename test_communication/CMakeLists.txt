@@ -206,10 +206,15 @@ if(BUILD_TESTING)
             if(WIN32)
               set(_append_library_dirs "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>")
             endif()
-
+            if(WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+              set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE_DEBUG}")
+            else()
+              set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE}")
+            endif()
             ament_add_nose_test(test_publisher_subscriber_py${test_suffix}
               "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber_python${test_suffix}_$<CONFIGURATION>.py"
               WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py"
+              PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
               APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}/../../rclpy"
               APPEND_ENV AMENT_PREFIX_PATH=${ament_index_build_path}
               APPEND_LIBRARY_DIRS "${_append_library_dirs}"
