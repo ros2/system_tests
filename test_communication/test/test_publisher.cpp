@@ -79,11 +79,17 @@ int main(int argc, char ** argv)
   } else if (message == "DynamicArrayPrimitives") {
     publish<test_communication::msg::DynamicArrayPrimitives>(
       node, message, get_messages_dynamic_array_primitives());
+  } else if (message == "BoundedArrayPrimitives") {
+    publish<test_communication::msg::BoundedArrayPrimitives>(
+      node, message, get_messages_bounded_array_primitives());
   } else if (message == "Nested") {
     publish<test_communication::msg::Nested>(node, message, get_messages_nested());
   } else if (message == "DynamicArrayNested") {
     publish<test_communication::msg::DynamicArrayNested>(
       node, message, get_messages_dynamic_array_nested());
+  } else if (message == "BoundedArrayNested") {
+    publish<test_communication::msg::BoundedArrayNested>(
+      node, message, get_messages_bounded_array_nested());
   } else if (message == "StaticArrayNested") {
     publish<test_communication::msg::StaticArrayNested>(
       node, message, get_messages_static_array_nested());
