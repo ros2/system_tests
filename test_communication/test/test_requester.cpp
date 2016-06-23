@@ -14,11 +14,14 @@
 
 #include <chrono>
 #include <iostream>
+#include <stdexcept>
 #include <string>
+#include <thread>  // TODO(wjwwood): remove me when fastrtps exclusion is removed
 #include <utility>
 #include <vector>
 
 #include "rclcpp/rclcpp.hpp"
+#include "rmw/rmw.h"  // TODO(wjwwood): remove me when fastrtps exclusion is removed
 
 #include "service_fixtures.hpp"
 
@@ -35,14 +38,22 @@ int request(
   size_t number_of_cycles = 5)
 {
   int rc = 0;
-  auto start = std::chrono::steady_clock::now();
-
   auto requester = node->create_client<T>(std::string("test_service_") + service_type);
+  {  // TODO(wjwwood): remove this block when fastrtps supports wait_for_service.
+    if (std::string(rmw_get_implementation_identifier()) != "rmw_fastrtps_cpp") {
+      if (!requester->wait_for_service(20_s)) {
+        throw std::runtime_error("requester service not available after waiting");
+      }
+    } else {
+      std::this_thread::sleep_for(1_s);
+    }
+  }
 
   rclcpp::WallRate cycle_rate(1);
   auto wait_between_services = std::chrono::milliseconds(100);
   size_t cycle_index = 0;
   size_t service_index = 0;
+  auto start = std::chrono::steady_clock::now();
   // publish the first request up to number_of_cycles times, longer sleep between each cycle
   // publish all requests one by one, shorter sleep between each request
   while (rclcpp::ok() && cycle_index < number_of_cycles && service_index < services.size()) {

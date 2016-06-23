@@ -13,11 +13,13 @@
 // limitations under the License.
 
 #include <chrono>
+#include <string>  // TODO(wjwwood): remove me when fastrtps exclusion is removed
 #include <thread>
 
 #include "gtest/gtest.h"
 
 #include "rclcpp/rclcpp.hpp"
+#include "rmw/rmw.h"  // TODO(wjwwood): remove me when fastrtps exclusion is removed
 
 #include "test_rclcpp/srv/add_two_ints.hpp"
 
@@ -36,9 +38,18 @@ TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_noreqid) {
   request->a = 1;
   request->b = 2;
 
+  {  // TODO(wjwwood): remove this block when fastrtps supports wait_for_service.
+    if (std::string(rmw_get_implementation_identifier()) != "rmw_fastrtps_cpp") {
+      ASSERT_TRUE(client->wait_for_service(20_s)) << "service not available after waiting";
+    } else {
+      std::this_thread::sleep_for(1_s);
+    }
+  }
+
   auto result = client->async_send_request(request);
 
-  rclcpp::spin_until_future_complete(node, result);  // Wait for the result.
+  auto ret = rclcpp::spin_until_future_complete(node, result, 5_s);  // Wait for the result.
+  ASSERT_EQ(ret, rclcpp::executor::FutureReturnCode::SUCCESS);
 
   EXPECT_EQ(3, result.get()->sum);
 }
@@ -51,9 +62,18 @@ TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_reqid) {
   request->a = 4;
   request->b = 5;
 
+  {  // TODO(wjwwood): remove this block when fastrtps supports wait_for_service.
+    if (std::string(rmw_get_implementation_identifier()) != "rmw_fastrtps_cpp") {
+      ASSERT_TRUE(client->wait_for_service(20_s)) << "service not available after waiting";
+    } else {
+      std::this_thread::sleep_for(1_s);
+    }
+  }
+
   auto result = client->async_send_request(request);
 
-  rclcpp::spin_until_future_complete(node, result);  // Wait for the result.
+  auto ret = rclcpp::spin_until_future_complete(node, result, 5_s);  // Wait for the result.
+  ASSERT_EQ(ret, rclcpp::executor::FutureReturnCode::SUCCESS);
 
   EXPECT_EQ(9, result.get()->sum);
 }
@@ -67,6 +87,14 @@ TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_return_request) {
   request->a = 4;
   request->b = 5;
 
+  {  // TODO(wjwwood): remove this block when fastrtps supports wait_for_service.
+    if (std::string(rmw_get_implementation_identifier()) != "rmw_fastrtps_cpp") {
+      ASSERT_TRUE(client->wait_for_service(20_s)) << "service not available after waiting";
+    } else {
+      std::this_thread::sleep_for(1_s);
+    }
+  }
+
   auto result = client->async_send_request(
     request,
     [](rclcpp::client::Client<test_rclcpp::srv::AddTwoInts>::SharedFutureWithRequest future) {
@@ -75,7 +103,8 @@ TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_return_request) {
     EXPECT_EQ(9, future.get().second->sum);
   });
 
-  rclcpp::spin_until_future_complete(node, result);  // Wait for the result.
+  auto ret = rclcpp::spin_until_future_complete(node, result, 5_s);  // Wait for the result.
+  ASSERT_EQ(ret, rclcpp::executor::FutureReturnCode::SUCCESS);
 }
 
 int main(int argc, char ** argv)
