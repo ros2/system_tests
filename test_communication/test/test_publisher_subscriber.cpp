@@ -26,7 +26,7 @@ void publish(
   rclcpp::Node::SharedPtr node,
   const std::string & message_type,
   std::vector<typename T::SharedPtr> messages,
-  size_t number_of_cycles = 5)
+  size_t number_of_cycles = 100)
 {
   rmw_qos_profile_t custom_qos_profile = rmw_qos_profile_default;
   custom_qos_profile.depth = messages.size();
@@ -35,7 +35,7 @@ void publish(
     std::string("test_message_") + message_type, custom_qos_profile);
 
   rclcpp::WallRate cycle_rate(10);
-  rclcpp::WallRate message_rate(40);
+  rclcpp::WallRate message_rate(100);
   size_t cycle_index = 0;
   // publish all messages up to number_of_cycles times, longer sleep between each cycle
   while (rclcpp::ok() && cycle_index < number_of_cycles) {
