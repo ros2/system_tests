@@ -17,12 +17,12 @@
 #include <future>
 #include <stdexcept>
 #include <string>
-#include <thread>  // TODO(wjwwood): remove me when fastrtps exclusion is removed
+#include <thread>  // TODO(wjwwood): remove me when Connext and FastRTPS exclusions are removed
 
 #include "gtest/gtest.h"
 
+#include "rclcpp/exceptions.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include "rmw/rmw.h"  // TODO(wjwwood): remove me when fastrtps exclusion is removed
 
 #include "test_rclcpp/utils.hpp"
 
@@ -205,10 +205,12 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), notify) {
     auto client = node->create_client<test_rclcpp::srv::AddTwoInts>(
       "test_executor_notify_service"
       );
-    {  // TODO(wjwwood): remove this block when fastrtps supports wait_for_service.
-      if (std::string(rmw_get_implementation_identifier()) != "rmw_fastrtps_cpp") {
-        ASSERT_TRUE(client->wait_for_service(20_s)) << "service not available after waiting";
-      } else {
+    {  // TODO(wjwwood): remove this block when Connext and FastRTPS support wait_for_service.
+      try {
+        if (!client->wait_for_service(20_s)) {
+          ASSERT_TRUE(false) << "service not available after waiting";
+        }
+      } catch (rclcpp::exceptions::RCLError) {
         std::this_thread::sleep_for(1_s);
       }
     }

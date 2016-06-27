@@ -16,12 +16,12 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
-#include <thread>  // TODO(wjwwood): remove me when fastrtps exclusion is removed
+#include <thread>  // TODO(wjwwood): remove me when Connext and FastRTPS exclusions are removed
 #include <utility>
 #include <vector>
 
+#include "rclcpp/exceptions.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include "rmw/rmw.h"  // TODO(wjwwood): remove me when fastrtps exclusion is removed
 
 #include "service_fixtures.hpp"
 
@@ -39,12 +39,12 @@ int request(
 {
   int rc = 0;
   auto requester = node->create_client<T>(std::string("test_service_") + service_type);
-  {  // TODO(wjwwood): remove this block when fastrtps supports wait_for_service.
-    if (std::string(rmw_get_implementation_identifier()) != "rmw_fastrtps_cpp") {
+  {  // TODO(wjwwood): remove this block when Connext and FastRTPS support wait_for_service.
+    try {
       if (!requester->wait_for_service(20_s)) {
         throw std::runtime_error("requester service not available after waiting");
       }
-    } else {
+    } catch (rclcpp::exceptions::RCLError) {
       std::this_thread::sleep_for(1_s);
     }
   }
