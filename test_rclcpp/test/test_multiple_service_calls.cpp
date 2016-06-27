@@ -13,15 +13,14 @@
 // limitations under the License.
 
 #include <iostream>
-#include <string>  // TODO(wjwwood): remove me when fastrtps exclusion is removed
-#include <thread>  // TODO(wjwwood): remove me when fastrtps exclusion is removed
+#include <thread>  // TODO(wjwwood): remove me when Connext and FastRTPS exclusions are removed
 #include <utility>
 #include <vector>
 
 #include "gtest/gtest.h"
 
+#include "rclcpp/exceptions.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include "rmw/rmw.h"  // TODO(wjwwood): remove me when fastrtps exclusion is removed
 
 #include "test_rclcpp/srv/add_two_ints.hpp"
 
@@ -46,10 +45,12 @@ TEST(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), two_service_calls) {
     "test_two_service_calls", handle_add_two_ints);
 
   auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("test_two_service_calls");
-  {  // TODO(wjwwood): remove this block when fastrtps supports wait_for_service.
-    if (std::string(rmw_get_implementation_identifier()) != "rmw_fastrtps_cpp") {
-      ASSERT_TRUE(client->wait_for_service(20_s)) << "service not available after waiting";
-    } else {
+  {  // TODO(wjwwood): remove this block when Connext and FastRTPS support wait_for_service.
+    try {
+      if (!client->wait_for_service(20_s)) {
+        ASSERT_TRUE(false) << "service not available after waiting";
+      }
+    } catch (rclcpp::exceptions::RCLError) {
       std::this_thread::sleep_for(1_s);
     }
   }
@@ -112,10 +113,12 @@ TEST(CLASSNAME(test_multiple_service_calls, RMW_IMPLEMENTATION), multiple_client
   fflush(stdout);
   // Send all the requests
   for (auto & pair : client_request_pairs) {
-    {  // TODO(wjwwood): remove this block when fastrtps supports wait_for_service.
-      if (std::string(rmw_get_implementation_identifier()) != "rmw_fastrtps_cpp") {
-        ASSERT_TRUE(pair.first->wait_for_service(20_s)) << "service not available after waiting";
-      } else {
+    {  // TODO(wjwwood): remove this block when Connext and FastRTPS support wait_for_service.
+      try {
+        if (!pair.first->wait_for_service(20_s)) {
+          ASSERT_TRUE(false) << "service not available after waiting";
+        }
+      } catch (rclcpp::exceptions::RCLError) {
         std::this_thread::sleep_for(1_s);
       }
     }

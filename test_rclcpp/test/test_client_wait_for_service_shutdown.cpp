@@ -30,8 +30,8 @@
 
 // rclcpp::shutdown() should wake up wait_for_service, even without spin.
 TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), wait_for_service_shutdown) {
-  // TODO(wjwwood): remove this "skip" when fastrtps supports wait_for_service.
-  if (std::string(rmw_get_implementation_identifier()) == "rmw_fastrtps_cpp") {
+  // TODO(wjwwood): remove this "skip" when Connext and FastRTPS support wait_for_service.
+  if (std::string(rmw_get_implementation_identifier()) != "rmw_opensplice_cpp") {
     return;
   }
   rclcpp::init(0, nullptr);
