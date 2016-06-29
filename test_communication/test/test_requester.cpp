@@ -35,7 +35,7 @@ int request(
       typename T::Response::SharedPtr
     >
   > services,
-  size_t number_of_cycles = 100)
+  size_t number_of_cycles = 10)
 {
   int rc = 0;
   auto requester = node->create_client<T>(std::string("test_service_") + service_type);
@@ -50,7 +50,7 @@ int request(
   }
 
   rclcpp::WallRate cycle_rate(10);
-  auto wait_between_services = std::chrono::milliseconds(10);
+  auto wait_between_services = std::chrono::milliseconds(100);
   size_t cycle_index = 0;
   size_t service_index = 0;
   auto start = std::chrono::steady_clock::now();
