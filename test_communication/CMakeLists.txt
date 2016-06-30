@@ -51,7 +51,7 @@ if(BUILD_TESTING)
     SKIP_INSTALL
   )
 
-  function(custom_test target)
+  function(custom_test target with_message_argument)
     # get typesupport of rmw implementation to include / link against the corresponding interfaces
     get_rmw_typesupport(typesupport_impls "${rmw_implementation}" LANGUAGE "cpp")
 
@@ -66,30 +66,37 @@ if(BUILD_TESTING)
     endforeach()
     ament_target_dependencies(${target}${target_suffix}
       "rclcpp${target_suffix}")
-    # register executable as a test
-    get_target_property(target_path ${target}${target_suffix}
-      RUNTIME_OUTPUT_DIRECTORY)
-    if(NOT target_path)
-      set(target_path "${CMAKE_CURRENT_BINARY_DIR}")
+    if(with_message_argument)
+      # adding test for each message type
+      foreach(message_file ${message_files})
+        get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
+        # TODO(dirk-thomas) publishing Bounded/DynamicArrayPrimitives in OpenSplice is buggy
+        # https://github.com/ros2/rclcpp/issues/219
+        if((NOT TEST_MESSAGE_TYPE STREQUAL "BoundedArrayPrimitives" AND NOT TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives") OR NOT rmw_implementation STREQUAL "rmw_opensplice_cpp")
+          ament_add_test(
+            "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
+            COMMAND "$<TARGET_FILE:${target}${target_suffix}>" "${TEST_MESSAGE_TYPE}"
+            TIMEOUT 15
+            GENERATE_RESULT_FOR_RETURN_CODE_ZERO
+            ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
+          set_tests_properties(
+            "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
+            PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}${target_suffix}>"
+          )
+        endif()
+      endforeach()
+    else()
+      ament_add_test(
+        "${target}${target_suffix}"
+        COMMAND "$<TARGET_FILE:${target}${target_suffix}>"
+        TIMEOUT 15
+        GENERATE_RESULT_FOR_RETURN_CODE_ZERO
+        ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
+      set_tests_properties(
+        "${target}${target_suffix}"
+        PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}${target_suffix}>"
+      )
     endif()
-    # adding test for each message type
-    foreach(message_file ${message_files})
-      get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
-      # TODO(dirk-thomas) publishing Bounded/DynamicArrayPrimitives in OpenSplice is buggy
-      # https://github.com/ros2/rclcpp/issues/219
-      if((NOT TEST_MESSAGE_TYPE STREQUAL "BoundedArrayPrimitives" AND NOT TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives") OR NOT rmw_implementation STREQUAL "rmw_opensplice_cpp")
-        ament_add_test(
-          "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
-          COMMAND "${target_path}/${target}${target_suffix}" "${TEST_MESSAGE_TYPE}"
-          TIMEOUT 15
-          GENERATE_RESULT_FOR_RETURN_CODE_ZERO
-          ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
-        set_tests_properties(
-          "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
-          PROPERTIES REQUIRED_FILES "${target_path}/${target}${target_suffix}"
-        )
-      endif()
-    endforeach()
   endfunction()
 
   function(custom_executable target)
@@ -240,9 +247,11 @@ if(BUILD_TESTING)
 
     # publisher combined with a subscriber
     custom_test(test_publisher_subscriber_cpp
+      TRUE
       "test/test_publisher_subscriber.cpp")
     # subcription valid data
     custom_test(test_subscription_valid_data_cpp
+      FALSE
       "test/test_subscription_valid_data.cpp")
 
     # executables publisher / subscriber
