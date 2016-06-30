@@ -115,7 +115,7 @@ if(BUILD_TESTING)
     # add_executable(${target}${target_suffix} ${ARGN})
     ament_add_gtest(
       "${target}${target_suffix}" ${ARGN}
-      TIMEOUT 15
+      TIMEOUT 60
       ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
     target_link_libraries(${target}${target_suffix}
       ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
@@ -304,12 +304,24 @@ if(BUILD_TESTING)
 
     # publisher combined with a subscriber
     custom_test(test_publisher_subscriber_cpp
-      TRUE
       "test/test_publisher_subscriber.cpp")
     # subcription valid data
     custom_test(test_subscription_valid_data_cpp
-      FALSE
       "test/test_subscription_valid_data.cpp")
+
+    # executables publisher / subscriber
+    custom_executable(test_publisher_cpp
+      "test/test_publisher.cpp")
+    custom_executable(test_subscriber_cpp
+      "test/test_subscriber.cpp")
+    # executables requester / replier
+    custom_executable(test_requester_cpp
+      "test/test_requester.cpp")
+    custom_executable(test_replier_cpp
+      "test/test_replier.cpp")
+
+    set(rmw_implementation1 "${rmw_implementation}")
+    set(target_suffix1 "${target_suffix}")
 
     # executables publisher / subscriber
     custom_executable(test_publisher_cpp
