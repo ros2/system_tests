@@ -25,9 +25,14 @@
 #ifdef RMW_IMPLEMENTATION
 # define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
 # define CLASSNAME(NAME, SUFFIX) CLASSNAME_(NAME, SUFFIX)
+# define QUOTE(arg) #arg
+# define STRINGER(arg) QUOTE(arg)
+# define RMW_IMPLEMENTATION_STRING STRINGER(RMW_IMPLEMENTATION)
 #else
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
+
+
 
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), to_string) {
   rclcpp::parameter::ParameterVariant pv("foo", "bar");
@@ -70,6 +75,13 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous) {
 }
 
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous_repeated) {
+#ifdef RMW_IMPLEMENTATION_STRING
+  // https://github.com/eProsima/ROS-RMW-Fast-RTPS-cpp/issues/46
+  if (std::string("rmw_fastrtps_cpp") == RMW_IMPLEMENTATION_STRING) {
+    printf("Skipping repeated parameter retrieval test for FastRTPS\n");
+    return;
+  }
+#endif
   auto node = rclcpp::Node::make_shared("test_parameters_local_synchronous_repeated");
   // TODO(esteve): Make the parameter service automatically start with the node.
   auto parameter_service = std::make_shared<rclcpp::parameter_service::ParameterService>(node);
@@ -91,6 +103,13 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_asynchronous) {
 }
 
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
+#ifdef RMW_IMPLEMENTATION_STRING
+  // https://github.com/eProsima/ROS-RMW-Fast-RTPS-cpp/issues/46
+  if (std::string("rmw_fastrtps_cpp") == RMW_IMPLEMENTATION_STRING) {
+    printf("Skipping repeated parameter retrieval test for FastRTPS\n");
+    return;
+  }
+#endif
   auto node = rclcpp::Node::make_shared("test_parameters_local_helpers");
   // TODO(esteve): Make the parameter service automatically start with the node.
   auto parameter_service = std::make_shared<rclcpp::parameter_service::ParameterService>(node);
