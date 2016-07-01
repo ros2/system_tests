@@ -44,9 +44,6 @@ if(BUILD_TESTING)
     ament_add_gtest(${target}${target_suffix} ${ARGN}
       ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
     if(TARGET ${target}${target_suffix})
-      target_link_libraries(${target}${target_suffix}
-        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-        ${_AMENT_EXPORT_LIBRARY_TARGETS})
       target_compile_definitions(${target}${target_suffix}
         PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
       add_dependencies(${target}${target_suffix} ${PROJECT_NAME})

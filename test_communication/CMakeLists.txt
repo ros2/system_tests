@@ -56,9 +56,6 @@ if(BUILD_TESTING)
     get_rmw_typesupport(typesupport_impls "${rmw_implementation}" LANGUAGE "cpp")
 
     add_executable(${target}${target_suffix} ${ARGN})
-    target_link_libraries(${target}${target_suffix}
-      ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-      ${_AMENT_EXPORT_LIBRARY_TARGETS})
     add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
     foreach(typesupport_impl ${typesupport_impls})
       rosidl_target_interfaces(${target}${target_suffix}
@@ -104,9 +101,6 @@ if(BUILD_TESTING)
     get_rmw_typesupport(typesupport_impls "${rmw_implementation}" LANGUAGE "cpp")
 
     add_executable(${target}${target_suffix} ${ARGN})
-    target_link_libraries(${target}${target_suffix}
-      ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-      ${_AMENT_EXPORT_LIBRARY_TARGETS})
     add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
     foreach(typesupport_impl ${typesupport_impls})
       rosidl_target_interfaces(${target}${target_suffix}
