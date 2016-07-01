@@ -140,9 +140,9 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
   EXPECT_TRUE(parameters_client->has_parameter("baz"));
   EXPECT_THROW(foobar = parameters_client->get_parameter<bool>("baz"), std::runtime_error);
   EXPECT_NO_THROW(baz = parameters_client->get_parameter<double>("baz"));
-  EXPECT_FLOAT_EQ(baz, 1.45);
+  EXPECT_DOUBLE_EQ(baz, 1.45);
   EXPECT_NO_THROW(baz = parameters_client->get_parameter("baz", -4.2));
-  EXPECT_FLOAT_EQ(baz, 1.45);
+  EXPECT_DOUBLE_EQ(baz, 1.45);
 
   EXPECT_TRUE(parameters_client->has_parameter("foobar"));
   EXPECT_THROW(baz = parameters_client->get_parameter<double>("foobar"), std::runtime_error);
@@ -181,7 +181,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
   EXPECT_NO_THROW(barstr = parameters_client->get_parameter("not_there", std::string("heya")));
   EXPECT_EQ(barstr, "heya");
   EXPECT_NO_THROW(baz = parameters_client->get_parameter("not_there", -4.2));
-  EXPECT_FLOAT_EQ(baz, -4.2);
+  EXPECT_DOUBLE_EQ(baz, -4.2);
   EXPECT_NO_THROW(foobar = parameters_client->get_parameter("not_there", false));
   EXPECT_EQ(foobar, false);
   EXPECT_NO_THROW(barfoo =
