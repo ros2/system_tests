@@ -78,6 +78,107 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_asynchronous) {
   verify_get_parameters_async(node, parameters_client);
 }
 
+TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
+  auto node = rclcpp::Node::make_shared("test_parameters_local_helpers");
+  // TODO(esteve): Make the parameter service automatically start with the node.
+  auto parameter_service = std::make_shared<rclcpp::parameter_service::ParameterService>(node);
+  auto parameters_client = std::make_shared<rclcpp::parameter_client::SyncParametersClient>(node);
+  auto set_parameters_results = parameters_client->set_parameters({
+    rclcpp::parameter::ParameterVariant("foo", 2),
+    rclcpp::parameter::ParameterVariant("bar", "hello"),
+    rclcpp::parameter::ParameterVariant("barstr", std::string("hello_str")),
+    rclcpp::parameter::ParameterVariant("baz", 1.45),
+    rclcpp::parameter::ParameterVariant("foobar", true),
+    rclcpp::parameter::ParameterVariant("barfoo", std::vector<uint8_t>{0, 1, 2}),
+  });
+
+  // Check to see if they were set.
+  for (auto & result : set_parameters_results) {
+    ASSERT_TRUE(result.successful);
+  }
+
+  int foo;
+  std::string bar, barstr;
+  double baz;
+  bool foobar;
+  std::vector<uint8_t> barfoo;
+
+  // Test variables that are set, verifying that types are obeyed, and defaults not used.
+  EXPECT_TRUE(parameters_client->has_parameter("foo"));
+  EXPECT_THROW(baz = parameters_client->get_parameter<double>("foo"), std::runtime_error);
+  EXPECT_NO_THROW(foo = parameters_client->get_parameter<int>("foo"));
+  EXPECT_EQ(foo, 2);
+  EXPECT_NO_THROW(foo = parameters_client->get_parameter("foo", 42));
+  EXPECT_EQ(foo, 2);
+
+  EXPECT_TRUE(parameters_client->has_parameter("bar"));
+  EXPECT_THROW(foo = parameters_client->get_parameter<int>("bar"), std::runtime_error);
+  EXPECT_NO_THROW(bar = parameters_client->get_parameter<std::string>("bar"));
+  EXPECT_EQ(bar, "hello");
+  EXPECT_NO_THROW(bar = parameters_client->get_parameter<std::string>("bar", "goodbye"));
+  EXPECT_EQ(bar, "hello");
+
+  EXPECT_TRUE(parameters_client->has_parameter("barstr"));
+  EXPECT_THROW(foobar = parameters_client->get_parameter<bool>("barstr"), std::runtime_error);
+  EXPECT_NO_THROW(barstr = parameters_client->get_parameter<std::string>("barstr"));
+  EXPECT_EQ(barstr, "hello_str");
+  EXPECT_NO_THROW(barstr = parameters_client->get_parameter("barstr", std::string("heya")));
+  EXPECT_EQ(barstr, "hello_str");
+
+  EXPECT_TRUE(parameters_client->has_parameter("baz"));
+  EXPECT_THROW(foobar = parameters_client->get_parameter<bool>("baz"), std::runtime_error);
+  EXPECT_NO_THROW(baz = parameters_client->get_parameter<double>("baz"));
+  EXPECT_FLOAT_EQ(baz, 1.45);
+  EXPECT_NO_THROW(baz = parameters_client->get_parameter("baz", -4.2));
+  EXPECT_FLOAT_EQ(baz, 1.45);
+
+  EXPECT_TRUE(parameters_client->has_parameter("foobar"));
+  EXPECT_THROW(baz = parameters_client->get_parameter<double>("foobar"), std::runtime_error);
+  EXPECT_NO_THROW(foobar = parameters_client->get_parameter<bool>("foobar"));
+  EXPECT_EQ(foobar, true);
+  EXPECT_NO_THROW(foobar = parameters_client->get_parameter("foobar", false));
+  EXPECT_EQ(foobar, true);
+
+  EXPECT_TRUE(parameters_client->has_parameter("barfoo"));
+  EXPECT_THROW(bar = parameters_client->get_parameter<std::string>("barfoo"), std::runtime_error);
+  EXPECT_NO_THROW(barfoo = parameters_client->get_parameter<std::vector<uint8_t>>("barfoo"));
+  EXPECT_EQ(barfoo[0], 0);
+  EXPECT_EQ(barfoo[1], 1);
+  EXPECT_EQ(barfoo[2], 2);
+  EXPECT_NO_THROW(barfoo =
+    parameters_client->get_parameter("barfoo", std::vector<uint8_t>{3, 4, 5}));
+  EXPECT_EQ(barfoo[0], 0);
+  EXPECT_EQ(barfoo[1], 1);
+  EXPECT_EQ(barfoo[2], 2);
+
+  // Test a variable that's not set, checking that we throw when asking for its value without
+  // specifying a default.
+  EXPECT_FALSE(parameters_client->has_parameter("not_there"));
+  EXPECT_THROW(parameters_client->get_parameter<int>("not_there"), std::runtime_error);
+  EXPECT_THROW(parameters_client->get_parameter<std::string>("not_there"), std::runtime_error);
+  EXPECT_THROW(parameters_client->get_parameter<double>("not_there"), std::runtime_error);
+  EXPECT_THROW(parameters_client->get_parameter<bool>("not_there"), std::runtime_error);
+  EXPECT_THROW(parameters_client->get_parameter<std::vector<uint8_t>>(
+      "not_there"), std::runtime_error);
+
+  // Test a variable that's not set, checking that we correctly get the specified default.
+  EXPECT_NO_THROW(foo = parameters_client->get_parameter("not_there", 42));
+  EXPECT_EQ(foo, 42);
+  EXPECT_NO_THROW(bar = parameters_client->get_parameter<std::string>("not_there", "goodbye"));
+  EXPECT_EQ(bar, "goodbye");
+  EXPECT_NO_THROW(barstr = parameters_client->get_parameter("not_there", std::string("heya")));
+  EXPECT_EQ(barstr, "heya");
+  EXPECT_NO_THROW(baz = parameters_client->get_parameter("not_there", -4.2));
+  EXPECT_FLOAT_EQ(baz, -4.2);
+  EXPECT_NO_THROW(foobar = parameters_client->get_parameter("not_there", false));
+  EXPECT_EQ(foobar, false);
+  EXPECT_NO_THROW(barfoo =
+    parameters_client->get_parameter("not_there", std::vector<uint8_t>{3, 4, 5}));
+  EXPECT_EQ(barfoo[0], 3);
+  EXPECT_EQ(barfoo[1], 4);
+  EXPECT_EQ(barfoo[2], 5);
+}
+
 int main(int argc, char ** argv)
 {
   // NOTE: use custom main to ensure that rclcpp::init is called only once
