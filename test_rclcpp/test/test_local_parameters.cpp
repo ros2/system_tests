@@ -69,6 +69,18 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous) {
   verify_test_parameters(parameters_client);
 }
 
+TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous_repeated) {
+  auto node = rclcpp::Node::make_shared("test_parameters_local_synchronous_repeated");
+  // TODO(esteve): Make the parameter service automatically start with the node.
+  auto parameter_service = std::make_shared<rclcpp::parameter_service::ParameterService>(node);
+  auto parameters_client = std::make_shared<rclcpp::parameter_client::SyncParametersClient>(node);
+  set_test_parameters(parameters_client);
+  for (int i = 0; i < 10; ++i) {
+    printf("iteration: %d\n", i);
+    verify_test_parameters(parameters_client);
+  }
+}
+
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_asynchronous) {
   auto node = rclcpp::Node::make_shared(std::string("test_parameters_local_asynchronous"));
   // TODO(esteve): Make the parameter service automatically start with the node.
