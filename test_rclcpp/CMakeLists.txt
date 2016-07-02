@@ -133,7 +133,7 @@ if(BUILD_TESTING)
       TIMEOUT 15)
     custom_gtest(gtest_multithreaded
       "test/test_multithreaded.cpp"
-      TIMEOUT 30)
+      TIMEOUT 70)
     custom_gtest(gtest_local_parameters
       "test/test_local_parameters.cpp"
       TIMEOUT 30)
