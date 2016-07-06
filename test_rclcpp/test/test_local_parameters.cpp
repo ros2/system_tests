@@ -32,8 +32,6 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
-
-
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), to_string) {
   rclcpp::parameter::ParameterVariant pv("foo", "bar");
   rclcpp::parameter::ParameterVariant pv2("foo2", "bar2");
