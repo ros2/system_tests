@@ -109,10 +109,10 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
     ASSERT_TRUE(result.successful);
   }
 
-  int foo;
+  int foo = 0;
   std::string bar, barstr;
-  double baz;
-  bool foobar;
+  double baz = 0.;
+  bool foobar = false;
   std::vector<uint8_t> barfoo;
 
   // Test variables that are set, verifying that types are obeyed, and defaults not used.
