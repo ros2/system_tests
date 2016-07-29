@@ -212,7 +212,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_primiti
 
   bool got_param = false;
 
-  int foo;
+  int foo = 0;
   std::string foostr;
 
   std::string bar = "bar";
@@ -230,7 +230,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_primiti
   // No throw on non-existent param, param shouldn't change
   foo = 1000;
   EXPECT_NO_THROW(got_param = node->get_parameter("no_such_param", foo));
-  EXPECT_EQ(false, got_param);
+  EXPECT_FALSE(got_param);
   EXPECT_EQ(1000, foo);
 
   EXPECT_NO_THROW(got_param = node->get_parameter("bar", bar));
@@ -288,7 +288,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_variant
 
   // No throw on non-existent param for reference passed version
   EXPECT_NO_THROW(got_param = node->get_parameter("no_such_param", foo));
-  EXPECT_EQ(false, got_param);
+  EXPECT_FALSE(got_param);
 
   // Throw on non-existent param for returning version
   EXPECT_THROW(node->get_parameter("no_such_param"), std::out_of_range);
