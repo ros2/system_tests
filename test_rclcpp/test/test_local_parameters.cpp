@@ -15,7 +15,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
-#include <stdint.h>
+#include <cstdint>
 #include <vector>
 #include "gtest/gtest.h"
 
