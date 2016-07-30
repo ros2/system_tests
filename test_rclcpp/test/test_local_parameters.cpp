@@ -15,6 +15,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <stdint.h>
 #include <vector>
 #include "gtest/gtest.h"
 
@@ -212,7 +213,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_primiti
 
   bool got_param = false;
 
-  int foo = 0;
+  int64_t foo = 0;
   std::string foostr;
 
   std::string bar = "bar";
