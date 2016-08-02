@@ -15,6 +15,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <cstdint>
 #include <vector>
 #include "gtest/gtest.h"
 
@@ -189,6 +190,122 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
   EXPECT_EQ(barfoo[0], 3);
   EXPECT_EQ(barfoo[1], 4);
   EXPECT_EQ(barfoo[2], 5);
+}
+
+TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_primitive_type) {
+  auto node = rclcpp::Node::make_shared("test_parameters_local_helpers");
+  // TODO(esteve): Make the parameter service automatically start with the node.
+  auto parameter_service = std::make_shared<rclcpp::parameter_service::ParameterService>(node);
+  auto parameters_client = std::make_shared<rclcpp::parameter_client::SyncParametersClient>(node);
+  auto set_parameters_results = parameters_client->set_parameters({
+    rclcpp::parameter::ParameterVariant("foo", 2),
+    rclcpp::parameter::ParameterVariant("bar", "hello"),
+    rclcpp::parameter::ParameterVariant("barstr", std::string("hello_str")),
+    rclcpp::parameter::ParameterVariant("baz", 1.45),
+    rclcpp::parameter::ParameterVariant("foobar", true),
+    rclcpp::parameter::ParameterVariant("barfoo", std::vector<uint8_t>{3, 4, 5}),
+  });
+
+  // Check to see if they were set.
+  for (auto & result : set_parameters_results) {
+    ASSERT_TRUE(result.successful);
+  }
+
+  bool got_param = false;
+
+  int64_t foo = 0;
+  std::string foostr;
+
+  std::string bar = "bar";
+  double baz = 0.0;
+  bool foobar = false;
+  std::vector<uint8_t> barfoo(3);
+
+  EXPECT_NO_THROW(got_param = node->get_parameter("foo", foo));
+  EXPECT_EQ(true, got_param);
+  EXPECT_EQ(2, foo);
+
+  // Throw on type error
+  EXPECT_THROW(got_param = node->get_parameter("foo", foostr), std::runtime_error);
+
+  // No throw on non-existent param, param shouldn't change
+  foo = 1000;
+  EXPECT_NO_THROW(got_param = node->get_parameter("no_such_param", foo));
+  EXPECT_FALSE(got_param);
+  EXPECT_EQ(1000, foo);
+
+  EXPECT_NO_THROW(got_param = node->get_parameter("bar", bar));
+  EXPECT_EQ(true, got_param);
+  EXPECT_EQ("hello", bar);
+
+  EXPECT_NO_THROW(got_param = node->get_parameter("baz", baz));
+  EXPECT_EQ(true, got_param);
+  EXPECT_DOUBLE_EQ(1.45, baz);
+
+  EXPECT_NO_THROW(got_param = node->get_parameter("foobar", foobar));
+  EXPECT_EQ(true, got_param);
+  EXPECT_EQ(true, foobar);
+
+  EXPECT_NO_THROW(got_param = node->get_parameter("barfoo", barfoo));
+  EXPECT_EQ(true, got_param);
+  EXPECT_EQ(barfoo[0], 3);
+  EXPECT_EQ(barfoo[1], 4);
+  EXPECT_EQ(barfoo[2], 5);
+}
+
+TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_variant_type) {
+  using rclcpp::parameter::ParameterVariant;
+
+  auto node = rclcpp::Node::make_shared("test_parameters_local_helpers");
+  // TODO(esteve): Make the parameter service automatically start with the node.
+  auto parameter_service = std::make_shared<rclcpp::parameter_service::ParameterService>(node);
+  auto parameters_client = std::make_shared<rclcpp::parameter_client::SyncParametersClient>(node);
+  auto set_parameters_results = parameters_client->set_parameters({
+    ParameterVariant("foo", 2),
+    ParameterVariant("bar", "hello"),
+    ParameterVariant("barstr", std::string("hello_str")),
+    ParameterVariant("baz", 1.45),
+    ParameterVariant("foobar", true),
+    ParameterVariant("barfoo", std::vector<uint8_t>{3, 4, 5}),
+  });
+
+  // Check to see if they were set.
+  for (auto & result : set_parameters_results) {
+    ASSERT_TRUE(result.successful);
+  }
+
+  bool got_param = false;
+
+  ParameterVariant foo;
+  ParameterVariant foostr;
+
+  ParameterVariant bar;
+  ParameterVariant baz;
+  ParameterVariant foobar;
+  ParameterVariant barfoo;
+
+  EXPECT_NO_THROW(got_param = node->get_parameter("foo", foo));
+  EXPECT_EQ(true, got_param);
+
+  // No throw on non-existent param for reference passed version
+  EXPECT_NO_THROW(got_param = node->get_parameter("no_such_param", foo));
+  EXPECT_FALSE(got_param);
+
+  // Throw on non-existent param for returning version
+  EXPECT_THROW(node->get_parameter("no_such_param"), std::out_of_range);
+
+
+  EXPECT_NO_THROW(got_param = node->get_parameter("bar", bar));
+  EXPECT_EQ(true, got_param);
+
+  EXPECT_NO_THROW(got_param = node->get_parameter("baz", baz));
+  EXPECT_EQ(true, got_param);
+
+  EXPECT_NO_THROW(got_param = node->get_parameter("foobar", foobar));
+  EXPECT_EQ(true, got_param);
+
+  EXPECT_NO_THROW(got_param = node->get_parameter("barfoo", barfoo));
+  EXPECT_EQ(true, got_param);
 }
 
 int main(int argc, char ** argv)
