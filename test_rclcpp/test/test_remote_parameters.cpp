@@ -37,7 +37,8 @@ TEST(CLASSNAME(parameters, rmw_implementation), test_remote_parameters) {
 
   auto node = rclcpp::Node::make_shared(std::string("test_remote_parameters"));
 
-  {  // TODO(wjwwood): remove this block when there is a wait_for_parameter_server option.
+  // TODO(wjwwood): remove this block when there is a wait_for_parameter_server option.
+  {
     // This is requried specifically for FastRTPS, see:
     //   https://github.com/eProsima/ROS-RMW-Fast-RTPS-cpp/pull/51#issuecomment-242872096
     std::this_thread::sleep_for(1_s);
