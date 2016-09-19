@@ -109,9 +109,6 @@ int main(int argc, char ** argv)
   std::string service = argv[1];
   auto node = rclcpp::Node::make_shared(std::string("test_requester_") + service);
 
-  // NOTE(esteve): sleep for two seconds to let the service start up
-  std::this_thread::sleep_for(std::chrono::seconds(2));
-
   int rc;
   if (service == "Empty") {
     rc = request<test_communication::srv::Empty>(
