@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include <iostream>
-#include <thread>  // TODO(wjwwood): remove me when Connext and FastRTPS exclusions are removed
 #include <utility>
 #include <vector>
 
@@ -45,14 +44,8 @@ TEST(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), two_service_calls) {
     "test_two_service_calls", handle_add_two_ints);
 
   auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("test_two_service_calls");
-  {  // TODO(wjwwood): remove this block when Connext and FastRTPS support wait_for_service.
-    try {
-      if (!client->wait_for_service(20_s)) {
-        ASSERT_TRUE(false) << "service not available after waiting";
-      }
-    } catch (rclcpp::exceptions::RCLError) {
-      std::this_thread::sleep_for(1_s);
-    }
+  if (!client->wait_for_service(20_s)) {
+    ASSERT_TRUE(false) << "service not available after waiting";
   }
 
   auto request1 = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
@@ -113,14 +106,8 @@ TEST(CLASSNAME(test_multiple_service_calls, RMW_IMPLEMENTATION), multiple_client
   fflush(stdout);
   // Send all the requests
   for (auto & pair : client_request_pairs) {
-    {  // TODO(wjwwood): remove this block when Connext and FastRTPS support wait_for_service.
-      try {
-        if (!pair.first->wait_for_service(20_s)) {
-          ASSERT_TRUE(false) << "service not available after waiting";
-        }
-      } catch (rclcpp::exceptions::RCLError) {
-        std::this_thread::sleep_for(1_s);
-      }
+    if (!pair.first->wait_for_service(20_s)) {
+      ASSERT_TRUE(false) << "service not available after waiting";
     }
     results.push_back(pair.first->async_send_request(pair.second));
   }
