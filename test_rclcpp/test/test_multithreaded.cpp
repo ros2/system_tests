@@ -14,7 +14,6 @@
 
 #include <limits>
 #include <string>
-#include <thread>  // TODO(wjwwood): remove me when Connext and FastRTPS exclusions are removed
 #include <utility>
 #include <vector>
 
@@ -194,14 +193,8 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     std::vector<SharedFuture> results;
     // Send all the requests
     for (auto & pair : client_request_pairs) {
-      {  // TODO(wjwwood): remove this block when Connext and FastRTPS support wait_for_service.
-        try {
-          if (!pair.first->wait_for_service(20_s)) {
-            ASSERT_TRUE(false) << "service not available after waiting";
-          }
-        } catch (rclcpp::exceptions::RCLError) {
-          std::this_thread::sleep_for(1_s);
-        }
+      if (!pair.first->wait_for_service(20_s)) {
+        ASSERT_TRUE(false) << "service not available after waiting";
       }
       results.push_back(pair.first->async_send_request(pair.second));
     }
@@ -225,14 +218,8 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     std::vector<SharedFuture> results;
     // Send all the requests again
     for (auto & pair : client_request_pairs) {
-      {  // TODO(wjwwood): remove this block when Connext and FastRTPS support wait_for_service.
-        try {
-          if (!pair.first->wait_for_service(20_s)) {
-            ASSERT_TRUE(false) << "service not available after waiting";
-          }
-        } catch (rclcpp::exceptions::RCLError) {
-          std::this_thread::sleep_for(1_s);
-        }
+      if (!pair.first->wait_for_service(20_s)) {
+        ASSERT_TRUE(false) << "service not available after waiting";
       }
       results.push_back(pair.first->async_send_request(pair.second));
     }
@@ -333,7 +320,7 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_access_publisher_i
 
 int main(int argc, char ** argv)
 {
-  // NOTE: use custom main to ensure that rclcpp::init is called only once
+  // use custom main to ensure that rclcpp::init is called only once
   rclcpp::init(argc, argv);
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
