@@ -74,7 +74,7 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_consistency_reg
         printf("receivied correct result\n");
         std::cout.flush();
       } else {
-        printf("received incorrect result: %li\n", result1.get()->sum);
+        printf("received incorrect result: %zd\n", result1.get()->sum);
         std::cout.flush();
       }
     } else {
@@ -116,7 +116,7 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_consistency_reg
         printf("receivied correct result\n");
         std::cout.flush();
       } else {
-        printf("received incorrect result: %li\n", result2.get()->sum);
+        printf("received incorrect result: %zd\n", result2.get()->sum);
         std::cout.flush();
       }
     } else {
