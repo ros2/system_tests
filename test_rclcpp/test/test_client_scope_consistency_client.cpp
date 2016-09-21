@@ -71,7 +71,7 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_consistency_reg
       printf("received first result\n");
       std::cout.flush();
       if (3 == result1.get()->sum) {
-        printf("receivied correct result\n");
+        printf("received correct result\n");
         std::cout.flush();
       } else {
         printf("received incorrect result: %zd\n", result1.get()->sum);
@@ -113,7 +113,7 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_consistency_reg
       printf("received second result\n");
       std::cout.flush();
       if (5 == result2.get()->sum) {
-        printf("receivied correct result\n");
+        printf("received correct result\n");
         std::cout.flush();
       } else {
         printf("received incorrect result: %zd\n", result2.get()->sum);
