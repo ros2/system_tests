@@ -169,6 +169,16 @@ if(BUILD_TESTING)
     custom_launch_test(test_client_scope_cpp
       test_client_scope_server_cpp test_client_scope_client_cpp
       TIMEOUT 30)
+
+    custom_executable(test_client_scope_consistency_server_cpp "test/test_client_scope_consistency_server.cpp")
+    custom_executable(test_client_scope_consistency_client_cpp "test/test_client_scope_consistency_client.cpp")
+    target_include_directories(test_client_scope_consistency_client_cpp${target_suffix}
+      PUBLIC ${GTEST_INCLUDE_DIRS})
+    target_link_libraries(test_client_scope_consistency_client_cpp${target_suffix}
+      ${GTEST_LIBRARIES})
+    custom_launch_test(test_client_scope_consistency_cpp
+      test_client_scope_consistency_server_cpp test_client_scope_consistency_client_cpp
+      TIMEOUT 30)
   endmacro()
 
   call_for_each_rmw_implementation(targets)
