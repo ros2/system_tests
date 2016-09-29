@@ -51,7 +51,7 @@ def talker(message_name, rmw_implementation, number_of_cycles):
             chatter_pub.publish(msg)
             msg_count += 1
             print('publishing message #%d' % msg_count)
-            time.sleep(0.1)
+        print('cycle_count: ' + str(cycle_count))
         time.sleep(1)
     rclpy.shutdown()
 
@@ -64,7 +64,7 @@ if __name__ == '__main__':
     parser.add_argument('-r', '--rmw_implementation', default=rmw_implementations[0],
                         choices=rmw_implementations,
                         help='rmw_implementation identifier')
-    parser.add_argument('-n', '--number_of_cycles', type=int, default=10,
+    parser.add_argument('-n', '--number_of_cycles', type=int, default=20,
                         help='number of sending attempts')
     args = parser.parse_args()
     try:
