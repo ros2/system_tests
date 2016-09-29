@@ -74,6 +74,7 @@ def listener(message_name, rmw_implementation, number_of_cycles):
            len(received_messages) != len(expected_msgs)):
         rclpy.spin_once(node)
         spin_count += 1
+        print('spin_count: ' + str(spin_count))
     rclpy.shutdown()
 
     assert len(received_messages) == len(expected_msgs),\
@@ -88,7 +89,7 @@ if __name__ == '__main__':
     parser.add_argument('-r', '--rmw_implementation', default=rmw_implementations[0],
                         choices=rmw_implementations,
                         help='rmw_implementation identifier')
-    parser.add_argument('-n', '--number_of_cycles', type=int, default=10,
+    parser.add_argument('-n', '--number_of_cycles', type=int, default=50,
                         help='number of sending attempts')
     args = parser.parse_args()
     try:
