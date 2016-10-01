@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <iostream>
+#include <memory>
 #include <thread>  // TODO(wjwwood): remove me when Connext and FastRTPS exclusions are removed
 #include <utility>
 #include <vector>

@@ -15,8 +15,8 @@
 #ifndef TEST_RCLCPP__UTILS_HPP_
 #define TEST_RCLCPP__UTILS_HPP_
 
-
 #include <cinttypes>
+#include <memory>
 #include <stdexcept>
 #include <string>
 
@@ -60,7 +60,6 @@ void busy_wait_for_subscriber(
     time_slept_count,
     topic_name.c_str());
 }
-
 
 }  // namespace test_rclcpp
 

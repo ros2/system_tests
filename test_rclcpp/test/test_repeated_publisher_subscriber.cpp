@@ -14,6 +14,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <memory>
 
 #include "gtest/gtest.h"
 

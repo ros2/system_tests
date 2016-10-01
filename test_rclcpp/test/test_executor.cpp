@@ -15,6 +15,7 @@
 #include <atomic>
 #include <cinttypes>
 #include <future>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <thread>  // TODO(wjwwood): remove me when Connext and FastRTPS exclusions are removed
