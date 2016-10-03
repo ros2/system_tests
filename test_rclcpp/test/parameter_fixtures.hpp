@@ -16,6 +16,7 @@
 #define PARAMETER_FIXTURES_HPP_
 
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <vector>

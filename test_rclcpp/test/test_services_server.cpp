@@ -16,6 +16,8 @@
 
 #include <test_rclcpp/srv/add_two_ints.hpp>
 
+#include <memory>
+
 void handle_add_two_ints_noreqid(
   const std::shared_ptr<test_rclcpp::srv::AddTwoInts::Request> request,
   std::shared_ptr<test_rclcpp::srv::AddTwoInts::Response> response)
