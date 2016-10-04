@@ -13,9 +13,12 @@ def test_rostopic_list():
     rmw_implementations = get_rmw_implementations()
 
     pub_cnt = 0
-    msg_list = ['DynamicArrayPrimitives' , 'Primitives']
+    msg_list = ['DynamicArrayPrimitives', 'Primitives']
     expected = {}
     for rmw_impl in rmw_implementations:
+        # TODO(mikaelarguedas) Opensplice creates a bunch of DDS topics
+        # remove this once we have official scheme for ROS topics
+        # and filter topics accordingly
         if rmw_impl != 'rmw_opensplice_cpp':
             for msg in msg_list:
                 topic_name = msg + '_' + rmw_impl
