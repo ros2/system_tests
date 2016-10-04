@@ -1,0 +1,56 @@
+import json
+from launch import LaunchDescriptor
+from launch.exit_handler import primary_exit_handler
+from launch.launcher import DefaultLauncher
+import os
+import sys
+
+
+def test_rostopic_list():
+    ld = LaunchDescriptor()
+
+    from rclpy.impl.rmw_implementation_tools import get_rmw_implementations
+    rmw_implementations = get_rmw_implementations()
+
+    pub_cnt = 0
+    msg_list = ['DynamicArrayPrimitives' , 'Primitives']
+    expected = {}
+    for rmw_impl in rmw_implementations:
+        if rmw_impl != 'rmw_opensplice_cpp':
+            for msg in msg_list:
+                topic_name = msg + '_' + rmw_impl
+                publisher_cmd = ['@TEST_PUBLISHER_EXECUTABLE@', msg, '-t', topic_name]
+                publisher_cmd.insert(0, sys.executable)
+
+                publisher_env = dict(os.environ)
+                publisher_env['RCLPY_IMPLEMENTATION'] = rmw_impl
+                ld.add_process(
+                    cmd=publisher_cmd,
+                    name='publisher' + str(pub_cnt),
+                    env=publisher_env,
+                )
+
+                expected[topic_name] = 'test_rclpy/' + msg
+                pub_cnt += 1
+
+    rostopic_env = dict(os.environ)
+    rostopic_env['RCLPY_IMPLEMENTATION'] = '@TEST_RMW@'
+    expected_string = json.dumps(expected)
+    rostopic_cmd = ['@TEST_ROSTOPIC_EXECUTABLE@', '-r', str(expected_string)]
+    rostopic_cmd.insert(0, sys.executable)
+    ld.add_process(
+        cmd=rostopic_cmd,
+        name='rostopic_list',
+        env=rostopic_env,
+        exit_handler=primary_exit_handler,
+    )
+
+    launcher = DefaultLauncher()
+    launcher.add_launch_descriptor(ld)
+    rc = launcher.launch()
+
+    assert rc == 0, \
+        "The launch file failed with exit code '" + str(rc) + "'. "
+
+if __name__ == '__main__':
+    test_rostopic_list()
