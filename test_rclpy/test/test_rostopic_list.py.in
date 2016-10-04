@@ -21,20 +21,34 @@ def test_rostopic_list():
         # and filter topics accordingly
         if rmw_impl != 'rmw_opensplice_cpp':
             for msg in msg_list:
-                topic_name = msg + '_' + rmw_impl
-                publisher_cmd = ['@TEST_PUBLISHER_EXECUTABLE@', msg, '-t', topic_name]
+                topic_name = msg + '_py_' + rmw_impl
+                publisher_cmd = ['@TEST_PUBLISHER_PY_EXECUTABLE@', msg, '-t', topic_name]
                 publisher_cmd.insert(0, sys.executable)
 
                 publisher_env = dict(os.environ)
                 publisher_env['RCLPY_IMPLEMENTATION'] = rmw_impl
                 ld.add_process(
                     cmd=publisher_cmd,
-                    name='publisher' + str(pub_cnt),
+                    name='publisher_py' + str(pub_cnt),
                     env=publisher_env,
                 )
-
-                expected[topic_name] = 'test_rclpy/' + msg
                 pub_cnt += 1
+                expected[topic_name] = 'test_rclpy/' + msg
+
+                topic_name = msg + '_cpp_' + rmw_impl
+                cpp_exec = '@TEST_PUBLISHER_EXECUTABLE@'[:'@TEST_PUBLISHER_EXECUTABLE@'.rfind('__rmw') + 2] + rmw_impl
+                publisher_cmd = [cpp_exec, msg, topic_name]
+
+                publisher_env = dict(os.environ)
+
+                publisher_env['RCL_ASSERT_RMW_ID_MATCHES'] = rmw_impl
+                ld.add_process(
+                    cmd=publisher_cmd,
+                    name='publisher_cpp' + str(pub_cnt),
+                    env=publisher_env,
+                )
+                pub_cnt += 1
+                expected[topic_name] = 'test_rclpy/' + msg
 
     rostopic_env = dict(os.environ)
     rostopic_env['RCLPY_IMPLEMENTATION'] = '@TEST_RMW@'

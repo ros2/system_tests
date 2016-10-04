@@ -27,7 +27,8 @@ if(BUILD_TESTING)
   macro(rostopic_test)
     # test rostopic list
     find_package(rmw_implementation_cmake REQUIRED)
-    set(TEST_PUBLISHER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/publisher_py.py")
+    set(TEST_PUBLISHER_PY_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/publisher_py.py")
+    set(TEST_PUBLISHER_EXECUTABLE "$<TARGET_FILE:test_publisher_cpp__${rmw_implementation}>")
     set(TEST_ROSTOPIC_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/rostopic_list.py")
     get_rmw_typesupport(typesupport_c_impl "${rmw_implementation}" LANGUAGE "c")
     set(TEST_RMW "${rmw_implementation}")
@@ -63,7 +64,26 @@ if(BUILD_TESTING)
     endif()
   endmacro()
 
+  function(custom_executable target)
+    # get typesupport of rmw implementation to include / link against the corresponding interfaces
+    get_rmw_typesupport(typesupport_impls "${rmw_implementation}" LANGUAGE "cpp")
+
+    add_executable(${target}${target_suffix} ${ARGN})
+    add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
+    foreach(typesupport_impl ${typesupport_impls})
+      rosidl_target_interfaces(${target}${target_suffix}
+        ${PROJECT_NAME} ${typesupport_impl})
+    endforeach()
+    ament_target_dependencies(${target}${target_suffix}
+      "rclcpp${target_suffix}"
+    )
+  endfunction()
+
   macro(targets)
+    get_rclcpp_information("${rmw_implementation}" "rclcpp${target_suffix}")
+
+    custom_executable(test_publisher_cpp
+      "test/test_publisher.cpp")
     rostopic_test()
   endmacro()
 

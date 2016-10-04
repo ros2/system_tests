@@ -31,7 +31,7 @@ def rostopic_list(wait_time, result_string):
         a = node.get_topic_names_and_types()
     rclpy.shutdown()
     assert a.topic_count == len(result_dictionary), \
-        'a.topic_count: {} != len(dictionary_result) : {}'.format(a.topic_count, result_dictionary)
+        'a.topic_count: {} != len(dictionary_result) : {}'.format(a.topic_count, len(result_dictionary))
     i = 0
     for topic_name in a.topic_names:
         assert a.type_names[i] == result_dictionary[topic_name], \
