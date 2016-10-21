@@ -42,17 +42,20 @@ def listener_cb(msg, received_messages, expected_msgs):
         raise RuntimeError('received unexpected message %r' % msg)
 
 
-def listener(message_name, rmw_implementation, number_of_cycles):
-    import rclpy
-    from rclpy.qos import qos_profile_default
-    from rclpy.impl.rmw_implementation_tools import select_rmw_implementation
+def listener(message_name, number_of_cycles):
     from message_fixtures import get_test_msg
+    import rclpy
+    from rclpy.impl.rmw_implementation_tools import select_rmw_implementation
+    from rclpy.impl.rmw_implementation_tools import get_rmw_implementations
+    from rclpy.qos import qos_profile_default
 
     message_pkg = 'test_communication'
     module = importlib.import_module(message_pkg + '.msg')
     msg_mod = getattr(module, message_name)
 
-    select_rmw_implementation(rmw_implementation)
+    rmw_implementations = get_rmw_implementations()
+    assert(os.environ['RCLPY_IMPLEMENTATION'] in rmw_implementations)
+    select_rmw_implementation(os.environ['RCLPY_IMPLEMENTATION'])
 
     rclpy.init([])
 
@@ -81,21 +84,15 @@ def listener(message_name, rmw_implementation, number_of_cycles):
         'Should have received {} {} messages from talker'.format(len(expected_msgs), message_name)
 
 if __name__ == '__main__':
-    from rclpy.impl.rmw_implementation_tools import get_rmw_implementations
-    rmw_implementations = get_rmw_implementations()
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('message_name', default='Primitives',
                         help='name of the ROS message')
-    parser.add_argument('-r', '--rmw_implementation', default=rmw_implementations[0],
-                        choices=rmw_implementations,
-                        help='rmw_implementation identifier')
     parser.add_argument('-n', '--number_of_cycles', type=int, default=50,
                         help='number of sending attempts')
     args = parser.parse_args()
     try:
         listener(
             message_name=args.message_name,
-            rmw_implementation=args.rmw_implementation,
             number_of_cycles=args.number_of_cycles)
     except KeyboardInterrupt:
         print('subscriber stopped cleanly')
