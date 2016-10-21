@@ -117,9 +117,7 @@ if(BUILD_TESTING)
     else()
       set(suffix "${suffix}__${rmw_implementation1}__${rmw_implementation2}")
     endif()
-    # set(TEST_PUBLISHER_EXECUTABLE "$<TARGET_FILE:test_publisher_cpp__${rmw_implementation1}>")
     set(PUBLISHER_RMW ${rmw_implementation1})
-    # set(TEST_SUBSCRIBER_EXECUTABLE "$<TARGET_FILE:test_subscriber_cpp__${rmw_implementation2}>")
     set(SUBSCRIBER_RMW ${rmw_implementation2})
     foreach(message_file ${message_files})
       get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
@@ -137,9 +135,6 @@ if(BUILD_TESTING)
       # TODO(dirk-thomas) publishing Bounded/DynamicArrayPrimitives in OpenSplice is buggy
       # https://github.com/ros2/rclcpp/issues/219
       if((NOT TEST_MESSAGE_TYPE STREQUAL "BoundedArrayPrimitives" AND NOT TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives") OR NOT rmw_implementation1 STREQUAL "rmw_opensplice_cpp")
-        if(NOT ${rmw_implementation1} STREQUAL "rmw_connext_dynamic_cpp" AND NOT ${rmw_implementation2} STREQUAL "rmw_connext_dynamic_cpp")
-        if(NOT ${rmw_implementation1} STREQUAL "rmw_opensplice_cpp" AND NOT ${rmw_implementation2} STREQUAL "rmw_opensplice_cpp")
-        # if(TEST_MESSAGE_TYPE STREQUAL "Primitives" OR TEST_MESSAGE_TYPE STREQUAL "Nested" OR TEST_MESSAGE_TYPE STREQUAL "BoundedArrayNested")
         ament_add_nose_test(test_publisher_subscriber${test_suffix}
           "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${test_suffix}_$<CONFIGURATION>.py"
           WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py"
@@ -152,8 +147,6 @@ if(BUILD_TESTING)
           test_publisher_subscriber${test_suffix}
           PROPERTIES DEPENDS "test_publisher_cpp__${rmw_implementation1};test_subscriber_cpp__${rmw_implementation2}"
         )
-        endif()
-        endif()
       endif()
     endforeach()
 
