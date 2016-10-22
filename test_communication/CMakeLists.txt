@@ -244,14 +244,14 @@ if(BUILD_TESTING)
   macro(targets)
     get_rclcpp_information("${rmw_implementation}" "rclcpp${target_suffix}")
 
-#    # publisher combined with a subscriber
-#    custom_test(test_publisher_subscriber_cpp
-#      TRUE
-#      "test/test_publisher_subscriber.cpp")
-#    # subcription valid data
-#    custom_test(test_subscription_valid_data_cpp
-#      FALSE
-#      "test/test_subscription_valid_data.cpp")
+    # publisher combined with a subscriber
+    custom_test(test_publisher_subscriber_cpp
+      TRUE
+      "test/test_publisher_subscriber.cpp")
+    # subcription valid data
+    custom_test(test_subscription_valid_data_cpp
+      FALSE
+      "test/test_subscription_valid_data.cpp")
 
     # executables publisher / subscriber
     custom_executable(test_publisher_cpp
