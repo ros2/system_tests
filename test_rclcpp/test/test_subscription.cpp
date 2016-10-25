@@ -58,8 +58,6 @@ void wait_for_future(
 }
 
 TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning) {
-  rclcpp::init(0, nullptr);
-
   auto node = rclcpp::Node::make_shared("test_subscription");
 
   rmw_qos_profile_t custom_qos_profile = rmw_qos_profile_default;
@@ -93,7 +91,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
       topic, callback, custom_qos_profile);
 
     // wait for discovery and the subscriber to connect
-    test_rclcpp::busy_wait_for_subscriber(node, topic);
+    test_rclcpp::wait_for_subscriber(node, topic);
 
     // start condition
     ASSERT_EQ(0, counter);
@@ -171,8 +169,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
   sub_called = std::promise<void>();
   sub_called_future = sub_called.get_future();
   using rclcpp::executor::FutureReturnCode;
-  rclcpp::executor::FutureReturnCode future_ret =
-    executor.spin_until_future_complete(sub_called_future, 100_ms);
+  FutureReturnCode future_ret = executor.spin_until_future_complete(sub_called_future, 100_ms);
   EXPECT_EQ(FutureReturnCode::TIMEOUT, future_ret);
   ASSERT_EQ(5, counter);
 }
@@ -202,7 +199,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
     "test_subscription", callback, rmw_qos_profile_default);
 
   // wait a moment for everything to initialize
-  test_rclcpp::busy_wait_for_subscriber(node, "test_subscription");
+  test_rclcpp::wait_for_subscriber(node, "test_subscription");
 
   // start condition
   ASSERT_EQ(0, counter);
@@ -248,7 +245,8 @@ public:
 
 // Shortened version of the test for the ConstSharedPtr callback signature in a method
 TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
-  subscription_shared_ptr_const_method_std_function) {
+  subscription_shared_ptr_const_method_std_function)
+{
   CallbackHolder cb_holder;
 
   auto node = rclcpp::Node::make_shared("test_subscription");
@@ -267,7 +265,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
     "test_subscription", cb_std_function, rmw_qos_profile_default);
 
   // wait a moment for everything to initialize
-  test_rclcpp::busy_wait_for_subscriber(node, "test_subscription");
+  test_rclcpp::wait_for_subscriber(node, "test_subscription");
 
   // start condition
   ASSERT_EQ(0, cb_holder.counter);
@@ -298,7 +296,8 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
 
 // Shortened version of the test for the ConstSharedPtr callback signature in a method
 TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
-  subscription_shared_ptr_const_method_direct) {
+  subscription_shared_ptr_const_method_direct)
+{
   CallbackHolder cb_holder;
 
   auto node = rclcpp::Node::make_shared("test_subscription");
@@ -316,7 +315,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
     rmw_qos_profile_default);
 
   // wait a moment for everything to initialize
-  test_rclcpp::busy_wait_for_subscriber(node, "test_subscription");
+  test_rclcpp::wait_for_subscriber(node, "test_subscription");
 
   // start condition
   ASSERT_EQ(0, cb_holder.counter);
@@ -372,7 +371,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
     "test_subscription", callback, rmw_qos_profile_default);
 
   // wait a moment for the subscriber to register
-  test_rclcpp::busy_wait_for_subscriber(node, "test_subscription");
+  test_rclcpp::wait_for_subscriber(node, "test_subscription");
 
   // start condition
   ASSERT_EQ(0, counter);
@@ -401,7 +400,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
 
 // Shortened version of the test for subscribing after spinning has started.
 TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), spin_before_subscription) {
-  auto node = rclcpp::Node::make_shared("spin_before_subscription");
+  rclcpp::Node::SharedPtr node = rclcpp::Node::make_shared("spin_before_subscription");
 
   auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(
     "spin_before_subscription", rmw_qos_profile_default);
@@ -429,7 +428,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), spin_before_subscription)
   // start condition
   ASSERT_EQ(0, counter);
 
-  test_rclcpp::busy_wait_for_subscriber(node, "spin_before_subscription");
+  test_rclcpp::wait_for_subscriber(node, "spin_before_subscription");
 
   msg->data = 1;
   // Create a ConstSharedPtr message to publish
@@ -460,4 +459,11 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), create_subscription_with_
 
   auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
     "test_subscription", 10, callback);
+}
+
+int main(int argc, char ** argv)
+{
+  rclcpp::init(argc, argv);
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
 }
