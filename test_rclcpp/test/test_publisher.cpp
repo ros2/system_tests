@@ -57,12 +57,12 @@ TEST(CLASSNAME(test_publisher, RMW_IMPLEMENTATION), publish_with_const_reference
 
   // start condition
   ASSERT_EQ(0, counter);
-  test_rclcpp::busy_wait_for_subscriber(node, "test_publisher");
+  test_rclcpp::wait_for_subscriber(node, "test_publisher");
 
   // nothing should be pending here
   executor.spin_node_some(node);
   ASSERT_EQ(0, counter);
-  test_rclcpp::busy_wait_for_subscriber(node, "test_publisher");
+  test_rclcpp::wait_for_subscriber(node, "test_publisher");
 
   msg.data = 1;
   publisher->publish(msg);

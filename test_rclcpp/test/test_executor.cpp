@@ -171,7 +171,7 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), notify) {
       "test_executor_notify_subscription",
       sub_callback,
       rmw_qos_profile_default);
-    test_rclcpp::busy_wait_for_subscriber(node, "test_executor_notify_subscription");
+    test_rclcpp::wait_for_subscriber(node, "test_executor_notify_subscription");
 
 
     auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(

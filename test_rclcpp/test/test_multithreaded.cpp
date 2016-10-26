@@ -74,7 +74,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   msg->data = 0;
 
   // wait a moment for everything to initialize
-  test_rclcpp::busy_wait_for_subscriber(node, "multi_consumer");
+  test_rclcpp::wait_for_subscriber(node, "multi_consumer");
 
   // sanity check that no callbacks have fired
   EXPECT_EQ(0, counter.load());
