@@ -34,10 +34,12 @@ void wait_for_subscriber(
   std::chrono::milliseconds timeout = std::chrono::milliseconds(1),
   std::chrono::microseconds sleep_period = std::chrono::seconds(1))
 {
-  using namespace std::chrono;
+  using std::chrono::duration_cast;
+  using std::chrono::microseconds;
+  using std::chrono::steady_clock;
   microseconds time_slept(0);
   while (node->count_subscribers(topic_name) == 0 &&
-    time_slept < duration_cast<std::chrono::microseconds>(timeout))
+    time_slept < duration_cast<microseconds>(timeout))
   {
     auto start = steady_clock::now();
     rclcpp::event::Event::SharedPtr graph_event = node->get_graph_event();

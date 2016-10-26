@@ -245,8 +245,7 @@ public:
 
 // Shortened version of the test for the ConstSharedPtr callback signature in a method
 TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
-  subscription_shared_ptr_const_method_std_function)
-{
+  subscription_shared_ptr_const_method_std_function) {
   CallbackHolder cb_holder;
 
   auto node = rclcpp::Node::make_shared("test_subscription");
@@ -296,8 +295,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
 
 // Shortened version of the test for the ConstSharedPtr callback signature in a method
 TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
-  subscription_shared_ptr_const_method_direct)
-{
+  subscription_shared_ptr_const_method_direct) {
   CallbackHolder cb_holder;
 
   auto node = rclcpp::Node::make_shared("test_subscription");
