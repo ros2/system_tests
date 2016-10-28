@@ -33,7 +33,7 @@ int main(int argc, char ** argv)
 
   auto node = rclcpp::node::Node::make_shared("client_scope_server");
 
-  node->create_service<test_rclcpp::srv::AddTwoInts>(
+  auto service = node->create_service<test_rclcpp::srv::AddTwoInts>(
     "client_scope", handle_add_two_ints);
 
   rclcpp::WallRate loop_rate(30);

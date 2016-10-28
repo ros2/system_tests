@@ -42,7 +42,7 @@ void handle_add_two_ints(
 TEST(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), two_service_calls) {
   auto node = rclcpp::Node::make_shared("test_two_service_calls");
 
-  node->create_service<test_rclcpp::srv::AddTwoInts>(
+  auto service = node->create_service<test_rclcpp::srv::AddTwoInts>(
     "test_two_service_calls", handle_add_two_ints);
 
   auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("test_two_service_calls");
@@ -91,7 +91,7 @@ TEST(CLASSNAME(test_multiple_service_calls, RMW_IMPLEMENTATION), multiple_client
   auto node = rclcpp::Node::make_shared("test_multiple_clients");
   rclcpp::executors::SingleThreadedExecutor executor;
 
-  node->create_service<test_rclcpp::srv::AddTwoInts>(
+  auto service = node->create_service<test_rclcpp::srv::AddTwoInts>(
     "test_multiple_clients", handle_add_two_ints);
 
   using ClientRequestPair = std::pair<

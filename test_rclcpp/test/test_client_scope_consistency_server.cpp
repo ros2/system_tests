@@ -41,7 +41,7 @@ int main(int argc, char ** argv)
     RMW_QOS_POLICY_RELIABLE,
     RMW_QOS_POLICY_VOLATILE_DURABILITY
   };
-  node->create_service<test_rclcpp::srv::AddTwoInts>(
+  auto service = node->create_service<test_rclcpp::srv::AddTwoInts>(
     "client_scope", handle_add_two_ints, rmw_qos_profile);
 
   rclcpp::WallRate loop_rate(30);
