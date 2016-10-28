@@ -44,14 +44,14 @@ void wait_for_subscriber(
   auto start = steady_clock::now();
   microseconds time_slept(0);
   auto predicate = [&node, &topic_name, &to_be_available]() -> bool {
-    if (to_be_available) {
-      // the subscriber is available if the count is gt 0
-      return node->count_subscribers(topic_name) > 0;
-    } else {
-      // the subscriver is no longer available when the count is 0
-      return node->count_subscribers(topic_name) == 0;
-    }
-  };
+      if (to_be_available) {
+        // the subscriber is available if the count is gt 0
+        return node->count_subscribers(topic_name) > 0;
+      } else {
+        // the subscriver is no longer available when the count is 0
+        return node->count_subscribers(topic_name) == 0;
+      }
+    };
   while (!predicate() && time_slept < duration_cast<microseconds>(timeout)) {
     rclcpp::event::Event::SharedPtr graph_event = node->get_graph_event();
     node->wait_for_graph_change(graph_event, sleep_period);

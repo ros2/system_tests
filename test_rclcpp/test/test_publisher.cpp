@@ -14,6 +14,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <string>
 
 #include "gtest/gtest.h"
 
@@ -21,6 +22,8 @@
 
 #include "test_rclcpp/msg/u_int32.hpp"
 #include "test_rclcpp/utils.hpp"
+
+#include "./pub_sub_fixtures.hpp"
 
 #ifdef RMW_IMPLEMENTATION
 # define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
@@ -31,11 +34,9 @@
 
 // Short test for the const reference publish signature.
 TEST(CLASSNAME(test_publisher, RMW_IMPLEMENTATION), publish_with_const_reference) {
-  rclcpp::init(0, nullptr);
-  auto node = rclcpp::Node::make_shared("test_publisher");
-
-  auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>("test_publisher", 10);
-
+  // topic name
+  std::string topic_name = "test_publish_with_const_reference";
+  // code to create the callback and subscription
   int counter = 0;
   auto callback =
     [&counter](test_rclcpp::msg::UInt32::ConstSharedPtr msg,
@@ -43,40 +44,33 @@ TEST(CLASSNAME(test_publisher, RMW_IMPLEMENTATION), publish_with_const_reference
     {
       ++counter;
       printf("  callback() %d with message data %u\n", counter, msg->data);
-      ASSERT_GE(counter, 0);
-      ASSERT_EQ(static_cast<unsigned int>(counter), msg->data);
       ASSERT_FALSE(info.from_intra_process);
     };
+  auto create_subscription_func =
+    [&callback](
+    rclcpp::Node::SharedPtr node,
+    const std::string & topic_name) -> rclcpp::Subscription<test_rclcpp::msg::UInt32>::SharedPtr
+    {
+      auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
+        topic_name, callback, rmw_qos_profile_default);
+      return subscriber;
+    };
+  // code to do the publish function
+  auto publish_func =
+    [](
+    rclcpp::Publisher<test_rclcpp::msg::UInt32>::SharedPtr publisher,
+    test_rclcpp::msg::UInt32::SharedPtr msg)
+    {
+      publisher->publish(msg);
+    };
+  // call the test template
+  single_message_pub_sub_fixture<test_rclcpp::msg::UInt32>(
+    topic_name, counter, create_subscription_func, publish_func);
+}
 
-  test_rclcpp::msg::UInt32 msg;
-  msg.data = 0;
-  rclcpp::executors::SingleThreadedExecutor executor;
-
-  auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
-    "test_publisher", callback, rmw_qos_profile_default);
-
-  // start condition
-  ASSERT_EQ(0, counter);
-  test_rclcpp::wait_for_subscriber(node, "test_publisher");
-
-  // nothing should be pending here
-  executor.spin_node_some(node);
-  ASSERT_EQ(0, counter);
-  test_rclcpp::wait_for_subscriber(node, "test_publisher");
-
-  msg.data = 1;
-  publisher->publish(msg);
-  ASSERT_EQ(0, counter);
-
-  // wait for the first callback
-  printf("spin_node_some() - callback (1) expected\n");
-
-  executor.spin_node_some(node);
-  // spin up to 4 times with a 25 ms wait in between
-  for (uint32_t i = 0; i < 4 && counter == 0; ++i) {
-    printf("callback not called, sleeping and trying again\n");
-    std::this_thread::sleep_for(std::chrono::milliseconds(25));
-    executor.spin_node_some(node);
-  }
-  ASSERT_EQ(1, counter);
+int main(int argc, char ** argv)
+{
+  rclcpp::init(argc, argv);
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
 }
