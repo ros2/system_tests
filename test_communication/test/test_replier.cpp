@@ -24,7 +24,7 @@
 #include "service_fixtures.hpp"
 
 template<typename T>
-void reply(
+typename rclcpp::service::Service<T>::SharedPtr reply(
   rclcpp::Node::SharedPtr node,
   const std::string & service_type,
   const std::vector<
@@ -58,7 +58,7 @@ void reply(
     };
   // *INDENT-ON*
 
-  node->create_service<T>(std::string("test_service_") + service_type, callback);
+  return node->create_service<T>(std::string("test_service_") + service_type, callback);
 }
 
 int main(int argc, char ** argv)
@@ -76,12 +76,13 @@ int main(int argc, char ** argv)
 
   auto services_empty = get_services_empty();
   auto services_primitives = get_services_primitives();
+  rclcpp::service::ServiceBase::SharedPtr server;
 
   if (service == "Empty") {
-    reply<test_communication::srv::Empty>(
+    server = reply<test_communication::srv::Empty>(
       node, service, services_empty);
   } else if (service == "Primitives") {
-    reply<test_communication::srv::Primitives>(
+    server = reply<test_communication::srv::Primitives>(
       node, service, services_primitives);
   } else {
     fprintf(stderr, "Unknown service argument '%s'\n", service.c_str());

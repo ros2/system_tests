@@ -40,13 +40,13 @@ int main(int argc, char ** argv)
 
   auto node = rclcpp::Node::make_shared("add_two_ints_server");
 
-  node->create_service<test_rclcpp::srv::AddTwoInts>(
+  auto service_noreqid = node->create_service<test_rclcpp::srv::AddTwoInts>(
     "add_two_ints_noreqid", handle_add_two_ints_noreqid);
 
-  node->create_service<test_rclcpp::srv::AddTwoInts>(
+  auto service_reqid = node->create_service<test_rclcpp::srv::AddTwoInts>(
     "add_two_ints_reqid", handle_add_two_ints_reqid);
 
-  node->create_service<test_rclcpp::srv::AddTwoInts>(
+  auto service_return_req = node->create_service<test_rclcpp::srv::AddTwoInts>(
     "add_two_ints_reqid_return_request", handle_add_two_ints_reqid);
 
   rclcpp::spin(node);
