@@ -118,7 +118,7 @@ if(BUILD_TESTING)
       TIMEOUT 30)
     custom_gtest(gtest_subscription
       "test/test_subscription.cpp"
-      TIMEOUT 30)
+      TIMEOUT 60)
     custom_gtest(gtest_multiple_service_calls
       "test/test_multiple_service_calls.cpp"
       TIMEOUT 30)
@@ -158,7 +158,7 @@ if(BUILD_TESTING)
       ${GTEST_LIBRARIES})
     custom_launch_test(test_services_cpp
       test_services_server_cpp test_services_client_cpp
-      TIMEOUT 30)
+      TIMEOUT 60)
 
     custom_executable(test_client_scope_server_cpp "test/test_client_scope_server.cpp")
     custom_executable(test_client_scope_client_cpp "test/test_client_scope_client.cpp")

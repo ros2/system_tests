@@ -13,12 +13,10 @@
 // limitations under the License.
 
 #include <chrono>
-#include <string>  // TODO(wjwwood): remove me when fastrtps exclusion is removed
 #include <thread>
 
 #include "gtest/gtest.h"
 #include "rclcpp/rclcpp.hpp"
-#include "rmw/rmw.h"  // TODO(wjwwood): remove me when fastrtps exclusion is removed
 #include "test_rclcpp/srv/add_two_ints.hpp"
 
 #ifdef RMW_IMPLEMENTATION
@@ -30,10 +28,6 @@
 
 // rclcpp::shutdown() should wake up wait_for_service, even without spin.
 TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), wait_for_service_shutdown) {
-  // TODO(wjwwood): remove this "skip" when Connext and FastRTPS support wait_for_service.
-  if (std::string(rmw_get_implementation_identifier()) != "rmw_opensplice_cpp") {
-    return;
-  }
   rclcpp::init(0, nullptr);
   auto node = rclcpp::node::Node::make_shared("wait_for_service_shutdown");
 

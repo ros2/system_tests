@@ -18,7 +18,6 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
-#include <thread>  // TODO(wjwwood): remove me when Connext and FastRTPS exclusions are removed
 
 #include "gtest/gtest.h"
 
@@ -172,7 +171,7 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), notify) {
       "test_executor_notify_subscription",
       sub_callback,
       rmw_qos_profile_default);
-    test_rclcpp::busy_wait_for_subscriber(node, "test_executor_notify_subscription");
+    test_rclcpp::wait_for_subscriber(node, "test_executor_notify_subscription");
 
 
     auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(
@@ -206,14 +205,8 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), notify) {
     auto client = node->create_client<test_rclcpp::srv::AddTwoInts>(
       "test_executor_notify_service"
       );
-    {  // TODO(wjwwood): remove this block when Connext and FastRTPS support wait_for_service.
-      try {
-        if (!client->wait_for_service(20_s)) {
-          ASSERT_TRUE(false) << "service not available after waiting";
-        }
-      } catch (rclcpp::exceptions::RCLError) {
-        std::this_thread::sleep_for(1_s);
-      }
+    if (!client->wait_for_service(20_s)) {
+      ASSERT_TRUE(false) << "service not available after waiting";
     }
     auto request = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
     request->a = 4;

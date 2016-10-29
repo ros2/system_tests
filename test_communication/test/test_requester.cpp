@@ -16,7 +16,6 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
-#include <thread>  // TODO(wjwwood): remove me when Connext and FastRTPS exclusions are removed
 #include <utility>
 #include <vector>
 
@@ -39,14 +38,8 @@ int request(
 {
   int rc = 0;
   auto requester = node->create_client<T>(std::string("test_service_") + service_type);
-  {  // TODO(wjwwood): remove this block when Connext and FastRTPS support wait_for_service.
-    try {
-      if (!requester->wait_for_service(20_s)) {
-        throw std::runtime_error("requester service not available after waiting");
-      }
-    } catch (rclcpp::exceptions::RCLError) {
-      std::this_thread::sleep_for(1_s);
-    }
+  if (!requester->wait_for_service(20_s)) {
+    throw std::runtime_error("requester service not available after waiting");
   }
 
   rclcpp::WallRate cycle_rate(10);
@@ -115,9 +108,6 @@ int main(int argc, char ** argv)
 
   std::string service = argv[1];
   auto node = rclcpp::Node::make_shared(std::string("test_requester_") + service);
-
-  // NOTE(esteve): sleep for two seconds to let the service start up
-  std::this_thread::sleep_for(std::chrono::seconds(2));
 
   int rc;
   if (service == "Empty") {

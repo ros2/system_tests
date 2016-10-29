@@ -14,7 +14,6 @@
 
 #include <iostream>
 #include <memory>
-#include <thread>  // TODO(wjwwood): remove me when Connext and FastRTPS exclusions are removed
 
 #include "gtest/gtest.h"
 #include "rclcpp/exceptions.hpp"
@@ -36,14 +35,8 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_regression_test
     printf("creating first client\n");
     std::cout.flush();
     auto client1 = node->create_client<test_rclcpp::srv::AddTwoInts>("client_scope");
-    {  // TODO(wjwwood): remove this block when Connext and FastRTPS support wait_for_service.
-      try {
-        if (!client1->wait_for_service(20_s)) {
-          ASSERT_TRUE(false) << "service not available after waiting";
-        }
-      } catch (rclcpp::exceptions::RCLError) {
-        std::this_thread::sleep_for(1_s);
-      }
+    if (!client1->wait_for_service(20_s)) {
+      ASSERT_TRUE(false) << "service not available after waiting";
     }
     auto request1 = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
     request1->a = 1;
@@ -69,14 +62,8 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_regression_test
     printf("creating second client\n");
     std::cout.flush();
     auto client2 = node->create_client<test_rclcpp::srv::AddTwoInts>("client_scope");
-    {  // TODO(wjwwood): remove this block when Connext and FastRTPS support wait_for_service.
-      try {
-        if (!client2->wait_for_service(20_s)) {
-          ASSERT_TRUE(false) << "service not available after waiting";
-        }
-      } catch (rclcpp::exceptions::RCLError) {
-        std::this_thread::sleep_for(1_s);
-      }
+    if (!client2->wait_for_service(20_s)) {
+      ASSERT_TRUE(false) << "service not available after waiting";
     }
     auto request2 = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
     request2->a = 2;
