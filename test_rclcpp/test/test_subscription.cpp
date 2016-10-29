@@ -175,9 +175,8 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
 
 // Shortened version of the test for the ConstSharedPtr callback signature
 TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_const) {
-  // topic name
   std::string topic_name = "test_subscription_subscription_shared_ptr_const";
-  // code to create the callback and subscription
+  // create the callback and subscription
   int counter = 0;
   auto callback =
     [&counter](test_rclcpp::msg::UInt32::ConstSharedPtr msg) -> void
@@ -194,7 +193,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
         topic_name, callback, rmw_qos_profile_default);
       return subscriber;
     };
-  // code to do the publish function
+  // do the publish function
   auto publish_func =
     [](
     rclcpp::Publisher<test_rclcpp::msg::UInt32>::SharedPtr publisher,
@@ -226,9 +225,8 @@ public:
 // Shortened version of the test for the ConstSharedPtr callback signature in a method
 TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
   subscription_shared_ptr_const_method_std_function) {
-  // topic name
   std::string topic_name = "test_subscription_shared_ptr_const_method_std_function";
-  // code to create the callback and subscription
+  // create the callback and subscription
   CallbackHolder cb_holder;
   std::function<void(test_rclcpp::msg::UInt32::ConstSharedPtr)> cb_std_function = std::bind(
     &CallbackHolder::callback, &cb_holder, std::placeholders::_1);
@@ -241,7 +239,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
         topic_name, cb_std_function, rmw_qos_profile_default);
       return subscriber;
     };
-  // code to do the publish function
+  // do the publish function
   auto publish_func =
     [](
     rclcpp::Publisher<test_rclcpp::msg::UInt32>::SharedPtr publisher,
@@ -259,9 +257,8 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
 // Shortened version of the test for the ConstSharedPtr callback signature in a method
 TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
   subscription_shared_ptr_const_method_direct) {
-  // topic name
   std::string topic_name = "test_subscription_shared_ptr_const_method_direct";
-  // code to create the callback and subscription
+  // create the callback and subscription
   CallbackHolder cb_holder;
   auto create_subscription_func =
     [&cb_holder](
@@ -274,7 +271,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
         rmw_qos_profile_default);
       return subscriber;
     };
-  // code to do the publish function
+  // do the publish function
   auto publish_func =
     [](
     rclcpp::Publisher<test_rclcpp::msg::UInt32>::SharedPtr publisher,
@@ -291,9 +288,8 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
 
 // Shortened version of the test for the ConstSharedPtr with info callback signature
 TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_const_with_info) {
-  // topic name
   std::string topic_name = "test_subscription_shared_ptr_const_method_direct";
-  // code to create the callback and subscription
+  // create the callback and subscription
   int counter = 0;
   auto callback =
     [&counter](test_rclcpp::msg::UInt32::ConstSharedPtr msg,
@@ -312,7 +308,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
         topic_name, callback, rmw_qos_profile_default);
       return subscriber;
     };
-  // code to do the publish function
+  // do the publish function
   auto publish_func =
     [](
     rclcpp::Publisher<test_rclcpp::msg::UInt32>::SharedPtr publisher,
@@ -327,9 +323,8 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
 
 // Shortened version of the test for subscribing after spinning has started.
 TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), spin_before_subscription) {
-  // topic name
   std::string topic_name = "test_spin_before_subscription";
-  // code to create the callback and subscription
+  // create the callback and subscription
   int counter = 0;
   auto callback =
     [&counter](test_rclcpp::msg::UInt32::ConstSharedPtr msg) -> void
@@ -346,7 +341,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), spin_before_subscription)
         topic_name, callback, rmw_qos_profile_default);
       return subscriber;
     };
-  // code to do the publish function
+  // do the publish function
   auto publish_func =
     [](
     rclcpp::Publisher<test_rclcpp::msg::UInt32>::SharedPtr publisher,
