@@ -48,7 +48,7 @@ void wait_for_subscriber(
         // the subscriber is available if the count is gt 0
         return node->count_subscribers(topic_name) > 0;
       } else {
-        // the subscriver is no longer available when the count is 0
+        // the subscriber is no longer available when the count is 0
         return node->count_subscribers(topic_name) == 0;
       }
     };
