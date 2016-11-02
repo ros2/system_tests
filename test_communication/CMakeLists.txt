@@ -139,24 +139,18 @@ if(BUILD_TESTING)
         NOT rmw_implementation1 STREQUAL "rmw_opensplice_cpp"
       )
         # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)
-        if(
-          (NOT rcl1 STREQUAL "rclpy" AND NOT rcl2 STREQUAL "rclpy") OR
-          (NOT TEST_MESSAGE_TYPE STREQUAL "StaticArrayNested") OR
-          (NOT rmw_implementation1 STREQUAL "rmw_connext_dynamic_cpp" AND NOT rmw_implementation2 STREQUAL "rmw_connext_dynamic_cpp")
+        ament_add_nose_test(test_publisher_subscriber${test_suffix}
+          "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${test_suffix}_$<CONFIGURATION>.py"
+          WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py"
+          PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
+          APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}/../../rclpy"
+          APPEND_ENV AMENT_PREFIX_PATH=${ament_index_build_path}
+          APPEND_LIBRARY_DIRS "${_append_library_dirs}"
+          TIMEOUT 15)
+        set_tests_properties(
+          test_publisher_subscriber${test_suffix}
+          PROPERTIES DEPENDS "test_publisher_cpp__${rmw_implementation1};test_subscriber_cpp__${rmw_implementation2}"
         )
-          ament_add_nose_test(test_publisher_subscriber${test_suffix}
-            "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${test_suffix}_$<CONFIGURATION>.py"
-            WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py"
-            PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
-            APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}/../../rclpy"
-            APPEND_ENV AMENT_PREFIX_PATH=${ament_index_build_path}
-            APPEND_LIBRARY_DIRS "${_append_library_dirs}"
-            TIMEOUT 15)
-          set_tests_properties(
-            test_publisher_subscriber${test_suffix}
-            PROPERTIES DEPENDS "test_publisher_cpp__${rmw_implementation1};test_subscriber_cpp__${rmw_implementation2}"
-          )
-        endif()
       endif()
     endforeach()
 
