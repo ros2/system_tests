@@ -154,44 +154,44 @@ if(BUILD_TESTING)
     endforeach()
 
     ## TODO(mikaelarguedas) modify this once python services are implemented
-    #if(rcl1 STREQUAL "rclcpp" AND rcl2 STREQUAL "rclcpp")
-    #  # TODO different vendors can't talk to each other right now
-    #  if(
-    #    rmw_implementation1 STREQUAL rmw_implementation2 OR
-    #    (rmw_implementation1 STREQUAL "rmw_connext_cpp" AND rmw_implementation2 STREQUAL "rmw_connext_dynamic_cpp") OR
-    #    (rmw_implementation1 STREQUAL "rmw_connext_dynamic_cpp" AND rmw_implementation2 STREQUAL "rmw_connext_cpp")
-    #  )
-    #  # test requester / replier
-    #  set(TEST_REQUESTER_EXECUTABLE "$<TARGET_FILE:test_requester_cpp__${rmw_implementation1}>")
-    #  set(REQUESTER_RMW ${rmw_implementation1})
-    #  set(TEST_REPLIER_EXECUTABLE "$<TARGET_FILE:test_replier_cpp__${rmw_implementation2}>")
-    #  set(REPLIER_RMW ${rmw_implementation2})
-    #  foreach(service_file ${service_files})
-    #    get_filename_component(TEST_SERVICE_TYPE "${service_file}" NAME_WE)
-    #    set(test_suffix "__${TEST_SERVICE_TYPE}${suffix}")
-    #    configure_file(
-    #      test/test_requester_replier.py.in
-    #      test_requester_replier_cpp${test_suffix}.py.configured
-    #      @ONLY
-    #    )
-    #    file(GENERATE
-    #      OUTPUT "test_requester_replier_cpp${test_suffix}_$<CONFIGURATION>.py"
-    #      INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier_cpp${test_suffix}.py.configured"
-    #    )
+    if(rcl1 STREQUAL "rclcpp" AND rcl2 STREQUAL "rclcpp")
+      # TODO different vendors can't talk to each other right now
+      if(
+        rmw_implementation1 STREQUAL rmw_implementation2 OR
+        (rmw_implementation1 STREQUAL "rmw_connext_cpp" AND rmw_implementation2 STREQUAL "rmw_connext_dynamic_cpp") OR
+        (rmw_implementation1 STREQUAL "rmw_connext_dynamic_cpp" AND rmw_implementation2 STREQUAL "rmw_connext_cpp")
+      )
+      # test requester / replier
+      set(TEST_REQUESTER_EXECUTABLE "$<TARGET_FILE:test_requester_cpp__${rmw_implementation1}>")
+      set(REQUESTER_RMW ${rmw_implementation1})
+      set(TEST_REPLIER_EXECUTABLE "$<TARGET_FILE:test_replier_cpp__${rmw_implementation2}>")
+      set(REPLIER_RMW ${rmw_implementation2})
+      foreach(service_file ${service_files})
+        get_filename_component(TEST_SERVICE_TYPE "${service_file}" NAME_WE)
+        set(test_suffix "__${TEST_SERVICE_TYPE}${suffix}")
+        configure_file(
+          test/test_requester_replier.py.in
+          test_requester_replier_cpp${test_suffix}.py.configured
+          @ONLY
+        )
+        file(GENERATE
+          OUTPUT "test_requester_replier_cpp${test_suffix}_$<CONFIGURATION>.py"
+          INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier_cpp${test_suffix}.py.configured"
+        )
 
-    #    ament_add_nose_test(
-    #      requester_replier_cpp${test_suffix}
-    #      "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier_cpp${test_suffix}_$<CONFIGURATION>.py"
-    #      TIMEOUT 30
-    #    )
-    #    set_tests_properties(
-    #      requester_replier_cpp${test_suffix}
-    #      PROPERTIES DEPENDS
-    #        "test_requester_cpp__${rmw_implementation1};test_replier_cpp__${rmw_implementation2}"
-    #    )
-    #  endforeach()
-    #  endif()
-    #endif()
+        ament_add_nose_test(
+          requester_replier_cpp${test_suffix}
+          "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier_cpp${test_suffix}_$<CONFIGURATION>.py"
+          TIMEOUT 30
+        )
+        set_tests_properties(
+          requester_replier_cpp${test_suffix}
+          PROPERTIES DEPENDS
+            "test_requester_cpp__${rmw_implementation1};test_replier_cpp__${rmw_implementation2}"
+        )
+      endforeach()
+      endif()
+    endif()
   endmacro()
 
   macro(configure_template _rcl1 _rcl2)
