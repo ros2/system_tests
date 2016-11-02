@@ -135,108 +135,109 @@ if(BUILD_TESTING)
       # TODO(dirk-thomas) publishing Bounded/DynamicArrayPrimitives in OpenSplice is buggy
       # https://github.com/ros2/rclcpp/issues/219
       if((NOT TEST_MESSAGE_TYPE STREQUAL "BoundedArrayPrimitives" AND NOT TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives") OR NOT rmw_implementation1 STREQUAL "rmw_opensplice_cpp")
-        ament_add_nose_test(test_publisher_subscriber${test_suffix}
-          "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${test_suffix}_$<CONFIGURATION>.py"
-          WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py"
-          PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
-          APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}/../../rclpy"
-          APPEND_ENV AMENT_PREFIX_PATH=${ament_index_build_path}
-          APPEND_LIBRARY_DIRS "${_append_library_dirs}"
-          TIMEOUT 15)
-        set_tests_properties(
-          test_publisher_subscriber${test_suffix}
-          PROPERTIES DEPENDS "test_publisher_cpp__${rmw_implementation1};test_subscriber_cpp__${rmw_implementation2}"
-        )
+        # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)
+        if((NOT rcl1 STREQUAL "rclpy" AND NOT rcl2 STREQUAL "rclpy") OR (NOT TEST_MESSAGE_TYPE STREQUAL "StaticArrayNested") OR NOT rmw_implementation STREQUAL "rmw_connext_dynamic_cpp")
+          ament_add_nose_test(test_publisher_subscriber${test_suffix}
+            "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${test_suffix}_$<CONFIGURATION>.py"
+            WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py"
+            PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
+            APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}/../../rclpy"
+            APPEND_ENV AMENT_PREFIX_PATH=${ament_index_build_path}
+            APPEND_LIBRARY_DIRS "${_append_library_dirs}"
+            TIMEOUT 15)
+          set_tests_properties(
+            test_publisher_subscriber${test_suffix}
+            PROPERTIES DEPENDS "test_publisher_cpp__${rmw_implementation1};test_subscriber_cpp__${rmw_implementation2}"
+          )
+        endif()
       endif()
     endforeach()
 
-    # TODO(mikaelarguedas) modify this once python services are implemented
-    if(rcl1 STREQUAL "rclcpp" AND rcl2 STREQUAL "rclcpp")
-      # TODO different vendors can't talk to each other right now
-      if(
-        rmw_implementation1 STREQUAL rmw_implementation2 OR
-        (rmw_implementation1 STREQUAL "rmw_connext_cpp" AND rmw_implementation2 STREQUAL "rmw_connext_dynamic_cpp") OR
-        (rmw_implementation1 STREQUAL "rmw_connext_dynamic_cpp" AND rmw_implementation2 STREQUAL "rmw_connext_cpp")
-      )
-      # test requester / replier
-      set(TEST_REQUESTER_EXECUTABLE "$<TARGET_FILE:test_requester_cpp__${rmw_implementation1}>")
-      set(REQUESTER_RMW ${rmw_implementation1})
-      set(TEST_REPLIER_EXECUTABLE "$<TARGET_FILE:test_replier_cpp__${rmw_implementation2}>")
-      set(REPLIER_RMW ${rmw_implementation2})
-      foreach(service_file ${service_files})
-        get_filename_component(TEST_SERVICE_TYPE "${service_file}" NAME_WE)
-        set(test_suffix "__${TEST_SERVICE_TYPE}${suffix}")
-        configure_file(
-          test/test_requester_replier.py.in
-          test_requester_replier_cpp${test_suffix}.py.configured
-          @ONLY
-        )
-        file(GENERATE
-          OUTPUT "test_requester_replier_cpp${test_suffix}_$<CONFIGURATION>.py"
-          INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier_cpp${test_suffix}.py.configured"
-        )
+    ## TODO(mikaelarguedas) modify this once python services are implemented
+    #if(rcl1 STREQUAL "rclcpp" AND rcl2 STREQUAL "rclcpp")
+    #  # TODO different vendors can't talk to each other right now
+    #  if(
+    #    rmw_implementation1 STREQUAL rmw_implementation2 OR
+    #    (rmw_implementation1 STREQUAL "rmw_connext_cpp" AND rmw_implementation2 STREQUAL "rmw_connext_dynamic_cpp") OR
+    #    (rmw_implementation1 STREQUAL "rmw_connext_dynamic_cpp" AND rmw_implementation2 STREQUAL "rmw_connext_cpp")
+    #  )
+    #  # test requester / replier
+    #  set(TEST_REQUESTER_EXECUTABLE "$<TARGET_FILE:test_requester_cpp__${rmw_implementation1}>")
+    #  set(REQUESTER_RMW ${rmw_implementation1})
+    #  set(TEST_REPLIER_EXECUTABLE "$<TARGET_FILE:test_replier_cpp__${rmw_implementation2}>")
+    #  set(REPLIER_RMW ${rmw_implementation2})
+    #  foreach(service_file ${service_files})
+    #    get_filename_component(TEST_SERVICE_TYPE "${service_file}" NAME_WE)
+    #    set(test_suffix "__${TEST_SERVICE_TYPE}${suffix}")
+    #    configure_file(
+    #      test/test_requester_replier.py.in
+    #      test_requester_replier_cpp${test_suffix}.py.configured
+    #      @ONLY
+    #    )
+    #    file(GENERATE
+    #      OUTPUT "test_requester_replier_cpp${test_suffix}_$<CONFIGURATION>.py"
+    #      INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier_cpp${test_suffix}.py.configured"
+    #    )
 
-        ament_add_nose_test(
-          requester_replier_cpp${test_suffix}
-          "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier_cpp${test_suffix}_$<CONFIGURATION>.py"
-          TIMEOUT 30
-        )
-        set_tests_properties(
-          requester_replier_cpp${test_suffix}
-          PROPERTIES DEPENDS
-            "test_requester_cpp__${rmw_implementation1};test_replier_cpp__${rmw_implementation2}"
-        )
-      endforeach()
+    #    ament_add_nose_test(
+    #      requester_replier_cpp${test_suffix}
+    #      "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier_cpp${test_suffix}_$<CONFIGURATION>.py"
+    #      TIMEOUT 30
+    #    )
+    #    set_tests_properties(
+    #      requester_replier_cpp${test_suffix}
+    #      PROPERTIES DEPENDS
+    #        "test_requester_cpp__${rmw_implementation1};test_replier_cpp__${rmw_implementation2}"
+    #    )
+    #  endforeach()
+    #  endif()
+    #endif()
+  endmacro()
+
+  macro(configure_template _rcl1 _rcl2)
+    set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE}")
+    set(_append_library_dirs "")
+    set(TEST_PUBLISHER_RCL "${_rcl1}")
+    set(TEST_SUBSCRIBER_RCL "${_rcl2}")
+
+    if("${_rcl1}" STREQUAL "${_rcl2}")
+      set(suffix "__${_rcl1}")
+    else()
+      set(suffix "__${_rcl1}__${_rcl2}")
+    endif()
+
+    if("${_rcl1}" STREQUAL "rclpy" OR "${_rcl2}" STREQUAL "rclpy")
+      if(WIN32)
+        set(_append_library_dirs "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>")
+        if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+          set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE_DEBUG}")
+        endif()
       endif()
+    endif()
+
+    if("${_rcl1}" STREQUAL "rclpy")
+      set(TEST_PUBLISHER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/publisher_py.py")
+    elseif("${_rcl1}" STREQUAL "rclcpp")
+      set(TEST_PUBLISHER_EXECUTABLE "$<TARGET_FILE:test_publisher_cpp__${rmw_implementation1}>")
+    endif()
+
+    if("${_rcl2}" STREQUAL "rclpy")
+      set(TEST_SUBSCRIBER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/subscriber_py.py")
+    elseif("${_rcl2}" STREQUAL "rclcpp")
+      set(TEST_SUBSCRIBER_EXECUTABLE "$<TARGET_FILE:test_subscriber_cpp__${rmw_implementation2}>")
     endif()
   endmacro()
 
+
   macro(multi_rcl)
-    # test publish / subscribe messages
-    set(rcls "")
     # TODO(mikaelarguedas) Aggregate available rcl from ament index ?
+    set(rcls "")
     list(APPEND rcls "rclpy")
     list(APPEND rcls "rclcpp")
     foreach(rcl1 ${rcls})
-      set(TEST_PUBLISHER_RCL ${rcl1})
-      if(rcl1 STREQUAL "rclcpp")
-        set(TEST_PUBLISHER_EXECUTABLE "$<TARGET_FILE:test_publisher_cpp__${rmw_implementation1}>")
-      elseif(rcl1 STREQUAL "rclpy")
-        set(_append_library_dirs "")
-        if(WIN32)
-          set(_append_library_dirs "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>")
-          if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-            set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE_DEBUG}")
-          else()
-            set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE}")
-          endif()
-        endif()
-        set(TEST_PUBLISHER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/publisher_py.py")
-      endif()
       foreach(rcl2 ${rcls})
-        set(TEST_SUBSCRIBER_RCL ${rcl2})
-        if(rcl1 STREQUAL rcl2)
-          set(suffix "__${rcl1}")
-        else()
-          set(suffix "__${rcl1}__${rcl2}")
-        endif()
-        if(rcl2 STREQUAL "rclcpp")
-          set(TEST_SUBSCRIBER_EXECUTABLE "$<TARGET_FILE:test_subscriber_cpp__${rmw_implementation2}>")
-        elseif(rcl2 STREQUAL "rclpy")
-          set(TEST_SUBSCRIBER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/subscriber_py.py")
-          set(_append_library_dirs "")
-          if(WIN32)
-            set(_append_library_dirs "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>")
-            if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-              set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE_DEBUG}")
-            else()
-              set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE}")
-            endif()
-          endif()
-        endif()
-        if(NOT (rmw_implementation1 STREQUAL "rmw_connext_dynamic_cpp" OR rmw_implementation2 STREQUAL "rmw_connext_dynamic_cpp"))
-            multi_targets()
-        endif()
+        configure_template("${rcl1}" "${rcl2}")
+        multi_targets()
       endforeach()
     endforeach()
   endmacro()
@@ -267,9 +268,9 @@ if(BUILD_TESTING)
     set(rmw_implementation1 "${rmw_implementation}")
     set(target_suffix1 "${target_suffix}")
 
-      foreach(rmw_implementation2 ${rmw_implementations2})
-        multi_rcl()
-      endforeach()
+    foreach(rmw_implementation2 ${rmw_implementations2})
+      multi_rcl()
+    endforeach()
   endmacro()
 
   call_for_each_rmw_implementation(targets)
