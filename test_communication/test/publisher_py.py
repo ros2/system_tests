@@ -33,8 +33,6 @@ def talker(message_name, number_of_cycles):
     module = importlib.import_module(message_pkg + '.msg')
     msg_mod = getattr(module, message_name)
 
-    rmw_implementations = get_rmw_implementations()
-    assert(os.environ.get('RCLPY_IMPLEMENTATION', 'Not Set') in rmw_implementations)
     select_rmw_implementation(os.environ['RCLPY_IMPLEMENTATION'])
 
     rclpy.init([])
