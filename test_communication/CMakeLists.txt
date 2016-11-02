@@ -160,7 +160,8 @@ if(BUILD_TESTING)
       endif()
     endforeach()
 
-    ## TODO(mikaelarguedas) modify this once python services are implemented
+    # test requester / replier
+    # TODO(mikaelarguedas) modify this once python services are implemented
     if(rcl1 STREQUAL "rclcpp" AND rcl2 STREQUAL "rclcpp")
       # TODO different vendors can't talk to each other right now
       if(
@@ -168,7 +169,6 @@ if(BUILD_TESTING)
         (rmw_implementation1 STREQUAL "rmw_connext_cpp" AND rmw_implementation2 STREQUAL "rmw_connext_dynamic_cpp") OR
         (rmw_implementation1 STREQUAL "rmw_connext_dynamic_cpp" AND rmw_implementation2 STREQUAL "rmw_connext_cpp")
       )
-      # test requester / replier
       set(TEST_REQUESTER_EXECUTABLE "$<TARGET_FILE:test_requester_cpp__${rmw_implementation1}>")
       set(REQUESTER_RMW ${rmw_implementation1})
       set(TEST_REPLIER_EXECUTABLE "$<TARGET_FILE:test_replier_cpp__${rmw_implementation2}>")
