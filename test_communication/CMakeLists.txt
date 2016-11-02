@@ -134,9 +134,16 @@ if(BUILD_TESTING)
 
       # TODO(dirk-thomas) publishing Bounded/DynamicArrayPrimitives in OpenSplice is buggy
       # https://github.com/ros2/rclcpp/issues/219
-      if((NOT TEST_MESSAGE_TYPE STREQUAL "BoundedArrayPrimitives" AND NOT TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives") OR NOT rmw_implementation1 STREQUAL "rmw_opensplice_cpp")
+      if(
+        (NOT TEST_MESSAGE_TYPE STREQUAL "BoundedArrayPrimitives" AND NOT TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives") OR
+        NOT rmw_implementation1 STREQUAL "rmw_opensplice_cpp"
+      )
         # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)
-        if((NOT rcl1 STREQUAL "rclpy" AND NOT rcl2 STREQUAL "rclpy") OR (NOT TEST_MESSAGE_TYPE STREQUAL "StaticArrayNested") OR NOT rmw_implementation STREQUAL "rmw_connext_dynamic_cpp")
+        if(
+          (NOT rcl1 STREQUAL "rclpy" AND NOT rcl2 STREQUAL "rclpy") OR
+          (NOT TEST_MESSAGE_TYPE STREQUAL "StaticArrayNested") OR
+          (NOT rmw_implementation1 STREQUAL "rmw_connext_dynamic_cpp" AND NOT rmw_implementation2 STREQUAL "rmw_connext_dynamic_cpp")
+        )
           ament_add_nose_test(test_publisher_subscriber${test_suffix}
             "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${test_suffix}_$<CONFIGURATION>.py"
             WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py"
