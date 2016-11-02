@@ -232,7 +232,7 @@ if(BUILD_TESTING)
   endmacro()
 
 
-  macro(multi_rcl)
+  macro(multi_client_libraries)
     # TODO(mikaelarguedas) Aggregate available rcl from ament index ?
     set(client_libraries "")
     list(APPEND client_libraries "rclpy")
@@ -272,7 +272,7 @@ if(BUILD_TESTING)
     set(target_suffix1 "${target_suffix}")
 
     foreach(rmw_implementation2 ${rmw_implementations2})
-      multi_rcl()
+      multi_client_libraries()
     endforeach()
   endmacro()
 
