@@ -56,7 +56,6 @@ if(BUILD_TESTING)
     get_rmw_typesupport(typesupport_impls "${rmw_implementation}" LANGUAGE "cpp")
 
     add_executable(${target}${target_suffix} ${ARGN})
-    add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
     foreach(typesupport_impl ${typesupport_impls})
       rosidl_target_interfaces(${target}${target_suffix}
         ${PROJECT_NAME} ${typesupport_impl})
@@ -101,7 +100,6 @@ if(BUILD_TESTING)
     get_rmw_typesupport(typesupport_impls "${rmw_implementation}" LANGUAGE "cpp")
 
     add_executable(${target}${target_suffix} ${ARGN})
-    add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
     foreach(typesupport_impl ${typesupport_impls})
       rosidl_target_interfaces(${target}${target_suffix}
         ${PROJECT_NAME} ${typesupport_impl})

@@ -46,7 +46,6 @@ if(BUILD_TESTING)
     if(TARGET ${target}${target_suffix})
       target_compile_definitions(${target}${target_suffix}
         PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
-      add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
       foreach(typesupport_impl ${typesupport_impls})
         rosidl_target_interfaces(${target}${target_suffix}
           ${PROJECT_NAME} ${typesupport_impl})
@@ -64,7 +63,6 @@ if(BUILD_TESTING)
     add_executable(${target}${target_suffix} ${ARGN})
     target_compile_definitions(${target}${target_suffix}
       PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
-    add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
     foreach(typesupport_impl ${typesupport_impls})
       rosidl_target_interfaces(${target}${target_suffix}
         ${PROJECT_NAME} ${typesupport_impl})
