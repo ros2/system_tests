@@ -141,25 +141,6 @@ if(BUILD_TESTING)
     )
   endfunction()
 
-
-  function(custom_executable_c target)
-    # get typesupport of rmw implementation to include / link against the corresponding interfaces
-    get_rmw_typesupport(typesupport_impls "${rmw_implementation}" LANGUAGE "c")
-
-    add_executable(${target}${target_suffix} ${ARGN})
-    target_link_libraries(${target}${target_suffix}
-      ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-      ${_AMENT_EXPORT_LIBRARY_TARGETS})
-    add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
-    foreach(typesupport_impl ${typesupport_impls})
-      rosidl_target_interfaces(${target}${target_suffix}
-        ${PROJECT_NAME} ${typesupport_impl})
-    endforeach()
-    ament_target_dependencies(${target}${target_suffix}
-      "rcl${target_suffix}"
-      "rosidl_generator_c")
-  endfunction()
-
   macro(multi_targets)
     # test publish / subscribe messages
     if(rmw_implementation1 STREQUAL rmw_implementation2)
