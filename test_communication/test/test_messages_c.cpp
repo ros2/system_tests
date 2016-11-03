@@ -224,7 +224,7 @@ void get_message(test_communication__msg__Primitives * msg, size_t msg_num)
     case 1:
       msg->bool_value = true;
       msg->byte_value = 255;
-      msg->char_value = '\255';
+      msg->char_value = '\x7f';
       msg->float32_value = 1.125f;
       msg->float64_value = 1.125;
       msg->int8_value = (std::numeric_limits<int8_t>::max)();
@@ -407,7 +407,7 @@ void get_message(test_communication__msg__StaticArrayPrimitives * msg, size_t ms
     msg->byte_values[1] = 0xff;
     msg->byte_values[2] = 0;
     msg->char_values[0] = '\0';
-    msg->char_values[1] = '\255';
+    msg->char_values[1] = '\x7f';
     msg->char_values[2] = '\0';
     msg->float32_values[0] = 0.0f;
     msg->float32_values[1] = 1.125f;
@@ -601,7 +601,7 @@ void get_message(test_communication__msg__DynamicArrayPrimitives * msg, size_t m
 
       msg->bool_values.data[0] = true;
       msg->byte_values.data[0] = 0xff;
-      msg->char_values.data[0] = '\255';
+      msg->char_values.data[0] = '\x7f';
       msg->float32_values.data[0] = 1.125f;
       msg->float64_values.data[0] = 1.125;
       msg->int8_values.data[0] = (std::numeric_limits<int8_t>::max)();
@@ -636,7 +636,7 @@ void get_message(test_communication__msg__DynamicArrayPrimitives * msg, size_t m
       msg->byte_values.data[0] = 0x00;
       msg->byte_values.data[1] = 0xff;
       msg->char_values.data[0] = '\0';
-      msg->char_values.data[1] = '\255';
+      msg->char_values.data[1] = '\x7f';
       msg->float32_values.data[0] = 0.0f;
       msg->float32_values.data[1] = 1.125f;
       msg->float32_values.data[2] = -2.125f;
