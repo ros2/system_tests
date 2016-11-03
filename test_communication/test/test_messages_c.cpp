@@ -149,7 +149,7 @@ public:
       MessageT message;
       size_t nb_msgs = get_message_num(&message);
       for (size_t msg_cnt = 0; msg_cnt < nb_msgs; msg_cnt++) {
-        get_message(&message, msg_cnt);
+        init_message(&message);
         auto msg_exit = make_scope_exit([&message]() {
           fini_message(&message);
         });
@@ -165,6 +165,9 @@ public:
 // Utilities for test fixtures
 template<typename MessageT>
 size_t get_message_num(MessageT * msg);
+
+template<typename MessageT>
+void init_message(MessageT * msg);
 
 template<typename MessageT>
 void get_message(MessageT * msg, size_t msg_num);
@@ -191,6 +194,11 @@ size_t get_message_num(test_communication__msg__Primitives * msg)
   return 4;
 }
 
+template<>
+void init_message(test_communication__msg__Primitives * msg)
+{
+  test_communication__msg__Primitives__init(msg);
+}
 
 template<>
 void get_message(test_communication__msg__Primitives * msg, size_t msg_num)
@@ -303,6 +311,11 @@ size_t get_message_num(test_communication__msg__Nested * msg)
   return 4;
 }
 
+template<>
+void init_message(test_communication__msg__Nested * msg)
+{
+  test_communication__msg__Nested__init(msg);
+}
 
 template<>
 void get_message(test_communication__msg__Nested * msg, size_t msg_num)
@@ -332,6 +345,11 @@ size_t get_message_num(test_communication__msg__Builtins * msg)
   return 1;
 }
 
+template<>
+void init_message(test_communication__msg__Builtins * msg)
+{
+  test_communication__msg__Builtins__init(msg);
+}
 
 template<>
 void get_message(test_communication__msg__Builtins * msg, size_t msg_num)
@@ -371,6 +389,11 @@ size_t get_message_num(test_communication__msg__StaticArrayPrimitives * msg)
   return 1;
 }
 
+template<>
+void init_message(test_communication__msg__StaticArrayPrimitives * msg)
+{
+  test_communication__msg__StaticArrayPrimitives__init(msg);
+}
 
 template<>
 void get_message(test_communication__msg__StaticArrayPrimitives * msg, size_t msg_num)
@@ -462,6 +485,12 @@ size_t get_message_num(test_communication__msg__StaticArrayNested * msg)
 }
 
 template<>
+void init_message(test_communication__msg__StaticArrayNested * msg)
+{
+  test_communication__msg__StaticArrayNested__init(msg);
+}
+
+template<>
 void get_message(test_communication__msg__StaticArrayNested * msg, size_t msg_num)
 {
   test_communication__msg__StaticArrayNested__init(msg);
@@ -523,6 +552,12 @@ size_t get_message_num(test_communication__msg__DynamicArrayPrimitives * msg)
 {
   (void)msg;
   return 5;
+}
+
+template<>
+void init_message(test_communication__msg__DynamicArrayPrimitives * msg)
+{
+  test_communication__msg__DynamicArrayPrimitives__init(msg);
 }
 
 template<>
@@ -768,6 +803,12 @@ size_t get_message_num(test_communication__msg__DynamicArrayNested * msg)
 }
 
 template<>
+void init_message(test_communication__msg__DynamicArrayNested * msg)
+{
+  test_communication__msg__DynamicArrayNested__init(msg);
+}
+
+template<>
 void get_message(test_communication__msg__DynamicArrayNested * msg, size_t msg_num)
 {
   test_communication__msg__Primitives submsg;
@@ -835,6 +876,12 @@ size_t get_message_num(test_communication__msg__BoundedArrayPrimitives * msg)
 {
   (void)msg;
   return 5;
+}
+
+template<>
+void init_message(test_communication__msg__BoundedArrayPrimitives * msg)
+{
+  test_communication__msg__BoundedArrayPrimitives__init(msg);
 }
 
 template<>
@@ -998,6 +1045,13 @@ size_t get_message_num(test_communication__msg__BoundedArrayNested * msg)
 {
   (void)msg;
   return 1;
+}
+
+
+template<>
+void init_message(test_communication__msg__BoundedArrayNested * msg)
+{
+  test_communication__msg__BoundedArrayNested__init(msg);
 }
 
 template<>
