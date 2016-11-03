@@ -505,37 +505,9 @@ void get_message(test_communication__msg__StaticArrayNested * msg, size_t msg_nu
 template<>
 void verify_message(test_communication__msg__StaticArrayNested & message, size_t msg_num)
 {
-  test_communication__msg__StaticArrayNested expected_msg;
-  get_message(&expected_msg, msg_num);
+  (void)msg_num;
   for (size_t i = 0; i < 4; ++i) {
-    EXPECT_EQ(expected_msg.primitive_values[i].bool_value,
-      message.primitive_values[i].bool_value);
-    EXPECT_EQ(expected_msg.primitive_values[i].byte_value,
-      message.primitive_values[i].byte_value);
-    EXPECT_EQ(expected_msg.primitive_values[i].char_value,
-      message.primitive_values[i].char_value);
-    EXPECT_FLOAT_EQ(expected_msg.primitive_values[i].float32_value,
-      message.primitive_values[i].float32_value);
-    EXPECT_DOUBLE_EQ(expected_msg.primitive_values[i].float64_value,
-      message.primitive_values[i].float64_value);
-    EXPECT_EQ(expected_msg.primitive_values[i].int8_value,
-      message.primitive_values[i].int8_value);
-    EXPECT_EQ(expected_msg.primitive_values[i].uint8_value,
-      message.primitive_values[i].uint8_value);
-    EXPECT_EQ(expected_msg.primitive_values[i].int16_value,
-      message.primitive_values[i].int16_value);
-    EXPECT_EQ(expected_msg.primitive_values[i].uint16_value,
-      message.primitive_values[i].uint16_value);
-    EXPECT_EQ(expected_msg.primitive_values[i].int32_value,
-      message.primitive_values[i].int32_value);
-    EXPECT_EQ(expected_msg.primitive_values[i].uint32_value,
-      message.primitive_values[i].uint32_value);
-    EXPECT_EQ(expected_msg.primitive_values[i].int64_value,
-      message.primitive_values[i].int64_value);
-    EXPECT_EQ(expected_msg.primitive_values[i].uint64_value,
-      message.primitive_values[i].uint64_value);
-    EXPECT_EQ(0, strcmp(expected_msg.primitive_values[i].string_value.data,
-      message.primitive_values[i].string_value.data));
+    verify_message(message.primitive_values[i], i);
   }
 }
 
