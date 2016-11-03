@@ -1,5 +1,4 @@
 import os
-
 from launch import LaunchDescriptor
 from launch.exit_handler import primary_exit_handler
 from launch.launcher import DefaultLauncher
@@ -7,19 +6,33 @@ from launch.launcher import DefaultLauncher
 
 def test_publisher_subscriber():
     ld = LaunchDescriptor()
+    publisher_cmd = ['@TEST_PUBLISHER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@']
+    subscriber_cmd = ['@TEST_SUBSCRIBER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@']
+    if '@TEST_PUBLISHER_RCL@' == 'rclpy':
+        import sys
+        publisher_cmd.insert(0, sys.executable)
+        pub_rmw_env_key = 'RCLPY_IMPLEMENTATION'
+    elif '@TEST_PUBLISHER_RCL@' == 'rclcpp':
+        pub_rmw_env_key = 'RCL_ASSERT_RMW_ID_MATCHES'
 
+    if '@TEST_SUBSCRIBER_RCL@' == 'rclpy':
+        import sys
+        subscriber_cmd.insert(0, sys.executable)
+        sub_rmw_env_key = 'RCLPY_IMPLEMENTATION'
+    elif '@TEST_SUBSCRIBER_RCL@' == 'rclcpp':
+        sub_rmw_env_key = 'RCL_ASSERT_RMW_ID_MATCHES'
     publisher_env = dict(os.environ)
-    publisher_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@PUBLISHER_RMW@'
+    publisher_env[pub_rmw_env_key] = '@PUBLISHER_RMW@'
     ld.add_process(
-        cmd=['@TEST_PUBLISHER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@'],
+        cmd=publisher_cmd,
         name='test_publisher',
         env=publisher_env,
     )
 
     subscriber_env = dict(os.environ)
-    subscriber_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@SUBSCRIBER_RMW@'
+    subscriber_env[sub_rmw_env_key] = '@SUBSCRIBER_RMW@'
     ld.add_process(
-        cmd=['@TEST_SUBSCRIBER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@'],
+        cmd=subscriber_cmd,
         name='test_subscriber',
         env=subscriber_env,
         exit_handler=primary_exit_handler,
