@@ -108,6 +108,37 @@ if(BUILD_TESTING)
       "rclcpp${target_suffix}")
   endfunction()
 
+  function(custom_test_c target)
+    # get typesupport of rmw implementation to include / link against the corresponding interfaces
+    get_rmw_typesupport(typesupport_impls "${rmw_implementation}" LANGUAGE "c")
+
+    ament_add_gtest(
+      "${target}${target_suffix}" ${ARGN}
+      TIMEOUT 90
+      ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
+    target_link_libraries(${target}${target_suffix}
+      ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
+      ${_AMENT_EXPORT_LIBRARY_TARGETS})
+    add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
+    foreach(typesupport_impl ${typesupport_impls})
+      rosidl_target_interfaces(${target}${target_suffix}
+        ${PROJECT_NAME} ${typesupport_impl})
+    endforeach()
+    rosidl_target_interfaces(${target}${target_suffix}
+      ${PROJECT_NAME} rosidl_generator_c)
+    ament_target_dependencies(${target}${target_suffix}
+      "rcl${target_suffix}")
+    get_target_property(target_path ${target}${target_suffix}
+      RUNTIME_OUTPUT_DIRECTORY)
+    if(NOT target_path)
+      set(target_path "${CMAKE_CURRENT_BINARY_DIR}")
+    endif()
+    set_tests_properties(
+      ${target}${target_suffix}
+      PROPERTIES REQUIRED_FILES "${target_path}/${target}${target_suffix}"
+    )
+  endfunction()
+
   macro(multi_targets)
     # test publish / subscribe messages
     if(rmw_implementation1 STREQUAL rmw_implementation2)
@@ -244,6 +275,10 @@ if(BUILD_TESTING)
   endmacro()
 
   macro(targets)
+    get_rcl_information("${rmw_implementation}" "rcl${target_suffix}")
+    custom_test_c(test_messages_c
+      "test/test_messages_c.cpp")
+
     get_rclcpp_information("${rmw_implementation}" "rclcpp${target_suffix}")
 
     # publisher combined with a subscriber
