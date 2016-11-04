@@ -189,7 +189,7 @@ public:
         EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
         ret = rcl_wait_set_add_subscription(&wait_set, &subscription);
         EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
-        rcl_ret_t ret = rcl_wait(&wait_set, RCL_S_TO_NS(1));
+        rcl_ret_t ret = rcl_wait(&wait_set, RCL_S_TO_NS(-1));
         ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
         ret = rcl_take(&subscription, &message, nullptr);
         ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
@@ -305,11 +305,11 @@ void get_message(test_communication__msg__Primitives * msg, size_t msg_num)
       msg->uint32_value = 1;
       msg->int64_value = 1;
       msg->uint64_value = 1;
-      char string_value[200] = {};
-      for (size_t i = 0; i < 200; i++) {
+      char string_value[20000] = {};
+      for (uint32_t i = 0; i < 20000; i++) {
         string_value[i] = '0' + (i % 10);
       }
-      rosidl_generator_c__String__assign(&msg->string_value, string_value);
+      rosidl_generator_c__String__assignn(&msg->string_value, string_value, sizeof(string_value));
       break;
   }
 }
