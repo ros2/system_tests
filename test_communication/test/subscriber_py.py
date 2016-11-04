@@ -46,7 +46,6 @@ def listener(message_name, number_of_cycles):
     from message_fixtures import get_test_msg
     import rclpy
     from rclpy.impl.rmw_implementation_tools import select_rmw_implementation
-    from rclpy.impl.rmw_implementation_tools import get_rmw_implementations
     from rclpy.qos import qos_profile_default
 
     message_pkg = 'test_communication'
