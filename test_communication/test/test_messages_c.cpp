@@ -126,11 +126,29 @@ public:
       rcl_ret_t ret = rcl_subscription_fini(&subscription, this->node_ptr);
       EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
     });
+    EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
     EXPECT_EQ(0, strcmp(rcl_subscription_get_topic_name(&subscription), topic_name));
-    // TODO(wjwwood): add logic to wait for the connection to be established
-    //                probably using the count_subscriptions busy wait mechanism
-    //                until then we will sleep for a short period of time
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+    rcl_wait_set_t wait_set = rcl_get_zero_initialized_wait_set();
+    EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+    ret = rcl_wait_set_init(
+      &wait_set,
+      0,  // number_of_subscriptions
+      1,  // number_of_guard_conditions
+      0,  // number_of_timers
+      0,  // number_of_clients
+      0,  // number_of_services
+      rcl_get_default_allocator());
+    EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+    ret = rcl_wait_set_clear_guard_conditions(&wait_set);
+    EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+    ret = rcl_wait_set_add_guard_condition(
+      &wait_set, rcl_node_get_graph_guard_condition(this->node_ptr));
+    EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+    ret = rcl_wait(&wait_set, RCL_S_TO_NS(2));
+    ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
     {
       MessageT message;
       size_t nb_msgs = get_message_num(&message);
@@ -144,7 +162,7 @@ public:
       }
     }
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
     {
       MessageT message;
       size_t nb_msgs = get_message_num(&message);
@@ -153,6 +171,24 @@ public:
         auto msg_exit = make_scope_exit([&message]() {
           fini_message(&message);
         });
+
+        rcl_wait_set_t wait_set = rcl_get_zero_initialized_wait_set();
+        EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+        ret = rcl_wait_set_init(
+          &wait_set,
+          1,  // number_of_subscriptions
+          0,  // number_of_guard_conditions
+          0,  // number_of_timers
+          0,  // number_of_clients
+          0,  // number_of_services
+          rcl_get_default_allocator());
+        EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+        ret = rcl_wait_set_clear_subscriptions(&wait_set);
+        EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+        ret = rcl_wait_set_add_subscription(&wait_set, &subscription);
+        EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+        rcl_ret_t ret = rcl_wait(&wait_set, RCL_S_TO_NS(1));
+        ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
         ret = rcl_take(&subscription, &message, nullptr);
         ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
         verify_message(message, msg_cnt);
