@@ -128,7 +128,6 @@ if(BUILD_TESTING)
       ${PROJECT_NAME} rosidl_generator_c)
     ament_target_dependencies(${target}${target_suffix}
       "rcl${target_suffix}")
-    # register executable as a test
     get_target_property(target_path ${target}${target_suffix}
       RUNTIME_OUTPUT_DIRECTORY)
     if(NOT target_path)
