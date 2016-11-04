@@ -142,10 +142,12 @@ public:
     EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
     ret = rcl_wait_set_clear_guard_conditions(&wait_set);
     EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+    const rcl_guard_condition_t * graph_guard_condition =
+      rcl_node_get_graph_guard_condition(this->node_ptr);
     ret = rcl_wait_set_add_guard_condition(
-      &wait_set, rcl_node_get_graph_guard_condition(this->node_ptr));
+      &wait_set, graph_guard_condition);
     EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
-    ret = rcl_wait(&wait_set, RCL_S_TO_NS(2));
+    ret = rcl_wait(&wait_set, -1);
     ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
