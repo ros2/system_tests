@@ -112,7 +112,6 @@ if(BUILD_TESTING)
     # get typesupport of rmw implementation to include / link against the corresponding interfaces
     get_rmw_typesupport(typesupport_impls "${rmw_implementation}" LANGUAGE "c")
 
-    # add_executable(${target}${target_suffix} ${ARGN})
     ament_add_gtest(
       "${target}${target_suffix}" ${ARGN}
       TIMEOUT 90
