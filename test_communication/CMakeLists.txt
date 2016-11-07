@@ -135,7 +135,7 @@ if(BUILD_TESTING)
     endif()
     set_tests_properties(
       ${target}${target_suffix}
-      PROPERTIES REQUIRED_FILES "${target_path}/${target}${target_suffix}"
+      PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}${target_suffix}>"
     )
   endfunction()
 
