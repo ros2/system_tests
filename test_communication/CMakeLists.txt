@@ -128,14 +128,9 @@ if(BUILD_TESTING)
       ${PROJECT_NAME} rosidl_generator_c)
     ament_target_dependencies(${target}${target_suffix}
       "rcl${target_suffix}")
-    get_target_property(target_path ${target}${target_suffix}
-      RUNTIME_OUTPUT_DIRECTORY)
-    if(NOT target_path)
-      set(target_path "${CMAKE_CURRENT_BINARY_DIR}")
-    endif()
     set_tests_properties(
       ${target}${target_suffix}
-      PROPERTIES REQUIRED_FILES "${target_path}/${target}${target_suffix}"
+      PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}${target_suffix}>"
     )
   endfunction()
 
