@@ -168,7 +168,6 @@ if(BUILD_TESTING)
           WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py"
           PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
           APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}/../../rclpy"
-          APPEND_ENV AMENT_PREFIX_PATH=${ament_index_build_path}
           APPEND_LIBRARY_DIRS "${_append_library_dirs}"
           TIMEOUT 15)
         set_tests_properties(
