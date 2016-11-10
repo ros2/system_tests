@@ -178,42 +178,44 @@ if(BUILD_TESTING)
     endforeach()
 
     # test requester / replier
-    # TODO(mikaelarguedas) modify this once python services are implemented
-    if(client_library1 STREQUAL "rclcpp" AND client_library2 STREQUAL "rclcpp")
       # TODO different vendors can't talk to each other right now
-      if(
-        rmw_implementation1 STREQUAL rmw_implementation2 OR
-        (rmw_implementation1 STREQUAL "rmw_connext_cpp" AND rmw_implementation2 STREQUAL "rmw_connext_dynamic_cpp") OR
-        (rmw_implementation1 STREQUAL "rmw_connext_dynamic_cpp" AND rmw_implementation2 STREQUAL "rmw_connext_cpp")
+    if(
+      rmw_implementation1 STREQUAL rmw_implementation2 OR
+      (rmw_implementation1 STREQUAL "rmw_connext_cpp" AND rmw_implementation2 STREQUAL "rmw_connext_dynamic_cpp") OR
+      (rmw_implementation1 STREQUAL "rmw_connext_dynamic_cpp" AND rmw_implementation2 STREQUAL "rmw_connext_cpp")
+    )
+      # TODO(mikaelarguedas) connext doesn't support C services for now
+      if((NOT client_library1 STREQUAL "rclpy" AND NOT client_library2 STREQUAL "rclpy") OR 
+        (NOT rmw_implementation1 MATCHES "(.*)connext(.*)" AND NOT rmw_implementation2 MATCHES "(.*)connext(.*)")
       )
-      set(TEST_REQUESTER_EXECUTABLE "$<TARGET_FILE:test_requester_cpp__${rmw_implementation1}>")
-      set(REQUESTER_RMW ${rmw_implementation1})
-      set(TEST_REPLIER_EXECUTABLE "$<TARGET_FILE:test_replier_cpp__${rmw_implementation2}>")
-      set(REPLIER_RMW ${rmw_implementation2})
-      foreach(service_file ${service_files})
-        get_filename_component(TEST_SERVICE_TYPE "${service_file}" NAME_WE)
-        set(test_suffix "__${TEST_SERVICE_TYPE}${suffix}")
-        configure_file(
-          test/test_requester_replier.py.in
-          test_requester_replier_cpp${test_suffix}.py.configured
-          @ONLY
-        )
-        file(GENERATE
-          OUTPUT "test_requester_replier_cpp${test_suffix}_$<CONFIGURATION>.py"
-          INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier_cpp${test_suffix}.py.configured"
-        )
+        set(REQUESTER_RMW ${rmw_implementation1})
+        set(REPLIER_RMW ${rmw_implementation2})
+        foreach(service_file ${service_files})
+          get_filename_component(TEST_SERVICE_TYPE "${service_file}" NAME_WE)
+          set(test_suffix "__${TEST_SERVICE_TYPE}${suffix}")
+          configure_file(
+            test/test_requester_replier.py.in
+            test_requester_replier${test_suffix}.py.configured
+            @ONLY
+          )
+          file(GENERATE
+            OUTPUT "test_requester_replier${test_suffix}_$<CONFIGURATION>.py"
+            INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier${test_suffix}.py.configured"
+          )
 
-        ament_add_nose_test(
-          requester_replier_cpp${test_suffix}
-          "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier_cpp${test_suffix}_$<CONFIGURATION>.py"
-          TIMEOUT 30
-        )
-        set_tests_properties(
-          requester_replier_cpp${test_suffix}
-          PROPERTIES DEPENDS
-            "test_requester_cpp__${rmw_implementation1};test_replier_cpp__${rmw_implementation2}"
-        )
-      endforeach()
+          ament_add_nose_test(test_requester_replier${test_suffix}
+            "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier${test_suffix}_$<CONFIGURATION>.py"
+            WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py"
+            PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
+            APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}/../../rclpy"
+            APPEND_LIBRARY_DIRS "${_append_library_dirs}"
+            TIMEOUT 30)
+          set_tests_properties(
+            test_publisher_subscriber${test_suffix}
+            PROPERTIES DEPENDS
+              "test_requester_cpp__${rmw_implementation1};test_replier_cpp__${rmw_implementation2}"
+          )
+        endforeach()
       endif()
     endif()
   endmacro()
@@ -225,6 +227,8 @@ if(BUILD_TESTING)
     set(_client_library2 "${_client_library2}")
     set(TEST_PUBLISHER_RCL "${_client_library1}")
     set(TEST_SUBSCRIBER_RCL "${_client_library2}")
+    set(TEST_REQUESTER_RCL "${_client_library1}")
+    set(TEST_REPLIER_RCL "${_client_library2}")
 
     if(_client_library1 STREQUAL _client_library2)
       set(suffix "__${_client_library1}")
@@ -243,14 +247,18 @@ if(BUILD_TESTING)
 
     if(_client_library1 STREQUAL "rclpy")
       set(TEST_PUBLISHER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/publisher_py.py")
+      set(TEST_REQUESTER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/requester_py.py")
     elseif(_client_library1 STREQUAL "rclcpp")
       set(TEST_PUBLISHER_EXECUTABLE "$<TARGET_FILE:test_publisher_cpp__${rmw_implementation1}>")
+      set(TEST_REQUESTER_EXECUTABLE "$<TARGET_FILE:test_requester_cpp__${rmw_implementation1}>")
     endif()
 
     if(_client_library2 STREQUAL "rclpy")
       set(TEST_SUBSCRIBER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/subscriber_py.py")
+      set(TEST_REPLIER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/replier_py.py")
     elseif(_client_library2 STREQUAL "rclcpp")
       set(TEST_SUBSCRIBER_EXECUTABLE "$<TARGET_FILE:test_subscriber_cpp__${rmw_implementation2}>")
+      set(TEST_REPLIER_EXECUTABLE "$<TARGET_FILE:test_replier_cpp__${rmw_implementation2}>")
     endif()
   endmacro()
 
