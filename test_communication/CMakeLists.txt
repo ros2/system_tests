@@ -185,7 +185,7 @@ if(BUILD_TESTING)
       (rmw_implementation1 STREQUAL "rmw_connext_dynamic_cpp" AND rmw_implementation2 STREQUAL "rmw_connext_cpp")
     )
       # TODO(mikaelarguedas) connext doesn't support C services for now
-      if((NOT client_library1 STREQUAL "rclpy" AND NOT client_library2 STREQUAL "rclpy") OR 
+      if((NOT client_library1 STREQUAL "rclpy" AND NOT client_library2 STREQUAL "rclpy") OR
         (NOT rmw_implementation1 MATCHES "(.*)connext(.*)" AND NOT rmw_implementation2 MATCHES "(.*)connext(.*)")
       )
         set(REQUESTER_RMW ${rmw_implementation1})
