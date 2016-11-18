@@ -1,0 +1,96 @@
+import os, time, subprocess, signal
+
+from launch import LaunchDescriptor
+from launch.exit_handler import primary_exit_handler
+from launch.launcher import DefaultLauncher
+
+ros_master_port = '12321';
+ros_master_uri = 'http://localhost:{}'.format(ros_master_port)
+
+def launch_rosmaster():
+    rosmaster_env = { 'ROS_MASTER_URI': ros_master_uri }
+    devnull = open(os.devnull, 'w')
+    cmd = ['@TEST_BRIDGE_ENV@', '@TEST_BRIDGE_ROSCORE@', '-p', ros_master_port]
+    rosmaster = subprocess.Popen(cmd, env=rosmaster_env, stderr=devnull, stdout=devnull)
+    time.sleep(5)
+    return rosmaster
+
+def add_dynamic_bridge(ld):
+    dynamic_bridge_env = dict(os.environ)
+    dynamic_bridge_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@TEST_BRIDGE_RMW@'
+    dynamic_bridge_env['ROS_MASTER_URI'] = ros_master_uri
+    ld.add_process(
+        cmd=['@TEST_BRIDGE_DYNAMIC_BRIDGE@'],
+        name='dynamic_bridge',
+        env=dynamic_bridge_env,
+    )
+
+def test_ros1_to_ros2():
+    ld = LaunchDescriptor()
+
+    server_env = dict(os.environ)
+    server_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@TEST_BRIDGE_RMW@'
+    ld.add_process(
+        cmd=['@TEST_BRIDGE_ROS2_SERVER@'],
+        name='server',
+        env=server_env,
+    )
+
+    add_dynamic_bridge(ld)
+
+    client_env = dict(os.environ)
+    client_env['ROS_MASTER_URI'] = ros_master_uri
+    ld.add_process(
+        cmd=['@TEST_BRIDGE_ROS1_CLIENT@'],
+        name='client',
+        env=client_env,
+        exit_handler=primary_exit_handler,
+    )
+
+    launcher = DefaultLauncher()
+    launcher.add_launch_descriptor(ld)
+    rc = launcher.launch()
+
+    assert rc == 0, \
+        "The launch file failed with exit code '" + str(rc) + "'. " \
+        'ROS1 client failed to get a response from ROS2 service.'
+
+def test_ros2_to_ros1():
+    ld = LaunchDescriptor()
+
+    server_env = dict(os.environ)
+    server_env['ROS_MASTER_URI'] = ros_master_uri
+    ld.add_process(
+        cmd=['@TEST_BRIDGE_ROS1_SERVER@'],
+        name='server',
+        env=server_env,
+    )
+
+    add_dynamic_bridge(ld)
+
+    client_env = dict(os.environ)
+    client_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@TEST_BRIDGE_RMW@'
+    ld.add_process(
+        cmd=['@TEST_BRIDGE_ROS2_CLIENT@'],
+        name='client',
+        env=client_env,
+        exit_handler=primary_exit_handler,
+    )
+
+    launcher = DefaultLauncher()
+    launcher.add_launch_descriptor(ld)
+    rc = launcher.launch()
+
+    assert rc == 0, \
+        "The launch file failed with exit code '" + str(rc) + "'. " \
+        'ROS2 client failed to get a response from ROS1 service.'
+
+if __name__ == '__main__':
+    process = launch_rosmaster()
+    test_ros1_to_ros2()
+    test_ros2_to_ros1()
+    if os.name == 'nt':
+      process.kill()
+    else:
+      process.send_signal(signal.SIGINT)
+      process.wait()
