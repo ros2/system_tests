@@ -6,6 +6,9 @@ from launch.launcher import DefaultLauncher
 
 
 def test_requester_replier():
+    if '@SKIP_TEST@' == 'True':
+        from unittest.case import SkipTest
+        raise SkipTest
     ld = LaunchDescriptor()
     requester_cmd = ['@TEST_REQUESTER_EXECUTABLE@', '@TEST_SERVICE_TYPE@']
     replier_cmd = ['@TEST_REPLIER_EXECUTABLE@', '@TEST_SERVICE_TYPE@']
