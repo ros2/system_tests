@@ -66,26 +66,20 @@ if(BUILD_TESTING)
       # adding test for each message type
       foreach(message_file ${message_files})
         get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
-
-        set(SKIP_TEST "")
         # TODO(dirk-thomas) publishing Bounded/DynamicArrayPrimitives in OpenSplice is buggy
         # https://github.com/ros2/rclcpp/issues/219
-        if(
-          (TEST_MESSAGE_TYPE STREQUAL "BoundedArrayPrimitives" OR TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives") AND
-          rmw_implementation1 STREQUAL "rmw_opensplice_cpp"
-        )
-          set(SKIP_TEST "True")
+        if((NOT TEST_MESSAGE_TYPE STREQUAL "BoundedArrayPrimitives" AND NOT TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives") OR NOT rmw_implementation STREQUAL "rmw_opensplice_cpp")
+          ament_add_test(
+            "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
+            COMMAND "$<TARGET_FILE:${target}${target_suffix}>" "${TEST_MESSAGE_TYPE}"
+            TIMEOUT 15
+            GENERATE_RESULT_FOR_RETURN_CODE_ZERO
+            ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
+          set_tests_properties(
+            "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
+            PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}${target_suffix}>"
+          )
         endif()
-        ament_add_test(
-          "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
-          COMMAND "$<TARGET_FILE:${target}${target_suffix}>" "${TEST_MESSAGE_TYPE}"
-          TIMEOUT 15
-          GENERATE_RESULT_FOR_RETURN_CODE_ZERO
-          ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
-        set_tests_properties(
-          "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
-          PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}${target_suffix}>"
-        )
       endforeach()
     else()
       ament_add_test(
