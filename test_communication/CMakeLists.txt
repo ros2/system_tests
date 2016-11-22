@@ -185,7 +185,7 @@ if(BUILD_TESTING)
 
     # TODO different vendors can't talk to each other right now
     if(NOT rmw_implementation1 STREQUAL rmw_implementation2 AND
-       NOT(rmw_implementation1 MATCHES "(.*)connext(.*)" AND rmw_implementation2 MATCHES "(.*)connext(.*)")
+      (NOT(rmw_implementation1 MATCHES "(.*)connext(.*)" AND rmw_implementation2 MATCHES "(.*)connext(.*)"))
     )
       set(SKIP_TEST "True")
     endif()
