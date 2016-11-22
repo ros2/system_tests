@@ -6,20 +6,38 @@ from launch.launcher import DefaultLauncher
 
 
 def test_requester_replier():
+    if '@SKIP_TEST@' == 'True':
+        from unittest.case import SkipTest
+        raise SkipTest
     ld = LaunchDescriptor()
+    requester_cmd = ['@TEST_REQUESTER_EXECUTABLE@', '@TEST_SERVICE_TYPE@']
+    replier_cmd = ['@TEST_REPLIER_EXECUTABLE@', '@TEST_SERVICE_TYPE@']
 
+    if '@TEST_REQUESTER_RCL@' == 'rclpy':
+        import sys
+        requester_cmd.insert(0, sys.executable)
+        requester_rmw_env_key = 'RCLPY_IMPLEMENTATION'
+    elif '@TEST_REQUESTER_RCL@' == 'rclcpp':
+        requester_rmw_env_key = 'RCL_ASSERT_RMW_ID_MATCHES'
+
+    if '@TEST_REPLIER_RCL@' == 'rclpy':
+        import sys
+        replier_cmd.insert(0, sys.executable)
+        replier_rmw_env_key = 'RCLPY_IMPLEMENTATION'
+    elif '@TEST_REPLIER_RCL@' == 'rclcpp':
+        replier_rmw_env_key = 'RCL_ASSERT_RMW_ID_MATCHES'
     replier_env = dict(os.environ)
-    replier_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@REPLIER_RMW@'
+    replier_env[replier_rmw_env_key] = '@REPLIER_RMW@'
     ld.add_process(
-        cmd=['@TEST_REPLIER_EXECUTABLE@', '@TEST_SERVICE_TYPE@'],
+        cmd=replier_cmd,
         name='test_replier',
         env=replier_env,
     )
 
     requester_env = dict(os.environ)
-    requester_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@REQUESTER_RMW@'
+    requester_env[requester_rmw_env_key] = '@REQUESTER_RMW@'
     ld.add_process(
-        cmd=['@TEST_REQUESTER_EXECUTABLE@', '@TEST_SERVICE_TYPE@'],
+        cmd=requester_cmd,
         name='test_requester',
         env=requester_env,
         exit_handler=primary_exit_handler,
