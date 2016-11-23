@@ -68,7 +68,16 @@ if(BUILD_TESTING)
         get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
         # TODO(dirk-thomas) publishing Bounded/DynamicArrayPrimitives in OpenSplice is buggy
         # https://github.com/ros2/rclcpp/issues/219
-        if((NOT TEST_MESSAGE_TYPE STREQUAL "BoundedArrayPrimitives" AND NOT TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives") OR NOT rmw_implementation STREQUAL "rmw_opensplice_cpp")
+        if(
+          (TEST_MESSAGE_TYPE STREQUAL "BoundedArrayPrimitives" OR TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives") AND
+          rmw_implementation STREQUAL "rmw_opensplice_cpp"
+        )
+          ament_add_test(
+            "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
+            COMMAND "$<TARGET_FILE:${target}${target_suffix}>" "${TEST_MESSAGE_TYPE}"
+            SKIP_TEST
+          )
+        else()
           ament_add_test(
             "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
             COMMAND "$<TARGET_FILE:${target}${target_suffix}>" "${TEST_MESSAGE_TYPE}"
