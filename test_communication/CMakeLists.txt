@@ -154,15 +154,6 @@ if(BUILD_TESTING)
     set(SUBSCRIBER_RMW ${rmw_implementation2})
     foreach(message_file ${message_files})
       get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
-      set(SKIP_TEST "")
-      # TODO(dirk-thomas) publishing Bounded/DynamicArrayPrimitives in OpenSplice is buggy
-      # https://github.com/ros2/rclcpp/issues/219
-      if(
-        (TEST_MESSAGE_TYPE STREQUAL "BoundedArrayPrimitives" OR TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives") AND
-        rmw_implementation1 STREQUAL "rmw_opensplice_cpp"
-      )
-        set(SKIP_TEST "True")
-      endif()
 
       set(test_suffix "__${TEST_MESSAGE_TYPE}${suffix}")
       configure_file(
@@ -175,18 +166,35 @@ if(BUILD_TESTING)
         INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${test_suffix}.py.configured"
       )
 
-      # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)
-      ament_add_nose_test(test_publisher_subscriber${test_suffix}
-        "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${test_suffix}_$<CONFIGURATION>.py"
-        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py"
-        PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
-        APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}/../../rclpy"
-        APPEND_LIBRARY_DIRS "${_append_library_dirs}"
-        TIMEOUT 15)
-      set_tests_properties(
-        test_publisher_subscriber${test_suffix}
-        PROPERTIES DEPENDS "test_publisher_cpp__${rmw_implementation1};test_subscriber_cpp__${rmw_implementation2}"
+      # TODO(dirk-thomas) publishing Bounded/DynamicArrayPrimitives in OpenSplice is buggy
+      # https://github.com/ros2/rclcpp/issues/219
+      if(
+        (TEST_MESSAGE_TYPE STREQUAL "BoundedArrayPrimitives" OR TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives") AND
+        rmw_implementation1 STREQUAL "rmw_opensplice_cpp"
       )
+        ament_add_nose_test(test_publisher_subscriber${test_suffix}
+          "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${test_suffix}_$<CONFIGURATION>.py"
+          WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py"
+          PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
+          APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}/../../rclpy"
+          APPEND_LIBRARY_DIRS "${_append_library_dirs}"
+          TIMEOUT 15
+          SKIP_TEST
+          )
+      else()
+        # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)
+        ament_add_nose_test(test_publisher_subscriber${test_suffix}
+          "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${test_suffix}_$<CONFIGURATION>.py"
+          WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py"
+          PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
+          APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}/../../rclpy"
+          APPEND_LIBRARY_DIRS "${_append_library_dirs}"
+          TIMEOUT 15)
+        set_tests_properties(
+          test_publisher_subscriber${test_suffix}
+          PROPERTIES DEPENDS "test_publisher_cpp__${rmw_implementation1};test_subscriber_cpp__${rmw_implementation2}"
+        )
+      endif()
     endforeach()
 
     # test requester / replier
@@ -225,18 +233,30 @@ if(BUILD_TESTING)
         INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier${test_suffix}.py.configured"
       )
 
-      ament_add_nose_test(test_requester_replier${test_suffix}
-        "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier${test_suffix}_$<CONFIGURATION>.py"
-        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py"
-        PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
-        APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}/../../rclpy"
-        APPEND_LIBRARY_DIRS "${_append_library_dirs}"
-        TIMEOUT 30)
-      set_tests_properties(
-        test_publisher_subscriber${test_suffix}
-        PROPERTIES DEPENDS
-          "test_requester_cpp__${rmw_implementation1};test_replier_cpp__${rmw_implementation2}"
-      )
+      if(SKIP_TEST STREQUAL "True")
+        ament_add_nose_test(test_requester_replier${test_suffix}
+          "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier${test_suffix}_$<CONFIGURATION>.py"
+          WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py"
+          PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
+          APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}/../../rclpy"
+          APPEND_LIBRARY_DIRS "${_append_library_dirs}"
+          TIMEOUT 30
+          SKIP_TEST
+        )
+      else()
+        ament_add_nose_test(test_requester_replier${test_suffix}
+          "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier${test_suffix}_$<CONFIGURATION>.py"
+          WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py"
+          PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
+          APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}/../../rclpy"
+          APPEND_LIBRARY_DIRS "${_append_library_dirs}"
+          TIMEOUT 30)
+        set_tests_properties(
+          test_publisher_subscriber${test_suffix}
+          PROPERTIES DEPENDS
+            "test_requester_cpp__${rmw_implementation1};test_replier_cpp__${rmw_implementation2}"
+        )
+      endif()
     endforeach()
   endmacro()
 

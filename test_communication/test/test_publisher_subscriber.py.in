@@ -5,9 +5,6 @@ from launch.launcher import DefaultLauncher
 
 
 def test_publisher_subscriber():
-    if '@SKIP_TEST@' == 'True':
-        from unittest.case import SkipTest
-        raise SkipTest
     ld = LaunchDescriptor()
     publisher_cmd = ['@TEST_PUBLISHER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@']
     subscriber_cmd = ['@TEST_SUBSCRIBER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@']
