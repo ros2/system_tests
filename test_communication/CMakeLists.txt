@@ -178,9 +178,8 @@ if(BUILD_TESTING)
           PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
           APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}/../../rclpy"
           APPEND_LIBRARY_DIRS "${_append_library_dirs}"
-          TIMEOUT 15
           SKIP_TEST
-          )
+          TIMEOUT 15)
       else()
         # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)
         ament_add_nose_test(test_publisher_subscriber${test_suffix}
