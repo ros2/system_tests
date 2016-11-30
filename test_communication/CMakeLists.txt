@@ -65,21 +65,27 @@ if(BUILD_TESTING)
     if(with_message_argument)
       # adding test for each message type
       foreach(message_file ${message_files})
+        set(SKIP_TEST "")
         get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
         # TODO(dirk-thomas) publishing Bounded/DynamicArrayPrimitives in OpenSplice is buggy
         # https://github.com/ros2/rclcpp/issues/219
-        if((NOT TEST_MESSAGE_TYPE STREQUAL "BoundedArrayPrimitives" AND NOT TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives") OR NOT rmw_implementation STREQUAL "rmw_opensplice_cpp")
-          ament_add_test(
-            "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
-            COMMAND "$<TARGET_FILE:${target}${target_suffix}>" "${TEST_MESSAGE_TYPE}"
-            TIMEOUT 15
-            GENERATE_RESULT_FOR_RETURN_CODE_ZERO
-            ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
-          set_tests_properties(
-            "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
-            PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}${target_suffix}>"
-          )
+        if(
+          (TEST_MESSAGE_TYPE STREQUAL "BoundedArrayPrimitives" OR TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives") AND
+          rmw_implementation STREQUAL "rmw_opensplice_cpp"
+        )
+          set(SKIP_TEST "SKIP_TEST")
         endif()
+        ament_add_test(
+          "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
+          COMMAND "$<TARGET_FILE:${target}${target_suffix}>" "${TEST_MESSAGE_TYPE}"
+          TIMEOUT 15
+          GENERATE_RESULT_FOR_RETURN_CODE_ZERO
+          ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
+          ${SKIP_TEST})
+        set_tests_properties(
+          "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
+          PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}${target_suffix}>"
+        )
       endforeach()
     else()
       ament_add_test(
@@ -145,15 +151,6 @@ if(BUILD_TESTING)
     set(SUBSCRIBER_RMW ${rmw_implementation2})
     foreach(message_file ${message_files})
       get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
-      set(SKIP_TEST "")
-      # TODO(dirk-thomas) publishing Bounded/DynamicArrayPrimitives in OpenSplice is buggy
-      # https://github.com/ros2/rclcpp/issues/219
-      if(
-        (TEST_MESSAGE_TYPE STREQUAL "BoundedArrayPrimitives" OR TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives") AND
-        rmw_implementation1 STREQUAL "rmw_opensplice_cpp"
-      )
-        set(SKIP_TEST "True")
-      endif()
 
       set(test_suffix "__${TEST_MESSAGE_TYPE}${suffix}")
       configure_file(
@@ -166,6 +163,15 @@ if(BUILD_TESTING)
         INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${test_suffix}.py.configured"
       )
 
+      set(SKIP_TEST "")
+      # TODO(dirk-thomas) publishing Bounded/DynamicArrayPrimitives in OpenSplice is buggy
+      # https://github.com/ros2/rclcpp/issues/219
+      if(
+        (TEST_MESSAGE_TYPE STREQUAL "BoundedArrayPrimitives" OR TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives") AND
+        rmw_implementation1 STREQUAL "rmw_opensplice_cpp"
+      )
+        set(SKIP_TEST "SKIP_TEST")
+      endif()
       # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)
       ament_add_nose_test(test_publisher_subscriber${test_suffix}
         "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${test_suffix}_$<CONFIGURATION>.py"
@@ -173,7 +179,8 @@ if(BUILD_TESTING)
         PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
         APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}/../../rclpy"
         APPEND_LIBRARY_DIRS "${_append_library_dirs}"
-        TIMEOUT 15)
+        TIMEOUT 15
+        ${SKIP_TEST})
       set_tests_properties(
         test_publisher_subscriber${test_suffix}
         PROPERTIES DEPENDS "test_publisher_cpp__${rmw_implementation1};test_subscriber_cpp__${rmw_implementation2}"
@@ -187,18 +194,18 @@ if(BUILD_TESTING)
     if(NOT rmw_implementation1 STREQUAL rmw_implementation2 AND
       (NOT(rmw_implementation1 MATCHES "(.*)connext(.*)" AND rmw_implementation2 MATCHES "(.*)connext(.*)"))
     )
-      set(SKIP_TEST "True")
+      set(SKIP_TEST "SKIP_TEST")
     endif()
 
     # TODO(mikaelarguedas) connext doesn't support C services for now
     if((client_library1 STREQUAL "rclpy" OR client_library2 STREQUAL "rclpy") AND
       (rmw_implementation1 MATCHES "(.*)connext(.*)" OR rmw_implementation2 MATCHES "(.*)connext(.*)")
     )
-      set(SKIP_TEST "True")
+      set(SKIP_TEST "SKIP_TEST")
     endif()
 
     if(WIN32 AND client_library1 STREQUAL "rclcpp" AND client_library2 STREQUAL "rclpy")
-      set(SKIP_TEST "True")
+      set(SKIP_TEST "SKIP_TEST")
     endif()
 
     set(REQUESTER_RMW ${rmw_implementation1})
@@ -222,7 +229,8 @@ if(BUILD_TESTING)
         PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
         APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}/../../rclpy"
         APPEND_LIBRARY_DIRS "${_append_library_dirs}"
-        TIMEOUT 30)
+        TIMEOUT 30
+        ${SKIP_TEST})
       set_tests_properties(
         test_publisher_subscriber${test_suffix}
         PROPERTIES DEPENDS
