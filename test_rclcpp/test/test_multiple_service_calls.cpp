@@ -31,6 +31,8 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
+using namespace rclcpp::literals;
+
 void handle_add_two_ints(
   const std::shared_ptr<test_rclcpp::srv::AddTwoInts::Request> request,
   std::shared_ptr<test_rclcpp::srv::AddTwoInts::Response> response)

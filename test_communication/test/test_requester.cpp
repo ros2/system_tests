@@ -24,6 +24,8 @@
 
 #include "service_fixtures.hpp"
 
+using namespace rclcpp::literals;
+
 template<typename T>
 int request(
   rclcpp::Node::SharedPtr node,

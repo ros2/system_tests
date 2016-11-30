@@ -36,6 +36,7 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
+using namespace rclcpp::literals;
 
 TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), recursive_spin_call) {
   rclcpp::executors::SingleThreadedExecutor executor;

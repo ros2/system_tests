@@ -35,6 +35,8 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
+using namespace rclcpp::literals;
+
 static inline void multi_consumer_pub_sub_test(bool intra_process)
 {
   std::string node_topic_name = "multi_consumer";

@@ -29,6 +29,8 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
+using namespace rclcpp::literals;
+
 TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_noreqid) {
   auto node = rclcpp::Node::make_shared("test_services_client_no_reqid");
 

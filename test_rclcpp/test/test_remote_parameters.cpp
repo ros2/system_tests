@@ -29,6 +29,8 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
+using namespace rclcpp::literals;
+
 TEST(CLASSNAME(parameters, rmw_implementation), test_remote_parameters) {
   std::string test_server_name = "test_parameters_server";
   // TODO(tfoote) make test_server name parameterizable

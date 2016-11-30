@@ -27,6 +27,8 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
+using namespace rclcpp::literals;
+
 // This test is concerned with the consistency of the two clients' behavior, not necessarily whether
 // or not they are successful.
 TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_consistency_regression_test) {

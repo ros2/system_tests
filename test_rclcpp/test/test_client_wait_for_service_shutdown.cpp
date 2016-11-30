@@ -26,6 +26,8 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
+using namespace rclcpp::literals;
+
 // rclcpp::shutdown() should wake up wait_for_service, even without spin.
 TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), wait_for_service_shutdown) {
   rclcpp::init(0, nullptr);

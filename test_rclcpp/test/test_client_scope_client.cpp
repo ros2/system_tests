@@ -27,6 +27,8 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
+using namespace rclcpp::literals;
+
 TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_regression_test) {
   auto node = rclcpp::node::Node::make_shared("client_scope_regression_test");
 

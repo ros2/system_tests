@@ -36,6 +36,7 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
+using namespace rclcpp::literals;
 
 template<typename DurationT>
 void wait_for_future(

@@ -31,6 +31,8 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
+using namespace rclcpp::literals;
+
 /*
    Ensures that the timeout behavior of spin_until_future_complete is correct.
  */
