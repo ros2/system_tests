@@ -42,7 +42,7 @@ template<typename DurationT>
 void wait_for_future(
   rclcpp::executor::Executor & executor,
   std::shared_future<void> & future,
-  DurationT & timeout)
+  const DurationT & timeout)
 {
   using rclcpp::executor::FutureReturnCode;
   rclcpp::executor::FutureReturnCode future_ret;
