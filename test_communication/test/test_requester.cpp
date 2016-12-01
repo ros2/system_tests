@@ -24,6 +24,7 @@
 
 #include "service_fixtures.hpp"
 
+// NOLINTNEXTLINE(build/namespaces)
 using namespace rclcpp::literals;
 
 template<typename T>

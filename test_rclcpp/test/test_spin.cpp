@@ -31,6 +31,7 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
+// NOLINTNEXTLINE(build/namespaces)
 using namespace rclcpp::literals;
 
 /*

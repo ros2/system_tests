@@ -29,6 +29,7 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
+// NOLINTNEXTLINE(build/namespaces)
 using namespace rclcpp::literals;
 
 TEST(CLASSNAME(parameters, rmw_implementation), test_remote_parameters) {

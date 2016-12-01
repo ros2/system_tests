@@ -35,6 +35,7 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
+// NOLINTNEXTLINE(build/namespaces)
 using namespace rclcpp::literals;
 
 static inline void multi_consumer_pub_sub_test(bool intra_process)

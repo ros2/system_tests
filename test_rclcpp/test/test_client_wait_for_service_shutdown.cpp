@@ -26,6 +26,7 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
+// NOLINTNEXTLINE(build/namespaces)
 using namespace rclcpp::literals;
 
 // rclcpp::shutdown() should wake up wait_for_service, even without spin.

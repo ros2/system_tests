@@ -27,6 +27,7 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
+// NOLINTNEXTLINE(build/namespaces)
 using namespace rclcpp::literals;
 
 // This test is concerned with the consistency of the two clients' behavior, not necessarily whether

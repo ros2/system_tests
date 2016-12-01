@@ -29,6 +29,7 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
+// NOLINTNEXTLINE(build/namespaces)
 using namespace rclcpp::literals;
 
 TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_noreqid) {
