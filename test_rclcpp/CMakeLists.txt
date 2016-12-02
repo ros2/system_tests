@@ -42,6 +42,7 @@ if(BUILD_TESTING)
     get_rmw_typesupport(typesupport_impls "${rmw_implementation}" LANGUAGE "cpp")
 
     ament_add_gtest(${target}${target_suffix} ${ARGN}
+      APPEND_LIBRARY_DIRS "${append_library_dirs}"
       ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
     if(TARGET ${target}${target_suffix})
       target_compile_definitions(${target}${target_suffix}
@@ -89,6 +90,7 @@ if(BUILD_TESTING)
     ament_add_nose_test(${test_name}${target_suffix}
       "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIGURATION>.py"
       ${ARGN}
+      APPEND_LIBRARY_DIRS "${append_library_dirs}"
       ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
     )
     set_tests_properties(${test_name}${target_suffix}
@@ -178,6 +180,11 @@ if(BUILD_TESTING)
       test_client_scope_consistency_server_cpp test_client_scope_consistency_client_cpp
       TIMEOUT 30)
   endmacro()
+
+  set(append_library_dirs "${CMAKE_CURRENT_BINARY_DIR}")
+  if(WIN32)
+    set(append_library_dirs "${append_library_dirs}/$<CONFIGURATION>")
+  endif()
 
   call_for_each_rmw_implementation(targets)
 endif()  # BUILD_TESTING

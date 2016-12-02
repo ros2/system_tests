@@ -80,6 +80,7 @@ if(BUILD_TESTING)
           COMMAND "$<TARGET_FILE:${target}${target_suffix}>" "${TEST_MESSAGE_TYPE}"
           TIMEOUT 15
           GENERATE_RESULT_FOR_RETURN_CODE_ZERO
+          APPEND_LIBRARY_DIRS "${append_library_dirs}"
           ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
           ${SKIP_TEST})
         set_tests_properties(
@@ -93,6 +94,7 @@ if(BUILD_TESTING)
         COMMAND "$<TARGET_FILE:${target}${target_suffix}>"
         TIMEOUT 15
         GENERATE_RESULT_FOR_RETURN_CODE_ZERO
+        APPEND_LIBRARY_DIRS "${append_library_dirs}"
         ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
       set_tests_properties(
         "${target}${target_suffix}"
@@ -178,7 +180,7 @@ if(BUILD_TESTING)
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py"
         PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
         APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}/../../rclpy"
-        APPEND_LIBRARY_DIRS "${_append_library_dirs}"
+        APPEND_LIBRARY_DIRS "${append_library_dirs}"
         TIMEOUT 15
         ${SKIP_TEST})
       set_tests_properties(
@@ -228,7 +230,7 @@ if(BUILD_TESTING)
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py"
         PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
         APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}/../../rclpy"
-        APPEND_LIBRARY_DIRS "${_append_library_dirs}"
+        APPEND_LIBRARY_DIRS "${append_library_dirs}"
         TIMEOUT 30
         ${SKIP_TEST})
       set_tests_properties(
@@ -241,7 +243,6 @@ if(BUILD_TESTING)
 
   macro(configure_template _client_library1 _client_library2)
     set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE}")
-    set(_append_library_dirs "")
     set(_client_library1 "${_client_library1}")
     set(_client_library2 "${_client_library2}")
     set(TEST_PUBLISHER_RCL "${_client_library1}")
@@ -257,7 +258,6 @@ if(BUILD_TESTING)
 
     if(_client_library1 STREQUAL "rclpy" OR _client_library2 STREQUAL "rclpy")
       if(WIN32)
-        set(_append_library_dirs "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>")
         if(CMAKE_BUILD_TYPE STREQUAL "Debug")
           set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE_DEBUG}")
         endif()
@@ -329,6 +329,11 @@ if(BUILD_TESTING)
       multi_client_libraries()
     endforeach()
   endmacro()
+
+  set(append_library_dirs "${CMAKE_CURRENT_BINARY_DIR}")
+  if(WIN32)
+    set(append_library_dirs "${append_library_dirs}/$<CONFIGURATION>")
+  endif()
 
   call_for_each_rmw_implementation(targets)
 endif()  # BUILD_TESTING
