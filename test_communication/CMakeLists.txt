@@ -13,6 +13,21 @@ endif()
 find_package(ament_cmake REQUIRED)
 
 if(BUILD_TESTING)
+  set(TEST_ROS1_BRIDGE FALSE)
+  find_package(ros1_bridge)
+  find_package(diagnostic_msgs)
+  find_package(PkgConfig)
+  if(PKG_CONFIG_FOUND)
+    include("${ros1_bridge_DIR}/find_ros1_package.cmake")
+    find_ros1_package(roscpp)
+    find_ros1_package(diagnostic_msgs)
+    find_ros1_package(roslaunch)
+    if (ros1_roscpp_FOUND AND ros1_diagnostic_msgs_FOUND AND ros1_roslaunch_FOUND)
+      include_directories(include)
+      set(TEST_ROS1_BRIDGE TRUE)
+    endif()
+  endif()
+
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 
@@ -322,6 +337,33 @@ if(BUILD_TESTING)
     custom_executable(test_replier_cpp
       "test/test_replier.cpp")
 
+    if(TEST_ROS1_BRIDGE)
+      custom_executable(test_bridge_ros2_client_cpp "test/test_bridge_ros2_client.cpp")
+      ament_target_dependencies("test_bridge_ros2_client_cpp${target_suffix}" "ros1_roscpp" "diagnostic_msgs")
+      custom_executable(test_bridge_ros2_server_cpp "test/test_bridge_ros2_server.cpp")
+      ament_target_dependencies("test_bridge_ros2_server_cpp${target_suffix}" "ros1_roscpp" "diagnostic_msgs")
+
+      set(TEST_BRIDGE_DYNAMIC_BRIDGE "${CMAKE_INSTALL_PREFIX}/bin/dynamic_bridge${target_suffix}")
+      set(TEST_BRIDGE_ROS2_CLIENT "$<TARGET_FILE:test_bridge_ros2_client_cpp${target_suffix}>")
+      set(TEST_BRIDGE_ROS2_SERVER "$<TARGET_FILE:test_bridge_ros2_server_cpp${target_suffix}>")
+      set(TEST_BRIDGE_RMW ${rmw_implementation})
+
+      configure_file(
+        test/test_ros1_bridge.py.in
+        test_ros1_bridge_cpp${target_suffix}.py.configured
+        @ONLY
+      )
+      file(GENERATE
+        OUTPUT "test_ros1_bridge_cpp${target_suffix}_$<CONFIGURATION>.py"
+        INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_ros1_bridge_cpp${target_suffix}.py.configured"
+      )
+      ament_add_nose_test(
+        test_ros1_bridge_cpp${target_suffix}
+        "${CMAKE_CURRENT_BINARY_DIR}/test_ros1_bridge_cpp${target_suffix}_$<CONFIGURATION>.py"
+        TIMEOUT 30
+      )
+    endif()
+
     set(rmw_implementation1 "${rmw_implementation}")
     set(target_suffix1 "${target_suffix}")
 
@@ -329,6 +371,17 @@ if(BUILD_TESTING)
       multi_client_libraries()
     endforeach()
   endmacro()
+
+  if(TEST_ROS1_BRIDGE)
+    add_executable(test_bridge_ros1_client "test/test_bridge_ros1_client.cpp")
+    ament_target_dependencies(test_bridge_ros1_client "ros1_roscpp")
+    add_executable(test_bridge_ros1_server "test/test_bridge_ros1_server.cpp")
+    ament_target_dependencies(test_bridge_ros1_server "ros1_roscpp")
+    set(TEST_BRIDGE_ENV "${ros1_roslaunch_PREFIX}/env.sh")
+    set(TEST_BRIDGE_ROSCORE "${ros1_roslaunch_PREFIX}/bin/roscore")
+    set(TEST_BRIDGE_ROS1_CLIENT "$<TARGET_FILE:test_bridge_ros1_client>")
+    set(TEST_BRIDGE_ROS1_SERVER "$<TARGET_FILE:test_bridge_ros1_server>")
+  endif()
 
   call_for_each_rmw_implementation(targets)
 endif()  # BUILD_TESTING
