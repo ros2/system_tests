@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <memory>
+
 #include "gtest/gtest.h"
 
 #include "rclcpp/rclcpp.hpp"
@@ -34,17 +36,19 @@
 class MyNodeWithService : public rclcpp::node::Node
 {
 public:
-  MyNodeWithService() : rclcpp::node::Node("node_with_service")
+  MyNodeWithService()
+  : rclcpp::node::Node("node_with_service")
   {
     service_ = this->create_service<test_rclcpp::srv::AddTwoInts>(
       "test",
       [](
         const std::shared_ptr<test_rclcpp::srv::AddTwoInts::Request> request,
         std::shared_ptr<test_rclcpp::srv::AddTwoInts::Response> response)
-      {
-        response->sum = request->a + request->b;
-      });
+    {
+      response->sum = request->a + request->b;
+    });
   }
+
 private:
   rclcpp::service::ServiceBase::SharedPtr service_;
 };
@@ -56,10 +60,12 @@ TEST(CLASSNAME(test_services_in_constructor, RMW_IMPLEMENTATION), service_in_con
 class MyNodeWithClient : public rclcpp::node::Node
 {
 public:
-  MyNodeWithClient() : rclcpp::node::Node("node_with_client")
+  MyNodeWithClient()
+  : rclcpp::node::Node("node_with_client")
   {
     client_ = this->create_client<test_rclcpp::srv::AddTwoInts>("test");
   }
+
 private:
   rclcpp::client::ClientBase::SharedPtr client_;
 };
@@ -75,4 +81,3 @@ int main(int argc, char ** argv)
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
-
