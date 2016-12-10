@@ -137,6 +137,9 @@ if(BUILD_TESTING)
     custom_gtest(gtest_local_parameters
       "test/test_local_parameters.cpp"
       TIMEOUT 30)
+    custom_gtest(gtest_services_in_constructor
+      "test/test_services_in_constructor.cpp"
+      TIMEOUT 30)
 
     # Parameter tests single implementation
     custom_executable(test_parameters_server_cpp "test/test_parameters_server.cpp")
