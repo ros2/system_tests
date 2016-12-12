@@ -42,7 +42,7 @@ def listener_cb(msg, received_messages, expected_msgs):
         raise RuntimeError('received unexpected message %r' % msg)
 
 
-def listener(message_name, number_of_cycles):
+def listener(message_name):
     from message_fixtures import get_test_msg
     import rclpy
     from rclpy.impl.rmw_implementation_tools import select_rmw_implementation
@@ -70,8 +70,7 @@ def listener(message_name, number_of_cycles):
 
     spin_count = 1
     print('subscriber: beginning loop')
-    while (rclpy.ok() and spin_count < number_of_cycles and
-           len(received_messages) != len(expected_msgs)):
+    while (rclpy.ok() and len(received_messages) != len(expected_msgs)):
         rclpy.spin_once(node)
         spin_count += 1
         print('spin_count: ' + str(spin_count))
@@ -84,13 +83,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('message_name', default='Primitives',
                         help='name of the ROS message')
-    parser.add_argument('-n', '--number_of_cycles', type=int, default=50,
-                        help='number of sending attempts')
     args = parser.parse_args()
     try:
-        listener(
-            message_name=args.message_name,
-            number_of_cycles=args.number_of_cycles)
+        listener(message_name=args.message_name)
     except KeyboardInterrupt:
         print('subscriber stopped cleanly')
     except BaseException:
