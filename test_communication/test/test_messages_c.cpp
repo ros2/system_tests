@@ -580,8 +580,8 @@ void get_message(test_communication__msg__DynamicArrayPrimitives * msg, size_t m
   switch (msg_num) {
     case 0:
       rosidl_generator_c__bool__Array__init(&msg->bool_values, 0);
-      rosidl_generator_c__byte__Array__init(&msg->byte_values, 0);
-      rosidl_generator_c__char__Array__init(&msg->char_values, 0);
+      rosidl_generator_c__int8__Array__init(&msg->byte_values, 0);
+      rosidl_generator_c__uint8__Array__init(&msg->char_values, 0);
       rosidl_generator_c__float32__Array__init(&msg->float32_values, 0);
       rosidl_generator_c__float64__Array__init(&msg->float64_values, 0);
       rosidl_generator_c__int8__Array__init(&msg->int8_values, 0);
@@ -597,8 +597,8 @@ void get_message(test_communication__msg__DynamicArrayPrimitives * msg, size_t m
       break;
     case 1:
       rosidl_generator_c__bool__Array__init(&msg->bool_values, 1);
-      rosidl_generator_c__byte__Array__init(&msg->byte_values, 1);
-      rosidl_generator_c__char__Array__init(&msg->char_values, 1);
+      rosidl_generator_c__int8__Array__init(&msg->byte_values, 1);
+      rosidl_generator_c__uint8__Array__init(&msg->char_values, 1);
       rosidl_generator_c__float32__Array__init(&msg->float32_values, 1);
       rosidl_generator_c__float64__Array__init(&msg->float64_values, 1);
       rosidl_generator_c__int8__Array__init(&msg->int8_values, 1);
@@ -612,8 +612,8 @@ void get_message(test_communication__msg__DynamicArrayPrimitives * msg, size_t m
       rosidl_generator_c__String__Array__init(&msg->string_values, 1);
 
       msg->bool_values.data[0] = true;
-      msg->byte_values.data[0] = 0xff;
-      msg->char_values.data[0] = '\x7f';
+      msg->byte_values.data[0] = 127;
+      msg->char_values.data[0] = 255;
       msg->float32_values.data[0] = 1.125f;
       msg->float64_values.data[0] = 1.125;
       msg->int8_values.data[0] = (std::numeric_limits<int8_t>::max)();
@@ -629,8 +629,8 @@ void get_message(test_communication__msg__DynamicArrayPrimitives * msg, size_t m
       break;
     case 2:
       rosidl_generator_c__bool__Array__init(&msg->bool_values, 2);
-      rosidl_generator_c__byte__Array__init(&msg->byte_values, 2);
-      rosidl_generator_c__char__Array__init(&msg->char_values, 2);
+      rosidl_generator_c__int8__Array__init(&msg->byte_values, 2);
+      rosidl_generator_c__uint8__Array__init(&msg->char_values, 2);
       rosidl_generator_c__float32__Array__init(&msg->float32_values, 3);
       rosidl_generator_c__float64__Array__init(&msg->float64_values, 3);
       rosidl_generator_c__int8__Array__init(&msg->int8_values, 3);
@@ -646,9 +646,9 @@ void get_message(test_communication__msg__DynamicArrayPrimitives * msg, size_t m
       msg->bool_values.data[0] = false;
       msg->bool_values.data[1] = true;
       msg->byte_values.data[0] = 0x00;
-      msg->byte_values.data[1] = 0xff;
+      msg->byte_values.data[1] = 0x7f;
       msg->char_values.data[0] = '\0';
-      msg->char_values.data[1] = '\x7f';
+      msg->char_values.data[1] = '\xff';
       msg->float32_values.data[0] = 0.0f;
       msg->float32_values.data[1] = 1.125f;
       msg->float32_values.data[2] = -2.125f;
@@ -682,8 +682,8 @@ void get_message(test_communication__msg__DynamicArrayPrimitives * msg, size_t m
       break;
     case 3:
       rosidl_generator_c__bool__Array__init(&msg->bool_values, size);
-      rosidl_generator_c__byte__Array__init(&msg->byte_values, size);
-      rosidl_generator_c__char__Array__init(&msg->char_values, size);
+      rosidl_generator_c__int8__Array__init(&msg->byte_values, size);
+      rosidl_generator_c__uint8__Array__init(&msg->char_values, size);
       rosidl_generator_c__float32__Array__init(&msg->float32_values, size);
       rosidl_generator_c__float64__Array__init(&msg->float64_values, size);
       rosidl_generator_c__int8__Array__init(&msg->int8_values, size);
@@ -698,8 +698,8 @@ void get_message(test_communication__msg__DynamicArrayPrimitives * msg, size_t m
 
       for (size_t i = 0; i < size; ++i) {
         msg->bool_values.data[i] = (i % 2 != 0) ? true : false;
-        msg->byte_values.data[i] = (uint8_t)i;
-        msg->char_values.data[i] = static_cast<char>(i);
+        msg->byte_values.data[i] = (int8_t)i;
+        msg->char_values.data[i] = (uint8_t)i;
         msg->float32_values.data[i] = 1.125f * i;
         msg->float64_values.data[i] = 1.125 * i;
         msg->int8_values.data[i] = (int8_t)i;
@@ -718,8 +718,8 @@ void get_message(test_communication__msg__DynamicArrayPrimitives * msg, size_t m
       break;
     case 4:
       rosidl_generator_c__bool__Array__init(&msg->bool_values, 0);
-      rosidl_generator_c__byte__Array__init(&msg->byte_values, 0);
-      rosidl_generator_c__char__Array__init(&msg->char_values, 0);
+      rosidl_generator_c__int8__Array__init(&msg->byte_values, 0);
+      rosidl_generator_c__uint8__Array__init(&msg->char_values, 0);
       rosidl_generator_c__float32__Array__init(&msg->float32_values, 0);
       rosidl_generator_c__float64__Array__init(&msg->float64_values, 0);
       rosidl_generator_c__int8__Array__init(&msg->int8_values, 0);
@@ -903,8 +903,8 @@ void get_message(test_communication__msg__BoundedArrayPrimitives * msg, size_t m
   switch (msg_num) {
     case 0:
       rosidl_generator_c__bool__Array__init(&msg->bool_values, 3);
-      rosidl_generator_c__byte__Array__init(&msg->byte_values, 3);
-      rosidl_generator_c__char__Array__init(&msg->char_values, 3);
+      rosidl_generator_c__int8__Array__init(&msg->byte_values, 3);
+      rosidl_generator_c__uint8__Array__init(&msg->char_values, 3);
       rosidl_generator_c__float32__Array__init(&msg->float32_values, 3);
       rosidl_generator_c__float64__Array__init(&msg->float64_values, 3);
       rosidl_generator_c__int8__Array__init(&msg->int8_values, 3);
@@ -963,8 +963,8 @@ void get_message(test_communication__msg__BoundedArrayPrimitives * msg, size_t m
       break;
     case 1:
       rosidl_generator_c__bool__Array__init(&msg->bool_values, 0);
-      rosidl_generator_c__byte__Array__init(&msg->byte_values, 0);
-      rosidl_generator_c__char__Array__init(&msg->char_values, 0);
+      rosidl_generator_c__int8__Array__init(&msg->byte_values, 0);
+      rosidl_generator_c__uint8__Array__init(&msg->char_values, 0);
       rosidl_generator_c__float32__Array__init(&msg->float32_values, 0);
       rosidl_generator_c__float64__Array__init(&msg->float64_values, 0);
       rosidl_generator_c__int8__Array__init(&msg->int8_values, 0);
