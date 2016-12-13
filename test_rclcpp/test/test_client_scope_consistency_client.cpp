@@ -35,10 +35,10 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_consistency_reg
   // Replicate the settings that caused https://github.com/ros2/system_tests/issues/153
   rmw_qos_profile_t rmw_qos_profile =
   {
-    RMW_QOS_POLICY_KEEP_LAST_HISTORY,
+    RMW_QOS_POLICY_HISTORY_KEEP_LAST,
     10,
-    RMW_QOS_POLICY_RELIABLE,
-    RMW_QOS_POLICY_VOLATILE_DURABILITY
+    RMW_QOS_POLICY_RELIABILITY_RELIABLE,
+    RMW_QOS_POLICY_DURABILITY_VOLATILE
   };
   rclcpp::executor::FutureReturnCode ret1;
 
