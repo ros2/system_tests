@@ -36,8 +36,7 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
-// NOLINTNEXTLINE(build/namespaces)
-using namespace rclcpp::literals;
+using namespace std::chrono_literals;
 
 template<typename DurationT>
 void wait_for_future(
@@ -71,7 +70,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
   int counter = 0;
   std::promise<void> sub_called;
   std::shared_future<void> sub_called_future(sub_called.get_future());
-  auto fail_after_timeout = 5_s;
+  auto fail_after_timeout = 5s;
   auto callback =
     [&counter, &sub_called](const test_rclcpp::msg::UInt32::SharedPtr msg) -> void
     {
@@ -99,7 +98,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
 
     // nothing should be pending here
     printf("spin_once(nonblocking) - no callback expected\n");
-    executor.spin_once(0_s);
+    executor.spin_once(0s);
     ASSERT_EQ(0, counter);
     printf("spin_some() - no callback expected\n");
     executor.spin_some();
@@ -116,7 +115,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
 
     // no additional calls to the subscription should be pending here
     printf("spin_once(nonblocking) - no callback expected\n");
-    executor.spin_once(0_s);
+    executor.spin_once(0s);
     ASSERT_EQ(1, counter);
     printf("spin_some() - no callback expected\n");
     executor.spin_some();
@@ -136,21 +135,21 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
     printf("spin_until_future_complete(short timeout) - callback (2) expected\n");
     sub_called = std::promise<void>();
     sub_called_future = sub_called.get_future();
-    wait_for_future(executor, sub_called_future, 10_ms);
+    wait_for_future(executor, sub_called_future, 10ms);
     ASSERT_EQ(2, counter);
 
     // check for next pending call
     printf("spin_until_future_complete(short timeout) - callback (3) expected\n");
     sub_called = std::promise<void>();
     sub_called_future = sub_called.get_future();
-    wait_for_future(executor, sub_called_future, 10_ms);
+    wait_for_future(executor, sub_called_future, 10ms);
     ASSERT_EQ(3, counter);
 
     // check for next pending call
     printf("spin_until_future_complete(short timeout) - callback (4) expected\n");
     sub_called = std::promise<void>();
     sub_called_future = sub_called.get_future();
-    wait_for_future(executor, sub_called_future, 10_ms);
+    wait_for_future(executor, sub_called_future, 10ms);
     ASSERT_EQ(4, counter);
 
     // check for last pending call (blocking)
@@ -170,7 +169,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
   sub_called = std::promise<void>();
   sub_called_future = sub_called.get_future();
   using rclcpp::executor::FutureReturnCode;
-  FutureReturnCode future_ret = executor.spin_until_future_complete(sub_called_future, 100_ms);
+  FutureReturnCode future_ret = executor.spin_until_future_complete(sub_called_future, 100ms);
   EXPECT_EQ(FutureReturnCode::TIMEOUT, future_ret);
   ASSERT_EQ(5, counter);
 }

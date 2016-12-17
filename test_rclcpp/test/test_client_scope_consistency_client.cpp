@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <chrono>
 #include <iostream>
 #include <memory>
 
@@ -27,8 +28,7 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
-// NOLINTNEXTLINE(build/namespaces)
-using namespace rclcpp::literals;
+using namespace std::chrono_literals;
 
 // This test is concerned with the consistency of the two clients' behavior, not necessarily whether
 // or not they are successful.
@@ -51,7 +51,7 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_consistency_reg
     std::cout.flush();
     auto client1 = node->create_client<test_rclcpp::srv::AddTwoInts>(
       "client_scope", rmw_qos_profile);
-    if (!client1->wait_for_service(20_s)) {
+    if (!client1->wait_for_service(20s)) {
       ASSERT_TRUE(false) << "service not available after waiting";
     }
     auto request1 = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
@@ -62,7 +62,7 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_consistency_reg
     std::cout.flush();
     auto result1 = client1->async_send_request(request1);
 
-    ret1 = rclcpp::spin_until_future_complete(node, result1, 5_s);
+    ret1 = rclcpp::spin_until_future_complete(node, result1, 5s);
     if (ret1 == rclcpp::executor::FutureReturnCode::SUCCESS) {
       printf("received first result\n");
       std::cout.flush();
@@ -87,7 +87,7 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_consistency_reg
 
     auto client2 = node->create_client<test_rclcpp::srv::AddTwoInts>(
       "client_scope", rmw_qos_profile);
-    if (!client2->wait_for_service(20_s)) {
+    if (!client2->wait_for_service(20s)) {
       ASSERT_TRUE(false) << "service not available after waiting";
     }
     auto request2 = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
@@ -98,7 +98,7 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_consistency_reg
     std::cout.flush();
     auto result2 = client2->async_send_request(request2);
 
-    auto ret2 = rclcpp::spin_until_future_complete(node, result2, 5_s);
+    auto ret2 = rclcpp::spin_until_future_complete(node, result2, 5s);
     if (ret2 == rclcpp::executor::FutureReturnCode::SUCCESS) {
       printf("received second result\n");
       std::cout.flush();

@@ -29,8 +29,7 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
-// NOLINTNEXTLINE(build/namespaces)
-using namespace rclcpp::literals;
+using namespace std::chrono_literals;
 
 TEST(CLASSNAME(parameters, rmw_implementation), test_remote_parameters) {
   std::string test_server_name = "test_parameters_server";
@@ -45,7 +44,7 @@ TEST(CLASSNAME(parameters, rmw_implementation), test_remote_parameters) {
   {
     // This is requried specifically for FastRTPS, see:
     //   https://github.com/eProsima/ROS-RMW-Fast-RTPS-cpp/pull/51#issuecomment-242872096
-    std::this_thread::sleep_for(1_s);
+    std::this_thread::sleep_for(1s);
   }
 
   auto parameters_client = std::make_shared<rclcpp::parameter_client::AsyncParametersClient>(node,

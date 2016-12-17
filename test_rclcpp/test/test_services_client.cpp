@@ -29,8 +29,7 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
-// NOLINTNEXTLINE(build/namespaces)
-using namespace rclcpp::literals;
+using namespace std::chrono_literals;
 
 TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_noreqid) {
   auto node = rclcpp::Node::make_shared("test_services_client_no_reqid");
@@ -40,13 +39,13 @@ TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_noreqid) {
   request->a = 1;
   request->b = 2;
 
-  if (!client->wait_for_service(20_s)) {
+  if (!client->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
   }
 
   auto result = client->async_send_request(request);
 
-  auto ret = rclcpp::spin_until_future_complete(node, result, 5_s);  // Wait for the result.
+  auto ret = rclcpp::spin_until_future_complete(node, result, 5s);  // Wait for the result.
   ASSERT_EQ(ret, rclcpp::executor::FutureReturnCode::SUCCESS);
 
   EXPECT_EQ(3, result.get()->sum);
@@ -60,13 +59,13 @@ TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_reqid) {
   request->a = 4;
   request->b = 5;
 
-  if (!client->wait_for_service(20_s)) {
+  if (!client->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
   }
 
   auto result = client->async_send_request(request);
 
-  auto ret = rclcpp::spin_until_future_complete(node, result, 5_s);  // Wait for the result.
+  auto ret = rclcpp::spin_until_future_complete(node, result, 5s);  // Wait for the result.
   ASSERT_EQ(ret, rclcpp::executor::FutureReturnCode::SUCCESS);
 
   EXPECT_EQ(9, result.get()->sum);
@@ -81,7 +80,7 @@ TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_return_request) {
   request->a = 4;
   request->b = 5;
 
-  if (!client->wait_for_service(20_s)) {
+  if (!client->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
   }
 
@@ -93,7 +92,7 @@ TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_return_request) {
     EXPECT_EQ(9, future.get().second->sum);
   });
 
-  auto ret = rclcpp::spin_until_future_complete(node, result, 5_s);  // Wait for the result.
+  auto ret = rclcpp::spin_until_future_complete(node, result, 5s);  // Wait for the result.
   ASSERT_EQ(ret, rclcpp::executor::FutureReturnCode::SUCCESS);
 }
 

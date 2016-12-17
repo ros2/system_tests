@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <chrono>
 #include <iostream>
 #include <memory>
 #include <utility>
@@ -31,8 +32,7 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
-// NOLINTNEXTLINE(build/namespaces)
-using namespace rclcpp::literals;
+using namespace std::chrono_literals;
 
 void handle_add_two_ints(
   const std::shared_ptr<test_rclcpp::srv::AddTwoInts::Request> request,
@@ -48,7 +48,7 @@ TEST(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), two_service_calls) {
     "test_two_service_calls", handle_add_two_ints);
 
   auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("test_two_service_calls");
-  if (!client->wait_for_service(20_s)) {
+  if (!client->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
   }
 
@@ -110,7 +110,7 @@ TEST(CLASSNAME(test_multiple_service_calls, RMW_IMPLEMENTATION), multiple_client
   fflush(stdout);
   // Send all the requests
   for (auto & pair : client_request_pairs) {
-    if (!pair.first->wait_for_service(20_s)) {
+    if (!pair.first->wait_for_service(20s)) {
       ASSERT_TRUE(false) << "service not available after waiting";
     }
     results.push_back(pair.first->async_send_request(pair.second));

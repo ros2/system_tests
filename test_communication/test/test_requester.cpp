@@ -24,8 +24,7 @@
 
 #include "service_fixtures.hpp"
 
-// NOLINTNEXTLINE(build/namespaces)
-using namespace rclcpp::literals;
+using namespace std::chrono_literals;
 
 template<typename T>
 int request(
@@ -41,7 +40,7 @@ int request(
 {
   int rc = 0;
   auto requester = node->create_client<T>(std::string("test_service_") + service_type);
-  if (!requester->wait_for_service(20_s)) {
+  if (!requester->wait_for_service(20s)) {
     throw std::runtime_error("requester service not available after waiting");
   }
 

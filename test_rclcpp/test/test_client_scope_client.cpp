@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <chrono>
 #include <iostream>
 #include <memory>
 
@@ -27,8 +28,7 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
-// NOLINTNEXTLINE(build/namespaces)
-using namespace rclcpp::literals;
+using namespace std::chrono_literals;
 
 TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_regression_test) {
   auto node = rclcpp::node::Node::make_shared("client_scope_regression_test");
@@ -38,7 +38,7 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_regression_test
     printf("creating first client\n");
     std::cout.flush();
     auto client1 = node->create_client<test_rclcpp::srv::AddTwoInts>("client_scope");
-    if (!client1->wait_for_service(20_s)) {
+    if (!client1->wait_for_service(20s)) {
       ASSERT_TRUE(false) << "service not available after waiting";
     }
     auto request1 = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
@@ -65,7 +65,7 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_regression_test
     printf("creating second client\n");
     std::cout.flush();
     auto client2 = node->create_client<test_rclcpp::srv::AddTwoInts>("client_scope");
-    if (!client2->wait_for_service(20_s)) {
+    if (!client2->wait_for_service(20s)) {
       ASSERT_TRUE(false) << "service not available after waiting";
     }
     auto request2 = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
