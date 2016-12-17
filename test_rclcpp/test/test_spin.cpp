@@ -31,6 +31,8 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
+using namespace std::chrono_literals;
+
 /*
    Ensures that the timeout behavior of spin_until_future_complete is correct.
  */
@@ -43,7 +45,7 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), test_spin_until_future_complete_t
     std::promise<void> already_set_promise;
     std::shared_future<void> already_complete_future = already_set_promise.get_future();
     already_set_promise.set_value();
-    auto ret = executor.spin_until_future_complete(already_complete_future, 1_s);
+    auto ret = executor.spin_until_future_complete(already_complete_future, 1s);
     EXPECT_EQ(FutureReturnCode::SUCCESS, ret);
     // Also try blocking with no timeout (default timeout of -1).
     ret = executor.spin_until_future_complete(already_complete_future);
@@ -55,19 +57,19 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), test_spin_until_future_complete_t
     std::promise<void> never_set_promise;
     std::shared_future<void> never_complete_future = never_set_promise.get_future();
     // Set the timeout just long enough to make sure it isn't incorrectly set.
-    auto ret = executor.spin_until_future_complete(never_complete_future, 50_ms);
+    auto ret = executor.spin_until_future_complete(never_complete_future, 50ms);
     EXPECT_EQ(FutureReturnCode::TIMEOUT, ret);
     // Also try with zero timeout.
-    ret = executor.spin_until_future_complete(never_complete_future, 0_s);
+    ret = executor.spin_until_future_complete(never_complete_future, 0s);
     EXPECT_EQ(FutureReturnCode::TIMEOUT, ret);
   }
 
   // Try to complete the future asynchronously, but not from within spinning.
   {
     std::shared_future<void> async_future = std::async(std::launch::async, []() {
-      std::this_thread::sleep_for(50_ms);
+      std::this_thread::sleep_for(50ms);
     });
-    auto ret = executor.spin_until_future_complete(async_future, 100_ms);
+    auto ret = executor.spin_until_future_complete(async_future, 100ms);
     EXPECT_EQ(FutureReturnCode::SUCCESS, ret);
   }
 
@@ -76,32 +78,32 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), test_spin_until_future_complete_t
   // Try trigger a timeout while spinning events are being handled.
   {
     std::promise<void> never_set_promise;
-    auto timer = node->create_wall_timer(7_ms, []() {
+    auto timer = node->create_wall_timer(7ms, []() {
       // Do nothing.
     });
-    auto timer2 = node->create_wall_timer(50_ms, []() {
+    auto timer2 = node->create_wall_timer(50ms, []() {
       // Do nothing.
     });
     std::shared_future<void> never_completed_future = never_set_promise.get_future();
     // Try with a timeout long enough for both timers to fire at least once.
-    auto ret = executor.spin_until_future_complete(never_completed_future, 75_ms);
+    auto ret = executor.spin_until_future_complete(never_completed_future, 75ms);
     EXPECT_EQ(FutureReturnCode::TIMEOUT, ret);
     // Also try with a timeout of zero (nonblocking).
-    ret = executor.spin_until_future_complete(never_completed_future, 0_s);
+    ret = executor.spin_until_future_complete(never_completed_future, 0s);
     EXPECT_EQ(FutureReturnCode::TIMEOUT, ret);
   }
 
   // Try to complete a future from within a spinning callback, in the presence of other events.
   {
     std::promise<void> timer_fired_promise;
-    auto timer = node->create_wall_timer(50_ms, [&timer_fired_promise]() {
+    auto timer = node->create_wall_timer(50ms, [&timer_fired_promise]() {
       timer_fired_promise.set_value();
     });
-    auto timer2 = node->create_wall_timer(1_ms, []() {
+    auto timer2 = node->create_wall_timer(1ms, []() {
       // Do nothing.
     });
     std::shared_future<void> timer_fired_future = timer_fired_promise.get_future();
-    auto ret = executor.spin_until_future_complete(timer_fired_future, 100_ms);
+    auto ret = executor.spin_until_future_complete(timer_fired_future, 100ms);
     EXPECT_EQ(FutureReturnCode::SUCCESS, ret);
     // Also try again with blocking spin_until_future_complete.
     timer_fired_promise = std::promise<void>();

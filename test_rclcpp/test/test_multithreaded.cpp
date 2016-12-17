@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <chrono>
 #include <limits>
 #include <memory>
 #include <string>
@@ -34,6 +35,8 @@
 #else
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
+
+using namespace std::chrono_literals;
 
 static inline void multi_consumer_pub_sub_test(bool intra_process)
 {
@@ -184,7 +187,7 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
   int client_request_pairs_size = static_cast<int>(client_request_pairs.size());
 
   executor.add_node(node);
-  rclcpp::utilities::sleep_for(5_ms);
+  rclcpp::utilities::sleep_for(5ms);
 
   executor.spin_some();
   // No callbacks should have fired
@@ -194,7 +197,7 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     std::vector<SharedFuture> results;
     // Send all the requests
     for (auto & pair : client_request_pairs) {
-      if (!pair.first->wait_for_service(20_s)) {
+      if (!pair.first->wait_for_service(20s)) {
         ASSERT_TRUE(false) << "service not available after waiting";
       }
       results.push_back(pair.first->async_send_request(pair.second));
@@ -219,7 +222,7 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     std::vector<SharedFuture> results;
     // Send all the requests again
     for (auto & pair : client_request_pairs) {
-      if (!pair.first->wait_for_service(20_s)) {
+      if (!pair.first->wait_for_service(20s)) {
         ASSERT_TRUE(false) << "service not available after waiting";
       }
       results.push_back(pair.first->async_send_request(pair.second));
@@ -281,7 +284,7 @@ static inline void multi_access_publisher(bool intra_process)
         while (subscription_counter < timer_counter &&
           ++i <= num_messages)
         {
-          rclcpp::utilities::sleep_for(1_ms);
+          rclcpp::utilities::sleep_for(1ms);
         }
         executor.cancel();
         return;

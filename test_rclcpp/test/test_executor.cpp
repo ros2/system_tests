@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <atomic>
+#include <chrono>
 #include <cinttypes>
 #include <future>
 #include <memory>
@@ -36,11 +37,12 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
+using namespace std::chrono_literals;
 
 TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), recursive_spin_call) {
   rclcpp::executors::SingleThreadedExecutor executor;
   auto node = rclcpp::Node::make_shared("recursive_spin_call");
-  auto timer = node->create_wall_timer(0_s, [&executor]() {
+  auto timer = node->create_wall_timer(0s, [&executor]() {
     ASSERT_THROW(executor.spin_some(), std::runtime_error);
     ASSERT_THROW(executor.spin_once(), std::runtime_error);
     ASSERT_THROW(executor.spin(), std::runtime_error);
@@ -64,7 +66,7 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), multithreaded_spin_call) {
     ASSERT_THROW(executor.spin(), std::runtime_error);
     executor.cancel();
   });
-  auto timer = node->create_wall_timer(0_s, [&m, &cv, &ready]() {
+  auto timer = node->create_wall_timer(0s, [&m, &cv, &ready]() {
     if (!ready) {
       {
         std::lock_guard<std::mutex> lock(m);
@@ -96,7 +98,7 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), multiple_executors) {
       ++counter1;
     };
   auto node1 = rclcpp::Node::make_shared("multiple_executors_1");
-  auto timer1 = node1->create_wall_timer(1_ms, callback1);
+  auto timer1 = node1->create_wall_timer(1ms, callback1);
   executor1.add_node(node1);
 
   // Initialize executor 2.
@@ -110,7 +112,7 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), multiple_executors) {
       ++counter2;
     };
   auto node2 = rclcpp::Node::make_shared("multiple_executors_2");
-  auto timer2 = node2->create_wall_timer(1_ms, callback2);
+  auto timer2 = node2->create_wall_timer(1ms, callback2);
   executor2.add_node(node2);
 
   auto spin_executor2 = [&executor2]() {
@@ -144,13 +146,13 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), notify) {
     std::shared_future<void> timer_future(timer_promise.get_future());
 
     auto timer = node->create_wall_timer(
-      1_ms,
+      1ms,
       [&timer_promise](rclcpp::TimerBase & timer)
     {
       timer_promise.set_value();
       timer.cancel();
     });
-    EXPECT_EQ(std::future_status::ready, timer_future.wait_for(50_ms));
+    EXPECT_EQ(std::future_status::ready, timer_future.wait_for(50ms));
     executor.cancel();
 
     spin_thread.join();
@@ -177,7 +179,7 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), notify) {
     auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(
       "test_executor_notify_subscription", rmw_qos_profile_default);
     auto timer = node->create_wall_timer(
-      1_ms,
+      1ms,
       [&publisher]()
     {
       test_rclcpp::msg::UInt32 pub_msg;
@@ -205,7 +207,7 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), notify) {
     auto client = node->create_client<test_rclcpp::srv::AddTwoInts>(
       "test_executor_notify_service"
       );
-    if (!client->wait_for_service(20_s)) {
+    if (!client->wait_for_service(20s)) {
       ASSERT_TRUE(false) << "service not available after waiting";
     }
     auto request = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();

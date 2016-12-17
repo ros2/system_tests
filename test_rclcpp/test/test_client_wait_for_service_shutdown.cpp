@@ -26,6 +26,8 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
+using namespace std::chrono_literals;
+
 // rclcpp::shutdown() should wake up wait_for_service, even without spin.
 TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), wait_for_service_shutdown) {
   rclcpp::init(0, nullptr);
@@ -34,12 +36,12 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), wait_for_service_shutdown) {
   auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("wait_for_service_shutdown");
 
   auto shutdown_thread = std::thread([]() {
-    std::this_thread::sleep_for(1_s);
+    std::this_thread::sleep_for(1s);
     rclcpp::shutdown();
   });
   auto start = std::chrono::steady_clock::now();
-  client->wait_for_service(15_s);
+  client->wait_for_service(15s);
   auto end = std::chrono::steady_clock::now();
-  ASSERT_LE(end - start, 10_s);
+  ASSERT_LE(end - start, 10s);
   shutdown_thread.join();
 }
