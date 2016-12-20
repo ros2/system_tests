@@ -84,11 +84,11 @@ if(BUILD_TESTING)
       @ONLY
     )
     file(GENERATE
-      OUTPUT "${test_name}${target_suffix}_$<CONFIGURATION>.py"
+      OUTPUT "${test_name}${target_suffix}_$<CONFIG>.py"
       INPUT "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}.py.configure"
     )
     ament_add_nose_test(${test_name}${target_suffix}
-      "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIGURATION>.py"
+      "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIG>.py"
       ${ARGN}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
@@ -186,7 +186,7 @@ if(BUILD_TESTING)
 
   set(append_library_dirs "${CMAKE_CURRENT_BINARY_DIR}")
   if(WIN32)
-    set(append_library_dirs "${append_library_dirs}/$<CONFIGURATION>")
+    set(append_library_dirs "${append_library_dirs}/$<CONFIG>")
   endif()
 
   call_for_each_rmw_implementation(targets)

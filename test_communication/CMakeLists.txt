@@ -161,7 +161,7 @@ if(BUILD_TESTING)
         @ONLY
       )
       file(GENERATE
-        OUTPUT "test_publisher_subscriber${test_suffix}_$<CONFIGURATION>.py"
+        OUTPUT "test_publisher_subscriber${test_suffix}_$<CONFIG>.py"
         INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${test_suffix}.py.configured"
       )
 
@@ -176,7 +176,7 @@ if(BUILD_TESTING)
       endif()
       # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)
       ament_add_nose_test(test_publisher_subscriber${test_suffix}
-        "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${test_suffix}_$<CONFIGURATION>.py"
+        "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${test_suffix}_$<CONFIG>.py"
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py"
         PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
         APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}/../../rclpy"
@@ -221,12 +221,12 @@ if(BUILD_TESTING)
         @ONLY
       )
       file(GENERATE
-        OUTPUT "test_requester_replier${test_suffix}_$<CONFIGURATION>.py"
+        OUTPUT "test_requester_replier${test_suffix}_$<CONFIG>.py"
         INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier${test_suffix}.py.configured"
       )
 
       ament_add_nose_test(test_requester_replier${test_suffix}
-        "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier${test_suffix}_$<CONFIGURATION>.py"
+        "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier${test_suffix}_$<CONFIG>.py"
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py"
         PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
         APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}/../../rclpy"
@@ -332,7 +332,7 @@ if(BUILD_TESTING)
 
   set(append_library_dirs "${CMAKE_CURRENT_BINARY_DIR}")
   if(WIN32)
-    set(append_library_dirs "${append_library_dirs}/$<CONFIGURATION>")
+    set(append_library_dirs "${append_library_dirs}/$<CONFIG>")
   endif()
 
   call_for_each_rmw_implementation(targets)
