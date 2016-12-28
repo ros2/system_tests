@@ -39,7 +39,7 @@
 
 #include "rosidl_generator_c/string_functions.h"
 #include "rosidl_generator_c/primitives_array_functions.h"
-#include "rosidl_generator_c/message_type_support.h"
+#include "rosidl_generator_c/message_type_support_struct.h"
 #include "rcl/error_handling.h"
 
 #ifndef SCOPE_EXIT_HPP_
@@ -337,7 +337,7 @@ void verify_message(test_communication__msg__Primitives & message, size_t msg_nu
 
 DEFINE_FINI_MESSAGE(test_communication__msg__Primitives);
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_primitives) {
-  const rosidl_message_type_support_t * ts = ROSIDL_GET_TYPE_SUPPORT(
+  const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, Primitives);
   test_message_type<test_communication__msg__Primitives>("test_primitives", ts);
 }
@@ -370,7 +370,7 @@ void verify_message(test_communication__msg__Nested & message, size_t msg_num)
 
 DEFINE_FINI_MESSAGE(test_communication__msg__Nested);
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_nested) {
-  const rosidl_message_type_support_t * ts = ROSIDL_GET_TYPE_SUPPORT(
+  const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, Nested);
   test_message_type<test_communication__msg__Nested>("test_nested", ts);
 }
@@ -414,7 +414,7 @@ void verify_message(test_communication__msg__Builtins & message, size_t msg_num)
 
 DEFINE_FINI_MESSAGE(test_communication__msg__Builtins);
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_builtins) {
-  const rosidl_message_type_support_t * ts = ROSIDL_GET_TYPE_SUPPORT(
+  const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, Builtins);
   test_message_type<test_communication__msg__Builtins>("test_builtins", ts);
 }
@@ -509,7 +509,7 @@ void verify_message(test_communication__msg__StaticArrayPrimitives & message, si
 
 DEFINE_FINI_MESSAGE(test_communication__msg__StaticArrayPrimitives);
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_staticarrayprimitives) {
-  const rosidl_message_type_support_t * ts = ROSIDL_GET_TYPE_SUPPORT(
+  const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, StaticArrayPrimitives);
   test_message_type<test_communication__msg__StaticArrayPrimitives>("test_staticarrayprimitives",
     ts);
@@ -551,7 +551,7 @@ void verify_message(test_communication__msg__StaticArrayNested & message, size_t
 
 DEFINE_FINI_MESSAGE(test_communication__msg__StaticArrayNested);
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_staticarraynested) {
-  const rosidl_message_type_support_t * ts = ROSIDL_GET_TYPE_SUPPORT(
+  const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, StaticArrayNested);
   test_message_type<test_communication__msg__StaticArrayNested>("test_staticarraynested",
     ts);
@@ -799,7 +799,7 @@ void verify_message(test_communication__msg__DynamicArrayPrimitives & message, s
 
 DEFINE_FINI_MESSAGE(test_communication__msg__DynamicArrayPrimitives);
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_dynamicarrayprimitives) {
-  const rosidl_message_type_support_t * ts = ROSIDL_GET_TYPE_SUPPORT(
+  const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, DynamicArrayPrimitives);
   test_message_type<test_communication__msg__DynamicArrayPrimitives>("test_dynamicarrayprimitives",
     ts);
@@ -874,7 +874,7 @@ void verify_message(test_communication__msg__DynamicArrayNested & message, size_
 
 DEFINE_FINI_MESSAGE(test_communication__msg__DynamicArrayNested);
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_dynamicarraynested) {
-  const rosidl_message_type_support_t * ts = ROSIDL_GET_TYPE_SUPPORT(
+  const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, DynamicArrayNested);
   test_message_type<test_communication__msg__DynamicArrayNested>("test_dynamicarraynested",
     ts);
@@ -1044,7 +1044,7 @@ void verify_message(test_communication__msg__BoundedArrayPrimitives & message, s
 
 DEFINE_FINI_MESSAGE(test_communication__msg__BoundedArrayPrimitives);
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_boundedarrayprimitives) {
-  const rosidl_message_type_support_t * ts = ROSIDL_GET_TYPE_SUPPORT(
+  const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, BoundedArrayPrimitives);
   test_message_type<test_communication__msg__BoundedArrayPrimitives>("test_boundedarrayprimitives",
     ts);
@@ -1120,7 +1120,7 @@ void verify_message(test_communication__msg__BoundedArrayNested & message, size_
 
 DEFINE_FINI_MESSAGE(test_communication__msg__BoundedArrayNested);
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_boundedarraynested) {
-  const rosidl_message_type_support_t * ts = ROSIDL_GET_TYPE_SUPPORT(
+  const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, BoundedArrayNested);
   test_message_type<test_communication__msg__BoundedArrayNested>("test_boundedarraynested",
     ts);

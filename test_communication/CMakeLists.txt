@@ -123,6 +123,7 @@ if(BUILD_TESTING)
     ament_add_gtest(
       "${target}${target_suffix}" ${ARGN}
       TIMEOUT 90
+      APPEND_LIBRARY_DIRS "${append_library_dirs}"
       ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
     target_link_libraries(${target}${target_suffix}
       ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
@@ -133,7 +134,7 @@ if(BUILD_TESTING)
         ${PROJECT_NAME} ${typesupport_impl})
     endforeach()
     rosidl_target_interfaces(${target}${target_suffix}
-      ${PROJECT_NAME} rosidl_generator_c)
+      ${PROJECT_NAME} "rosidl_typesupport_c")
     ament_target_dependencies(${target}${target_suffix}
       "rcl${target_suffix}")
     set_tests_properties(
