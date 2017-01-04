@@ -335,7 +335,7 @@ void verify_message(test_communication__msg__Primitives & message, size_t msg_nu
   EXPECT_EQ(0, strcmp(expected_msg.string_value.data, message.string_value.data));
 }
 
-DEFINE_FINI_MESSAGE(test_communication__msg__Primitives);
+DEFINE_FINI_MESSAGE(test_communication__msg__Primitives)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_primitives) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, Primitives);
@@ -368,7 +368,7 @@ void verify_message(test_communication__msg__Nested & message, size_t msg_num)
   verify_message(message.primitive_values, msg_num);
 }
 
-DEFINE_FINI_MESSAGE(test_communication__msg__Nested);
+DEFINE_FINI_MESSAGE(test_communication__msg__Nested)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_nested) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, Nested);
@@ -412,7 +412,7 @@ void verify_message(test_communication__msg__Builtins & message, size_t msg_num)
   EXPECT_EQ(expected_msg.time_value.nanosec, message.time_value.nanosec);
 }
 
-DEFINE_FINI_MESSAGE(test_communication__msg__Builtins);
+DEFINE_FINI_MESSAGE(test_communication__msg__Builtins)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_builtins) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, Builtins);
@@ -507,7 +507,7 @@ void verify_message(test_communication__msg__StaticArrayPrimitives & message, si
   }
 }
 
-DEFINE_FINI_MESSAGE(test_communication__msg__StaticArrayPrimitives);
+DEFINE_FINI_MESSAGE(test_communication__msg__StaticArrayPrimitives)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_staticarrayprimitives) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, StaticArrayPrimitives);
@@ -549,7 +549,7 @@ void verify_message(test_communication__msg__StaticArrayNested & message, size_t
   }
 }
 
-DEFINE_FINI_MESSAGE(test_communication__msg__StaticArrayNested);
+DEFINE_FINI_MESSAGE(test_communication__msg__StaticArrayNested)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_staticarraynested) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, StaticArrayNested);
@@ -797,7 +797,7 @@ void verify_message(test_communication__msg__DynamicArrayPrimitives & message, s
   }
 }
 
-DEFINE_FINI_MESSAGE(test_communication__msg__DynamicArrayPrimitives);
+DEFINE_FINI_MESSAGE(test_communication__msg__DynamicArrayPrimitives)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_dynamicarrayprimitives) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, DynamicArrayPrimitives);
@@ -872,7 +872,7 @@ void verify_message(test_communication__msg__DynamicArrayNested & message, size_
   }
 }
 
-DEFINE_FINI_MESSAGE(test_communication__msg__DynamicArrayNested);
+DEFINE_FINI_MESSAGE(test_communication__msg__DynamicArrayNested)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_dynamicarraynested) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, DynamicArrayNested);
@@ -1042,7 +1042,7 @@ void verify_message(test_communication__msg__BoundedArrayPrimitives & message, s
   }
 }
 
-DEFINE_FINI_MESSAGE(test_communication__msg__BoundedArrayPrimitives);
+DEFINE_FINI_MESSAGE(test_communication__msg__BoundedArrayPrimitives)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_boundedarrayprimitives) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, BoundedArrayPrimitives);
@@ -1118,7 +1118,7 @@ void verify_message(test_communication__msg__BoundedArrayNested & message, size_
   }
 }
 
-DEFINE_FINI_MESSAGE(test_communication__msg__BoundedArrayNested);
+DEFINE_FINI_MESSAGE(test_communication__msg__BoundedArrayNested)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_boundedarraynested) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, BoundedArrayNested);
