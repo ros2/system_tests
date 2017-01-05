@@ -33,14 +33,11 @@ def replier_callback(request, response, srv_fixtures):
 def replier(service_name, number_of_cycles):
     from service_fixtures import get_test_srv
     import rclpy
-    from rclpy.impl.rmw_implementation_tools import select_rmw_implementation
     from rclpy.qos import qos_profile_services_default
 
     service_pkg = 'test_communication'
     module = importlib.import_module(service_pkg + '.srv')
     srv_mod = getattr(module, service_name)
-
-    select_rmw_implementation(os.environ['RCLPY_IMPLEMENTATION'])
 
     rclpy.init([])
 

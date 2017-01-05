@@ -25,6 +25,7 @@ def test_requester_replier():
         replier_rmw_env_key = 'RCL_ASSERT_RMW_ID_MATCHES'
     replier_env = dict(os.environ)
     replier_env[replier_rmw_env_key] = '@REPLIER_RMW@'
+    replier_env['RMW_IMPLEMENTATION'] = '@REPLIER_RMW@'
     ld.add_process(
         cmd=replier_cmd,
         name='test_replier',
@@ -33,6 +34,7 @@ def test_requester_replier():
 
     requester_env = dict(os.environ)
     requester_env[requester_rmw_env_key] = '@REQUESTER_RMW@'
+    requester_env['RMW_IMPLEMENTATION'] = '@REQUESTER_RMW@'
     ld.add_process(
         cmd=requester_cmd,
         name='test_requester',

@@ -45,14 +45,11 @@ def listener_cb(msg, received_messages, expected_msgs):
 def listener(message_name):
     from message_fixtures import get_test_msg
     import rclpy
-    from rclpy.impl.rmw_implementation_tools import select_rmw_implementation
     from rclpy.qos import qos_profile_default
 
     message_pkg = 'test_communication'
     module = importlib.import_module(message_pkg + '.msg')
     msg_mod = getattr(module, message_name)
-
-    select_rmw_implementation(os.environ['RCLPY_IMPLEMENTATION'])
 
     rclpy.init([])
 

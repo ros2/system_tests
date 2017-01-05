@@ -23,6 +23,7 @@ def test_publisher_subscriber():
         sub_rmw_env_key = 'RCL_ASSERT_RMW_ID_MATCHES'
     publisher_env = dict(os.environ)
     publisher_env[pub_rmw_env_key] = '@PUBLISHER_RMW@'
+    publisher_env['RMW_IMPLEMENTATION'] = '@PUBLISHER_RMW@'
     ld.add_process(
         cmd=publisher_cmd,
         name='test_publisher',
@@ -31,6 +32,7 @@ def test_publisher_subscriber():
 
     subscriber_env = dict(os.environ)
     subscriber_env[sub_rmw_env_key] = '@SUBSCRIBER_RMW@'
+    subscriber_env['RMW_IMPLEMENTATION'] = '@SUBSCRIBER_RMW@'
     ld.add_process(
         cmd=subscriber_cmd,
         name='test_subscriber',
