@@ -174,7 +174,7 @@ public:
           fini_message(&message);
         });
 
-        rcl_wait_set_t wait_set = rcl_get_zero_initialized_wait_set();
+        wait_set = rcl_get_zero_initialized_wait_set();
         EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
         ret = rcl_wait_set_init(
           &wait_set,
@@ -189,7 +189,7 @@ public:
         EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
         ret = rcl_wait_set_add_subscription(&wait_set, &subscription);
         EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
-        rcl_ret_t ret = rcl_wait(&wait_set, RCL_S_TO_NS(-1));
+        ret = rcl_wait(&wait_set, RCL_S_TO_NS(-1));
         ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
         ret = rcl_take(&subscription, &message, nullptr);
         ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
