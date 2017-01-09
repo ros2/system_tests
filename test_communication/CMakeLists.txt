@@ -52,16 +52,6 @@ if(BUILD_TESTING)
   )
 
   function(custom_test target with_message_argument)
-    # get typesupport of rmw implementation to include / link against the corresponding interfaces
-    get_rmw_typesupport(typesupport_impls "${rmw_implementation}" LANGUAGE "cpp")
-
-    add_executable(${target}${target_suffix} ${ARGN})
-    foreach(typesupport_impl ${typesupport_impls})
-      rosidl_target_interfaces(${target}${target_suffix}
-        ${PROJECT_NAME} ${typesupport_impl})
-    endforeach()
-    ament_target_dependencies(${target}${target_suffix}
-      "rclcpp${target_suffix}")
     if(with_message_argument)
       # adding test for each message type
       foreach(message_file ${message_files})
@@ -77,66 +67,60 @@ if(BUILD_TESTING)
         endif()
         ament_add_test(
           "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
-          COMMAND "$<TARGET_FILE:${target}${target_suffix}>" "${TEST_MESSAGE_TYPE}"
+          COMMAND "$<TARGET_FILE:${target}>" "${TEST_MESSAGE_TYPE}"
           TIMEOUT 15
           GENERATE_RESULT_FOR_RETURN_CODE_ZERO
           APPEND_LIBRARY_DIRS "${append_library_dirs}"
-          ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
+          ENV
+          RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
+          RMW_IMPLEMENTATION=${rmw_implementation}
           ${SKIP_TEST})
         set_tests_properties(
           "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
-          PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}${target_suffix}>"
+          PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}>"
         )
       endforeach()
     else()
       ament_add_test(
         "${target}${target_suffix}"
-        COMMAND "$<TARGET_FILE:${target}${target_suffix}>"
+        COMMAND "$<TARGET_FILE:${target}>"
         TIMEOUT 15
         GENERATE_RESULT_FOR_RETURN_CODE_ZERO
         APPEND_LIBRARY_DIRS "${append_library_dirs}"
-        ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
+        ENV
+        RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
+        RMW_IMPLEMENTATION=${rmw_implementation})
       set_tests_properties(
         "${target}${target_suffix}"
-        PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}${target_suffix}>"
+        PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}>"
       )
     endif()
   endfunction()
 
   function(custom_executable target)
-    # get typesupport of rmw implementation to include / link against the corresponding interfaces
-    get_rmw_typesupport(typesupport_impls "${rmw_implementation}" LANGUAGE "cpp")
-
-    add_executable(${target}${target_suffix} ${ARGN})
-    foreach(typesupport_impl ${typesupport_impls})
-      rosidl_target_interfaces(${target}${target_suffix}
-        ${PROJECT_NAME} ${typesupport_impl})
-    endforeach()
-    ament_target_dependencies(${target}${target_suffix}
-      "rclcpp${target_suffix}")
+    add_executable(${target} ${ARGN})
+    rosidl_target_interfaces(${target}
+      ${PROJECT_NAME} "rosidl_typesupport_cpp")
+    ament_target_dependencies(${target}
+      "rclcpp")
   endfunction()
 
   function(custom_test_c target)
-    # get typesupport of rmw implementation to include / link against the corresponding interfaces
-    get_rmw_typesupport(typesupport_impls "${rmw_implementation}" LANGUAGE "c")
-
     ament_add_gtest(
       "${target}${target_suffix}" ${ARGN}
       TIMEOUT 90
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
-      ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
+      ENV
+      RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
+      RMW_IMPLEMENTATION=${rmw_implementation})
     target_link_libraries(${target}${target_suffix}
       ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
       ${_AMENT_EXPORT_LIBRARY_TARGETS})
     add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
-    foreach(typesupport_impl ${typesupport_impls})
-      rosidl_target_interfaces(${target}${target_suffix}
-        ${PROJECT_NAME} ${typesupport_impl})
-    endforeach()
     rosidl_target_interfaces(${target}${target_suffix}
       ${PROJECT_NAME} "rosidl_typesupport_c")
     ament_target_dependencies(${target}${target_suffix}
-      "rcl${target_suffix}")
+      "rcl")
     set_tests_properties(
       ${target}${target_suffix}
       PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}${target_suffix}>"
@@ -269,16 +253,16 @@ if(BUILD_TESTING)
       set(TEST_PUBLISHER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/publisher_py.py")
       set(TEST_REQUESTER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/requester_py.py")
     elseif(_client_library1 STREQUAL "rclcpp")
-      set(TEST_PUBLISHER_EXECUTABLE "$<TARGET_FILE:test_publisher_cpp__${rmw_implementation1}>")
-      set(TEST_REQUESTER_EXECUTABLE "$<TARGET_FILE:test_requester_cpp__${rmw_implementation1}>")
+      set(TEST_PUBLISHER_EXECUTABLE "$<TARGET_FILE:test_publisher_cpp>")
+      set(TEST_REQUESTER_EXECUTABLE "$<TARGET_FILE:test_requester_cpp>")
     endif()
 
     if(_client_library2 STREQUAL "rclpy")
       set(TEST_SUBSCRIBER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/subscriber_py.py")
       set(TEST_REPLIER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/replier_py.py")
     elseif(_client_library2 STREQUAL "rclcpp")
-      set(TEST_SUBSCRIBER_EXECUTABLE "$<TARGET_FILE:test_subscriber_cpp__${rmw_implementation2}>")
-      set(TEST_REPLIER_EXECUTABLE "$<TARGET_FILE:test_replier_cpp__${rmw_implementation2}>")
+      set(TEST_SUBSCRIBER_EXECUTABLE "$<TARGET_FILE:test_subscriber_cpp>")
+      set(TEST_REPLIER_EXECUTABLE "$<TARGET_FILE:test_replier_cpp>")
     endif()
   endmacro()
 
@@ -296,32 +280,31 @@ if(BUILD_TESTING)
     endforeach()
   endmacro()
 
+  # publisher combined with a subscriber
+  custom_executable(test_publisher_subscriber_cpp
+    "test/test_publisher_subscriber.cpp")
+  # subcription valid data
+  custom_executable(test_subscription_valid_data_cpp
+    "test/test_subscription_valid_data.cpp")
+  # executables publisher / subscriber
+  custom_executable(test_publisher_cpp
+    "test/test_publisher.cpp")
+  custom_executable(test_subscriber_cpp
+    "test/test_subscriber.cpp")
+  # executables requester / replier
+  custom_executable(test_requester_cpp
+    "test/test_requester.cpp")
+  custom_executable(test_replier_cpp
+    "test/test_replier.cpp")
+
   macro(targets)
-    get_rcl_information("${rmw_implementation}" "rcl${target_suffix}")
     custom_test_c(test_messages_c
       "test/test_messages_c.cpp")
 
-    get_rclcpp_information("${rmw_implementation}" "rclcpp${target_suffix}")
-
     # publisher combined with a subscriber
-    custom_test(test_publisher_subscriber_cpp
-      TRUE
-      "test/test_publisher_subscriber.cpp")
+    custom_test(test_publisher_subscriber_cpp TRUE)
     # subcription valid data
-    custom_test(test_subscription_valid_data_cpp
-      FALSE
-      "test/test_subscription_valid_data.cpp")
-
-    # executables publisher / subscriber
-    custom_executable(test_publisher_cpp
-      "test/test_publisher.cpp")
-    custom_executable(test_subscriber_cpp
-      "test/test_subscriber.cpp")
-    # executables requester / replier
-    custom_executable(test_requester_cpp
-      "test/test_requester.cpp")
-    custom_executable(test_replier_cpp
-      "test/test_replier.cpp")
+    custom_test(test_subscription_valid_data_cpp FALSE)
 
     set(rmw_implementation1 "${rmw_implementation}")
     set(target_suffix1 "${target_suffix}")

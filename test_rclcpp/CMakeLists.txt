@@ -38,45 +38,37 @@ if(BUILD_TESTING)
   endforeach()
 
   macro(custom_gtest target)
-    # get typesupport of rmw implementation to include / link against the corresponding interfaces
-    get_rmw_typesupport(typesupport_impls "${rmw_implementation}" LANGUAGE "cpp")
-
     ament_add_gtest(${target}${target_suffix} ${ARGN}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
-      ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation})
+      ENV
+      RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
+      RMW_IMPLEMENTATION=${rmw_implementation})
     if(TARGET ${target}${target_suffix})
       target_compile_definitions(${target}${target_suffix}
         PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
-      foreach(typesupport_impl ${typesupport_impls})
-        rosidl_target_interfaces(${target}${target_suffix}
-          ${PROJECT_NAME} ${typesupport_impl})
-      endforeach()
+      rosidl_target_interfaces(${target}${target_suffix}
+        ${PROJECT_NAME} "rosidl_typesupport_cpp")
       ament_target_dependencies(${target}${target_suffix}
-        "rclcpp${target_suffix}")
+        "rclcpp")
       target_include_directories(${target}${target_suffix} PUBLIC include)
     endif()
   endmacro()
 
   function(custom_executable target)
-    # get typesupport of rmw implementation to include / link against the corresponding interfaces
-    get_rmw_typesupport(typesupport_impls "${rmw_implementation}" LANGUAGE "cpp")
-
-    add_executable(${target}${target_suffix} ${ARGN})
-    target_compile_definitions(${target}${target_suffix}
+    add_executable(${target} ${ARGN})
+    target_compile_definitions(${target}
       PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
-    foreach(typesupport_impl ${typesupport_impls})
-      rosidl_target_interfaces(${target}${target_suffix}
-        ${PROJECT_NAME} ${typesupport_impl})
-    endforeach()
-    ament_target_dependencies(${target}${target_suffix}
-      "rclcpp${target_suffix}")
+    rosidl_target_interfaces(${target}
+      ${PROJECT_NAME} "rosidl_typesupport_cpp")
+    ament_target_dependencies(${target}
+      "rclcpp")
   endfunction()
 
   macro(custom_launch_test test_name executable1 executable2)
     set(TEST_NAME "${test_name}")
-    set(TEST_EXECUTABLE1 "$<TARGET_FILE:${executable1}${target_suffix}>")
+    set(TEST_EXECUTABLE1 "$<TARGET_FILE:${executable1}>")
     set(TEST_EXECUTABLE1_NAME "${executable1}")
-    set(TEST_EXECUTABLE2 "$<TARGET_FILE:${executable2}${target_suffix}>")
+    set(TEST_EXECUTABLE2 "$<TARGET_FILE:${executable2}>")
     set(TEST_EXECUTABLE2_NAME "${executable2}")
     configure_file(
       test/test_two_executables.py.in
@@ -91,7 +83,9 @@ if(BUILD_TESTING)
       "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIG>.py"
       ${ARGN}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
-      ENV RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
+      ENV
+      RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
+      RMW_IMPLEMENTATION=${rmw_implementation}
     )
     set_tests_properties(${test_name}${target_suffix}
       PROPERTIES DEPENDS "${executable1}${target_suffix} ${executable2}${target_suffix}"
@@ -99,8 +93,6 @@ if(BUILD_TESTING)
   endmacro()
 
   macro(targets)
-    get_rclcpp_information("${rmw_implementation}" "rclcpp${target_suffix}")
-
     custom_gtest(gtest_publisher
       "test/test_publisher.cpp"
       TIMEOUT 15)
@@ -142,43 +134,19 @@ if(BUILD_TESTING)
       TIMEOUT 30)
 
     # Parameter tests single implementation
-    custom_executable(test_parameters_server_cpp "test/test_parameters_server.cpp")
-    custom_executable(test_remote_parameters_cpp "test/test_remote_parameters.cpp")
-    target_include_directories(test_remote_parameters_cpp${target_suffix}
-      PUBLIC ${GTEST_INCLUDE_DIRS})
-    target_link_libraries(test_remote_parameters_cpp${target_suffix}
-      ${GTEST_LIBRARIES})
     custom_launch_test(test_parameter_server_cpp
       test_parameters_server_cpp test_remote_parameters_cpp
       TIMEOUT 15)
 
     # Service tests single implementation
-    custom_executable(test_services_server_cpp "test/test_services_server.cpp")
-    custom_executable(test_services_client_cpp "test/test_services_client.cpp")
-    target_include_directories(test_services_client_cpp${target_suffix}
-      PUBLIC ${GTEST_INCLUDE_DIRS})
-    target_link_libraries(test_services_client_cpp${target_suffix}
-      ${GTEST_LIBRARIES})
     custom_launch_test(test_services_cpp
       test_services_server_cpp test_services_client_cpp
       TIMEOUT 60)
 
-    custom_executable(test_client_scope_server_cpp "test/test_client_scope_server.cpp")
-    custom_executable(test_client_scope_client_cpp "test/test_client_scope_client.cpp")
-    target_include_directories(test_client_scope_client_cpp${target_suffix}
-      PUBLIC ${GTEST_INCLUDE_DIRS})
-    target_link_libraries(test_client_scope_client_cpp${target_suffix}
-      ${GTEST_LIBRARIES})
     custom_launch_test(test_client_scope_cpp
       test_client_scope_server_cpp test_client_scope_client_cpp
       TIMEOUT 30)
 
-    custom_executable(test_client_scope_consistency_server_cpp "test/test_client_scope_consistency_server.cpp")
-    custom_executable(test_client_scope_consistency_client_cpp "test/test_client_scope_consistency_client.cpp")
-    target_include_directories(test_client_scope_consistency_client_cpp${target_suffix}
-      PUBLIC ${GTEST_INCLUDE_DIRS})
-    target_link_libraries(test_client_scope_consistency_client_cpp${target_suffix}
-      ${GTEST_LIBRARIES})
     custom_launch_test(test_client_scope_consistency_cpp
       test_client_scope_consistency_server_cpp test_client_scope_consistency_client_cpp
       TIMEOUT 30)
@@ -190,6 +158,36 @@ if(BUILD_TESTING)
   endif()
 
   call_for_each_rmw_implementation(targets)
+
+  # Parameter tests single implementation
+  custom_executable(test_parameters_server_cpp "test/test_parameters_server.cpp")
+  custom_executable(test_remote_parameters_cpp "test/test_remote_parameters.cpp")
+  target_include_directories(test_remote_parameters_cpp
+    PUBLIC ${GTEST_INCLUDE_DIRS})
+  target_link_libraries(test_remote_parameters_cpp
+    ${GTEST_LIBRARIES})
+
+  # Service tests single implementation
+  custom_executable(test_services_server_cpp "test/test_services_server.cpp")
+  custom_executable(test_services_client_cpp "test/test_services_client.cpp")
+  target_include_directories(test_services_client_cpp
+    PUBLIC ${GTEST_INCLUDE_DIRS})
+  target_link_libraries(test_services_client_cpp
+    ${GTEST_LIBRARIES})
+
+  custom_executable(test_client_scope_server_cpp "test/test_client_scope_server.cpp")
+  custom_executable(test_client_scope_client_cpp "test/test_client_scope_client.cpp")
+  target_include_directories(test_client_scope_client_cpp
+    PUBLIC ${GTEST_INCLUDE_DIRS})
+  target_link_libraries(test_client_scope_client_cpp
+    ${GTEST_LIBRARIES})
+
+  custom_executable(test_client_scope_consistency_server_cpp "test/test_client_scope_consistency_server.cpp")
+  custom_executable(test_client_scope_consistency_client_cpp "test/test_client_scope_consistency_client.cpp")
+  target_include_directories(test_client_scope_consistency_client_cpp
+    PUBLIC ${GTEST_INCLUDE_DIRS})
+  target_link_libraries(test_client_scope_consistency_client_cpp
+    ${GTEST_LIBRARIES})
 endif()  # BUILD_TESTING
 
 # TODO should not install anything

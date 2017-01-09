@@ -1,4 +1,5 @@
 import os
+import sys
 
 from launch import LaunchDescriptor
 from launch.exit_handler import primary_exit_handler
@@ -11,20 +12,13 @@ def test_requester_replier():
     replier_cmd = ['@TEST_REPLIER_EXECUTABLE@', '@TEST_SERVICE_TYPE@']
 
     if '@TEST_REQUESTER_RCL@' == 'rclpy':
-        import sys
         requester_cmd.insert(0, sys.executable)
-        requester_rmw_env_key = 'RCLPY_IMPLEMENTATION'
-    elif '@TEST_REQUESTER_RCL@' == 'rclcpp':
-        requester_rmw_env_key = 'RCL_ASSERT_RMW_ID_MATCHES'
-
     if '@TEST_REPLIER_RCL@' == 'rclpy':
-        import sys
         replier_cmd.insert(0, sys.executable)
-        replier_rmw_env_key = 'RCLPY_IMPLEMENTATION'
-    elif '@TEST_REPLIER_RCL@' == 'rclcpp':
-        replier_rmw_env_key = 'RCL_ASSERT_RMW_ID_MATCHES'
+
     replier_env = dict(os.environ)
-    replier_env[replier_rmw_env_key] = '@REPLIER_RMW@'
+    replier_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@REPLIER_RMW@'
+    replier_env['RMW_IMPLEMENTATION'] = '@REPLIER_RMW@'
     ld.add_process(
         cmd=replier_cmd,
         name='test_replier',
@@ -32,7 +26,8 @@ def test_requester_replier():
     )
 
     requester_env = dict(os.environ)
-    requester_env[requester_rmw_env_key] = '@REQUESTER_RMW@'
+    requester_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@REQUESTER_RMW@'
+    requester_env['RMW_IMPLEMENTATION'] = '@REQUESTER_RMW@'
     ld.add_process(
         cmd=requester_cmd,
         name='test_requester',
