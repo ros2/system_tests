@@ -76,6 +76,7 @@ def listener(message_name):
     assert len(received_messages) == len(expected_msgs),\
         'Should have received {} {} messages from talker'.format(len(expected_msgs), message_name)
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('message_name', default='Primitives',
