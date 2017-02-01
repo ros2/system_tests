@@ -59,6 +59,7 @@ def requester(service_name, number_of_cycles):
         'Should have received %d responsed from replier' % len(srv_fixtures)
     print('everything went well !')
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('service_name', default='Primitives',

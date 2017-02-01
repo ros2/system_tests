@@ -52,6 +52,7 @@ def talker(message_name, number_of_cycles):
         time.sleep(0.1)
     rclpy.shutdown()
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('message_name', default='Primitives',

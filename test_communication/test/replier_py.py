@@ -60,6 +60,7 @@ def replier(service_name, number_of_cycles):
         print('spin_count: ' + str(spin_count))
     rclpy.shutdown()
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('service_name', default='Primitives',
