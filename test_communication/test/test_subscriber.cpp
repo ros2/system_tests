@@ -57,8 +57,8 @@ rclcpp::subscription::SubscriptionBase::SharedPtr subscribe(
       }
 
       // shutdown node when all expected messages have been received
-      for (auto received : received_messages) {
-        if (!received) {
+      for (auto received_msg : received_messages) {
+        if (!received_msg) {
           return;
         }
       }

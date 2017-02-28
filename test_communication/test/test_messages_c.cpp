@@ -129,26 +129,28 @@ public:
     EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
     EXPECT_EQ(0, strcmp(rcl_subscription_get_topic_name(&subscription), topic_name));
 
-    rcl_wait_set_t wait_set = rcl_get_zero_initialized_wait_set();
-    EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
-    ret = rcl_wait_set_init(
-      &wait_set,
-      0,  // number_of_subscriptions
-      1,  // number_of_guard_conditions
-      0,  // number_of_timers
-      0,  // number_of_clients
-      0,  // number_of_services
-      rcl_get_default_allocator());
-    EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
-    ret = rcl_wait_set_clear_guard_conditions(&wait_set);
-    EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
-    const rcl_guard_condition_t * graph_guard_condition =
-      rcl_node_get_graph_guard_condition(this->node_ptr);
-    ret = rcl_wait_set_add_guard_condition(
-      &wait_set, graph_guard_condition);
-    EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
-    ret = rcl_wait(&wait_set, -1);
-    ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+    {
+      rcl_wait_set_t wait_set = rcl_get_zero_initialized_wait_set();
+      EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+      ret = rcl_wait_set_init(
+        &wait_set,
+        0,  // number_of_subscriptions
+        1,  // number_of_guard_conditions
+        0,  // number_of_timers
+        0,  // number_of_clients
+        0,  // number_of_services
+        rcl_get_default_allocator());
+      EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+      ret = rcl_wait_set_clear_guard_conditions(&wait_set);
+      EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+      const rcl_guard_condition_t * graph_guard_condition =
+        rcl_node_get_graph_guard_condition(this->node_ptr);
+      ret = rcl_wait_set_add_guard_condition(
+        &wait_set, graph_guard_condition);
+      EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+      ret = rcl_wait(&wait_set, -1);
+      ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+    }
 
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
     {
@@ -189,7 +191,7 @@ public:
         EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
         ret = rcl_wait_set_add_subscription(&wait_set, &subscription);
         EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
-        rcl_ret_t ret = rcl_wait(&wait_set, RCL_S_TO_NS(-1));
+        ret = rcl_wait(&wait_set, RCL_S_TO_NS(-1));
         ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
         ret = rcl_take(&subscription, &message, nullptr);
         ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
@@ -335,7 +337,7 @@ void verify_message(test_communication__msg__Primitives & message, size_t msg_nu
   EXPECT_EQ(0, strcmp(expected_msg.string_value.data, message.string_value.data));
 }
 
-DEFINE_FINI_MESSAGE(test_communication__msg__Primitives);
+DEFINE_FINI_MESSAGE(test_communication__msg__Primitives)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_primitives) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, Primitives);
@@ -368,7 +370,7 @@ void verify_message(test_communication__msg__Nested & message, size_t msg_num)
   verify_message(message.primitive_values, msg_num);
 }
 
-DEFINE_FINI_MESSAGE(test_communication__msg__Nested);
+DEFINE_FINI_MESSAGE(test_communication__msg__Nested)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_nested) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, Nested);
@@ -412,7 +414,7 @@ void verify_message(test_communication__msg__Builtins & message, size_t msg_num)
   EXPECT_EQ(expected_msg.time_value.nanosec, message.time_value.nanosec);
 }
 
-DEFINE_FINI_MESSAGE(test_communication__msg__Builtins);
+DEFINE_FINI_MESSAGE(test_communication__msg__Builtins)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_builtins) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, Builtins);
@@ -507,7 +509,7 @@ void verify_message(test_communication__msg__StaticArrayPrimitives & message, si
   }
 }
 
-DEFINE_FINI_MESSAGE(test_communication__msg__StaticArrayPrimitives);
+DEFINE_FINI_MESSAGE(test_communication__msg__StaticArrayPrimitives)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_staticarrayprimitives) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, StaticArrayPrimitives);
@@ -549,7 +551,7 @@ void verify_message(test_communication__msg__StaticArrayNested & message, size_t
   }
 }
 
-DEFINE_FINI_MESSAGE(test_communication__msg__StaticArrayNested);
+DEFINE_FINI_MESSAGE(test_communication__msg__StaticArrayNested)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_staticarraynested) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, StaticArrayNested);
@@ -797,7 +799,7 @@ void verify_message(test_communication__msg__DynamicArrayPrimitives & message, s
   }
 }
 
-DEFINE_FINI_MESSAGE(test_communication__msg__DynamicArrayPrimitives);
+DEFINE_FINI_MESSAGE(test_communication__msg__DynamicArrayPrimitives)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_dynamicarrayprimitives) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, DynamicArrayPrimitives);
@@ -872,7 +874,7 @@ void verify_message(test_communication__msg__DynamicArrayNested & message, size_
   }
 }
 
-DEFINE_FINI_MESSAGE(test_communication__msg__DynamicArrayNested);
+DEFINE_FINI_MESSAGE(test_communication__msg__DynamicArrayNested)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_dynamicarraynested) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, DynamicArrayNested);
@@ -1042,7 +1044,7 @@ void verify_message(test_communication__msg__BoundedArrayPrimitives & message, s
   }
 }
 
-DEFINE_FINI_MESSAGE(test_communication__msg__BoundedArrayPrimitives);
+DEFINE_FINI_MESSAGE(test_communication__msg__BoundedArrayPrimitives)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_boundedarrayprimitives) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, BoundedArrayPrimitives);
@@ -1118,7 +1120,7 @@ void verify_message(test_communication__msg__BoundedArrayNested & message, size_
   }
 }
 
-DEFINE_FINI_MESSAGE(test_communication__msg__BoundedArrayNested);
+DEFINE_FINI_MESSAGE(test_communication__msg__BoundedArrayNested)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_boundedarraynested) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, BoundedArrayNested);
