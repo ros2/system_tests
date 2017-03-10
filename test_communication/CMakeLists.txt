@@ -14,13 +14,6 @@ find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
-# get the rmw implementations ahead of time
-find_package(rmw_implementation_cmake REQUIRED)
-get_available_rmw_implementations(rmw_implementations2)
-foreach(rmw_implementation ${rmw_implementations2})
-  find_package("${rmw_implementation}" REQUIRED)
-endforeach()
-
 set(message_files
   "msg/BoundedArrayNested.msg"
   "msg/BoundedArrayPrimitives.msg"
@@ -51,6 +44,13 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
+
+  # get the rmw implementations ahead of time
+  find_package(rmw_implementation_cmake REQUIRED)
+  get_available_rmw_implementations(rmw_implementations2)
+  foreach(rmw_implementation ${rmw_implementations2})
+    find_package("${rmw_implementation}" REQUIRED)
+  endforeach()
 
   function(custom_test target with_message_argument)
     if(with_message_argument)
