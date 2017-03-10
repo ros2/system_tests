@@ -13,13 +13,9 @@
 
   <build_depend>ament_cmake_auto</build_depend>
   <build_depend>builtin_interfaces</build_depend>
-  <build_depend>rclcpp</build_depend>
-  <build_depend>rclpy</build_depend>
-  <build_depend>rcl</build_depend>
   <build_depend>rmw_implementation</build_depend>
   <build_depend>rmw_implementation_cmake</build_depend>
   <build_depend>rosidl_default_generators</build_depend>
-  <build_depend>rosidl_default_runtime</build_depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
@@ -28,6 +24,11 @@
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
   <test_depend>launch</test_depend>
+  <test_depend>rclcpp</test_depend>
+  <test_depend>rclpy</test_depend>
+  <test_depend>rcl</test_depend>
+
+  <exec_depend>rosidl_default_runtime</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
