@@ -11,45 +11,46 @@ else()
 endif()
 
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_auto REQUIRED)
+ament_auto_find_build_dependencies()
+
+# get the rmw implementations ahead of time
+find_package(rmw_implementation_cmake REQUIRED)
+get_available_rmw_implementations(rmw_implementations2)
+foreach(rmw_implementation ${rmw_implementations2})
+  find_package("${rmw_implementation}" REQUIRED)
+endforeach()
+
+set(message_files
+  "msg/BoundedArrayNested.msg"
+  "msg/BoundedArrayPrimitives.msg"
+  "msg/Builtins.msg"
+  "msg/DynamicArrayNested.msg"
+  "msg/DynamicArrayPrimitives.msg"
+  "msg/Empty.msg"
+  "msg/Nested.msg"
+  "msg/Primitives.msg"
+  "msg/StaticArrayNested.msg"
+  "msg/StaticArrayPrimitives.msg"
+)
+set(other_message_files
+  "msg/FieldsWithSameType.msg"
+  "msg/UInt32.msg"
+)
+set(service_files
+  "srv/Empty.srv"
+  "srv/Primitives.srv"
+)
+rosidl_generate_interfaces(${PROJECT_NAME}
+  ${message_files}
+  ${other_message_files}
+  ${service_files}
+  DEPENDENCIES builtin_interfaces
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
-
-  # get the rmw implementations ahead of time
-  find_package(rmw_implementation_cmake REQUIRED)
-  get_available_rmw_implementations(rmw_implementations2)
-  foreach(rmw_implementation ${rmw_implementations2})
-    find_package("${rmw_implementation}" REQUIRED)
-  endforeach()
-
-  set(message_files
-    "msg/BoundedArrayNested.msg"
-    "msg/BoundedArrayPrimitives.msg"
-    "msg/Builtins.msg"
-    "msg/DynamicArrayNested.msg"
-    "msg/DynamicArrayPrimitives.msg"
-    "msg/Empty.msg"
-    "msg/Nested.msg"
-    "msg/Primitives.msg"
-    "msg/StaticArrayNested.msg"
-    "msg/StaticArrayPrimitives.msg"
-  )
-  set(other_message_files
-    "msg/FieldsWithSameType.msg"
-    "msg/UInt32.msg"
-  )
-  set(service_files
-    "srv/Empty.srv"
-    "srv/Primitives.srv"
-  )
-  rosidl_generate_interfaces(${PROJECT_NAME}
-    ${message_files}
-    ${other_message_files}
-    ${service_files}
-    DEPENDENCIES builtin_interfaces
-    SKIP_INSTALL
-  )
 
   function(custom_test target with_message_argument)
     if(with_message_argument)
@@ -322,5 +323,7 @@ if(BUILD_TESTING)
   call_for_each_rmw_implementation(targets)
 endif()  # BUILD_TESTING
 
-# TODO should not install anything
+install(FILES test/__init__.py test/message_fixtures.py
+  DESTINATION "${PYTHON_INSTALL_DIR}/${PROJECT_NAME}")
+
 ament_package()
