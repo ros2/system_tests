@@ -10,7 +10,6 @@ else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
 endif()
 
-find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
@@ -326,4 +325,4 @@ endif()  # BUILD_TESTING
 install(FILES test/__init__.py test/message_fixtures.py
   DESTINATION "${PYTHON_INSTALL_DIR}/${PROJECT_NAME}")
 
-ament_package()
+ament_auto_package()
