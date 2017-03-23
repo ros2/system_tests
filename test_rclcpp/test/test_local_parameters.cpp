@@ -309,6 +309,73 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_variant
   EXPECT_EQ(true, got_param);
 }
 
+TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_parameter_or) {
+  using rclcpp::parameter::ParameterVariant;
+
+  auto node = rclcpp::Node::make_shared("test_parameters_get_parameter_or");
+  auto set_parameters_results = node->set_parameters({
+    ParameterVariant("foo", 2),
+  });
+
+  // Check to see if they were set.
+  for (auto & result : set_parameters_results) {
+    ASSERT_TRUE(result.successful);
+  }
+
+  {
+    // try to get with default a parameter that is already set
+    int foo_value = -1;
+    node->get_parameter_or("foo", foo_value, 42);
+    ASSERT_EQ(foo_value, 2);
+    int foo_value2 = -1;
+    ASSERT_TRUE(node->get_parameter("foo", foo_value2));
+    ASSERT_EQ(foo_value2, 2);
+  }
+
+  {
+    // try to get with default a parameter that is not set
+    int bar_value = -1;
+    node->get_parameter_or("bar", bar_value, 42);
+    ASSERT_EQ(bar_value, 42);
+    // ensure it is still unset
+    int bar_value2 = -1;
+    ASSERT_FALSE(node->get_parameter("bar", bar_value2));
+    ASSERT_EQ(bar_value2, -1);
+  }
+}
+
+TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), set_parameter_if_not_set) {
+  using rclcpp::parameter::ParameterVariant;
+
+  auto node = rclcpp::Node::make_shared("test_parameters_set_parameter_if_not_set");
+  auto set_parameters_results = node->set_parameters({
+    ParameterVariant("foo", 2),
+  });
+
+  // Check to see if they were set.
+  for (auto & result : set_parameters_results) {
+    ASSERT_TRUE(result.successful);
+  }
+
+  {
+    // try to set_if_not_set a parameter that is already set
+    node->set_parameter_if_not_set("foo", 42);
+    // make sure it did not change (it was already set)
+    int foo_value = -1;
+    ASSERT_TRUE(node->get_parameter("foo", foo_value));
+    ASSERT_EQ(foo_value, 2);
+  }
+
+  {
+    // try to get with default a parameter that is not set
+    node->set_parameter_if_not_set("bar", 42);
+    // ensure it was set
+    int bar_value = -1;
+    ASSERT_TRUE(node->get_parameter("bar", bar_value));
+    ASSERT_EQ(bar_value, 42);
+  }
+}
+
 int main(int argc, char ** argv)
 {
   // NOTE: use custom main to ensure that rclcpp::init is called only once
