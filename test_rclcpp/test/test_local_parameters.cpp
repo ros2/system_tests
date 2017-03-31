@@ -324,21 +324,21 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_parameter_or) {
 
   {
     // try to get with default a parameter that is already set
-    int foo_value = -1;
-    node->get_parameter_or("foo", foo_value, 42);
+    int64_t foo_value = -1;
+    node->get_parameter_or("foo", foo_value, static_cast<int64_t>(42));
     ASSERT_EQ(foo_value, 2);
-    int foo_value2 = -1;
+    int64_t foo_value2 = -1;
     ASSERT_TRUE(node->get_parameter("foo", foo_value2));
     ASSERT_EQ(foo_value2, 2);
   }
 
   {
     // try to get with default a parameter that is not set
-    int bar_value = -1;
-    node->get_parameter_or("bar", bar_value, 42);
+    int64_t bar_value = -1;
+    node->get_parameter_or("bar", bar_value, static_cast<int64_t>(42));
     ASSERT_EQ(bar_value, 42);
     // ensure it is still unset
-    int bar_value2 = -1;
+    int64_t bar_value2 = -1;
     ASSERT_FALSE(node->get_parameter("bar", bar_value2));
     ASSERT_EQ(bar_value2, -1);
   }
@@ -361,7 +361,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), set_parameter_if_not_
     // try to set_if_not_set a parameter that is already set
     node->set_parameter_if_not_set("foo", 42);
     // make sure it did not change (it was already set)
-    int foo_value = -1;
+    int64_t foo_value = -1;
     ASSERT_TRUE(node->get_parameter("foo", foo_value));
     ASSERT_EQ(foo_value, 2);
   }
@@ -370,7 +370,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), set_parameter_if_not_
     // try to get with default a parameter that is not set
     node->set_parameter_if_not_set("bar", 42);
     // ensure it was set
-    int bar_value = -1;
+    int64_t bar_value = -1;
     ASSERT_TRUE(node->get_parameter("bar", bar_value));
     ASSERT_EQ(bar_value, 42);
   }
