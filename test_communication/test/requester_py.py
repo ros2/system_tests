@@ -24,20 +24,18 @@ sys.path.insert(0, os.getcwd())
 def requester(service_name, number_of_cycles):
     from service_fixtures import get_test_srv
     import rclpy
-    from rclpy.qos import qos_profile_services_default
 
     service_pkg = 'test_communication'
     module = importlib.import_module(service_pkg + '.srv')
     srv_mod = getattr(module, service_name)
 
-    rclpy.init([])
+    rclpy.init(args=[])
 
     node = rclpy.create_node('requester')
 
     srv_fixtures = get_test_srv(service_name)
 
-    client = node.create_client(
-        srv_mod, 'test_service_' + service_name, qos_profile_services_default)
+    client = node.create_client(srv_mod, 'test_service_' + service_name)
 
     spin_count = 1
     received_replies = []
