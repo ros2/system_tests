@@ -33,13 +33,12 @@ def replier_callback(request, response, srv_fixtures):
 def replier(service_name, number_of_cycles):
     from service_fixtures import get_test_srv
     import rclpy
-    from rclpy.qos import qos_profile_services_default
 
     service_pkg = 'test_communication'
     module = importlib.import_module(service_pkg + '.srv')
     srv_mod = getattr(module, service_name)
 
-    rclpy.init([])
+    rclpy.init(args=[])
 
     node = rclpy.create_node('replier')
 
@@ -49,13 +48,12 @@ def replier(service_name, number_of_cycles):
         replier_callback, srv_fixtures=srv_fixtures)
 
     node.create_service(
-        srv_mod, 'test_service_' + service_name, chatter_callback,
-        qos_profile_services_default)
+        srv_mod, 'test_service_' + service_name, chatter_callback)
 
     spin_count = 1
     print('replier: beginning loop')
     while rclpy.ok() and spin_count < number_of_cycles:
-        rclpy.spin_once(node, 2)
+        rclpy.spin_once(node, timeout_sec=2)
         spin_count += 1
         print('spin_count: ' + str(spin_count))
     rclpy.shutdown()
