@@ -65,7 +65,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
 
   rclcpp::executors::MultiThreadedExecutor executor;
   // Try to saturate the MultithreadedExecutor's thread pool with subscriptions
-  for (uint32_t i = 0; i < std::min<unsigned int>(executor.get_number_of_threads(), 16); i++) {
+  for (uint32_t i = 0; i < std::min<size_t>(executor.get_number_of_threads(), 16); ++i) {
     auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(node_topic_name, 16, callback,
         callback_group);
     subscriptions.push_back(sub);
@@ -163,7 +163,7 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     };
 
   rmw_qos_profile_t qos_profile = rmw_qos_profile_services_default;
-  qos_profile.depth = std::min<unsigned int>(executor.get_number_of_threads(), 16) * 2;
+  qos_profile.depth = std::min<size_t>(executor.get_number_of_threads(), 16) * 2;
   auto callback_group = node->create_callback_group(
     rclcpp::callback_group::CallbackGroupType::Reentrant);
   auto service = node->create_service<test_rclcpp::srv::AddTwoInts>(
@@ -176,7 +176,7 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
 
 
   std::vector<ClientRequestPair> client_request_pairs;
-  for (uint32_t i = 0; i < 2 * std::min<unsigned int>(executor.get_number_of_threads(), 16); ++i) {
+  for (uint32_t i = 0; i < 2 * std::min<size_t>(executor.get_number_of_threads(), 16); ++i) {
     auto client = node->create_client<test_rclcpp::srv::AddTwoInts>(
       "multi_consumer_clients", qos_profile, callback_group);
     auto request = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
@@ -204,13 +204,13 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
       results.push_back(pair.first->async_send_request(pair.second));
     }
     // Wait on each future
-    for (uint32_t i = 0; i < results.size(); i++) {
+    for (uint32_t i = 0; i < results.size(); ++i) {
       auto result = executor.spin_until_future_complete(results[i]);
       ASSERT_EQ(result, rclcpp::executor::FutureReturnCode::SUCCESS);
     }
 
     // Check the status of all futures
-    for (uint32_t i = 0; i < results.size(); i++) {
+    for (uint32_t i = 0; i < results.size(); ++i) {
       ASSERT_EQ(std::future_status::ready, results[i].wait_for(std::chrono::seconds(0)));
       EXPECT_EQ(results[i].get()->sum, 2 * i + 1);
     }
@@ -242,7 +242,7 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     executor.spin();
 
     // Check the status of all futures
-    for (uint32_t i = 0; i < results.size(); i++) {
+    for (uint32_t i = 0; i < results.size(); ++i) {
       ASSERT_EQ(std::future_status::ready, results[i].wait_for(std::chrono::seconds(0)));
       EXPECT_EQ(results[i].get()->sum, 2 * i + 1);
     }
@@ -267,7 +267,7 @@ static inline void multi_access_publisher(bool intra_process)
 
   rclcpp::executors::MultiThreadedExecutor executor;
 
-  const size_t num_messages = 5 * std::min<unsigned int>(executor.get_number_of_threads(), 16);
+  const size_t num_messages = 5 * std::min<size_t>(executor.get_number_of_threads(), 16);
   auto pub = node->create_publisher<test_rclcpp::msg::UInt32>(node_topic_name, num_messages);
   // callback groups?
   auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
@@ -297,7 +297,7 @@ static inline void multi_access_publisher(bool intra_process)
     };
   std::vector<rclcpp::timer::TimerBase::SharedPtr> timers;
   // timers will fire simultaneously in each thread
-  for (uint32_t i = 0; i < std::min<unsigned int>(executor.get_number_of_threads(), 16); i++) {
+  for (uint32_t i = 0; i < std::min<size_t>(executor.get_number_of_threads(), 16); ++i) {
     timers.push_back(node->create_wall_timer(std::chrono::milliseconds(1), timer_callback));
   }
 
