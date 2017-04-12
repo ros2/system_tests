@@ -329,7 +329,7 @@ void get_message(test_communication__msg__Primitives * msg, size_t msg_num)
       msg->uint32_value = 0;
       msg->int64_value = 0;
       msg->uint64_value = 0;
-      rosidl_generator_c__String__assign(&msg->string_value, "hello");
+      rosidl_generator_c__String__assign(&msg->string_value, "こんにちは");
       break;
   }
 }

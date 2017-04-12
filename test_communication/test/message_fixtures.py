@@ -129,7 +129,7 @@ def get_msg_primitives():
     msg.int64_value = 0
     msg.uint64_value = 0
     # check multibyte string
-    msg.string_value = 'hello'
+    msg.string_value = 'こんにちは'
     msgs.append(msg)
 
     return msgs

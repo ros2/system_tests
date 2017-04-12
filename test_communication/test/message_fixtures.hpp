@@ -137,7 +137,7 @@ get_messages_primitives()
     msg->int64_value = 0;
     msg->uint64_value = 0;
     // check multibyte string
-    msg->string_value = "hello";
+    msg->string_value = "こんにちは";
     messages.push_back(msg);
   }
   return messages;
