@@ -204,13 +204,13 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
       results.push_back(pair.first->async_send_request(pair.second));
     }
     // Wait on each future
-    for (uint32_t i = 0; i < results.size(); i++) {
+    for (uint32_t i = 0; i < results.size(); ++i) {
       auto result = executor.spin_until_future_complete(results[i]);
       ASSERT_EQ(result, rclcpp::executor::FutureReturnCode::SUCCESS);
     }
 
     // Check the status of all futures
-    for (uint32_t i = 0; i < results.size(); i++) {
+    for (uint32_t i = 0; i < results.size(); ++i) {
       ASSERT_EQ(std::future_status::ready, results[i].wait_for(std::chrono::seconds(0)));
       EXPECT_EQ(results[i].get()->sum, 2 * i + 1);
     }
@@ -242,7 +242,7 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     executor.spin();
 
     // Check the status of all futures
-    for (uint32_t i = 0; i < results.size(); i++) {
+    for (uint32_t i = 0; i < results.size(); ++i) {
       ASSERT_EQ(std::future_status::ready, results[i].wait_for(std::chrono::seconds(0)));
       EXPECT_EQ(results[i].get()->sum, 2 * i + 1);
     }
@@ -297,7 +297,7 @@ static inline void multi_access_publisher(bool intra_process)
     };
   std::vector<rclcpp::timer::TimerBase::SharedPtr> timers;
   // timers will fire simultaneously in each thread
-  for (uint32_t i = 0; i < std::min<size_t>(executor.get_number_of_threads(), 16); i++) {
+  for (uint32_t i = 0; i < std::min<size_t>(executor.get_number_of_threads(), 16); ++i) {
     timers.push_back(node->create_wall_timer(std::chrono::milliseconds(1), timer_callback));
   }
 
