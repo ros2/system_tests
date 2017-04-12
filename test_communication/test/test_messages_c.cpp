@@ -231,7 +231,7 @@ template<>
 size_t get_message_num(test_communication__msg__Primitives * msg)
 {
   (void)msg;
-  return 4;
+  return 5;
 }
 
 template<>
@@ -294,24 +294,42 @@ void get_message(test_communication__msg__Primitives * msg, size_t msg_num)
       rosidl_generator_c__String__assign(&msg->string_value, "min value");
       break;
     case 3:
-      msg->bool_value = true;
-      msg->byte_value = 1;
-      msg->char_value = '\1';
-      msg->float32_value = 1.0f;
-      msg->float64_value = 1;
-      msg->int8_value = 1;
-      msg->uint8_value = 1;
-      msg->int16_value = 1;
-      msg->uint16_value = 1;
-      msg->int32_value = 1;
-      msg->uint32_value = 1;
-      msg->int64_value = 1;
-      msg->uint64_value = 1;
-      char string_value[20000] = {};
-      for (uint32_t i = 0; i < 20000; i++) {
-        string_value[i] = '0' + (i % 10);
+      {
+        msg->bool_value = true;
+        msg->byte_value = 1;
+        msg->char_value = '\1';
+        msg->float32_value = 1.0f;
+        msg->float64_value = 1;
+        msg->int8_value = 1;
+        msg->uint8_value = 1;
+        msg->int16_value = 1;
+        msg->uint16_value = 1;
+        msg->int32_value = 1;
+        msg->uint32_value = 1;
+        msg->int64_value = 1;
+        msg->uint64_value = 1;
+        char string_value[20000] = {};
+        for (uint32_t i = 0; i < 20000; i++) {
+          string_value[i] = '0' + (i % 10);
+        }
+        rosidl_generator_c__String__assignn(&msg->string_value, string_value, sizeof(string_value));
+        break;
       }
-      rosidl_generator_c__String__assignn(&msg->string_value, string_value, sizeof(string_value));
+    case 4:
+      msg->bool_value = false;
+      msg->byte_value = 0;
+      msg->char_value = '\0';
+      msg->float32_value = 0.0f;
+      msg->float64_value = 0;
+      msg->int8_value = 0;
+      msg->uint8_value = 0;
+      msg->int16_value = 0;
+      msg->uint16_value = 0;
+      msg->int32_value = 0;
+      msg->uint32_value = 0;
+      msg->int64_value = 0;
+      msg->uint64_value = 0;
+      rosidl_generator_c__String__assign(&msg->string_value, "hello");
       break;
   }
 }
@@ -348,7 +366,7 @@ template<>
 size_t get_message_num(test_communication__msg__Nested * msg)
 {
   (void)msg;
-  return 4;
+  return 5;
 }
 
 template<>

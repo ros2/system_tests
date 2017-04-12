@@ -114,6 +114,24 @@ def get_msg_primitives():
         msg.string_value += str(i % 10)
     msgs.append(msg)
 
+    msg = Primitives()
+    msg.bool_value = False
+    msg.byte_value = bytes([0])
+    msg.char_value = '\x00'
+    msg.float32_value = float(0.0)
+    msg.float64_value = float(0.0)
+    msg.int8_value = 0
+    msg.uint8_value = 0
+    msg.int16_value = 0
+    msg.uint16_value = 0
+    msg.int32_value = 0
+    msg.uint32_value = 0
+    msg.int64_value = 0
+    msg.uint64_value = 0
+    # check multibyte string
+    msg.string_value = 'hello'
+    msgs.append(msg)
+
     return msgs
 
 

@@ -121,6 +121,25 @@ get_messages_primitives()
     }
     messages.push_back(msg);
   }
+  {
+    auto msg = std::make_shared<test_communication::msg::Primitives>();
+    msg->bool_value = false;
+    msg->byte_value = 0;
+    msg->char_value = '\0';
+    msg->float32_value = 0.0f;
+    msg->float64_value = 0;
+    msg->int8_value = 0;
+    msg->uint8_value = 0;
+    msg->int16_value = 0;
+    msg->uint16_value = 0;
+    msg->int32_value = 0;
+    msg->uint32_value = 0;
+    msg->int64_value = 0;
+    msg->uint64_value = 0;
+    // check multibyte string
+    msg->string_value = "hello";
+    messages.push_back(msg);
+  }
   return messages;
 }
 
