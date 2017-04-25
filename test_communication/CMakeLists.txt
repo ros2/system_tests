@@ -219,7 +219,7 @@ if(BUILD_TESTING)
         TIMEOUT 30
         ${SKIP_TEST})
       set_tests_properties(
-        test_publisher_subscriber${test_suffix}
+        test_requester_replier${test_suffix}
         PROPERTIES DEPENDS
           "test_requester_cpp__${rmw_implementation1};test_replier_cpp__${rmw_implementation2}"
       )
