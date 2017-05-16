@@ -127,6 +127,34 @@ if(BUILD_TESTING)
     )
   endfunction()
 
+  function(custom_security_test_c target)
+    set(SKIP_TEST "")
+    # TODO(mikaelarguedas) reenable fastrtps once local participant secure comm is working
+    if(rmw_implementation STREQUAL "rmw_fastrtps_cpp")
+      set(SKIP_TEST "SKIP_TEST")
+    endif()
+    ament_add_gtest(
+      "${target}${target_suffix}" ${ARGN}
+      TIMEOUT 90
+      ${SKIP_TEST}
+      APPEND_LIBRARY_DIRS "${append_library_dirs}"
+      ENV
+      RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
+      RMW_IMPLEMENTATION=${rmw_implementation})
+    target_link_libraries(${target}${target_suffix}
+      ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
+      ${_AMENT_EXPORT_LIBRARY_TARGETS})
+    add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
+    rosidl_target_interfaces(${target}${target_suffix}
+      ${PROJECT_NAME} "rosidl_typesupport_c")
+    ament_target_dependencies(${target}${target_suffix}
+      "rcl")
+    set_tests_properties(
+      ${target}${target_suffix}
+      PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}${target_suffix}>"
+    )
+  endfunction()
+
   macro(multi_targets)
     # test publish / subscribe messages
     if(rmw_implementation1 STREQUAL rmw_implementation2)
@@ -280,38 +308,41 @@ if(BUILD_TESTING)
     endforeach()
   endmacro()
 
-  # publisher combined with a subscriber
-  custom_executable(test_publisher_subscriber_cpp
-    "test/test_publisher_subscriber.cpp")
-  # subcription valid data
-  custom_executable(test_subscription_valid_data_cpp
-    "test/test_subscription_valid_data.cpp")
-  # executables publisher / subscriber
-  custom_executable(test_publisher_cpp
-    "test/test_publisher.cpp")
-  custom_executable(test_subscriber_cpp
-    "test/test_subscriber.cpp")
-  # executables requester / replier
-  custom_executable(test_requester_cpp
-    "test/test_requester.cpp")
-  custom_executable(test_replier_cpp
-    "test/test_replier.cpp")
+  # # publisher combined with a subscriber
+  # custom_executable(test_publisher_subscriber_cpp
+  #   "test/test_publisher_subscriber.cpp")
+  # # subcription valid data
+  # custom_executable(test_subscription_valid_data_cpp
+  #   "test/test_subscription_valid_data.cpp")
+  # # executables publisher / subscriber
+  # custom_executable(test_publisher_cpp
+  #   "test/test_publisher.cpp")
+  # custom_executable(test_subscriber_cpp
+  #   "test/test_subscriber.cpp")
+  # # executables requester / replier
+  # custom_executable(test_requester_cpp
+  #   "test/test_requester.cpp")
+  # custom_executable(test_replier_cpp
+  #   "test/test_replier.cpp")
 
   macro(targets)
     custom_test_c(test_messages_c
       "test/test_messages_c.cpp")
 
-    # publisher combined with a subscriber
-    custom_test(test_publisher_subscriber_cpp TRUE)
-    # subcription valid data
-    custom_test(test_subscription_valid_data_cpp FALSE)
+    custom_security_test_c(test_security_c
+      "test/test_secure_nodes_c.cpp")
 
-    set(rmw_implementation1 "${rmw_implementation}")
-    set(target_suffix1 "${target_suffix}")
+    # # publisher combined with a subscriber
+    # custom_test(test_publisher_subscriber_cpp TRUE)
+    # # subcription valid data
+    # custom_test(test_subscription_valid_data_cpp FALSE)
 
-    foreach(rmw_implementation2 ${rmw_implementations2})
-      multi_client_libraries()
-    endforeach()
+    # set(rmw_implementation1 "${rmw_implementation}")
+    # set(target_suffix1 "${target_suffix}")
+
+    # foreach(rmw_implementation2 ${rmw_implementations2})
+    #   multi_client_libraries()
+    # endforeach()
   endmacro()
 
   set(append_library_dirs "${CMAKE_CURRENT_BINARY_DIR}")
