@@ -1,0 +1,2 @@
+V	270514235600Z		1000	unknown	/CN=publisher
+V	270514235607Z		1001	unknown	/CN=subscriber

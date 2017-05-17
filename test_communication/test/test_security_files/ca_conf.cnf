@@ -1,0 +1,40 @@
+[ ca ]
+default_ca = CA_default
+
+[ CA_default ]
+dir              = .
+certs            = $dir/certs
+crl_dir          = $dir/crl
+database         = $dir/index.txt
+unique_subject   = no
+new_certs_dir    = $dir
+certificate      = $dir/ca.cert.pem
+private_key      = $dir/ca.key.pem
+serial           = $dir/serial
+crlnumber        = $dir/crlnumber
+crl              = $dir/crl.pem
+RANDFILE         = $dir/private/.rand
+name_opt         = ca_default
+cert_opt         = ca_default
+default_days     = 1825
+default_crl_days = 30
+default_md       = sha256
+preserve         = no
+policy           = policy_match
+
+[ policy_match ]
+countryName            = optional
+stateOrProvinceName    = optional
+organizationName       = optional
+organizationalUnitName = optional
+commonName             = supplied
+emailAddress           = optional
+
+[ req ]
+prompt = no
+distinguished_name = req_distinguished_name
+string_mask = utf8only
+
+[ req_distinguished_name ]
+commonName = sros2testCA
+
