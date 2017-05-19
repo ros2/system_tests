@@ -1,0 +1,60 @@
+import os
+import sys
+
+from launch import LaunchDescriptor
+from launch.exit_handler import primary_exit_handler
+from launch.launcher import DefaultLauncher
+
+
+def test_secure_publisher_subscriber():
+    ld = LaunchDescriptor()
+    publisher_cmd = [
+        '@TEST_PUBLISHER_EXECUTABLE@', '@PUBLISHER_NODE_NAME@',
+        '@PUBLISHER_TOPIC_NAME@', '@PUBLISHER_SHOULD_THROW@'
+    ]
+    subscriber_cmd = [
+        '@TEST_SUBSCRIBER_EXECUTABLE@', '@SUBSCRIBER_NODE_NAME@',
+        '@SUBSCRIBER_TOPIC_NAME@', '@SUBSCRIBER_SHOULD_THROW@', '@SUBSCRIBER_SHOULD_TIMEOUT@'
+    ]
+
+    # if '@TEST_PUBLISHER_RCL@' == 'rclpy':
+    #     publisher_cmd.insert(0, sys.executable)
+    # if '@TEST_SUBSCRIBER_RCL@' == 'rclpy':
+    #     subscriber_cmd.insert(0, sys.executable)
+
+    publisher_env = dict(os.environ)
+    publisher_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@PUBLISHER_RMW@'
+    publisher_env['RMW_IMPLEMENTATION'] = '@PUBLISHER_RMW@'
+    publisher_env['ROS_ENABLE_SECURITY'] = '@PUBLISHER_ROS_ENABLE_SECURITY@'
+    publisher_env['ROS_SECURITY_STRATEGY'] = '@PUBLISHER_ROS_SECURITY_STRATEGY@'
+    publisher_env['ROS_SECURE_ROOT'] = '@PUBLISHER_ROS_SECURE_ROOT@'
+    ld.add_process(
+        cmd=publisher_cmd,
+        name='test_publisher',
+        env=publisher_env,
+    )
+
+    subscriber_env = dict(os.environ)
+    subscriber_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@SUBSCRIBER_RMW@'
+    subscriber_env['RMW_IMPLEMENTATION'] = '@SUBSCRIBER_RMW@'
+    subscriber_env['ROS_ENABLE_SECURITY'] = '@SUBSCRIBER_ROS_ENABLE_SECURITY@'
+    subscriber_env['ROS_SECURITY_STRATEGY'] = '@SUBSCRIBER_ROS_SECURITY_STRATEGY@'
+    subscriber_env['ROS_SECURE_ROOT'] = '@SUBSCRIBER_ROS_SECURE_ROOT@'
+    ld.add_process(
+        cmd=subscriber_cmd,
+        name='test_subscriber',
+        env=subscriber_env,
+        exit_handler=primary_exit_handler,
+    )
+
+    launcher = DefaultLauncher()
+    launcher.add_launch_descriptor(ld)
+    rc = launcher.launch()
+
+    assert rc == 0, \
+        "The launch file failed with exit code '" + str(rc) + "'. " \
+        'May be the subscriber did not receive any messages?'
+
+
+if __name__ == '__main__':
+    test_secure_publisher_subscriber()

@@ -127,34 +127,6 @@ if(BUILD_TESTING)
     )
   endfunction()
 
-  function(custom_security_test_c target)
-    set(SKIP_TEST "")
-    # TODO(mikaelarguedas) reenable fastrtps once local participant secure comm is working
-    if(rmw_implementation STREQUAL "rmw_fastrtps_cpp")
-      set(SKIP_TEST "SKIP_TEST")
-    endif()
-    ament_add_gtest(
-      "${target}${target_suffix}" ${ARGN}
-      TIMEOUT 90
-      ${SKIP_TEST}
-      APPEND_LIBRARY_DIRS "${append_library_dirs}"
-      ENV
-      RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
-      RMW_IMPLEMENTATION=${rmw_implementation})
-    target_link_libraries(${target}${target_suffix}
-      ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-      ${_AMENT_EXPORT_LIBRARY_TARGETS})
-    add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
-    rosidl_target_interfaces(${target}${target_suffix}
-      ${PROJECT_NAME} "rosidl_typesupport_c")
-    ament_target_dependencies(${target}${target_suffix}
-      "rcl")
-    set_tests_properties(
-      ${target}${target_suffix}
-      PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}${target_suffix}>"
-    )
-  endfunction()
-
   macro(multi_targets)
     # test publish / subscribe messages
     if(rmw_implementation1 STREQUAL rmw_implementation2)
@@ -308,41 +280,119 @@ if(BUILD_TESTING)
     endforeach()
   endmacro()
 
-  # # publisher combined with a subscriber
-  # custom_executable(test_publisher_subscriber_cpp
-  #   "test/test_publisher_subscriber.cpp")
-  # # subcription valid data
-  # custom_executable(test_subscription_valid_data_cpp
-  #   "test/test_subscription_valid_data.cpp")
-  # # executables publisher / subscriber
-  # custom_executable(test_publisher_cpp
-  #   "test/test_publisher.cpp")
-  # custom_executable(test_subscriber_cpp
-  #   "test/test_subscriber.cpp")
-  # # executables requester / replier
-  # custom_executable(test_requester_cpp
-  #   "test/test_requester.cpp")
-  # custom_executable(test_replier_cpp
-  #   "test/test_replier.cpp")
+  macro(security_tests)
+    set(suffix "__${rmw_implementation}")
+    set(PUBLISHER_RMW ${rmw_implementation})
+    set(SUBSCRIBER_RMW ${rmw_implementation})
+    set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE}")
+    set(_client_library1 "rclcpp")
+    set(_client_library2 "rclcpp")
+    set(TEST_PUBLISHER_RCL "${_client_library1}")
+    set(TEST_SUBSCRIBER_RCL "${_client_library2}")
+
+    set(TEST_PUBLISHER_EXECUTABLE "$<TARGET_FILE:test_secure_publisher_cpp>")
+    set(TEST_SUBSCRIBER_EXECUTABLE "$<TARGET_FILE:test_secure_subscriber_cpp>")
+
+    set(PUBLISHER_NODE_NAME "publisher")
+    set(SUBSCRIBER_NODE_NAME "subscriber")
+    set(PUBLISHER_TOPIC_NAME "chatter")
+    set(SUBSCRIBER_TOPIC_NAME "chatter")
+    set(PUBLISHER_SHOULD_THROW "false")
+    set(SUBSCRIBER_SHOULD_THROW "false")
+    set(SUBSCRIBER_SHOULD_TIMEOUT "false")
+
+    # Test cases for communication without security
+    set(PUBLISHER_ROS_ENABLE_SECURITY_LIST "false;false;false;true;false")
+    set(SUBSCRIBER_ROS_ENABLE_SECURITY_LIST "false;false;false;false;true")
+    set(PUBLISHER_ROS_SECURITY_STRATEGY_LIST "Enforce;garbage;garbage;Permissive;Garbage")
+    set(SUBSCRIBER_ROS_SECURITY_STRATEGY_LIST "Enforce;Permissive;Garbage;Garbage;Permissive")
+    set(PUBLISHER_ROS_SECURE_ROOT_LIST "garbage;WHATEVER;${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/;garbage;garbage")
+    set(SUBSCRIBER_ROS_SECURE_ROOT_LIST "${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files;WHATEVER;garbage;garbage;garbage")
+
+    foreach(message_file ${message_files})
+      # get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
+      set(n_tests "")
+      set(number 0)
+      list(LENGTH PUBLISHER_ROS_ENABLE_SECURITY_LIST n_tests)
+      # testing only one message type to avoid taking to much test time
+      if(TEST_MESSAGE_TYPE STREQUAL "Empty")
+        while( number LESS ${n_tests} )
+          # here we define all the environment variables needed for security
+          list(GET PUBLISHER_ROS_ENABLE_SECURITY_LIST ${number} PUBLISHER_ROS_ENABLE_SECURITY)
+          list(GET SUBSCRIBER_ROS_ENABLE_SECURITY_LIST ${number} SUBSCRIBER_ROS_ENABLE_SECURITY)
+          list(GET PUBLISHER_ROS_SECURITY_STRATEGY_LIST ${number} PUBLISHER_ROS_SECURITY_STRATEGY)
+          list(GET SUBSCRIBER_ROS_SECURITY_STRATEGY_LIST ${number} SUBSCRIBER_ROS_SECURITY_STRATEGY)
+          list(GET PUBLISHER_ROS_SECURE_ROOT_LIST ${number} PUBLISHER_ROS_SECURE_ROOT)
+          list(GET SUBSCRIBER_ROS_SECURE_ROOT_LIST ${number} SUBSCRIBER_ROS_SECURE_ROOT)
+
+          set(test_suffix "__${TEST_MESSAGE_TYPE}${suffix}__test${number}")
+          configure_file(
+            test/test_secure_publisher_subscriber.py.in
+            test_secure_publisher_subscriber${test_suffix}.py.configured
+            @ONLY
+          )
+          file(GENERATE
+            OUTPUT "test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
+            INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}.py.configured"
+          )
+          MATH( EXPR number "${number} + 1")
+
+          set(SKIP_TEST "")
+          # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)
+          ament_add_nose_test(test_secure_publisher_subscriber${test_suffix}
+            "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
+            PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
+            APPEND_LIBRARY_DIRS "${append_library_dirs}"
+            TIMEOUT 15
+            ${SKIP_TEST})
+          set_tests_properties(
+            test_secure_publisher_subscriber${test_suffix}
+            PROPERTIES DEPENDS "test_secure_publisher_cpp__${rmw_implementation};test_secure_subscriber_cpp__${rmw_implementation}"
+          )
+        endwhile()
+      endif()
+    endforeach()
+  endmacro()
+
+  # publisher combined with a subscriber
+  custom_executable(test_publisher_subscriber_cpp
+    "test/test_publisher_subscriber.cpp")
+  # subcription valid data
+  custom_executable(test_subscription_valid_data_cpp
+    "test/test_subscription_valid_data.cpp")
+  # executables publisher / subscriber
+  custom_executable(test_publisher_cpp
+    "test/test_publisher.cpp")
+  custom_executable(test_subscriber_cpp
+    "test/test_subscriber.cpp")
+  # executables requester / replier
+  custom_executable(test_requester_cpp
+    "test/test_requester.cpp")
+  custom_executable(test_replier_cpp
+    "test/test_replier.cpp")
+  # executables secure publisher / subscriber
+  custom_executable(test_secure_publisher_cpp
+    "test/test_secure_publisher.cpp")
+  custom_executable(test_secure_subscriber_cpp
+    "test/test_secure_subscriber.cpp")
 
   macro(targets)
     custom_test_c(test_messages_c
       "test/test_messages_c.cpp")
 
-    custom_security_test_c(test_security_c
-      "test/test_secure_nodes_c.cpp")
+    security_tests()
 
-    # # publisher combined with a subscriber
-    # custom_test(test_publisher_subscriber_cpp TRUE)
-    # # subcription valid data
-    # custom_test(test_subscription_valid_data_cpp FALSE)
+    # publisher combined with a subscriber
+    custom_test(test_publisher_subscriber_cpp TRUE)
+    # subcription valid data
+    custom_test(test_subscription_valid_data_cpp FALSE)
 
-    # set(rmw_implementation1 "${rmw_implementation}")
-    # set(target_suffix1 "${target_suffix}")
+    set(rmw_implementation1 "${rmw_implementation}")
+    set(target_suffix1 "${target_suffix}")
 
-    # foreach(rmw_implementation2 ${rmw_implementations2})
-    #   multi_client_libraries()
-    # endforeach()
+    foreach(rmw_implementation2 ${rmw_implementations2})
+      multi_client_libraries()
+    endforeach()
   endmacro()
 
   set(append_library_dirs "${CMAKE_CURRENT_BINARY_DIR}")
