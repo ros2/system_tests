@@ -301,7 +301,9 @@ if(BUILD_TESTING)
     set(SUBSCRIBER_SHOULD_THROW "false")
     set(SUBSCRIBER_SHOULD_TIMEOUT "false")
 
-    # Test cases for communication without security
+    set(VALID_ROS_SECURE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/")
+
+    # Test suite for communication without security
     set(PUBLISHER_ROS_ENABLE_SECURITY_LIST "false;false;false;true;false")
     set(SUBSCRIBER_ROS_ENABLE_SECURITY_LIST "false;false;false;false;true")
     set(PUBLISHER_ROS_SECURITY_STRATEGY_LIST "Enforce;garbage;garbage;Permissive;Garbage")
@@ -309,23 +311,38 @@ if(BUILD_TESTING)
     set(PUBLISHER_ROS_SECURE_ROOT_LIST "garbage;WHATEVER;${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/;garbage;garbage")
     set(SUBSCRIBER_ROS_SECURE_ROOT_LIST "${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files;WHATEVER;garbage;garbage;garbage")
 
+    # Test suite for working secured communication
+    set(test_suite2_PUBLISHER_ROS_ENABLE_SECURITY_LIST "true;true;true;true")
+    set(test_suite2_SUBSCRIBER_ROS_ENABLE_SECURITY_LIST "true;true;true;true")
+    set(test_suite2_PUBLISHER_ROS_SECURITY_STRATEGY_LIST "Enforce;Enforce;Permissive;Permissive")
+    set(test_suite2_SUBSCRIBER_ROS_SECURITY_STRATEGY_LIST "Enforce;Permissive;Enforce;Permissive")
+
+    # Test suite for invalid configurations
+    set(test_suite3_SUBSCRIBER_ROS_SECURE_ROOT_LIST "garbage;${VALID_ROS_SECURE_ROOT};${VALID_ROS_SECURE_ROOT};${VALID_ROS_SECURE_ROOT};${VALID_ROS_SECURE_ROOT}")
+    set(test_suite3_SUBSCRIBER_NODE_NAMES "subscriber;subscriber2;subscriber_invalid_cert;subscriber_missing_key")
+
+    set(n_non_secure_tests "")
+    set(n_secure_communication_tests "")
+    list(LENGTH PUBLISHER_ROS_ENABLE_SECURITY_LIST n_non_secure_tests)
+    list(LENGTH test_suite2_PUBLISHER_ROS_ENABLE_SECURITY_LIST n_secure_communication_tests)
+    list(LENGTH test_suite3_SUBSCRIBER_NODE_NAMES n_throwing_secure_tests)
+
     foreach(message_file ${message_files})
-      # get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
-      set(n_tests "")
-      set(number 0)
-      list(LENGTH PUBLISHER_ROS_ENABLE_SECURITY_LIST n_tests)
+      get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
       # testing only one message type to avoid taking to much test time
       if(TEST_MESSAGE_TYPE STREQUAL "Empty")
-        while( number LESS ${n_tests} )
+        set(index 0)
+        # configure all non_secure_tests
+        while(index LESS ${n_non_secure_tests})
           # here we define all the environment variables needed for security
-          list(GET PUBLISHER_ROS_ENABLE_SECURITY_LIST ${number} PUBLISHER_ROS_ENABLE_SECURITY)
-          list(GET SUBSCRIBER_ROS_ENABLE_SECURITY_LIST ${number} SUBSCRIBER_ROS_ENABLE_SECURITY)
-          list(GET PUBLISHER_ROS_SECURITY_STRATEGY_LIST ${number} PUBLISHER_ROS_SECURITY_STRATEGY)
-          list(GET SUBSCRIBER_ROS_SECURITY_STRATEGY_LIST ${number} SUBSCRIBER_ROS_SECURITY_STRATEGY)
-          list(GET PUBLISHER_ROS_SECURE_ROOT_LIST ${number} PUBLISHER_ROS_SECURE_ROOT)
-          list(GET SUBSCRIBER_ROS_SECURE_ROOT_LIST ${number} SUBSCRIBER_ROS_SECURE_ROOT)
+          list(GET PUBLISHER_ROS_ENABLE_SECURITY_LIST ${index} PUBLISHER_ROS_ENABLE_SECURITY)
+          list(GET SUBSCRIBER_ROS_ENABLE_SECURITY_LIST ${index} SUBSCRIBER_ROS_ENABLE_SECURITY)
+          list(GET PUBLISHER_ROS_SECURITY_STRATEGY_LIST ${index} PUBLISHER_ROS_SECURITY_STRATEGY)
+          list(GET SUBSCRIBER_ROS_SECURITY_STRATEGY_LIST ${index} SUBSCRIBER_ROS_SECURITY_STRATEGY)
+          list(GET PUBLISHER_ROS_SECURE_ROOT_LIST ${index} PUBLISHER_ROS_SECURE_ROOT)
+          list(GET SUBSCRIBER_ROS_SECURE_ROOT_LIST ${index} SUBSCRIBER_ROS_SECURE_ROOT)
 
-          set(test_suffix "__${TEST_MESSAGE_TYPE}${suffix}__test${number}")
+          set(test_suffix "__${TEST_MESSAGE_TYPE}${suffix}__test_suite1_${index}")
           configure_file(
             test/test_secure_publisher_subscriber.py.in
             test_secure_publisher_subscriber${test_suffix}.py.configured
@@ -335,7 +352,86 @@ if(BUILD_TESTING)
             OUTPUT "test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}.py.configured"
           )
-          MATH( EXPR number "${number} + 1")
+          MATH( EXPR index "${index} + 1")
+
+          set(SKIP_TEST "")
+          # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)
+          ament_add_nose_test(test_secure_publisher_subscriber${test_suffix}
+            "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
+            PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
+            APPEND_LIBRARY_DIRS "${append_library_dirs}"
+            TIMEOUT 15
+            ${SKIP_TEST})
+          set_tests_properties(
+            test_secure_publisher_subscriber${test_suffix}
+            PROPERTIES DEPENDS "test_secure_publisher_cpp__${rmw_implementation};test_secure_subscriber_cpp__${rmw_implementation}"
+          )
+        endwhile()
+
+        set(index 0)
+        set(PUBLISHER_ROS_SECURE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/")
+        set(SUBSCRIBER_ROS_SECURE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/")
+        # configure all non_secure_tests
+        while( index LESS ${n_secure_communication_tests} )
+          # here we define all the environment variables needed for security
+          list(GET test_suite2_PUBLISHER_ROS_ENABLE_SECURITY_LIST ${index} PUBLISHER_ROS_ENABLE_SECURITY)
+          list(GET test_suite2_SUBSCRIBER_ROS_ENABLE_SECURITY_LIST ${index} SUBSCRIBER_ROS_ENABLE_SECURITY)
+          list(GET test_suite2_PUBLISHER_ROS_SECURITY_STRATEGY_LIST ${index} PUBLISHER_ROS_SECURITY_STRATEGY)
+          list(GET test_suite2_SUBSCRIBER_ROS_SECURITY_STRATEGY_LIST ${index} SUBSCRIBER_ROS_SECURITY_STRATEGY)
+
+          set(test_suffix "__${TEST_MESSAGE_TYPE}${suffix}__test_suite2_${index}")
+          configure_file(
+            test/test_secure_publisher_subscriber.py.in
+            test_secure_publisher_subscriber${test_suffix}.py.configured
+            @ONLY
+          )
+          file(GENERATE
+            OUTPUT "test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
+            INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}.py.configured"
+          )
+          MATH( EXPR index "${index} + 1")
+
+          set(SKIP_TEST "")
+          # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)
+          ament_add_nose_test(test_secure_publisher_subscriber${test_suffix}
+            "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
+            PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
+            APPEND_LIBRARY_DIRS "${append_library_dirs}"
+            TIMEOUT 15
+            ${SKIP_TEST})
+          set_tests_properties(
+            test_secure_publisher_subscriber${test_suffix}
+            PROPERTIES DEPENDS "test_secure_publisher_cpp__${rmw_implementation};test_secure_subscriber_cpp__${rmw_implementation}"
+          )
+        endwhile()
+
+        set(index 0)
+        # configure all trhowing tests
+        set(PUBLISHER_ROS_ENABLE_SECURITY "false")
+        set(SUBSCRIBER_ROS_ENABLE_SECURITY "true")
+        set(PUBLISHER_ROS_SECURITY_STRATEGY "Garbage")
+        set(SUBSCRIBER_ROS_SECURITY_STRATEGY "Enforce")
+        set(PUBLISHER_ROS_SECURE_ROOT "GARBAGEGARBAGE")
+        set(SUBSCRIBER_NODE_NAME "subscriber")
+        set(PUBLISHER_NODE_NAME "publisher")
+        set(PUBLISHER_SHOULD_THROW "false")
+        set(SUBSCRIBER_SHOULD_THROW "true")
+        # set(SUBSCRIBER_SHOULD_TIMEOUT "false")
+
+        while( index LESS ${n_throwing_secure_tests} )
+          list(GET test_suite3_SUBSCRIBER_NODE_NAMES ${index} SUBSCRIBER_NODE_NAME)
+          list(GET test_suite3_SUBSCRIBER_ROS_SECURE_ROOT_LIST ${index} SUBSCRIBER_ROS_SECURE_ROOT)
+          set(test_suffix "__${TEST_MESSAGE_TYPE}${suffix}__test_suite3_${index}")
+          configure_file(
+            test/test_secure_publisher_subscriber.py.in
+            test_secure_publisher_subscriber${test_suffix}.py.configured
+            @ONLY
+          )
+          file(GENERATE
+            OUTPUT "test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
+            INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}.py.configured"
+          )
+          MATH( EXPR index "${index} + 1")
 
           set(SKIP_TEST "")
           # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)

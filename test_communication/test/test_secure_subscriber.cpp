@@ -94,10 +94,10 @@ int main(int argc, char ** argv)
   } catch (std::runtime_error & e){
     if (should_throw) {
       fprintf(stderr, "throw exception as expected");
-      return 1;
+      return 0;
     } else {
       fprintf(stderr, "should not have thrown!");
-      return 0;
+      return 1;
     }
   }
   fprintf(stderr, "node created, attempt to subscribe");
