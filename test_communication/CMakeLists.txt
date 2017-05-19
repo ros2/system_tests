@@ -354,7 +354,7 @@ if(BUILD_TESTING)
               OUTPUT "test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
               INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}.py.configured"
             )
-            MATH( EXPR index "${index} + 1")
+            math(EXPR index "${index} + 1")
 
             set(SKIP_TEST "")
             # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)
@@ -391,7 +391,7 @@ if(BUILD_TESTING)
               OUTPUT "test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
               INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}.py.configured"
             )
-            MATH( EXPR index "${index} + 1")
+            math(EXPR index "${index} + 1")
 
             set(SKIP_TEST "")
             # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)
@@ -433,7 +433,7 @@ if(BUILD_TESTING)
               OUTPUT "test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
               INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}.py.configured"
             )
-            MATH( EXPR index "${index} + 1")
+            math(EXPR index "${index} + 1")
 
             set(SKIP_TEST "")
             # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)

@@ -14,6 +14,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -85,13 +86,15 @@ int main(int argc, char ** argv)
   }
   std::string node_name = argv[1];
   std::string topic_name = argv[2];
-  bool should_throw = ((0 == strcmp(argv[3], "false")) || (0 == strcmp(argv[3], "0"))) ? false : true;
-  bool should_timeout = ((0 == strcmp(argv[4], "false")) || (0 == strcmp(argv[3], "0"))) ? false : true;
+  bool should_throw =
+    ((0 == strcmp(argv[3], "false")) || (0 == strcmp(argv[3], "0"))) ? false : true;
+  bool should_timeout =
+    ((0 == strcmp(argv[4], "false")) || (0 == strcmp(argv[3], "0"))) ? false : true;
   fprintf(stderr, "should_throw is:'%d'\n", should_throw);
   std::shared_ptr<rclcpp::node::Node> node = nullptr;
   try {
     node = rclcpp::Node::make_shared(node_name);
-  } catch (std::runtime_error & e){
+  } catch (std::runtime_error & e) {
     if (should_throw) {
       fprintf(stderr, "throw exception as expected");
       return 0;
@@ -107,7 +110,7 @@ int main(int argc, char ** argv)
   auto messages_empty = get_messages_empty();
   subscriber = attempt_subscribe<test_communication::msg::Empty>(
     node, topic_name, messages_empty, received_messages);
-  if(should_throw) {
+  if (should_throw) {
     if (nullptr == subscriber) {
       return 0;
     } else {

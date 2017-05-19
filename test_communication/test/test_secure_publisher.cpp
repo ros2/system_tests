@@ -14,6 +14,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -41,9 +42,6 @@ int8_t attempt_publish(
   rclcpp::WallRate cycle_rate(10);
   rclcpp::WallRate message_rate(100);
   size_t cycle_index = 0;
-  // std::cout << "rclcpp::ok?" << rclcpp::ok() << std::endl;
-  // std::cout << "cycle_index < number_of_cycles" << (cycle_index < number_of_cycles) << std::endl;
-  // std::cout << "cycle_index:'" << cycle_index << "' number_of_cycles:'" << number_of_cycles << "'" << std::endl;
   // publish all messages up to number_of_cycles times, longer sleep between each cycle
   while (rclcpp::ok() && cycle_index < number_of_cycles) {
     // std::cout << "in while" << std::endl;
@@ -80,12 +78,13 @@ int main(int argc, char ** argv)
   }
   std::string node_name = argv[1];
   std::string topic_name = argv[2];
-  bool should_throw = ((0 == strcmp(argv[3], "false")) || (0 == strcmp(argv[3], "0"))) ? false : true;
+  bool should_throw =
+    ((0 == strcmp(argv[3], "false")) || (0 == strcmp(argv[3], "0"))) ? false : true;
   fprintf(stderr, "should_throw is:'%d'\n", should_throw);
   std::shared_ptr<rclcpp::node::Node> node = nullptr;
   try {
     node = rclcpp::Node::make_shared(node_name);
-  } catch (std::runtime_error & e){
+  } catch (std::runtime_error & e) {
     if (should_throw) {
       fprintf(stderr, "throw exception as expected");
       return 0;
