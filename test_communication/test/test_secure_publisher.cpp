@@ -84,7 +84,7 @@ int main(int argc, char ** argv)
   std::shared_ptr<rclcpp::node::Node> node = nullptr;
   try {
     node = rclcpp::Node::make_shared(node_name);
-  } catch (std::runtime_error & e) {
+  } catch (std::runtime_error &) {
     if (should_throw) {
       fprintf(stderr, "throw exception as expected");
       return 0;
