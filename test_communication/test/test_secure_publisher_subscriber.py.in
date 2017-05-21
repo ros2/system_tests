@@ -13,7 +13,7 @@ def test_secure_publisher_subscriber():
         '@PUBLISHER_TOPIC_NAME@', '@PUBLISHER_SHOULD_THROW@'
     ]
     subscriber_cmd = [
-        '@TEST_SUBSCRIBER_EXECUTABLE@', '@SUBSCRIBER_NODE_NAME@',
+        '@TEST_SUBSCRIBER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@', '@SUBSCRIBER_NODE_NAME@',
         '@SUBSCRIBER_TOPIC_NAME@', '@SUBSCRIBER_SHOULD_THROW@', '@SUBSCRIBER_SHOULD_TIMEOUT@'
     ]
 

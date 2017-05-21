@@ -332,7 +332,7 @@ if(BUILD_TESTING)
       foreach(message_file ${message_files})
         get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
         # testing only one message type to avoid taking to much test time
-        if(TEST_MESSAGE_TYPE STREQUAL "Empty")
+        # if(TEST_MESSAGE_TYPE STREQUAL "Empty")
           set(index 0)
           # configure all non_secure_tests
           while(index LESS ${n_non_secure_tests})
@@ -407,48 +407,48 @@ if(BUILD_TESTING)
             )
           endwhile()
 
-          set(index 0)
-          # configure all trhowing tests
-          set(PUBLISHER_ROS_ENABLE_SECURITY "false")
-          set(SUBSCRIBER_ROS_ENABLE_SECURITY "true")
-          set(PUBLISHER_ROS_SECURITY_STRATEGY "Garbage")
-          set(SUBSCRIBER_ROS_SECURITY_STRATEGY "Enforce")
-          set(PUBLISHER_ROS_SECURE_ROOT "GARBAGEGARBAGE")
-          set(SUBSCRIBER_NODE_NAME "subscriber")
-          set(PUBLISHER_NODE_NAME "publisher")
-          set(PUBLISHER_SHOULD_THROW "false")
-          set(SUBSCRIBER_SHOULD_THROW "true")
+          # set(index 0)
+          # # configure all trhowing tests
+          # set(PUBLISHER_ROS_ENABLE_SECURITY "false")
+          # set(SUBSCRIBER_ROS_ENABLE_SECURITY "true")
+          # set(PUBLISHER_ROS_SECURITY_STRATEGY "Garbage")
+          # set(SUBSCRIBER_ROS_SECURITY_STRATEGY "Enforce")
+          # set(PUBLISHER_ROS_SECURE_ROOT "GARBAGEGARBAGE")
+          # set(SUBSCRIBER_NODE_NAME "subscriber")
+          # set(PUBLISHER_NODE_NAME "publisher")
+          # set(PUBLISHER_SHOULD_THROW "false")
+          # set(SUBSCRIBER_SHOULD_THROW "true")
           # set(SUBSCRIBER_SHOULD_TIMEOUT "false")
 
-          while( index LESS ${n_throwing_secure_tests} )
-            list(GET test_suite3_SUBSCRIBER_NODE_NAMES ${index} SUBSCRIBER_NODE_NAME)
-            list(GET test_suite3_SUBSCRIBER_ROS_SECURE_ROOT_LIST ${index} SUBSCRIBER_ROS_SECURE_ROOT)
-            set(test_suffix "__${TEST_MESSAGE_TYPE}${suffix}__test_suite3_${index}")
-            configure_file(
-              test/test_secure_publisher_subscriber.py.in
-              test_secure_publisher_subscriber${test_suffix}.py.configured
-              @ONLY
-            )
-            file(GENERATE
-              OUTPUT "test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
-              INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}.py.configured"
-            )
-            math(EXPR index "${index} + 1")
+          # while( index LESS ${n_throwing_secure_tests} )
+          #   list(GET test_suite3_SUBSCRIBER_NODE_NAMES ${index} SUBSCRIBER_NODE_NAME)
+          #   list(GET test_suite3_SUBSCRIBER_ROS_SECURE_ROOT_LIST ${index} SUBSCRIBER_ROS_SECURE_ROOT)
+          #   set(test_suffix "__${TEST_MESSAGE_TYPE}${suffix}__test_suite3_${index}")
+          #   configure_file(
+          #     test/test_secure_publisher_subscriber.py.in
+          #     test_secure_publisher_subscriber${test_suffix}.py.configured
+          #     @ONLY
+          #   )
+          #   file(GENERATE
+          #     OUTPUT "test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
+          #     INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}.py.configured"
+          #   )
+          #   math(EXPR index "${index} + 1")
 
-            set(SKIP_TEST "")
-            # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)
-            ament_add_nose_test(test_secure_publisher_subscriber${test_suffix}
-              "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
-              PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
-              APPEND_LIBRARY_DIRS "${append_library_dirs}"
-              TIMEOUT 15
-              ${SKIP_TEST})
-            set_tests_properties(
-              test_secure_publisher_subscriber${test_suffix}
-              PROPERTIES DEPENDS "test_secure_publisher_cpp__${rmw_implementation};test_secure_subscriber_cpp__${rmw_implementation}"
-            )
-          endwhile()
-        endif()
+          #   set(SKIP_TEST "")
+          #   # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)
+          #   ament_add_nose_test(test_secure_publisher_subscriber${test_suffix}
+          #     "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
+          #     PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
+          #     APPEND_LIBRARY_DIRS "${append_library_dirs}"
+          #     TIMEOUT 15
+          #     ${SKIP_TEST})
+          #   set_tests_properties(
+          #     test_secure_publisher_subscriber${test_suffix}
+          #     PROPERTIES DEPENDS "test_secure_publisher_cpp__${rmw_implementation};test_secure_subscriber_cpp__${rmw_implementation}"
+          #   )
+          # endwhile()
+        # endif()
       endforeach()
     endif()
   endmacro()
