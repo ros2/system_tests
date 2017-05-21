@@ -9,7 +9,7 @@ from launch.launcher import DefaultLauncher
 def test_secure_publisher_subscriber():
     ld = LaunchDescriptor()
     publisher_cmd = [
-        '@TEST_PUBLISHER_EXECUTABLE@', '@PUBLISHER_NODE_NAME@',
+        '@TEST_PUBLISHER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@', '@PUBLISHER_NODE_NAME@',
         '@PUBLISHER_TOPIC_NAME@', '@PUBLISHER_SHOULD_THROW@'
     ]
     subscriber_cmd = [

@@ -69,17 +69,18 @@ int8_t attempt_publish(
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
-  if (argc != 4) {
+  if (argc != 5) {
     fprintf(
       stderr,
       "Wrong number of arguments,\n"
-      "pass a node name, a topic name and a should_throw boolean\n");
+      "pass a message type, a node name, a topic name and a should_throw boolean\n");
     return 1;
   }
-  std::string node_name = argv[1];
+  std::string message = argv[1];
+  std::string node_name = argv[2];
   std::string topic_name = argv[2];
   bool should_throw =
-    ((0 == strcmp(argv[3], "false")) || (0 == strcmp(argv[3], "0"))) ? false : true;
+    ((0 == strcmp(argv[4], "false")) || (0 == strcmp(argv[4], "0"))) ? false : true;
   fprintf(stderr, "should_throw is:'%d'\n", should_throw);
   std::shared_ptr<rclcpp::node::Node> node = nullptr;
   try {
@@ -94,37 +95,57 @@ int main(int argc, char ** argv)
     }
   }
   fprintf(stderr, "node created, attempt to publish");
-  int8_t ret = attempt_publish<test_communication::msg::Empty>(
-    node, topic_name, get_messages_empty());
-  // if (message == "Empty") {
-  //   publish<test_communication::msg::Empty>(node, message, get_messages_empty());
-  // } else if (message == "Primitives") {
-  //   publish<test_communication::msg::Primitives>(node, message, get_messages_primitives());
-  // } else if (message == "StaticArrayPrimitives") {
-  //   publish<test_communication::msg::StaticArrayPrimitives>(
-  //     node, message, get_messages_static_array_primitives());
-  // } else if (message == "DynamicArrayPrimitives") {
-  //   publish<test_communication::msg::DynamicArrayPrimitives>(
-  //     node, message, get_messages_dynamic_array_primitives());
-  // } else if (message == "BoundedArrayPrimitives") {
-  //   publish<test_communication::msg::BoundedArrayPrimitives>(
-  //     node, message, get_messages_bounded_array_primitives());
-  // } else if (message == "Nested") {
-  //   publish<test_communication::msg::Nested>(node, message, get_messages_nested());
-  // } else if (message == "DynamicArrayNested") {
-  //   publish<test_communication::msg::DynamicArrayNested>(
-  //     node, message, get_messages_dynamic_array_nested());
-  // } else if (message == "BoundedArrayNested") {
-  //   publish<test_communication::msg::BoundedArrayNested>(
-  //     node, message, get_messages_bounded_array_nested());
-  // } else if (message == "StaticArrayNested") {
-  //   publish<test_communication::msg::StaticArrayNested>(
-  //     node, message, get_messages_static_array_nested());
-  // } else if (message == "Builtins") {
-  //   publish<test_communication::msg::Builtins>(node, message, get_messages_builtins());
-  // } else {
-  //   fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
-  //   return 1;
-  // }
+  int8_t ret;
+
+  if (message == "Empty") {
+    ret = attempt_publish<test_communication::msg::Empty>(
+      node, topic_name, get_messages_empty());
+    // publish<test_communication::msg::Empty>(node, message, get_messages_empty());
+  } else if (message == "Primitives") {
+    ret = attempt_publish<test_communication::msg::Primitives>(
+      node, topic_name, get_messages_primitives());
+    // publish<test_communication::msg::Primitives>(node, message, get_messages_primitives());
+  } else if (message == "StaticArrayPrimitives") {
+    ret = attempt_publish<test_communication::msg::StaticArrayPrimitives>(
+      node, topic_name, get_messages_static_array_primitives());
+    // publish<test_communication::msg::StaticArrayPrimitives>(
+    //   node, message, get_messages_static_array_primitives());
+  } else if (message == "DynamicArrayPrimitives") {
+    ret = attempt_publish<test_communication::msg::DynamicArrayPrimitives>(
+      node, topic_name, get_messages_dynamic_array_primitives());
+    // publish<test_communication::msg::DynamicArrayPrimitives>(
+    //   node, message, get_messages_dynamic_array_primitives());
+  } else if (message == "BoundedArrayPrimitives") {
+    ret = attempt_publish<test_communication::msg::BoundedArrayPrimitives>(
+      node, topic_name, get_messages_bounded_array_primitives());
+    // publish<test_communication::msg::BoundedArrayPrimitives>(
+    //   node, message, get_messages_bounded_array_primitives());
+  } else if (message == "Nested") {
+    ret = attempt_publish<test_communication::msg::Nested>(
+      node, topic_name, get_messages_nested());
+    // publish<test_communication::msg::Nested>(node, message, get_messages_nested());
+  } else if (message == "DynamicArrayNested") {
+    ret = attempt_publish<test_communication::msg::DynamicArrayNested>(
+      node, topic_name, get_messages_dynamic_array_nested());
+    // publish<test_communication::msg::DynamicArrayNested>(
+    //   node, message, get_messages_dynamic_array_nested());
+  } else if (message == "BoundedArrayNested") {
+    ret = attempt_publish<test_communication::msg::BoundedArrayNested>(
+      node, topic_name, get_messages_bounded_array_nested());
+    // publish<test_communication::msg::BoundedArrayNested>(
+    //   node, message, get_messages_bounded_array_nested());
+  } else if (message == "StaticArrayNested") {
+    ret = attempt_publish<test_communication::msg::StaticArrayNested>(
+      node, topic_name, get_messages_static_array_nested());
+    // publish<test_communication::msg::StaticArrayNested>(
+    //   node, message, get_messages_static_array_nested());
+  } else if (message == "Builtins") {
+    ret = attempt_publish<test_communication::msg::Builtins>(
+      node, topic_name, get_messages_builtins());
+    // publish<test_communication::msg::Builtins>(node, message, get_messages_builtins());
+  } else {
+    fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
+    return 1;
+  }
   return ret;
 }
