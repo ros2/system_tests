@@ -1,1 +1,5 @@
 V	270514235600Z		1000	unknown	/CN=publisher
+V	270514235607Z		1001	unknown	/CN=subscriber
+V	270523203108Z		1002	unknown	/CN=subscriber_invalide_cert
+V	270523203207Z		1003	unknown	/CN=subscriber_invalid_cert
+V	270523203230Z		1004	unknown	/CN=publisher_invalid_cert
