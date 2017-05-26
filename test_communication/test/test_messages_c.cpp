@@ -127,7 +127,6 @@ public:
       EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
     });
     EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
-    EXPECT_EQ(0, strcmp(rcl_subscription_get_topic_name(&subscription), topic_name));
 
     {
       rcl_wait_set_t wait_set = rcl_get_zero_initialized_wait_set();
