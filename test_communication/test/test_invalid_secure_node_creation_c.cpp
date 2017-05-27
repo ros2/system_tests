@@ -17,37 +17,17 @@
 
 #include <gtest/gtest.h>
 
-#include <chrono>
-#include <string>
-#include <thread>
-
-#include "rcl/subscription.h"
-#include "rcl/publisher.h"
-
-#include "rcl/rcl.h"
-
-// #include "test_communication/msg/bounded_array_nested.h"
-// #include "test_communication/msg/bounded_array_primitives.h"
-// #include "test_communication/msg/dynamic_array_nested.h"
-// #include "test_communication/msg/dynamic_array_primitives.h"
-#include "test_communication/msg/empty.h"
-#include "test_communication/msg/nested.h"
-#include "test_communication/msg/primitives.h"
-// #include "test_communication/msg/static_array_nested.h"
-// #include "test_communication/msg/static_array_primitives.h"
-// #include "test_communication/msg/builtins.h"
-
-#include "rosidl_generator_c/string_functions.h"
-#include "rosidl_generator_c/primitives_array_functions.h"
-#include "rosidl_generator_c/message_type_support_struct.h"
-#include "rcl/error_handling.h"
-#include "rcutils/get_env.h"
-#ifndef SCOPE_EXIT_HPP_
-#define SCOPE_EXIT_HPP_
-
 #include <functional>
 #include <limits>
 #include <memory>
+#include <string>
+
+#include "rcl/rcl.h"
+#include "rcl/error_handling.h"
+#include "rcutils/get_env.h"
+
+#ifndef SCOPE_EXIT_HPP_
+#define SCOPE_EXIT_HPP_
 
 template<typename Callable>
 struct ScopeExit
@@ -109,7 +89,9 @@ public:
     const char * ROS_SECURITY_STRATEGY,
     const char * node_name, bool should_fail_participant_creation)
   {
-    custom_putenv("ROS_SECURE_ROOT", ROS_SECURE_ROOT);
+    if (ROS_SECURE_ROOT != NULL) {
+      custom_putenv("ROS_SECURE_ROOT", ROS_SECURE_ROOT);
+    }
     custom_putenv("ROS_ENABLE_SECURITY", ROS_ENABLE_SECURITY);
     custom_putenv("ROS_SECURITY_STRATEGY", ROS_SECURITY_STRATEGY);
     rcl_ret_t ret;
@@ -137,21 +119,21 @@ TEST_F(CLASSNAME(TestSecureNode, RMW_IMPLEMENTATION), test_1) {
 
 TEST_F(CLASSNAME(TestSecureNode, RMW_IMPLEMENTATION), test_2) {
   test_node_creation(
-    "/home/mikael/work/ros2/sros2_testing_ws/src/ros2/system_tests/test_communication/test/test_security_files",
+    NULL,
     "true", "Enforce",
     "publisher2", true);
 }
 
 TEST_F(CLASSNAME(TestSecureNode, RMW_IMPLEMENTATION), test_3) {
   test_node_creation(
-    "/home/mikael/work/ros2/sros2_testing_ws/src/ros2/system_tests/test_communication/test/test_security_files",
+    NULL,
     "true", "Enforce",
     "publisher_invalid_cert", true);
 }
 
 TEST_F(CLASSNAME(TestSecureNode, RMW_IMPLEMENTATION), test_4) {
   test_node_creation(
-    "/home/mikael/work/ros2/sros2_testing_ws/src/ros2/system_tests/test_communication/test/test_security_files",
-    "true", "Garbage",
+    NULL,
+    "true", "Enforce",
     "publisher_missing_key", true);
 }

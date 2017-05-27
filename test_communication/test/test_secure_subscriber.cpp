@@ -23,6 +23,7 @@
 
 #include "message_fixtures.hpp"
 
+using namespace std::chrono_literals;
 
 template<typename T>
 rclcpp::subscription::SubscriptionBase::SharedPtr attempt_subscribe(
@@ -74,104 +75,162 @@ rclcpp::subscription::SubscriptionBase::SharedPtr attempt_subscribe(
   return subscriber;
 }
 
+template<typename T>
+rclcpp::subscription::SubscriptionBase::SharedPtr attempt_subscribe(
+  rclcpp::Node::SharedPtr node,
+  const std::string & topic_name,
+  bool & sub_callback_called,
+  rclcpp::executors::SingleThreadedExecutor & exec)
+{
+  auto subscription_callback =
+    [&sub_callback_called, &exec](const typename T::SharedPtr) -> void
+    {
+      fprintf(stderr, "***SUB_CALLBACK***");
+      sub_callback_called = true;
+      exec.cancel();
+    };
+
+  auto subscriber = node->create_subscription<T>(
+    topic_name, subscription_callback, rmw_qos_profile_default);
+  return subscriber;
+}
+
+rclcpp::TimerBase::SharedPtr create_timer(
+  rclcpp::Node::SharedPtr node,
+  bool & timer_callback_called,
+  rclcpp::executors::SingleThreadedExecutor & exec)
+{
+  auto timer_callback =
+    [&timer_callback_called, &exec]() -> void
+    {
+      fprintf(stderr, "***TIMER_CALLBACK***");
+      timer_callback_called = true;
+      exec.cancel();
+    };
+  auto timer = node->create_wall_timer(8s, timer_callback, nullptr);
+
+  return timer;
+}
+
+
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
-  if (argc != 6) {
+  if (argc != 3) {
     fprintf(
       stderr,
       "Wrong number of arguments,\n"
-      "pass a node name, a topic name and a should_throw boolean\n");
+      "pass a node name, a topic name and a should_timeout boolean\n");
     return 1;
   }
   std::string message = argv[1];
-  std::string node_name = argv[2];
-  std::string topic_name = argv[3];
-  bool should_throw =
-    ((0 == strcmp(argv[4], "false")) || (0 == strcmp(argv[4], "0"))) ? false : true;
+  std::string node_name = "subscriber";
+  std::string topic_name = "chatter";
   bool should_timeout =
-    ((0 == strcmp(argv[5], "false")) || (0 == strcmp(argv[5], "0"))) ? false : true;
-  fprintf(stderr, "should_throw is:'%d'\n", should_throw);
+    ((0 == strcmp(argv[2], "false")) || (0 == strcmp(argv[2], "0"))) ? false : true;
   std::shared_ptr<rclcpp::node::Node> node = nullptr;
   try {
     node = rclcpp::Node::make_shared(node_name);
   } catch (std::runtime_error &) {
-    if (should_throw) {
-      fprintf(stderr, "throw exception as expected");
-      return 0;
-    } else {
-      fprintf(stderr, "should not have thrown!");
-      return 1;
-    }
-  }
-  fprintf(stderr, "node created, attempt to subscribe");
-  std::vector<bool> received_messages;  // collect flags about received messages
-  rclcpp::subscription::SubscriptionBase::SharedPtr subscriber;
-  // TODO(mikaelarguedas) test access control passing another should_throw
-  auto messages_empty = get_messages_empty();
-  auto messages_primitives = get_messages_primitives();
-  auto messages_static_array_primitives = get_messages_static_array_primitives();
-  auto messages_dynamic_array_primitives = get_messages_dynamic_array_primitives();
-  auto messages_bounded_array_primitives = get_messages_bounded_array_primitives();
-  auto messages_nested = get_messages_nested();
-  auto messages_dynamic_array_nested = get_messages_dynamic_array_nested();
-  auto messages_bounded_array_nested = get_messages_bounded_array_nested();
-  auto messages_static_array_nested = get_messages_static_array_nested();
-  auto messages_builtins = get_messages_builtins();
-
-  // TODO(mikaelarguedas) use should_timeout
-  (void)should_timeout;
-  // auto start = std::chrono::steady_clock::now();
-
-  // std::string message = argv[1];
-  // auto node = rclcpp::Node::make_shared(std::string("test_subscriber_") + message);
-
-  if (message == "Empty") {
-    subscriber = attempt_subscribe<test_communication::msg::Empty>(
-      node, topic_name, messages_empty, received_messages);
-  } else if (message == "Primitives") {
-    subscriber = attempt_subscribe<test_communication::msg::Primitives>(
-      node, topic_name, messages_primitives, received_messages);
-  } else if (message == "StaticArrayPrimitives") {
-    subscriber = attempt_subscribe<test_communication::msg::StaticArrayPrimitives>(
-      node, topic_name, messages_static_array_primitives, received_messages);
-  } else if (message == "DynamicArrayPrimitives") {
-    subscriber = attempt_subscribe<test_communication::msg::DynamicArrayPrimitives>(
-      node, topic_name, messages_dynamic_array_primitives, received_messages);
-  } else if (message == "BoundedArrayPrimitives") {
-    subscriber = attempt_subscribe<test_communication::msg::BoundedArrayPrimitives>(
-      node, topic_name, messages_bounded_array_primitives, received_messages);
-  } else if (message == "Nested") {
-    subscriber = attempt_subscribe<test_communication::msg::Nested>(
-      node, topic_name, messages_nested, received_messages);
-  } else if (message == "DynamicArrayNested") {
-    subscriber = attempt_subscribe<test_communication::msg::DynamicArrayNested>(
-      node, topic_name, messages_dynamic_array_nested, received_messages);
-  } else if (message == "BoundedArrayNested") {
-    subscriber = attempt_subscribe<test_communication::msg::BoundedArrayNested>(
-      node, topic_name, messages_bounded_array_nested, received_messages);
-  } else if (message == "StaticArrayNested") {
-    subscriber = attempt_subscribe<test_communication::msg::StaticArrayNested>(
-      node, topic_name, messages_static_array_nested, received_messages);
-  } else if (message == "Builtins") {
-    subscriber = attempt_subscribe<test_communication::msg::Builtins>(
-      node, topic_name, messages_builtins, received_messages);
-  } else {
-    fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
+    fprintf(stderr, "should not have thrown!");
     return 1;
   }
-  if (should_throw) {
-    if (nullptr == subscriber) {
-      return 0;
+  rclcpp::subscription::SubscriptionBase::SharedPtr subscriber;
+
+  if (!should_timeout) {
+    std::vector<bool> received_messages;  // collect flags about received messages
+    auto messages_empty = get_messages_empty();
+    auto messages_primitives = get_messages_primitives();
+    auto messages_static_array_primitives = get_messages_static_array_primitives();
+    auto messages_dynamic_array_primitives = get_messages_dynamic_array_primitives();
+    auto messages_bounded_array_primitives = get_messages_bounded_array_primitives();
+    auto messages_nested = get_messages_nested();
+    auto messages_dynamic_array_nested = get_messages_dynamic_array_nested();
+    auto messages_bounded_array_nested = get_messages_bounded_array_nested();
+    auto messages_static_array_nested = get_messages_static_array_nested();
+    auto messages_builtins = get_messages_builtins();
+    if (message == "Empty") {
+      subscriber = attempt_subscribe<test_communication::msg::Empty>(
+        node, topic_name, messages_empty, received_messages);
+    } else if (message == "Primitives") {
+      subscriber = attempt_subscribe<test_communication::msg::Primitives>(
+        node, topic_name, messages_primitives, received_messages);
+    } else if (message == "StaticArrayPrimitives") {
+      subscriber = attempt_subscribe<test_communication::msg::StaticArrayPrimitives>(
+        node, topic_name, messages_static_array_primitives, received_messages);
+    } else if (message == "DynamicArrayPrimitives") {
+      subscriber = attempt_subscribe<test_communication::msg::DynamicArrayPrimitives>(
+        node, topic_name, messages_dynamic_array_primitives, received_messages);
+    } else if (message == "BoundedArrayPrimitives") {
+      subscriber = attempt_subscribe<test_communication::msg::BoundedArrayPrimitives>(
+        node, topic_name, messages_bounded_array_primitives, received_messages);
+    } else if (message == "Nested") {
+      subscriber = attempt_subscribe<test_communication::msg::Nested>(
+        node, topic_name, messages_nested, received_messages);
+    } else if (message == "DynamicArrayNested") {
+      subscriber = attempt_subscribe<test_communication::msg::DynamicArrayNested>(
+        node, topic_name, messages_dynamic_array_nested, received_messages);
+    } else if (message == "BoundedArrayNested") {
+      subscriber = attempt_subscribe<test_communication::msg::BoundedArrayNested>(
+        node, topic_name, messages_bounded_array_nested, received_messages);
+    } else if (message == "StaticArrayNested") {
+      subscriber = attempt_subscribe<test_communication::msg::StaticArrayNested>(
+        node, topic_name, messages_static_array_nested, received_messages);
+    } else if (message == "Builtins") {
+      subscriber = attempt_subscribe<test_communication::msg::Builtins>(
+        node, topic_name, messages_builtins, received_messages);
     } else {
+      fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
+      return 1;
+    }
+
+    rclcpp::spin(node);
+  } else {
+    bool timer_callback_called = false;
+    bool sub_callback_called = false;
+    rclcpp::TimerBase::SharedPtr timer;
+    rclcpp::executors::SingleThreadedExecutor executor;
+    if (message == "Empty") {
+      subscriber = attempt_subscribe<test_communication::msg::Empty>(
+        node, topic_name, sub_callback_called, executor);
+    } else if (message == "Primitives") {
+      subscriber = attempt_subscribe<test_communication::msg::Primitives>(
+        node, topic_name, sub_callback_called, executor);
+    } else if (message == "StaticArrayPrimitives") {
+      subscriber = attempt_subscribe<test_communication::msg::StaticArrayPrimitives>(
+        node, topic_name, sub_callback_called, executor);
+    } else if (message == "DynamicArrayPrimitives") {
+      subscriber = attempt_subscribe<test_communication::msg::DynamicArrayPrimitives>(
+        node, topic_name, sub_callback_called, executor);
+    } else if (message == "BoundedArrayPrimitives") {
+      subscriber = attempt_subscribe<test_communication::msg::BoundedArrayPrimitives>(
+        node, topic_name, sub_callback_called, executor);
+    } else if (message == "Nested") {
+      subscriber = attempt_subscribe<test_communication::msg::Nested>(
+        node, topic_name, sub_callback_called, executor);
+    } else if (message == "DynamicArrayNested") {
+      subscriber = attempt_subscribe<test_communication::msg::DynamicArrayNested>(
+        node, topic_name, sub_callback_called, executor);
+    } else if (message == "BoundedArrayNested") {
+      subscriber = attempt_subscribe<test_communication::msg::BoundedArrayNested>(
+        node, topic_name, sub_callback_called, executor);
+    } else if (message == "StaticArrayNested") {
+      subscriber = attempt_subscribe<test_communication::msg::StaticArrayNested>(
+        node, topic_name, sub_callback_called, executor);
+    } else if (message == "Builtins") {
+      subscriber = attempt_subscribe<test_communication::msg::Builtins>(
+        node, topic_name, sub_callback_called, executor);
+    } else {
+      fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
+      return 1;
+    }
+    timer = create_timer(node, timer_callback_called, executor);
+    executor.add_node(node);
+    executor.spin();
+    if (!timer_callback_called || sub_callback_called) {
       return 1;
     }
   }
-  rclcpp::spin(node);
-
-  // auto end = std::chrono::steady_clock::now();
-  // std::chrono::duration<float> diff = (end - start);
-  // std::cout << "subscribed for " << diff.count() << " seconds" << std::endl;
 
   return 0;
 }

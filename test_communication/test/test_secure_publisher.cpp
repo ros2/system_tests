@@ -64,35 +64,24 @@ int8_t attempt_publish(
   return 0;
 }
 
-// TODO(mikaelarguedas) separate should_throw on node creation and
-// publisher creation to test access control
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
-  if (argc != 5) {
+  if (argc != 2) {
     fprintf(
       stderr,
       "Wrong number of arguments,\n"
-      "pass a message type, a node name, a topic name and a should_throw boolean\n");
+      "pass a message type\n");
     return 1;
   }
   std::string message = argv[1];
-  std::string node_name = argv[2];
-  std::string topic_name = argv[3];
-  bool should_throw =
-    ((0 == strcmp(argv[4], "false")) || (0 == strcmp(argv[4], "0"))) ? false : true;
-  fprintf(stderr, "should_throw is:'%d'\n", should_throw);
+  std::string node_name = "publisher";
+  std::string topic_name = "chatter";
   std::shared_ptr<rclcpp::node::Node> node = nullptr;
   try {
     node = rclcpp::Node::make_shared(node_name);
   } catch (std::runtime_error &) {
-    if (should_throw) {
-      fprintf(stderr, "throw exception as expected");
-      return 0;
-    } else {
-      fprintf(stderr, "should not have thrown!");
-      return 1;
-    }
+    fprintf(stderr, "should not have thrown!");
   }
   fprintf(stderr, "node created, attempt to publish");
   int8_t ret;
