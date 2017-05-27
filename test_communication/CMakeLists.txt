@@ -317,8 +317,6 @@ if(BUILD_TESTING)
     set(TEST_PUBLISHER_EXECUTABLE "$<TARGET_FILE:test_secure_publisher_cpp>")
     set(TEST_SUBSCRIBER_EXECUTABLE "$<TARGET_FILE:test_secure_subscriber_cpp>")
 
-    set(PUBLISHER_TOPIC_NAME "chatter")
-    set(SUBSCRIBER_TOPIC_NAME "chatter")
     set(SUBSCRIBER_SHOULD_TIMEOUT "false")
 
     set(VALID_ROS_SECURE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/")
