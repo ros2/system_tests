@@ -137,7 +137,7 @@ if(BUILD_TESTING)
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation}
-      ROS_SECURE_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/"
+      ROS_SECURE_ROOT="${VALID_ROS_SECURE_ROOT}"
     )
     target_link_libraries(${target}${target_suffix}
       ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
@@ -319,15 +319,14 @@ if(BUILD_TESTING)
 
     set(SUBSCRIBER_SHOULD_TIMEOUT "false")
 
-    set(VALID_ROS_SECURE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/")
 
     # Test suite for communication without security
     set(non_secure_comm_PUBLISHER_ROS_ENABLE_SECURITY_LIST "false;false;false;true;false")
     set(non_secure_comm_SUBSCRIBER_ROS_ENABLE_SECURITY_LIST "false;false;false;false;true")
     set(non_secure_comm_PUBLISHER_ROS_SECURITY_STRATEGY_LIST "Enforce;garbage;garbage;Permissive;Garbage")
     set(non_secure_comm_SUBSCRIBER_ROS_SECURITY_STRATEGY_LIST "Enforce;Permissive;Garbage;Garbage;Permissive")
-    set(non_secure_comm_PUBLISHER_ROS_SECURE_ROOT_LIST "garbage;WHATEVER;${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/;garbage;garbage")
-    set(SUBSCRIBER_ROS_SECURE_ROOT_LIST "${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files;WHATEVER;garbage;garbage;garbage")
+    set(non_secure_comm_PUBLISHER_ROS_SECURE_ROOT_LIST "garbage;WHATEVER;${VALID_ROS_SECURE_ROOT};garbage;garbage")
+    set(SUBSCRIBER_ROS_SECURE_ROOT_LIST "${VALID_ROS_SECURE_ROOT};WHATEVER;garbage;garbage;garbage")
 
     # Test suite for secured communication
     set(secure_comm_PUBLISHER_ROS_ENABLE_SECURITY_LIST "true;true;true;true")
@@ -350,7 +349,7 @@ if(BUILD_TESTING)
 
     foreach(message_file ${message_files})
       get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
-      # TODO(mikaelarguedas) test only few message types toavoid taking to much test time
+      # TODO(mikaelarguedas) test only few message types to avoid taking to much test time
       if(TEST_MESSAGE_TYPE STREQUAL "Empty" OR TEST_MESSAGE_TYPE STREQUAL "DynamicArrayNested")
         set(index 0)
         # configure all non_secure_tests
@@ -392,8 +391,8 @@ if(BUILD_TESTING)
 
         set(index 0)
         set(SUBSCRIBER_SHOULD_TIMEOUT "false")
-        set(PUBLISHER_ROS_SECURE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/")
-        set(SUBSCRIBER_ROS_SECURE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/")
+        set(PUBLISHER_ROS_SECURE_ROOT "${VALID_ROS_SECURE_ROOT}")
+        set(SUBSCRIBER_ROS_SECURE_ROOT "${VALID_ROS_SECURE_ROOT}")
         # configure all non_secure_tests
         while( index LESS ${n_secure_communication_tests} )
           # here we define all the environment variables needed for security
@@ -429,8 +428,8 @@ if(BUILD_TESTING)
         endwhile()
 
         set(index 0)
-        set(PUBLISHER_ROS_SECURE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/")
-        set(SUBSCRIBER_ROS_SECURE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/")
+        set(PUBLISHER_ROS_SECURE_ROOT "${VALID_ROS_SECURE_ROOT}")
+        set(SUBSCRIBER_ROS_SECURE_ROOT "${VALID_ROS_SECURE_ROOT}")
         set(SUBSCRIBER_SHOULD_TIMEOUT "true")
         # configure all non_secure_tests
         while( index LESS ${n_not_connecting_tests} )
@@ -495,6 +494,7 @@ if(BUILD_TESTING)
     custom_test_c(test_messages_c
       "test/test_messages_c.cpp")
 
+    set(VALID_ROS_SECURE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/")
     # TODO(mikaelarguedas) extend this to connext once 5.2.4 released
     if(rmw_implementation STREQUAL "rmw_fastrtps_cpp")
       custom_security_test_c(test_security_nodes_c
