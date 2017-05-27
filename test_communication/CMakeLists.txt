@@ -310,15 +310,11 @@ if(BUILD_TESTING)
     set(suffix "__${rmw_implementation}")
     set(PUBLISHER_RMW ${rmw_implementation})
     set(SUBSCRIBER_RMW ${rmw_implementation})
-    set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE}")
+    # Not testing across client libraries for now
     set(TEST_PUBLISHER_RCL "rclcpp")
     set(TEST_SUBSCRIBER_RCL "rclcpp")
-
     set(TEST_PUBLISHER_EXECUTABLE "$<TARGET_FILE:test_secure_publisher_cpp>")
     set(TEST_SUBSCRIBER_EXECUTABLE "$<TARGET_FILE:test_secure_subscriber_cpp>")
-
-    set(SUBSCRIBER_SHOULD_TIMEOUT "false")
-
 
     # Test suite for communication without security
     set(non_secure_comm_PUBLISHER_ROS_ENABLE_SECURITY_LIST "false;false;false;true;false")
@@ -352,10 +348,10 @@ if(BUILD_TESTING)
       # TODO(mikaelarguedas) test only few message types to avoid taking to much test time
       if(TEST_MESSAGE_TYPE STREQUAL "Empty" OR TEST_MESSAGE_TYPE STREQUAL "DynamicArrayNested")
         set(index 0)
-        # configure all non_secure_tests
+        # configure all non secure communication tests
         set(SUBSCRIBER_SHOULD_TIMEOUT "false")
         while(index LESS ${n_non_secure_tests})
-          # here we define all the environment variables needed for security
+          # here we define all the variables needed for security template expansion
           list(GET non_secure_comm_PUBLISHER_ROS_ENABLE_SECURITY_LIST ${index} PUBLISHER_ROS_ENABLE_SECURITY)
           list(GET SUBSCRIBER_ROS_ENABLE_SECURITY_LIST ${index} SUBSCRIBER_ROS_ENABLE_SECURITY)
           list(GET PUBLISHER_ROS_SECURITY_STRATEGY_LIST ${index} PUBLISHER_ROS_SECURITY_STRATEGY)
@@ -376,10 +372,8 @@ if(BUILD_TESTING)
           math(EXPR index "${index} + 1")
 
           set(SKIP_TEST "")
-          # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)
           ament_add_nose_test(test_secure_publisher_subscriber${test_suffix}
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
-            PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
             TIMEOUT 15
             ${SKIP_TEST})
@@ -393,9 +387,9 @@ if(BUILD_TESTING)
         set(SUBSCRIBER_SHOULD_TIMEOUT "false")
         set(PUBLISHER_ROS_SECURE_ROOT "${VALID_ROS_SECURE_ROOT}")
         set(SUBSCRIBER_ROS_SECURE_ROOT "${VALID_ROS_SECURE_ROOT}")
-        # configure all non_secure_tests
+        # configure all secure communication tests
         while( index LESS ${n_secure_communication_tests} )
-          # here we define all the environment variables needed for security
+          # here we define all the variables needed for security template expansion
           list(GET secure_comm_PUBLISHER_ROS_ENABLE_SECURITY_LIST ${index} PUBLISHER_ROS_ENABLE_SECURITY)
           list(GET secure_comm_SUBSCRIBER_ROS_ENABLE_SECURITY_LIST ${index} SUBSCRIBER_ROS_ENABLE_SECURITY)
           list(GET secure_comm_PUBLISHER_ROS_SECURITY_STRATEGY_LIST ${index} PUBLISHER_ROS_SECURITY_STRATEGY)
@@ -414,10 +408,8 @@ if(BUILD_TESTING)
           math(EXPR index "${index} + 1")
 
           set(SKIP_TEST "")
-          # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)
           ament_add_nose_test(test_secure_publisher_subscriber${test_suffix}
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
-            PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
             TIMEOUT 15
             ${SKIP_TEST})
@@ -431,9 +423,9 @@ if(BUILD_TESTING)
         set(PUBLISHER_ROS_SECURE_ROOT "${VALID_ROS_SECURE_ROOT}")
         set(SUBSCRIBER_ROS_SECURE_ROOT "${VALID_ROS_SECURE_ROOT}")
         set(SUBSCRIBER_SHOULD_TIMEOUT "true")
-        # configure all non_secure_tests
+        # configure all not connecting tests 
         while( index LESS ${n_not_connecting_tests} )
-          # here we define all the environment variables needed for security
+          # here we define all the variables needed for security template expansion
           list(GET not_connecting_PUBLISHER_ROS_ENABLE_SECURITY_LIST ${index} PUBLISHER_ROS_ENABLE_SECURITY)
           list(GET not_connecting_SUBSCRIBER_ROS_ENABLE_SECURITY_LIST ${index} SUBSCRIBER_ROS_ENABLE_SECURITY)
           list(GET not_connecting_PUBLISHER_ROS_SECURITY_STRATEGY_LIST ${index} PUBLISHER_ROS_SECURITY_STRATEGY)
@@ -452,10 +444,8 @@ if(BUILD_TESTING)
           math(EXPR index "${index} + 1")
 
           set(SKIP_TEST "")
-          # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)
           ament_add_nose_test(test_secure_publisher_subscriber${test_suffix}
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
-            PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
             TIMEOUT 15
             ${SKIP_TEST})
