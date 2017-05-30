@@ -34,17 +34,14 @@ int8_t attempt_publish(
   rmw_qos_profile_t custom_qos_profile = rmw_qos_profile_default;
   custom_qos_profile.depth = messages.size();
 
-  // std::cout << "creating publisher" << std::endl;
   auto publisher = node->create_publisher<T>(
     topic_name, custom_qos_profile);
-  // std::cout << "publisher created" << std::endl;
 
   rclcpp::WallRate cycle_rate(10);
   rclcpp::WallRate message_rate(100);
   size_t cycle_index = 0;
   // publish all messages up to number_of_cycles times, longer sleep between each cycle
   while (rclcpp::ok() && cycle_index < number_of_cycles) {
-    // std::cout << "in while" << std::endl;
     size_t message_index = 0;
     // publish all messages one by one, shorter sleep between each message
     while (rclcpp::ok() && message_index < messages.size()) {
