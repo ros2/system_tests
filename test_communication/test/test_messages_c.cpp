@@ -190,7 +190,7 @@ public:
         EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
         ret = rcl_wait_set_add_subscription(&wait_set, &subscription);
         EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
-        ret = rcl_wait(&wait_set, RCL_S_TO_NS(-1));
+        ret = rcl_wait(&wait_set, -1);
         ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
         ret = rcl_take(&subscription, &message, nullptr);
         ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
