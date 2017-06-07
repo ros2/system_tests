@@ -41,7 +41,8 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_consistency_reg
     RMW_QOS_POLICY_HISTORY_KEEP_LAST,
     10,
     RMW_QOS_POLICY_RELIABILITY_RELIABLE,
-    RMW_QOS_POLICY_DURABILITY_VOLATILE
+    RMW_QOS_POLICY_DURABILITY_VOLATILE,
+    false
   };
   rclcpp::executor::FutureReturnCode ret1;
 
