@@ -96,6 +96,9 @@ if(BUILD_TESTING)
     custom_gtest(gtest_publisher
       "test/test_publisher.cpp"
       TIMEOUT 15)
+    custom_gtest(gtest_avoid_ros_namespace_conventions_qos
+      "test/test_avoid_ros_namespace_conventions_qos.cpp"
+      TIMEOUT 15)
     custom_gtest(gtest_client_wait_for_service_shutdown
       "test/test_client_wait_for_service_shutdown.cpp"
       TIMEOUT 15)

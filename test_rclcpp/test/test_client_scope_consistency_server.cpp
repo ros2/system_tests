@@ -39,7 +39,8 @@ int main(int argc, char ** argv)
     RMW_QOS_POLICY_HISTORY_KEEP_LAST,
     10,
     RMW_QOS_POLICY_RELIABILITY_RELIABLE,
-    RMW_QOS_POLICY_DURABILITY_VOLATILE
+    RMW_QOS_POLICY_DURABILITY_VOLATILE,
+    false
   };
   auto service = node->create_service<test_rclcpp::srv::AddTwoInts>(
     "client_scope", handle_add_two_ints, rmw_qos_profile);

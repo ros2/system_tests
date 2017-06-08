@@ -38,6 +38,7 @@ single_message_pub_sub_fixture(
   std::function<
     void(typename rclcpp::Publisher<MessageT>::SharedPtr, typename MessageT::SharedPtr)
   > publish_func,
+  rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
   std::function<void(rclcpp::executors::SingleThreadedExecutor &)> pre_subscription_hook = nullptr,
   size_t max_retries = 3,  // number of times it will try to publish
   size_t max_loops = 200,  // number of times it will check for data
@@ -46,7 +47,7 @@ single_message_pub_sub_fixture(
   auto node = rclcpp::Node::make_shared(topic_name + "_node");
 
   auto publisher = node->create_publisher<MessageT>(
-    topic_name, rmw_qos_profile_default);
+    topic_name, custom_qos);
 
   auto msg = std::make_shared<MessageT>();
   msg->data = 0;

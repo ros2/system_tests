@@ -362,7 +362,8 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), spin_before_subscription)
     };
   // call the test template
   single_message_pub_sub_fixture<test_rclcpp::msg::UInt32>(
-    topic_name, counter, create_subscription_func, publish_func, pre_subscription_hook);
+    topic_name, counter, create_subscription_func, publish_func,
+    rmw_qos_profile_default, pre_subscription_hook);
 }
 
 // Test of the queue size create_subscription signature.
