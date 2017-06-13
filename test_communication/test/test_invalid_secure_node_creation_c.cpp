@@ -68,7 +68,7 @@ void custom_putenv(const char * name, const char * value)
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
-class CLASSNAME (TestSecureNode, RMW_IMPLEMENTATION) : public ::testing::Test
+class CLASSNAME (TestInvalidSecureNode, RMW_IMPLEMENTATION) : public ::testing::Test
 {
 public:
   rcl_node_t * node_ptr;
@@ -110,28 +110,28 @@ public:
   }
 };
 
-TEST_F(CLASSNAME(TestSecureNode, RMW_IMPLEMENTATION), test_1) {
+TEST_F(CLASSNAME(TestInvalidSecureNode, RMW_IMPLEMENTATION), test_1) {
   test_node_creation(
     "garbage",
     "true", "Enforce",
     "publisher", true);
 }
 
-TEST_F(CLASSNAME(TestSecureNode, RMW_IMPLEMENTATION), test_2) {
+TEST_F(CLASSNAME(TestInvalidSecureNode, RMW_IMPLEMENTATION), test_2) {
   test_node_creation(
     NULL,
     "true", "Enforce",
     "publisher2", true);
 }
 
-TEST_F(CLASSNAME(TestSecureNode, RMW_IMPLEMENTATION), test_3) {
+TEST_F(CLASSNAME(TestInvalidSecureNode, RMW_IMPLEMENTATION), test_3) {
   test_node_creation(
     NULL,
     "true", "Enforce",
     "publisher_invalid_cert", true);
 }
 
-TEST_F(CLASSNAME(TestSecureNode, RMW_IMPLEMENTATION), test_4) {
+TEST_F(CLASSNAME(TestInvalidSecureNode, RMW_IMPLEMENTATION), test_4) {
   test_node_creation(
     NULL,
     "true", "Enforce",
