@@ -370,6 +370,7 @@ if(BUILD_TESTING)
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
             TIMEOUT 15
+          )
           set_tests_properties(
             test_secure_publisher_subscriber${test_suffix}
             PROPERTIES DEPENDS "test_secure_publisher_cpp__${rmw_implementation};test_secure_subscriber_cpp__${rmw_implementation}"
@@ -404,6 +405,7 @@ if(BUILD_TESTING)
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
             TIMEOUT 15
+          )
           set_tests_properties(
             test_secure_publisher_subscriber${test_suffix}
             PROPERTIES DEPENDS "test_secure_publisher_cpp__${rmw_implementation};test_secure_subscriber_cpp__${rmw_implementation}"
@@ -438,6 +440,7 @@ if(BUILD_TESTING)
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
             TIMEOUT 15
+          )
           set_tests_properties(
             test_secure_publisher_subscriber${test_suffix}
             PROPERTIES DEPENDS "test_secure_publisher_cpp__${rmw_implementation};test_secure_subscriber_cpp__${rmw_implementation}"
