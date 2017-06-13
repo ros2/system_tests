@@ -128,11 +128,9 @@ if(BUILD_TESTING)
   endfunction()
 
   function(custom_security_test_c target)
-    set(SKIP_TEST "")
     ament_add_gtest(
       "${target}${target_suffix}" ${ARGN}
       TIMEOUT 90
-      ${SKIP_TEST}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
@@ -336,9 +334,6 @@ if(BUILD_TESTING)
     set(not_connecting_PUBLISHER_ROS_SECURITY_STRATEGY_LIST "Permissive;Enforce")
     set(not_connecting_SUBSCRIBER_ROS_SECURITY_STRATEGY_LIST "Enforce;Permissive")
 
-    set(n_non_secure_tests "")
-    set(n_secure_communication_tests "")
-    set(n_not_connecting_tests "")
     list(LENGTH non_secure_comm_PUBLISHER_ROS_ENABLE_SECURITY_LIST n_non_secure_tests)
     list(LENGTH secure_comm_PUBLISHER_ROS_ENABLE_SECURITY_LIST n_secure_communication_tests)
     list(LENGTH not_connecting_PUBLISHER_ROS_ENABLE_SECURITY_LIST n_not_connecting_tests)
@@ -371,12 +366,10 @@ if(BUILD_TESTING)
           )
           math(EXPR index "${index} + 1")
 
-          set(SKIP_TEST "")
           ament_add_nose_test(test_secure_publisher_subscriber${test_suffix}
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
             TIMEOUT 15
-            ${SKIP_TEST})
           set_tests_properties(
             test_secure_publisher_subscriber${test_suffix}
             PROPERTIES DEPENDS "test_secure_publisher_cpp__${rmw_implementation};test_secure_subscriber_cpp__${rmw_implementation}"
@@ -388,7 +381,7 @@ if(BUILD_TESTING)
         set(PUBLISHER_ROS_SECURE_ROOT "${VALID_ROS_SECURE_ROOT}")
         set(SUBSCRIBER_ROS_SECURE_ROOT "${VALID_ROS_SECURE_ROOT}")
         # configure all secure communication tests
-        while( index LESS ${n_secure_communication_tests} )
+        while(index LESS ${n_secure_communication_tests})
           # here we define all the variables needed for security template expansion
           list(GET secure_comm_PUBLISHER_ROS_ENABLE_SECURITY_LIST ${index} PUBLISHER_ROS_ENABLE_SECURITY)
           list(GET secure_comm_SUBSCRIBER_ROS_ENABLE_SECURITY_LIST ${index} SUBSCRIBER_ROS_ENABLE_SECURITY)
@@ -407,12 +400,10 @@ if(BUILD_TESTING)
           )
           math(EXPR index "${index} + 1")
 
-          set(SKIP_TEST "")
           ament_add_nose_test(test_secure_publisher_subscriber${test_suffix}
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
             TIMEOUT 15
-            ${SKIP_TEST})
           set_tests_properties(
             test_secure_publisher_subscriber${test_suffix}
             PROPERTIES DEPENDS "test_secure_publisher_cpp__${rmw_implementation};test_secure_subscriber_cpp__${rmw_implementation}"
@@ -424,7 +415,7 @@ if(BUILD_TESTING)
         set(SUBSCRIBER_ROS_SECURE_ROOT "${VALID_ROS_SECURE_ROOT}")
         set(SUBSCRIBER_SHOULD_TIMEOUT "true")
         # configure all not connecting tests 
-        while( index LESS ${n_not_connecting_tests} )
+        while(index LESS ${n_not_connecting_tests})
           # here we define all the variables needed for security template expansion
           list(GET not_connecting_PUBLISHER_ROS_ENABLE_SECURITY_LIST ${index} PUBLISHER_ROS_ENABLE_SECURITY)
           list(GET not_connecting_SUBSCRIBER_ROS_ENABLE_SECURITY_LIST ${index} SUBSCRIBER_ROS_ENABLE_SECURITY)
@@ -443,12 +434,10 @@ if(BUILD_TESTING)
           )
           math(EXPR index "${index} + 1")
 
-          set(SKIP_TEST "")
           ament_add_nose_test(test_secure_publisher_subscriber${test_suffix}
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
             TIMEOUT 15
-            ${SKIP_TEST})
           set_tests_properties(
             test_secure_publisher_subscriber${test_suffix}
             PROPERTIES DEPENDS "test_secure_publisher_cpp__${rmw_implementation};test_secure_subscriber_cpp__${rmw_implementation}"
