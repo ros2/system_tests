@@ -113,18 +113,20 @@ if(BUILD_TESTING)
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation})
-    target_link_libraries(${target}${target_suffix}
-      ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-      ${_AMENT_EXPORT_LIBRARY_TARGETS})
-    add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
-    rosidl_target_interfaces(${target}${target_suffix}
-      ${PROJECT_NAME} "rosidl_typesupport_c")
-    ament_target_dependencies(${target}${target_suffix}
-      "rcl")
-    set_tests_properties(
-      ${target}${target_suffix}
-      PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}${target_suffix}>"
-    )
+    if(TARGET ${target}${target_suffix})
+      target_link_libraries(${target}${target_suffix}
+        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
+        ${_AMENT_EXPORT_LIBRARY_TARGETS})
+      add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
+      rosidl_target_interfaces(${target}${target_suffix}
+        ${PROJECT_NAME} "rosidl_typesupport_c")
+      ament_target_dependencies(${target}${target_suffix}
+        "rcl")
+      set_tests_properties(
+        ${target}${target_suffix}
+        PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}${target_suffix}>"
+      )
+    endif()
   endfunction()
 
   function(custom_security_test_c target)
@@ -137,18 +139,20 @@ if(BUILD_TESTING)
       RMW_IMPLEMENTATION=${rmw_implementation}
       ROS_SECURE_ROOT="${VALID_ROS_SECURE_ROOT}"
     )
-    target_link_libraries(${target}${target_suffix}
-      ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-      ${_AMENT_EXPORT_LIBRARY_TARGETS})
-    add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
-    rosidl_target_interfaces(${target}${target_suffix}
-      ${PROJECT_NAME} "rosidl_typesupport_c")
-    ament_target_dependencies(${target}${target_suffix}
-      "rcl")
-    set_tests_properties(
-      ${target}${target_suffix}
-      PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}${target_suffix}>"
-    )
+    if(TARGET ${target}${target_suffix})
+      target_link_libraries(${target}${target_suffix}
+        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
+        ${_AMENT_EXPORT_LIBRARY_TARGETS})
+      add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
+      rosidl_target_interfaces(${target}${target_suffix}
+        ${PROJECT_NAME} "rosidl_typesupport_c")
+      ament_target_dependencies(${target}${target_suffix}
+        "rcl")
+      set_tests_properties(
+        ${target}${target_suffix}
+        PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}${target_suffix}>"
+      )
+    endif()
   endfunction()
 
   macro(multi_targets)
