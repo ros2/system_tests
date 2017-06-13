@@ -49,6 +49,7 @@ def talker(message_name, number_of_cycles):
             time.sleep(0.01)
         cycle_count += 1
         time.sleep(0.1)
+    node.destroy_node()
     rclpy.shutdown()
 
 
