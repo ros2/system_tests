@@ -420,7 +420,7 @@ if(BUILD_TESTING)
         set(PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY "${VALID_ROS_SECURITY_ROOT_DIRECTORY}")
         set(SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY "${VALID_ROS_SECURITY_ROOT_DIRECTORY}")
         set(SUBSCRIBER_SHOULD_TIMEOUT "true")
-        # configure all not connecting tests 
+        # configure all not connecting tests
         while(index LESS ${n_not_connecting_tests})
           # here we define all the variables needed for security template expansion
           list(GET not_connecting_PUBLISHER_ROS_SECURITY_ENABLE_LIST ${index} PUBLISHER_ROS_SECURITY_ENABLE)
