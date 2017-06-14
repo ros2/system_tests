@@ -85,14 +85,14 @@ public:
   }
 
   void test_node_creation(
-    const char * ROS_SECURE_ROOT, const char * ROS_ENABLE_SECURITY,
+    const char * ROS_SECURITY_ROOT_DIRECTORY, const char * ROS_SECURITY_ENABLE,
     const char * ROS_SECURITY_STRATEGY,
     const char * node_name, bool should_fail_participant_creation)
   {
-    if (ROS_SECURE_ROOT != NULL) {
-      custom_putenv("ROS_SECURE_ROOT", ROS_SECURE_ROOT);
+    if (ROS_SECURITY_ROOT_DIRECTORY != NULL) {
+      custom_putenv("ROS_SECURITY_ROOT_DIRECTORY", ROS_SECURITY_ROOT_DIRECTORY);
     }
-    custom_putenv("ROS_ENABLE_SECURITY", ROS_ENABLE_SECURITY);
+    custom_putenv("ROS_SECURITY_ENABLE", ROS_SECURITY_ENABLE);
     custom_putenv("ROS_SECURITY_STRATEGY", ROS_SECURITY_STRATEGY);
     rcl_ret_t ret;
     ret = rcl_init(0, nullptr, rcl_get_default_allocator());

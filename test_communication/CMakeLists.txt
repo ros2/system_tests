@@ -137,7 +137,7 @@ if(BUILD_TESTING)
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation}
-      ROS_SECURE_ROOT="${VALID_ROS_SECURE_ROOT}"
+      ROS_SECURITY_ROOT_DIRECTORY="${VALID_ROS_SECURITY_ROOT_DIRECTORY}"
     )
     if(TARGET ${target}${target_suffix})
       target_link_libraries(${target}${target_suffix}
@@ -319,28 +319,28 @@ if(BUILD_TESTING)
     set(TEST_SUBSCRIBER_EXECUTABLE "$<TARGET_FILE:test_secure_subscriber_cpp>")
 
     # Test suite for communication without security
-    set(non_secure_comm_PUBLISHER_ROS_ENABLE_SECURITY_LIST "false;false;false;true;false")
-    set(non_secure_comm_SUBSCRIBER_ROS_ENABLE_SECURITY_LIST "false;false;false;false;true")
+    set(non_secure_comm_PUBLISHER_ROS_SECURITY_ENABLE_LIST "false;false;false;true;false")
+    set(non_secure_comm_SUBSCRIBER_ROS_SECURITY_ENABLE_LIST "false;false;false;false;true")
     set(non_secure_comm_PUBLISHER_ROS_SECURITY_STRATEGY_LIST "Enforce;garbage;garbage;Permissive;Garbage")
     set(non_secure_comm_SUBSCRIBER_ROS_SECURITY_STRATEGY_LIST "Enforce;Permissive;Garbage;Garbage;Permissive")
-    set(non_secure_comm_PUBLISHER_ROS_SECURE_ROOT_LIST "garbage;WHATEVER;${VALID_ROS_SECURE_ROOT};garbage;garbage")
-    set(SUBSCRIBER_ROS_SECURE_ROOT_LIST "${VALID_ROS_SECURE_ROOT};WHATEVER;garbage;garbage;garbage")
+    set(non_secure_comm_PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY_LIST "garbage;WHATEVER;${VALID_ROS_SECURITY_ROOT_DIRECTORY};garbage;garbage")
+    set(SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY_LIST "${VALID_ROS_SECURITY_ROOT_DIRECTORY};WHATEVER;garbage;garbage;garbage")
 
     # Test suite for secured communication
-    set(secure_comm_PUBLISHER_ROS_ENABLE_SECURITY_LIST "true;true;true;true")
-    set(secure_comm_SUBSCRIBER_ROS_ENABLE_SECURITY_LIST "true;true;true;true")
+    set(secure_comm_PUBLISHER_ROS_SECURITY_ENABLE_LIST "true;true;true;true")
+    set(secure_comm_SUBSCRIBER_ROS_SECURITY_ENABLE_LIST "true;true;true;true")
     set(secure_comm_PUBLISHER_ROS_SECURITY_STRATEGY_LIST "Enforce;Enforce;Permissive;Permissive")
     set(secure_comm_SUBSCRIBER_ROS_SECURITY_STRATEGY_LIST "Enforce;Permissive;Enforce;Permissive")
 
     # Test suite for one node with security and the second without
-    set(not_connecting_PUBLISHER_ROS_ENABLE_SECURITY_LIST "false;true")
-    set(not_connecting_SUBSCRIBER_ROS_ENABLE_SECURITY_LIST "true;false")
+    set(not_connecting_PUBLISHER_ROS_SECURITY_ENABLE_LIST "false;true")
+    set(not_connecting_SUBSCRIBER_ROS_SECURITY_ENABLE_LIST "true;false")
     set(not_connecting_PUBLISHER_ROS_SECURITY_STRATEGY_LIST "Permissive;Enforce")
     set(not_connecting_SUBSCRIBER_ROS_SECURITY_STRATEGY_LIST "Enforce;Permissive")
 
-    list(LENGTH non_secure_comm_PUBLISHER_ROS_ENABLE_SECURITY_LIST n_non_secure_tests)
-    list(LENGTH secure_comm_PUBLISHER_ROS_ENABLE_SECURITY_LIST n_secure_communication_tests)
-    list(LENGTH not_connecting_PUBLISHER_ROS_ENABLE_SECURITY_LIST n_not_connecting_tests)
+    list(LENGTH non_secure_comm_PUBLISHER_ROS_SECURITY_ENABLE_LIST n_non_secure_tests)
+    list(LENGTH secure_comm_PUBLISHER_ROS_SECURITY_ENABLE_LIST n_secure_communication_tests)
+    list(LENGTH not_connecting_PUBLISHER_ROS_SECURITY_ENABLE_LIST n_not_connecting_tests)
 
     foreach(message_file ${message_files})
       get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
@@ -351,12 +351,12 @@ if(BUILD_TESTING)
         set(SUBSCRIBER_SHOULD_TIMEOUT "false")
         while(index LESS ${n_non_secure_tests})
           # here we define all the variables needed for security template expansion
-          list(GET non_secure_comm_PUBLISHER_ROS_ENABLE_SECURITY_LIST ${index} PUBLISHER_ROS_ENABLE_SECURITY)
-          list(GET SUBSCRIBER_ROS_ENABLE_SECURITY_LIST ${index} SUBSCRIBER_ROS_ENABLE_SECURITY)
+          list(GET non_secure_comm_PUBLISHER_ROS_SECURITY_ENABLE_LIST ${index} PUBLISHER_ROS_SECURITY_ENABLE)
+          list(GET SUBSCRIBER_ROS_SECURITY_ENABLE_LIST ${index} SUBSCRIBER_ROS_SECURITY_ENABLE)
           list(GET PUBLISHER_ROS_SECURITY_STRATEGY_LIST ${index} PUBLISHER_ROS_SECURITY_STRATEGY)
           list(GET SUBSCRIBER_ROS_SECURITY_STRATEGY_LIST ${index} SUBSCRIBER_ROS_SECURITY_STRATEGY)
-          list(GET PUBLISHER_ROS_SECURE_ROOT_LIST ${index} PUBLISHER_ROS_SECURE_ROOT)
-          list(GET SUBSCRIBER_ROS_SECURE_ROOT_LIST ${index} SUBSCRIBER_ROS_SECURE_ROOT)
+          list(GET PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY_LIST ${index} PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY)
+          list(GET SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY_LIST ${index} SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY)
 
           set(test_suffix "__${TEST_MESSAGE_TYPE}${suffix}__non_secure_comm_${index}")
           configure_file(
@@ -383,13 +383,13 @@ if(BUILD_TESTING)
 
         set(index 0)
         set(SUBSCRIBER_SHOULD_TIMEOUT "false")
-        set(PUBLISHER_ROS_SECURE_ROOT "${VALID_ROS_SECURE_ROOT}")
-        set(SUBSCRIBER_ROS_SECURE_ROOT "${VALID_ROS_SECURE_ROOT}")
+        set(PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY "${VALID_ROS_SECURITY_ROOT_DIRECTORY}")
+        set(SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY "${VALID_ROS_SECURITY_ROOT_DIRECTORY}")
         # configure all secure communication tests
         while(index LESS ${n_secure_communication_tests})
           # here we define all the variables needed for security template expansion
-          list(GET secure_comm_PUBLISHER_ROS_ENABLE_SECURITY_LIST ${index} PUBLISHER_ROS_ENABLE_SECURITY)
-          list(GET secure_comm_SUBSCRIBER_ROS_ENABLE_SECURITY_LIST ${index} SUBSCRIBER_ROS_ENABLE_SECURITY)
+          list(GET secure_comm_PUBLISHER_ROS_SECURITY_ENABLE_LIST ${index} PUBLISHER_ROS_SECURITY_ENABLE)
+          list(GET secure_comm_SUBSCRIBER_ROS_SECURITY_ENABLE_LIST ${index} SUBSCRIBER_ROS_SECURITY_ENABLE)
           list(GET secure_comm_PUBLISHER_ROS_SECURITY_STRATEGY_LIST ${index} PUBLISHER_ROS_SECURITY_STRATEGY)
           list(GET secure_comm_SUBSCRIBER_ROS_SECURITY_STRATEGY_LIST ${index} SUBSCRIBER_ROS_SECURITY_STRATEGY)
 
@@ -417,14 +417,14 @@ if(BUILD_TESTING)
         endwhile()
 
         set(index 0)
-        set(PUBLISHER_ROS_SECURE_ROOT "${VALID_ROS_SECURE_ROOT}")
-        set(SUBSCRIBER_ROS_SECURE_ROOT "${VALID_ROS_SECURE_ROOT}")
+        set(PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY "${VALID_ROS_SECURITY_ROOT_DIRECTORY}")
+        set(SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY "${VALID_ROS_SECURITY_ROOT_DIRECTORY}")
         set(SUBSCRIBER_SHOULD_TIMEOUT "true")
         # configure all not connecting tests 
         while(index LESS ${n_not_connecting_tests})
           # here we define all the variables needed for security template expansion
-          list(GET not_connecting_PUBLISHER_ROS_ENABLE_SECURITY_LIST ${index} PUBLISHER_ROS_ENABLE_SECURITY)
-          list(GET not_connecting_SUBSCRIBER_ROS_ENABLE_SECURITY_LIST ${index} SUBSCRIBER_ROS_ENABLE_SECURITY)
+          list(GET not_connecting_PUBLISHER_ROS_SECURITY_ENABLE_LIST ${index} PUBLISHER_ROS_SECURITY_ENABLE)
+          list(GET not_connecting_SUBSCRIBER_ROS_SECURITY_ENABLE_LIST ${index} SUBSCRIBER_ROS_SECURITY_ENABLE)
           list(GET not_connecting_PUBLISHER_ROS_SECURITY_STRATEGY_LIST ${index} PUBLISHER_ROS_SECURITY_STRATEGY)
           list(GET not_connecting_SUBSCRIBER_ROS_SECURITY_STRATEGY_LIST ${index} SUBSCRIBER_ROS_SECURITY_STRATEGY)
 
@@ -480,7 +480,7 @@ if(BUILD_TESTING)
     custom_test_c(test_messages_c
       "test/test_messages_c.cpp")
 
-    set(VALID_ROS_SECURE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/")
+    set(VALID_ROS_SECURITY_ROOT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/")
     # TODO(mikaelarguedas) extend this to connext once 5.2.4 released
     if(rmw_implementation STREQUAL "rmw_fastrtps_cpp")
       custom_security_test_c(test_security_nodes_c
