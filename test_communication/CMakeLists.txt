@@ -13,6 +13,8 @@ endif()
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
+option(SECURITY "Activate security" OFF)
+
 set(message_files
   "msg/BoundedArrayNested.msg"
   "msg/BoundedArrayPrimitives.msg"
@@ -481,12 +483,16 @@ if(BUILD_TESTING)
       "test/test_messages_c.cpp")
 
     set(VALID_ROS_SECURITY_ROOT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/")
-    # TODO(mikaelarguedas) extend this to connext once 5.2.4 released
-    if(rmw_implementation STREQUAL "rmw_fastrtps_cpp")
-      custom_security_test_c(test_security_nodes_c
-        "test/test_invalid_secure_node_creation_c.cpp")
-      security_tests()
+
+    if(SECURITY)
+      # TODO(mikaelarguedas) extend this to connext once 5.2.4 released
+      if(rmw_implementation STREQUAL "rmw_fastrtps_cpp")
+        custom_security_test_c(test_security_nodes_c
+          "test/test_invalid_secure_node_creation_c.cpp")
+        security_tests()
+      endif()
     endif()
+
     # publisher combined with a subscriber
     custom_test(test_publisher_subscriber_cpp TRUE)
     # subcription valid data
