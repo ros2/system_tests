@@ -1,3 +1,5 @@
+# generated from test_communication/test/test_requester_replier.py.in
+
 import os
 import sys
 

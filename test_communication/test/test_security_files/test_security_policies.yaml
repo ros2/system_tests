@@ -1,0 +1,73 @@
+nodes:
+  listener:
+    topics:
+      chatter:
+        allow: s # can subscribe to chatter
+      parameter_events:
+        allow: p # can publish on parameter_events
+  talker:
+    topics:
+      chatter:
+        allow: p # can publish on chatter
+      parameter_events:
+        allow: p # can publish on parameter_events
+  subscriber:
+    topics:
+      chatter:
+        allow: s # can subscribe to chatter
+      parameter_events:
+        allow: p # can publish on parameter_events
+  publisher:
+    topics:
+      chatter:
+        allow: p # can publish on chatter
+      parameter_events:
+        allow: p # can publish on paramer_events
+  client:
+    topics:
+      req:
+        allow: p # can publish on req
+      resp:
+        allow: s # can subscribe to resp
+      parameter_events:
+        allow: p # can publish on parameter_events
+  server:
+    topics:
+      req:
+        allow: s # can subscribe to req
+      resp:
+        allow: p # can publish on resp
+      parameter_events:
+        allow: p # can publish on parameter_events
+  add_two_ints_client:
+    topics:
+      add_two_intsRequest:
+        allow: p # can publish on req
+      add_two_intsReply:
+        allow: s # can subscribe to resp
+      parameter_events:
+        allow: p # can publish on parameter_events
+  add_two_ints_server:
+    topics:
+      add_two_intsRequest:
+        allow: s # can subscribe to req
+      add_two_intsReply:
+        allow: p # can publish on resp
+      parameter_events:
+        allow: p # can publish on parameter_events
+  minimal_client:
+    topics:
+      add_two_intsRequest:
+        allow: p # can publish on req
+      add_two_intsReply:
+        allow: s # can subscribe to resp
+      parameter_events:
+        allow: p # can publish on parameter_events
+  minimal_service:
+    topics:
+      add_two_intsRequest:
+        allow: s # can subscribe to req
+      add_two_intsReply:
+        allow: p # can publish on resp
+      parameter_events:
+        allow: p # can publish on parameter_events
