@@ -17,6 +17,7 @@ from test_communication.msg import BoundedArrayPrimitives
 from test_communication.msg import Builtins
 from test_communication.msg import DynamicArrayNested
 from test_communication.msg import DynamicArrayPrimitives
+from test_communication.msg import DynamicArrayPrimitivesNested
 from test_communication.msg import Empty
 from test_communication.msg import FieldsWithSameType
 from test_communication.msg import Nested
@@ -254,13 +255,19 @@ def get_msg_dynamic_array_primitives():
     return msgs
 
 
+def get_msg_dynamic_array_primitives_nested():
+    primitives_msgs = get_msg_dynamic_array_primitives()
+
+    msg = DynamicArrayPrimitivesNested()
+    msg.msgs.append(primitives_msgs[0])
+    msg.msgs.append(primitives_msgs[0])
+    return [msg]
+
 def get_msg_dynamic_array_nested():
     msg = DynamicArrayNested()
     for primitive_msg in get_msg_primitives():
         msg.primitive_values.append(primitive_msg)
-
     return [msg]
-
 
 def get_msg_bounded_array_primitives():
     msgs = []
@@ -317,6 +324,8 @@ def get_test_msg(message_name):
         msg = get_msg_dynamic_array_primitives()
     elif 'DynamicArrayNested' == message_name:
         msg = get_msg_dynamic_array_nested()
+    elif 'DynamicArrayPrimitivesNested' == message_name:
+        msg = get_msg_dynamic_array_primitives_nested()
     elif 'BoundedArrayPrimitives' == message_name:
         msg = get_msg_bounded_array_primitives()
     elif 'BoundedArrayNested' == message_name:
