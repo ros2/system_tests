@@ -263,11 +263,13 @@ def get_msg_dynamic_array_primitives_nested():
     msg.msgs.append(primitives_msgs[0])
     return [msg]
 
+
 def get_msg_dynamic_array_nested():
     msg = DynamicArrayNested()
     for primitive_msg in get_msg_primitives():
         msg.primitive_values.append(primitive_msg)
     return [msg]
+
 
 def get_msg_bounded_array_primitives():
     msgs = []
