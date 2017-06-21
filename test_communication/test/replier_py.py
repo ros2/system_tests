@@ -56,6 +56,7 @@ def replier(service_name, number_of_cycles):
         rclpy.spin_once(node, timeout_sec=2)
         spin_count += 1
         print('spin_count: ' + str(spin_count))
+    node.destroy_node()
     rclpy.shutdown()
 
 
