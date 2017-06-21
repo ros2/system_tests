@@ -52,6 +52,7 @@ def requester(service_name, number_of_cycles):
             spin_count += 1
             print('spin_count: ' + str(spin_count))
         break
+    node.destroy_node()
     rclpy.shutdown()
     assert len(received_replies) == len(srv_fixtures), \
         'Should have received %d responsed from replier' % len(srv_fixtures)

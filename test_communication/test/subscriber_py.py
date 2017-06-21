@@ -69,6 +69,7 @@ def listener(message_name):
         rclpy.spin_once(node)
         spin_count += 1
         print('spin_count: ' + str(spin_count))
+    node.destroy_node()
     rclpy.shutdown()
 
     assert len(received_messages) == len(expected_msgs),\
