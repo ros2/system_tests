@@ -585,7 +585,12 @@ void get_message(test_communication__msg__DynamicArrayPrimitives * msg, size_t m
 {
   test_communication__msg__DynamicArrayPrimitives__init(msg);
   // const size_t size = 2000;
-  const size_t size = 5;
+  const size_t size = 120;
+  // size ~110-120 is the breaking point where this starts throwing invalid pointer error
+  // test cases 0 1 and 2 pass
+  // test case 3 segfaults in rmw_take_with_info
+  // test case 4 throw memory corruption error if size < 100
+  //             if size > ~120 throws munmap_chunk(): invalid pointer
   switch (msg_num) {
     case 0:
       rosidl_generator_c__bool__Array__init(&msg->bool_values, 0);
@@ -636,7 +641,7 @@ void get_message(test_communication__msg__DynamicArrayPrimitives * msg, size_t m
       rosidl_generator_c__String__assign(&msg->string_values.data[0], "max value");
       msg->check = 1;
       break;
-    case 2:
+    case 3:
       rosidl_generator_c__bool__Array__init(&msg->bool_values, 2);
       rosidl_generator_c__byte__Array__init(&msg->byte_values, 2);
       rosidl_generator_c__char__Array__init(&msg->char_values, 2);
@@ -726,7 +731,7 @@ void get_message(test_communication__msg__DynamicArrayPrimitives * msg, size_t m
       }
       msg->check = 3;
       break;
-    case 3:
+    case 2:
       rosidl_generator_c__bool__Array__init(&msg->bool_values, 0);
       rosidl_generator_c__byte__Array__init(&msg->byte_values, 0);
       rosidl_generator_c__char__Array__init(&msg->char_values, 0);
