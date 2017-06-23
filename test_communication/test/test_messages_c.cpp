@@ -30,14 +30,13 @@
 #include "test_communication/msg/bounded_array_primitives.h"
 #include "test_communication/msg/dynamic_array_nested.h"
 #include "test_communication/msg/dynamic_array_primitives.h"
+#include "test_communication/msg/dynamic_array_primitives_nested.h"
 #include "test_communication/msg/empty.h"
 #include "test_communication/msg/nested.h"
 #include "test_communication/msg/primitives.h"
 #include "test_communication/msg/static_array_nested.h"
 #include "test_communication/msg/static_array_primitives.h"
 #include "test_communication/msg/builtins.h"
-
-#include "test_communication/msg/dynamic_array_primitives_nested.h"
 
 #include "rosidl_generator_c/string_functions.h"
 #include "rosidl_generator_c/primitives_array_functions.h"
