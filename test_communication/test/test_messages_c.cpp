@@ -159,9 +159,7 @@ public:
       for (size_t msg_cnt = 0; msg_cnt < nb_msgs; msg_cnt++) {
         get_message(&message, msg_cnt);
         auto msg_exit = make_scope_exit([&message]() {
-          fprintf(stderr, "tacotaco1\n");
           fini_message(&message);
-          fprintf(stderr, "tacotaco2\n");
         });
         ret = rcl_publish(&publisher, &message);
         ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
@@ -175,9 +173,7 @@ public:
       for (size_t msg_cnt = 0; msg_cnt < nb_msgs; msg_cnt++) {
         init_message(&message);
         auto msg_exit = make_scope_exit([&message]() {
-          fprintf(stderr, "byebye1\n");
           fini_message(&message);
-          fprintf(stderr, "byebye2\n");
         });
 
         rcl_wait_set_t wait_set = rcl_get_zero_initialized_wait_set();
@@ -197,13 +193,9 @@ public:
         EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
         ret = rcl_wait(&wait_set, -1);
         ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
-        fprintf(stderr, "coucou3\n");
         ret = rcl_take(&subscription, &message, nullptr);
-        fprintf(stderr, "coucou4\n");
         ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
-        fprintf(stderr, "coucou5\n");
         verify_message(message, msg_cnt);
-        fprintf(stderr, "coucou6\n");
       }
     }
   }
