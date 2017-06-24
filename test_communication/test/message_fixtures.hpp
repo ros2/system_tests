@@ -288,9 +288,9 @@ get_messages_dynamic_array_primitives_nested()
     get_messages_dynamic_array_primitives();
 
   auto msg = std::make_shared<test_communication::msg::DynamicArrayPrimitivesNested>();
-  msg->msgs.push_back(*primitive_msgs[0]);
-  msg->msgs.push_back(*primitive_msgs[0]);
-
+  for (size_t i = 0; i < primitive_msgs.size(); ++i) {
+    msg->msgs.push_back(*primitive_msgs[i]);
+  }
   messages.push_back(msg);
   return messages;
 }

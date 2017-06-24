@@ -259,8 +259,8 @@ def get_msg_dynamic_array_primitives_nested():
     primitives_msgs = get_msg_dynamic_array_primitives()
 
     msg = DynamicArrayPrimitivesNested()
-    msg.msgs.append(primitives_msgs[0])
-    msg.msgs.append(primitives_msgs[0])
+    for primitives_msg in primitives_msgs:
+        msg.msgs.append(primitives_msg)
 
     return [msg]
 
