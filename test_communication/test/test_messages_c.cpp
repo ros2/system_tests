@@ -1161,67 +1161,10 @@ void get_message(test_communication__msg__DynamicArrayPrimitivesNested * msg, si
 template<>
 void verify_message(test_communication__msg__DynamicArrayPrimitivesNested & message, size_t msg_num)
 {
-  (void)message;
   test_communication__msg__DynamicArrayPrimitivesNested expected_msg;
   get_message(&expected_msg, msg_num);
-
-  for (size_t ii = 0; ii < expected_msg.msgs.size; ++ii) {
-    for (size_t i = 0; i < expected_msg.msgs.data[ii].bool_values.size; ++i) {
-      EXPECT_EQ(expected_msg.msgs.data[ii].bool_values.data[i],
-        message.msgs.data[ii].bool_values.data[i]);
-    }
-    for (size_t i = 0; i < expected_msg.msgs.data[ii].byte_values.size; ++i) {
-      EXPECT_EQ(expected_msg.msgs.data[ii].byte_values.data[i],
-        message.msgs.data[ii].byte_values.data[i]);
-    }
-    for (size_t i = 0; i < expected_msg.msgs.data[ii].char_values.size; ++i) {
-      EXPECT_EQ(expected_msg.msgs.data[ii].char_values.data[i],
-        message.msgs.data[ii].char_values.data[i]);
-    }
-    for (size_t i = 0; i < expected_msg.msgs.data[ii].float32_values.size; ++i) {
-      EXPECT_FLOAT_EQ(expected_msg.msgs.data[ii].float32_values.data[i],
-        message.msgs.data[ii].float32_values.data[i]);
-    }
-    for (size_t i = 0; i < expected_msg.msgs.data[ii].float64_values.size; ++i) {
-      EXPECT_DOUBLE_EQ(expected_msg.msgs.data[ii].float64_values.data[i],
-        message.msgs.data[ii].float64_values.data[i]);
-    }
-    for (size_t i = 0; i < expected_msg.msgs.data[ii].int8_values.size; ++i) {
-      EXPECT_EQ(expected_msg.msgs.data[ii].int8_values.data[i],
-        message.msgs.data[ii].int8_values.data[i]);
-    }
-    for (size_t i = 0; i < expected_msg.msgs.data[ii].uint8_values.size; ++i) {
-      EXPECT_EQ(expected_msg.msgs.data[ii].uint8_values.data[i],
-        message.msgs.data[ii].uint8_values.data[i]);
-    }
-    for (size_t i = 0; i < expected_msg.msgs.data[ii].int16_values.size; ++i) {
-      EXPECT_EQ(expected_msg.msgs.data[ii].int16_values.data[i],
-        message.msgs.data[ii].int16_values.data[i]);
-    }
-    for (size_t i = 0; i < expected_msg.msgs.data[ii].uint16_values.size; ++i) {
-      EXPECT_EQ(expected_msg.msgs.data[ii].uint16_values.data[i],
-        message.msgs.data[ii].uint16_values.data[i]);
-    }
-    for (size_t i = 0; i < expected_msg.msgs.data[ii].int32_values.size; ++i) {
-      EXPECT_EQ(expected_msg.msgs.data[ii].int32_values.data[i],
-        message.msgs.data[ii].int32_values.data[i]);
-    }
-    for (size_t i = 0; i < expected_msg.msgs.data[ii].uint32_values.size; ++i) {
-      EXPECT_EQ(expected_msg.msgs.data[ii].uint32_values.data[i],
-        message.msgs.data[ii].uint32_values.data[i]);
-    }
-    for (size_t i = 0; i < expected_msg.msgs.data[ii].int64_values.size; ++i) {
-      EXPECT_EQ(expected_msg.msgs.data[ii].int64_values.data[i],
-        message.msgs.data[ii].int64_values.data[i]);
-    }
-    for (size_t i = 0; i < expected_msg.msgs.data[ii].uint64_values.size; ++i) {
-      EXPECT_EQ(expected_msg.msgs.data[ii].uint64_values.data[i],
-        message.msgs.data[ii].uint64_values.data[i]);
-    }
-    for (size_t i = 0; i < expected_msg.msgs.data[ii].string_values.size; ++i) {
-      EXPECT_EQ(0, strcmp(message.msgs.data[ii].string_values.data[i].data,
-        expected_msg.msgs.data[ii].string_values.data[i].data));
-    }
+  for (size_t i = 0; i < expected_msg.msgs.size; ++i) {
+    verify_message(message.msgs.data[i], i);
   }
 }
 
