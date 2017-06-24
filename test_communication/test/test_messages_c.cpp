@@ -30,6 +30,7 @@
 #include "test_communication/msg/bounded_array_primitives.h"
 #include "test_communication/msg/dynamic_array_nested.h"
 #include "test_communication/msg/dynamic_array_primitives.h"
+#include "test_communication/msg/dynamic_array_primitives_nested.h"
 #include "test_communication/msg/empty.h"
 #include "test_communication/msg/nested.h"
 #include "test_communication/msg/primitives.h"
@@ -1125,4 +1126,52 @@ TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_boundedarraynest
     test_communication, msg, BoundedArrayNested);
   test_message_type<test_communication__msg__BoundedArrayNested>("test_boundedarraynested",
     ts);
+}
+
+template<>
+size_t get_message_num(test_communication__msg__DynamicArrayPrimitivesNested * msg)
+{
+  (void)msg;
+  return 1;
+}
+
+
+template<>
+void init_message(test_communication__msg__DynamicArrayPrimitivesNested * msg)
+{
+  test_communication__msg__DynamicArrayPrimitivesNested__init(msg);
+}
+
+template<>
+void get_message(test_communication__msg__DynamicArrayPrimitivesNested * msg, size_t msg_num)
+{
+  test_communication__msg__DynamicArrayPrimitives submsg;
+  const size_t size = get_message_num(&submsg);
+  test_communication__msg__DynamicArrayPrimitivesNested__init(msg);
+  test_communication__msg__DynamicArrayPrimitives__Array__init(&msg->msgs, size);
+  switch (msg_num) {
+    case 0:
+      for (size_t i = 0; i < size; ++i) {
+        get_message(&msg->msgs.data[i], i);
+      }
+      break;
+  }
+}
+
+template<>
+void verify_message(test_communication__msg__DynamicArrayPrimitivesNested & message, size_t msg_num)
+{
+  test_communication__msg__DynamicArrayPrimitivesNested expected_msg;
+  get_message(&expected_msg, msg_num);
+  for (size_t i = 0; i < expected_msg.msgs.size; ++i) {
+    verify_message(message.msgs.data[i], i);
+  }
+}
+
+DEFINE_FINI_MESSAGE(test_communication__msg__DynamicArrayPrimitivesNested)
+TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_dynamicarraynestedprimitives) {
+  const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
+    test_communication, msg, DynamicArrayPrimitivesNested);
+  test_message_type<test_communication__msg__DynamicArrayPrimitivesNested>(
+    "test_dynamicarraynestedprimitives", ts);
 }

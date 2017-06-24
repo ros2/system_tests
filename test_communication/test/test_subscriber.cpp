@@ -90,6 +90,7 @@ int main(int argc, char ** argv)
   auto messages_primitives = get_messages_primitives();
   auto messages_static_array_primitives = get_messages_static_array_primitives();
   auto messages_dynamic_array_primitives = get_messages_dynamic_array_primitives();
+  auto messages_dynamic_array_primitives_nested = get_messages_dynamic_array_primitives_nested();
   auto messages_bounded_array_primitives = get_messages_bounded_array_primitives();
   auto messages_nested = get_messages_nested();
   auto messages_dynamic_array_nested = get_messages_dynamic_array_nested();
@@ -108,6 +109,9 @@ int main(int argc, char ** argv)
   } else if (message == "StaticArrayPrimitives") {
     subscriber = subscribe<test_communication::msg::StaticArrayPrimitives>(
       node, message, messages_static_array_primitives, received_messages);
+  } else if (message == "DynamicArrayPrimitivesNested") {
+    subscriber = subscribe<test_communication::msg::DynamicArrayPrimitivesNested>(
+      node, message, messages_dynamic_array_primitives_nested, received_messages);
   } else if (message == "DynamicArrayPrimitives") {
     subscriber = subscribe<test_communication::msg::DynamicArrayPrimitives>(
       node, message, messages_dynamic_array_primitives, received_messages);

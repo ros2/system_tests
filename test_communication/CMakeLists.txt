@@ -30,6 +30,7 @@ set(message_files
   "msg/Builtins.msg"
   "msg/DynamicArrayNested.msg"
   "msg/DynamicArrayPrimitives.msg"
+  "msg/DynamicArrayPrimitivesNested.msg"
   "msg/Empty.msg"
   "msg/Nested.msg"
   "msg/Primitives.msg"
