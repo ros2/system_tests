@@ -1229,6 +1229,6 @@ DEFINE_FINI_MESSAGE(test_communication__msg__DynamicArrayPrimitivesNested)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_dynamicarraynestedprimitives) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_communication, msg, DynamicArrayPrimitivesNested);
-  test_message_type<test_communication__msg__DynamicArrayPrimitivesNested>("test_dynamicarraynestedprimitives",
-    ts);
+  test_message_type<test_communication__msg__DynamicArrayPrimitivesNested>(
+    "test_dynamicarraynestedprimitives", ts);
 }
