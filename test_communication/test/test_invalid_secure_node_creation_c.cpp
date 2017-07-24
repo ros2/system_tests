@@ -49,11 +49,11 @@ make_scope_exit(Callable callable)
 
 void custom_putenv(const char * name, const char * value)
 {
-#ifdef WIN32
+#ifdef _WIN32
   _putenv_s(name, value);
 #else
   setenv(name, value, 1);
-#endif
+#endif  // _WIN32
 }
 
 #define SCOPE_EXIT(code) make_scope_exit([&]() {code; })
