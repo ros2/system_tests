@@ -214,6 +214,30 @@ if(BUILD_TESTING)
       )
     endforeach()
 
+    # test durability publish / subscribe
+    configure_file(
+      test/test_durability.py.in
+      test_durability${suffix}.py.configured
+      @ONLY
+    )
+    file(GENERATE
+      OUTPUT "test_durability${suffix}_$<CONFIG>.py"
+      INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_durability${suffix}.py.configured"
+    )
+    ament_add_nose_test(test_durability${suffix}
+      "${CMAKE_CURRENT_BINARY_DIR}/test_durability${suffix}_$<CONFIG>.py"
+      WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py"
+      PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
+      APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}/../../rclpy"
+      APPEND_LIBRARY_DIRS "${append_library_dirs}"
+      TIMEOUT 30
+      "")
+    set_tests_properties(
+      test_durability${suffix}
+      PROPERTIES DEPENDS
+        "test_durability_publisher_cpp__${rmw_implementation1};test_durability_subscriber_cpp__${rmw_implementation2}"
+    )
+
     # test requester / replier
     set(SKIP_TEST "")
 
@@ -292,17 +316,21 @@ if(BUILD_TESTING)
     if(_client_library1 STREQUAL "rclpy")
       set(TEST_PUBLISHER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/publisher_py.py")
       set(TEST_REQUESTER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/requester_py.py")
+      set(TEST_DURABILITY_PUBLISHER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/publisher_durability_py.py")
     elseif(_client_library1 STREQUAL "rclcpp")
       set(TEST_PUBLISHER_EXECUTABLE "$<TARGET_FILE:test_publisher_cpp>")
       set(TEST_REQUESTER_EXECUTABLE "$<TARGET_FILE:test_requester_cpp>")
+      set(TEST_DURABILITY_PUBLISHER_EXECUTABLE "$<TARGET_FILE:test_durability_publisher_cpp>")
     endif()
 
     if(_client_library2 STREQUAL "rclpy")
       set(TEST_SUBSCRIBER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/subscriber_py.py")
       set(TEST_REPLIER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/replier_py.py")
+      set(TEST_DURABILITY_SUBSCRIBER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/subscriber_durability_py.py")
     elseif(_client_library2 STREQUAL "rclcpp")
       set(TEST_SUBSCRIBER_EXECUTABLE "$<TARGET_FILE:test_subscriber_cpp>")
       set(TEST_REPLIER_EXECUTABLE "$<TARGET_FILE:test_replier_cpp>")
+      set(TEST_DURABILITY_SUBSCRIBER_EXECUTABLE "$<TARGET_FILE:test_durability_subscriber_cpp>")
     endif()
   endmacro()
 
@@ -478,10 +506,10 @@ if(BUILD_TESTING)
   custom_executable(test_subscriber_cpp
     "test/test_subscriber.cpp")
   # executables qos_publisher / qos_subscriber
-  custom_executable(test_qos_publisher_cpp
-    "test/test_qos_publisher.cpp")
-  custom_executable(test_qos_subscriber_cpp
-    "test/test_qos_subscriber.cpp")
+  custom_executable(test_durability_publisher_cpp
+    "test/test_durability_publisher.cpp")
+  custom_executable(test_durability_subscriber_cpp
+    "test/test_durability_subscriber.cpp")
   # executables requester / replier
   custom_executable(test_requester_cpp
     "test/test_requester.cpp")
@@ -492,16 +520,6 @@ if(BUILD_TESTING)
     "test/test_secure_publisher.cpp")
   custom_executable(test_secure_subscriber_cpp
     "test/test_secure_subscriber.cpp")
-
-  # Launch file for QoS tests
-  set(TEST_QOS_PUBLISHER_EXECUTABLE "$<TARGET_FILE:test_qos_publisher_cpp>")
-  set(TEST_QOS_SUBSCRIBER_EXECUTABLE "$<TARGET_FILE:test_qos_subscriber_cpp>")
-  set(TEST_QOS_RMW ${rmw_implementation})
-  configure_file(
-    test/test_qos.py.in
-    test_qos_cpp${test_suffix}.py.configured
-    @ONLY
-  )
 
   macro(targets)
     custom_test_c(test_messages_c

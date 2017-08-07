@@ -16,8 +16,9 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
-#include <rclcpp/rclcpp.hpp>
+#include "rclcpp/rclcpp.hpp"
 
 #include "message_fixtures.hpp"
 
@@ -65,10 +66,10 @@ rclcpp::subscription::SubscriptionBase::SharedPtr subscribe(
 
   rmw_qos_profile_t custom_qos_profile = rmw_qos_profile_default;
   custom_qos_profile.depth = expected_messages.size();
-  custom_qos_profile.durability = RMW_QOS_POLICY_TRANSIENT_LOCAL_DURABILITY;
+  custom_qos_profile.durability = RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL;
 
   auto subscriber = node->create_subscription<T>(
-    std::string("test_qos_message_primitives"), custom_qos_profile, callback);
+    std::string("test_durability_message_primitives"), callback, custom_qos_profile);
   return subscriber;
 }
 
@@ -84,13 +85,6 @@ int main(int argc, char ** argv)
   std::vector<bool> received_messages;  // collect flags about received messages
 
   auto messages = get_messages_primitives();
-
-  std::cout << "Wait for 20 seconds before subscribing" << std::endl;
-
-  // Wait for a while before subscribing
-  std::chrono::seconds wait_time(10);
-
-  std::this_thread::sleep_for(wait_time);
 
   std::cout << "Create subscriber" << std::endl;
 

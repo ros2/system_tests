@@ -15,8 +15,9 @@
 #include <chrono>
 #include <iostream>
 #include <string>
+#include <vector>
 
-#include <rclcpp/rclcpp.hpp>
+#include "rclcpp/rclcpp.hpp"
 
 #include "message_fixtures.hpp"
 
@@ -30,10 +31,10 @@ typename rclcpp::publisher::Publisher<T>::SharedPtr publish(
 
   rmw_qos_profile_t custom_qos_profile = rmw_qos_profile_default;
   custom_qos_profile.depth = messages.size();
-  custom_qos_profile.durability = RMW_QOS_POLICY_TRANSIENT_LOCAL_DURABILITY;
+  custom_qos_profile.durability = RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL;
 
   auto publisher = node->create_publisher<T>(
-    std::string("test_qos_message_primitives"), custom_qos_profile);
+    std::string("test_durability_message_primitives"), custom_qos_profile);
 
   rclcpp::WallRate time_between_cycles(1);
   rclcpp::WallRate time_between_messages(10);
@@ -66,11 +67,6 @@ int main(int argc, char ** argv)
   auto node = rclcpp::Node::make_shared(std::string("test_qos_publisher_primitives"));
 
   auto publisher = publish<test_communication::msg::Primitives>(node, get_messages_primitives(), 1);
-
-  // Wait for a while before exiting
-  std::chrono::seconds wait_time(50);
-
-  std::this_thread::sleep_for(wait_time);
 
   return 0;
 }
