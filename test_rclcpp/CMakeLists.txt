@@ -104,6 +104,18 @@ if(BUILD_TESTING)
   # Macro for tests that trigger the shutdown of an executable based on particular console output,
   # then check the output of the executable against different console output.
   macro(custom_launch_test_executable_output test_name executable)
+    cmake_parse_arguments(_ARG "SKIP_TEST" "TIMEOUT" "" ${ARGN})
+    if(_ARG_UNPARSED_ARGUMENTS)
+      message(FATAL_ERROR "custom_launch_test_executable_output() called with "
+      "unused arguments: ${_ARG_UNPARSED_ARGUMENTS}")
+    endif()
+    if(_ARG_TIMEOUT)
+      set(_ARG_TIMEOUT "TIMEOUT" "${_ARG_TIMEOUT}")
+    endif()
+    if(_ARG_SKIP_TEST)
+      set(_ARG_SKIP_TEST "SKIP_TEST")
+    endif()
+
     set(TEST_NAME "${test_name}")
     set(TEST_EXECUTABLE "$<TARGET_FILE:${executable}>")
     set(TEST_EXECUTABLE_NAME "${executable}")
@@ -122,7 +134,8 @@ if(BUILD_TESTING)
     )
     ament_add_nose_test(${test_name}${target_suffix}
       "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIG>.py"
-      ${ARGN}
+      ${_ARG_TIMEOUT}
+      ${_ARG_SKIP_TEST}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
@@ -195,17 +208,25 @@ if(BUILD_TESTING)
       test_client_scope_consistency_server_cpp test_client_scope_consistency_client_cpp
       TIMEOUT 30)
 
+    # Note (dhood): signal handler tests will be skipped on Windows because there is no opportunity
+    # for signal handling once shutdown is triggered by launch_testing.
+    set(SKIP_TEST "")
+    if(WIN32)
+      set(SKIP_TEST "SKIP_TEST")
+    endif()
     # Test that a user-defined signal handler is called on interrupt:
     # after rclcpp::init has been called, but before rclcpp::shutdown has been called.
     custom_launch_test_executable_output(test_signal_handler_before_shutdown
       test_signal_handler
-      TIMEOUT 30)
+      TIMEOUT 30
+      ${SKIP_TEST})
 
     # Test that a user-defined signal handler is restored after rclcpp::init and rclcpp::shutdown
     # have been called.
     custom_launch_test_executable_output(test_signal_handler_after_shutdown
       test_signal_handler
-      TIMEOUT 30)
+      TIMEOUT 30
+      ${SKIP_TEST})
   endmacro()
 
   set(append_library_dirs "${CMAKE_CURRENT_BINARY_DIR}")
