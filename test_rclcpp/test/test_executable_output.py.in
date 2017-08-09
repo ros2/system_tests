@@ -1,4 +1,5 @@
-# generated from test_rclcpp/test/test_two_executables.py.in
+# generated from test_rclcpp/test/test_executable_output.py.in
+# generated code does not contain a copyright notice
 
 from launch import LaunchDescriptor
 from launch.exit_handler import primary_exit_handler

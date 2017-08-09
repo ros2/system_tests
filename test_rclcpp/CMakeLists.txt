@@ -142,7 +142,7 @@ if(BUILD_TESTING)
       RMW_IMPLEMENTATION=${rmw_implementation}
     )
     set_tests_properties(${test_name}${target_suffix}
-      PROPERTIES DEPENDS "${executable1}${target_suffix}"
+      PROPERTIES DEPENDS "${executable}${target_suffix}"
     )
   endmacro()
 
