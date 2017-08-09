@@ -104,17 +104,6 @@ if(BUILD_TESTING)
   # Macro for tests that trigger the shutdown of an executable based on particular console output,
   # then check the output of the executable against different console output.
   macro(custom_launch_test_executable_output test_name executable)
-    cmake_parse_arguments(_ARG "SKIP_TEST" "TIMEOUT" "" ${ARGN})
-    if(_ARG_UNPARSED_ARGUMENTS)
-      message(FATAL_ERROR "custom_launch_test_executable_output() called with "
-      "unused arguments: ${_ARG_UNPARSED_ARGUMENTS}")
-    endif()
-    if(_ARG_TIMEOUT)
-      set(_ARG_TIMEOUT "TIMEOUT" "${_ARG_TIMEOUT}")
-    endif()
-    if(_ARG_SKIP_TEST)
-      set(_ARG_SKIP_TEST "SKIP_TEST")
-    endif()
 
     set(TEST_NAME "${test_name}")
     set(TEST_EXECUTABLE "$<TARGET_FILE:${executable}>")
@@ -134,8 +123,7 @@ if(BUILD_TESTING)
     )
     ament_add_nose_test(${test_name}${target_suffix}
       "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIG>.py"
-      ${_ARG_TIMEOUT}
-      ${_ARG_SKIP_TEST}
+      ${ARGN}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
