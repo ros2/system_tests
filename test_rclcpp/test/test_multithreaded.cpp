@@ -126,7 +126,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
         // wait for the last callback to fire before cancelling
         // Wait for pending subscription callbacks to trigger.
         std::atomic_uint loop(0);
-        while ((counter.load() != expected_count) && (loop++ < max_loops)) {
+        while (counter.load() != expected_count) {
           std::this_thread::sleep_for(sleep_per_loop);
         }
         executor.cancel();
