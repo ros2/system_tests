@@ -13,12 +13,16 @@ def test_requester_replier():
     requester_cmd = ['@TEST_REQUESTER_EXECUTABLE@', '@TEST_SERVICE_TYPE@']
     replier_cmd = ['@TEST_REPLIER_EXECUTABLE@', '@TEST_SERVICE_TYPE@']
 
+    replier_env = dict(os.environ)
+    requester_env = dict(os.environ)
+
     if '@TEST_REQUESTER_RCL@' == 'rclpy':
         requester_cmd.insert(0, sys.executable)
+        replier_env['PYTHONUNBUFFERED'] = '1'
     if '@TEST_REPLIER_RCL@' == 'rclpy':
         replier_cmd.insert(0, sys.executable)
+        requester_env['PYTHONUNBUFFERED'] = '1'
 
-    replier_env = dict(os.environ)
     replier_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@REPLIER_RMW@'
     replier_env['RMW_IMPLEMENTATION'] = '@REPLIER_RMW@'
     ld.add_process(
@@ -27,7 +31,6 @@ def test_requester_replier():
         env=replier_env,
     )
 
-    requester_env = dict(os.environ)
     requester_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@REQUESTER_RMW@'
     requester_env['RMW_IMPLEMENTATION'] = '@REQUESTER_RMW@'
     ld.add_process(
