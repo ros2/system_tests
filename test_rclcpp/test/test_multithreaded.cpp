@@ -95,9 +95,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   // messages. So we put a heuristic upper bound (2s) on how long we're willing to
   // wait for delivery to occur.
   const std::chrono::milliseconds sleep_per_loop(10);
-  const unsigned int max_loops = 200;
-  std::atomic_uint loop(0);
-  while ((counter.load() != subscriptions_size) && (loop++ < max_loops)) {
+  while (subscriptions_size != counter.load()) {
     rclcpp::utilities::sleep_for(sleep_per_loop);
     executor.spin_some();
   }
@@ -116,7 +114,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
 
   std::mutex publish_mutex;
   auto publish_callback = [
-    msg, &pub, &executor, &counter, &expected_count, &sleep_per_loop, &max_loops, &publish_mutex](
+    msg, &pub, &executor, &counter, &expected_count, &sleep_per_loop, &publish_mutex](
     rclcpp::timer::TimerBase & timer) -> void
     {
       std::lock_guard<std::mutex> lock(publish_mutex);
@@ -124,8 +122,6 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
       if (msg->data > 5) {
         timer.cancel();
         // wait for the last callback to fire before cancelling
-        // Wait for pending subscription callbacks to trigger.
-        std::atomic_uint loop(0);
         while (counter.load() != expected_count) {
           std::this_thread::sleep_for(sleep_per_loop);
         }
@@ -297,7 +293,6 @@ static inline void multi_access_publisher(bool intra_process)
     {
       if (timer_counter.load() >= num_messages) {
         timer.cancel();
-        std::atomic_uint i(0);
         // Wait for pending subscription callbacks to trigger.
         while (subscription_counter < timer_counter) {
           rclcpp::utilities::sleep_for(1ms);
