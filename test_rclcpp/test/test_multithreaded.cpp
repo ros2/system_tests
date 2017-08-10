@@ -46,10 +46,13 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
     node_topic_name += "_intra_process";
   }
 
+  rclcpp::executors::MultiThreadedExecutor executor;
+
   auto node = rclcpp::Node::make_shared(node_topic_name, "", intra_process);
   auto callback_group = node->create_callback_group(
     rclcpp::callback_group::CallbackGroupType::Reentrant);
-  auto pub = node->create_publisher<test_rclcpp::msg::UInt32>(node_topic_name, 16);
+  const size_t num_messages = std::min<size_t>(executor.get_number_of_threads(), 16);
+  auto pub = node->create_publisher<test_rclcpp::msg::UInt32>(node_topic_name, 5 * num_messages);
 
   std::vector<rclcpp::Subscription<test_rclcpp::msg::UInt32>::SharedPtr> subscriptions;
   std::atomic_int counter(0);
@@ -63,11 +66,10 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
       ASSERT_EQ(intra_process, info.from_intra_process);
     };
 
-  rclcpp::executors::MultiThreadedExecutor executor;
   // Try to saturate the MultithreadedExecutor's thread pool with subscriptions
-  for (uint32_t i = 0; i < std::min<size_t>(executor.get_number_of_threads(), 16); ++i) {
-    auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(node_topic_name, 16, callback,
-        callback_group);
+  for (uint32_t i = 0; i < num_messages; ++i) {
+    auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(
+      node_topic_name, 5 * num_messages, callback, callback_group);
     subscriptions.push_back(sub);
   }
   ASSERT_TRUE(std::numeric_limits<int>::max() > subscriptions.size());
