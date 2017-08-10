@@ -271,9 +271,23 @@ static inline void multi_access_publisher(bool intra_process)
   auto pub = node->create_publisher<test_rclcpp::msg::UInt32>(node_topic_name, num_messages);
   // callback groups?
   auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
+
+  std::atomic_uint subscription_counter(0);
+  auto sub_callback = [&subscription_counter](const test_rclcpp::msg::UInt32::SharedPtr msg)
+    {
+      ++subscription_counter;
+      printf("Subscription callback %u\n", subscription_counter.load());
+      printf("callback() %d with message data %u\n", subscription_counter.load(), msg->data);
+    };
+  auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(node_topic_name, num_messages,
+      sub_callback,
+      sub_callback_group);
+
+  // wait a moment for everything to initialize
+  test_rclcpp::wait_for_subscriber(node, "multi_access");
+
   // use atomic
   std::atomic_uint timer_counter(0);
-  std::atomic_uint subscription_counter(0);
 
   auto timer_callback =
     [&executor, &pub, &msg, &timer_counter, &subscription_counter, &num_messages](
@@ -301,14 +315,6 @@ static inline void multi_access_publisher(bool intra_process)
     timers.push_back(node->create_wall_timer(std::chrono::milliseconds(1), timer_callback));
   }
 
-  auto sub_callback = [&subscription_counter](const test_rclcpp::msg::UInt32::SharedPtr)
-    {
-      ++subscription_counter;
-      printf("Subscription callback %u\n", subscription_counter.load());
-    };
-  auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(node_topic_name, num_messages,
-      sub_callback,
-      sub_callback_group);
   executor.add_node(node);
   executor.spin();
   ASSERT_EQ(num_messages, timer_counter.load());
