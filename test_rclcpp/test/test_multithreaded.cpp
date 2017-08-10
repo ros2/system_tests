@@ -80,7 +80,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   msg->data = 0;
 
   // wait a moment for everything to initialize
-  test_rclcpp::wait_for_subscriber(node, "multi_consumer");
+  test_rclcpp::wait_for_subscriber(node, node_topic_name);
 
   // sanity check that no callbacks have fired
   EXPECT_EQ(0, counter.load());
@@ -282,7 +282,7 @@ static inline void multi_access_publisher(bool intra_process)
       sub_callback_group);
 
   // wait a moment for everything to initialize
-  test_rclcpp::wait_for_subscriber(node, "multi_access");
+  test_rclcpp::wait_for_subscriber(node, node_topic_name);
 
   // use atomic
   std::atomic_uint timer_counter(0);
