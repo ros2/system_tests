@@ -99,11 +99,11 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
     rclcpp::utilities::sleep_for(sleep_per_loop);
     executor.spin_some();
   }
-  EXPECT_EQ(counter.load(), subscriptions_size);
+  EXPECT_EQ(subscriptions_size, counter.load());
 
   // Expectation: no further messages were received.
   executor.spin_once(std::chrono::milliseconds(0));
-  EXPECT_EQ(counter.load(), subscriptions_size);
+  EXPECT_EQ(subscriptions_size, counter.load());
 
   // reset counter
   counter.store(0);
@@ -135,7 +135,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   auto timer = node->create_wall_timer(std::chrono::milliseconds(1), publish_callback);
 
   executor.spin();
-  EXPECT_EQ(counter.load(), expected_count);
+  EXPECT_EQ(expected_count, counter.load());
 }
 
 TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_single_producer) {
@@ -206,16 +206,16 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     // Wait on each future
     for (uint32_t i = 0; i < results.size(); ++i) {
       auto result = executor.spin_until_future_complete(results[i]);
-      ASSERT_EQ(result, rclcpp::executor::FutureReturnCode::SUCCESS);
+      ASSERT_EQ(rclcpp::executor::FutureReturnCode::SUCCESS, result);
     }
 
     // Check the status of all futures
     for (uint32_t i = 0; i < results.size(); ++i) {
       ASSERT_EQ(std::future_status::ready, results[i].wait_for(std::chrono::seconds(0)));
-      EXPECT_EQ(results[i].get()->sum, 2 * i + 1);
+      EXPECT_EQ(2 * i + 1, results[i].get()->sum);
     }
 
-    EXPECT_EQ(counter.load(), client_request_pairs_size);
+    EXPECT_EQ(client_request_pairs_size, counter.load());
   }
 
   // Reset the counter and try again with spin
@@ -244,9 +244,9 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     // Check the status of all futures
     for (uint32_t i = 0; i < results.size(); ++i) {
       ASSERT_EQ(std::future_status::ready, results[i].wait_for(std::chrono::seconds(0)));
-      EXPECT_EQ(results[i].get()->sum, 2 * i + 1);
+      EXPECT_EQ(2 * i + 1, results[i].get()->sum);
     }
-    EXPECT_EQ(counter.load(), client_request_pairs_size);
+    EXPECT_EQ(client_request_pairs_size, counter.load());
   }
 }
 
@@ -311,8 +311,8 @@ static inline void multi_access_publisher(bool intra_process)
       sub_callback_group);
   executor.add_node(node);
   executor.spin();
-  ASSERT_EQ(timer_counter.load(), num_messages);
-  ASSERT_EQ(timer_counter.load(), subscription_counter);
+  ASSERT_EQ(num_messages, timer_counter.load());
+  ASSERT_EQ(subscription_counter, timer_counter.load());
 }
 
 TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_access_publisher) {
