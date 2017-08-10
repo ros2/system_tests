@@ -297,9 +297,7 @@ static inline void multi_access_publisher(bool intra_process)
         timer.cancel();
         std::atomic_uint i(0);
         // Wait for pending subscription callbacks to trigger.
-        while (subscription_counter < timer_counter &&
-          ++i <= num_messages)
-        {
+        while (subscription_counter < timer_counter) {
           rclcpp::utilities::sleep_for(1ms);
         }
         executor.cancel();
