@@ -119,6 +119,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
     rclcpp::parameter::ParameterVariant("foobar", true),
     rclcpp::parameter::ParameterVariant("barfoo", std::vector<uint8_t>{0, 1, 2}),
   });
+  printf("Got set_parameters result\n");
 
   // Check to see if they were set.
   for (auto & result : set_parameters_results) {
@@ -223,6 +224,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_primiti
     rclcpp::parameter::ParameterVariant("foobar", true),
     rclcpp::parameter::ParameterVariant("barfoo", std::vector<uint8_t>{3, 4, 5}),
   });
+  printf("Got set_parameters result\n");
 
   // Check to see if they were set.
   for (auto & result : set_parameters_results) {
@@ -289,6 +291,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_variant
     ParameterVariant("foobar", true),
     ParameterVariant("barfoo", std::vector<uint8_t>{3, 4, 5}),
   });
+  printf("Got set_parameters result\n");
 
   // Check to see if they were set.
   for (auto & result : set_parameters_results) {
@@ -336,6 +339,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_parameter_or) {
   auto set_parameters_results = node->set_parameters({
     ParameterVariant("foo", 2),
   });
+  printf("Got set_parameters result\n");
 
   // Check to see if they were set.
   for (auto & result : set_parameters_results) {
@@ -371,6 +375,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), set_parameter_if_not_
   auto set_parameters_results = node->set_parameters({
     ParameterVariant("foo", 2),
   });
+  printf("Got set_parameters result\n");
 
   // Check to see if they were set.
   for (auto & result : set_parameters_results) {
@@ -399,6 +404,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), set_parameter_if_not_
 int main(int argc, char ** argv)
 {
   // NOTE: use custom main to ensure that rclcpp::init is called only once
+  setvbuf(stdout, NULL, _IONBF, BUFSIZ);
   rclcpp::init(argc, argv);
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

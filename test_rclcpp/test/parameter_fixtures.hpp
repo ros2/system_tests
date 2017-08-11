@@ -30,6 +30,7 @@ const double test_epsilon = 1e-6;
 void set_test_parameters(
   std::shared_ptr<rclcpp::parameter_client::SyncParametersClient> parameters_client)
 {
+  printf("Setting parameters\n");
   // Set several differnet types of parameters.
   auto set_parameters_results = parameters_client->set_parameters({
     rclcpp::parameter::ParameterVariant("foo", 2),
@@ -40,6 +41,8 @@ void set_test_parameters(
     rclcpp::parameter::ParameterVariant("foo.second", 42),
     rclcpp::parameter::ParameterVariant("foobar", true),
   });
+  printf("Got set_parameters result\n");
+
 
   // Check to see if they were set.
   for (auto & result : set_parameters_results) {
@@ -51,6 +54,7 @@ void verify_set_parameters_async(
   std::shared_ptr<rclcpp::Node> node,
   std::shared_ptr<rclcpp::parameter_client::AsyncParametersClient> parameters_client)
 {
+  printf("Setting parameters\n");
   // Set several differnet types of parameters.
   auto set_parameters_results = parameters_client->set_parameters({
     rclcpp::parameter::ParameterVariant("foo", 2),
@@ -62,6 +66,8 @@ void verify_set_parameters_async(
     rclcpp::parameter::ParameterVariant("foobar", true),
   });
   rclcpp::spin_until_future_complete(node, set_parameters_results);  // Wait for the results.
+  printf("Got set_parameters result\n");
+
   // Check to see if they were set.
   for (auto & result : set_parameters_results.get()) {
     ASSERT_TRUE(result.successful);
@@ -71,6 +77,7 @@ void verify_set_parameters_async(
 void verify_test_parameters(
   std::shared_ptr<rclcpp::parameter_client::SyncParametersClient> parameters_client)
 {
+  printf("Listing parameters with recursive depth\n");
   // Test recursive depth (=0)
   auto parameters_and_prefixes = parameters_client->list_parameters({"foo", "bar"},
       rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE);
@@ -81,6 +88,7 @@ void verify_test_parameters(
     EXPECT_STREQ("foo", prefix.c_str());
   }
 
+  printf("Listing parameters with depth of 1\n");
   // Test different depth
   auto parameters_and_prefixes4 = parameters_client->list_parameters({"foo"}, 1);
   for (auto & name : parameters_and_prefixes4.names) {
@@ -90,6 +98,7 @@ void verify_test_parameters(
     EXPECT_STREQ("foo", prefix.c_str());
   }
 
+  printf("Listing parameters with depth of 2\n");
   // Test different depth
   auto parameters_and_prefixes5 = parameters_client->list_parameters({"foo"}, 2);
   for (auto & name : parameters_and_prefixes5.names) {
@@ -99,6 +108,7 @@ void verify_test_parameters(
     EXPECT_STREQ("foo", prefix.c_str());
   }
 
+  printf("Getting parameters\n");
   // Get a few of the parameters just set.
   for (auto & parameter : parameters_client->get_parameters({"foo", "bar", "baz"})) {
     // std::cout << "Parameter is:" << std::endl << parameter.to_yaml() << std::endl;
@@ -120,11 +130,13 @@ void verify_test_parameters(
     }
   }
 
+  printf("Getting nonexistent parameters\n");
   // Get a few non existant parameters
   for (auto & parameter : parameters_client->get_parameters({"not_foo", "not_baz"})) {
     EXPECT_STREQ("There should be no matches", parameter.get_name().c_str());
   }
 
+  printf("Listing parameters with recursive depth\n");
   // List all of the parameters, using an empty prefix list and depth=0
   parameters_and_prefixes = parameters_client->list_parameters({},
       rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE);
@@ -139,6 +151,7 @@ void verify_test_parameters(
         name),
       parameters_and_prefixes.names.cend());
   }
+  printf("Listing parameters with depth 100\n");
   // List all of the parameters, using an empty prefix list and large depth
   parameters_and_prefixes = parameters_client->list_parameters({}, 100);
   EXPECT_EQ(parameters_and_prefixes.names.size(), all_names.size());
@@ -149,6 +162,7 @@ void verify_test_parameters(
         name),
       parameters_and_prefixes.names.cend());
   }
+  printf("Listing parameters with depth 1\n");
   // List most of the parameters, using an empty prefix list and depth=1
   parameters_and_prefixes = parameters_client->list_parameters({}, 1);
   std::vector<std::string> depth_one_names = {
@@ -168,6 +182,7 @@ void verify_get_parameters_async(
   std::shared_ptr<rclcpp::Node> node,
   std::shared_ptr<rclcpp::parameter_client::AsyncParametersClient> parameters_client)
 {
+  printf("Listing parameters with recursive depth\n");
   // Test recursive depth (=0)
   auto result = parameters_client->list_parameters({"foo", "bar"},
       rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE);
@@ -180,6 +195,7 @@ void verify_get_parameters_async(
     EXPECT_STREQ("foo", prefix.c_str());
   }
 
+  printf("Listing parameters with depth 1\n");
   // Test different depth
   auto result4 = parameters_client->list_parameters({"foo"}, 1);
   rclcpp::spin_until_future_complete(node, result4);
@@ -192,6 +208,7 @@ void verify_get_parameters_async(
   }
 
   // Test different depth
+  printf("Listing parameters with depth 2\n");
   auto result4a = parameters_client->list_parameters({"foo"}, 2);
   rclcpp::spin_until_future_complete(node, result4a);
   auto parameters_and_prefixes4a = result4a.get();
@@ -203,6 +220,7 @@ void verify_get_parameters_async(
   }
 
 
+  printf("Getting parameters\n");
   // Get a few of the parameters just set.
   auto result2 = parameters_client->get_parameters({"foo", "bar", "baz"});
   rclcpp::spin_until_future_complete(node, result2);
@@ -226,6 +244,7 @@ void verify_get_parameters_async(
     }
   }
 
+  printf("Getting nonexistent parameters\n");
   // Get a few non existant parameters
   auto result3 = parameters_client->get_parameters({"not_foo", "not_baz"});
   rclcpp::spin_until_future_complete(node, result3);
@@ -233,6 +252,7 @@ void verify_get_parameters_async(
     EXPECT_STREQ("There should be no matches", parameter.get_name().c_str());
   }
 
+  printf("Listing parameters with recursive depth\n");
   // List all of the parameters, using an empty prefix list
   auto result5 = parameters_client->list_parameters({},
       rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE);
