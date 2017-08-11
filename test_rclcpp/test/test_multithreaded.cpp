@@ -46,10 +46,13 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
     node_topic_name += "_intra_process";
   }
 
+  rclcpp::executors::MultiThreadedExecutor executor;
+
   auto node = rclcpp::Node::make_shared(node_topic_name, "", intra_process);
   auto callback_group = node->create_callback_group(
     rclcpp::callback_group::CallbackGroupType::Reentrant);
-  auto pub = node->create_publisher<test_rclcpp::msg::UInt32>(node_topic_name, 16);
+  const size_t num_messages = std::min<size_t>(executor.get_number_of_threads(), 16);
+  auto pub = node->create_publisher<test_rclcpp::msg::UInt32>(node_topic_name, 5 * num_messages);
 
   std::vector<rclcpp::Subscription<test_rclcpp::msg::UInt32>::SharedPtr> subscriptions;
   std::atomic_int counter(0);
@@ -63,11 +66,10 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
       ASSERT_EQ(intra_process, info.from_intra_process);
     };
 
-  rclcpp::executors::MultiThreadedExecutor executor;
   // Try to saturate the MultithreadedExecutor's thread pool with subscriptions
-  for (uint32_t i = 0; i < std::min<size_t>(executor.get_number_of_threads(), 16); ++i) {
-    auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(node_topic_name, 16, callback,
-        callback_group);
+  for (uint32_t i = 0; i < num_messages; ++i) {
+    auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(
+      node_topic_name, 5 * num_messages, callback, callback_group);
     subscriptions.push_back(sub);
   }
   ASSERT_TRUE(std::numeric_limits<int>::max() > subscriptions.size());
@@ -78,7 +80,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   msg->data = 0;
 
   // wait a moment for everything to initialize
-  test_rclcpp::wait_for_subscriber(node, "multi_consumer");
+  test_rclcpp::wait_for_subscriber(node, node_topic_name);
 
   // sanity check that no callbacks have fired
   EXPECT_EQ(0, counter.load());
@@ -93,17 +95,15 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   // messages. So we put a heuristic upper bound (2s) on how long we're willing to
   // wait for delivery to occur.
   const std::chrono::milliseconds sleep_per_loop(10);
-  const unsigned int max_loops = 200;
-  std::atomic_uint loop(0);
-  while ((counter.load() != subscriptions_size) && (loop++ < max_loops)) {
+  while (subscriptions_size != counter.load()) {
     rclcpp::utilities::sleep_for(sleep_per_loop);
     executor.spin_some();
   }
-  EXPECT_EQ(counter.load(), subscriptions_size);
+  EXPECT_EQ(subscriptions_size, counter.load());
 
   // Expectation: no further messages were received.
   executor.spin_once(std::chrono::milliseconds(0));
-  EXPECT_EQ(counter.load(), subscriptions_size);
+  EXPECT_EQ(subscriptions_size, counter.load());
 
   // reset counter
   counter.store(0);
@@ -114,7 +114,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
 
   std::mutex publish_mutex;
   auto publish_callback = [
-    msg, &pub, &executor, &counter, &expected_count, &sleep_per_loop, &max_loops, &publish_mutex](
+    msg, &pub, &executor, &counter, &expected_count, &sleep_per_loop, &publish_mutex](
     rclcpp::timer::TimerBase & timer) -> void
     {
       std::lock_guard<std::mutex> lock(publish_mutex);
@@ -122,9 +122,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
       if (msg->data > 5) {
         timer.cancel();
         // wait for the last callback to fire before cancelling
-        // Wait for pending subscription callbacks to trigger.
-        std::atomic_uint loop(0);
-        while ((counter.load() != expected_count) && (loop++ < max_loops)) {
+        while (counter.load() != expected_count) {
           std::this_thread::sleep_for(sleep_per_loop);
         }
         executor.cancel();
@@ -135,7 +133,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   auto timer = node->create_wall_timer(std::chrono::milliseconds(1), publish_callback);
 
   executor.spin();
-  EXPECT_EQ(counter.load(), expected_count);
+  EXPECT_EQ(expected_count, counter.load());
 }
 
 TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_single_producer) {
@@ -206,16 +204,16 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     // Wait on each future
     for (uint32_t i = 0; i < results.size(); ++i) {
       auto result = executor.spin_until_future_complete(results[i]);
-      ASSERT_EQ(result, rclcpp::executor::FutureReturnCode::SUCCESS);
+      ASSERT_EQ(rclcpp::executor::FutureReturnCode::SUCCESS, result);
     }
 
     // Check the status of all futures
     for (uint32_t i = 0; i < results.size(); ++i) {
       ASSERT_EQ(std::future_status::ready, results[i].wait_for(std::chrono::seconds(0)));
-      EXPECT_EQ(results[i].get()->sum, 2 * i + 1);
+      EXPECT_EQ(2 * i + 1, results[i].get()->sum);
     }
 
-    EXPECT_EQ(counter.load(), client_request_pairs_size);
+    EXPECT_EQ(client_request_pairs_size, counter.load());
   }
 
   // Reset the counter and try again with spin
@@ -244,9 +242,9 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     // Check the status of all futures
     for (uint32_t i = 0; i < results.size(); ++i) {
       ASSERT_EQ(std::future_status::ready, results[i].wait_for(std::chrono::seconds(0)));
-      EXPECT_EQ(results[i].get()->sum, 2 * i + 1);
+      EXPECT_EQ(2 * i + 1, results[i].get()->sum);
     }
-    EXPECT_EQ(counter.load(), client_request_pairs_size);
+    EXPECT_EQ(client_request_pairs_size, counter.load());
   }
 }
 
@@ -271,9 +269,23 @@ static inline void multi_access_publisher(bool intra_process)
   auto pub = node->create_publisher<test_rclcpp::msg::UInt32>(node_topic_name, num_messages);
   // callback groups?
   auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
+
+  std::atomic_uint subscription_counter(0);
+  auto sub_callback = [&subscription_counter](const test_rclcpp::msg::UInt32::SharedPtr msg)
+    {
+      ++subscription_counter;
+      printf("Subscription callback %u\n", subscription_counter.load());
+      printf("callback() %d with message data %u\n", subscription_counter.load(), msg->data);
+    };
+  auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(node_topic_name, num_messages,
+      sub_callback,
+      sub_callback_group);
+
+  // wait a moment for everything to initialize
+  test_rclcpp::wait_for_subscriber(node, node_topic_name);
+
   // use atomic
   std::atomic_uint timer_counter(0);
-  std::atomic_uint subscription_counter(0);
 
   auto timer_callback =
     [&executor, &pub, &msg, &timer_counter, &subscription_counter, &num_messages](
@@ -281,11 +293,8 @@ static inline void multi_access_publisher(bool intra_process)
     {
       if (timer_counter.load() >= num_messages) {
         timer.cancel();
-        std::atomic_uint i(0);
         // Wait for pending subscription callbacks to trigger.
-        while (subscription_counter < timer_counter &&
-          ++i <= num_messages)
-        {
+        while (subscription_counter < timer_counter) {
           rclcpp::utilities::sleep_for(1ms);
         }
         executor.cancel();
@@ -301,18 +310,10 @@ static inline void multi_access_publisher(bool intra_process)
     timers.push_back(node->create_wall_timer(std::chrono::milliseconds(1), timer_callback));
   }
 
-  auto sub_callback = [&subscription_counter](const test_rclcpp::msg::UInt32::SharedPtr)
-    {
-      ++subscription_counter;
-      printf("Subscription callback %u\n", subscription_counter.load());
-    };
-  auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(node_topic_name, num_messages,
-      sub_callback,
-      sub_callback_group);
   executor.add_node(node);
   executor.spin();
-  ASSERT_EQ(timer_counter.load(), num_messages);
-  ASSERT_EQ(timer_counter.load(), subscription_counter);
+  ASSERT_EQ(num_messages, timer_counter.load());
+  ASSERT_EQ(subscription_counter, timer_counter.load());
 }
 
 TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_access_publisher) {
