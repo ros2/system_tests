@@ -185,6 +185,7 @@ int main(int argc, char ** argv)
     publish<test_communication::msg::Builtins>(node, message, messages_builtins);
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
+    rclcpp::shutdown();
     return 1;
   }
 

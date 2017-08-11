@@ -60,11 +60,11 @@ void publish(
 
 int main(int argc, char ** argv)
 {
-  rclcpp::init(argc, argv);
   if (argc != 2) {
     fprintf(stderr, "Wrong number of arguments, pass one message type\n");
     return 1;
   }
+  rclcpp::init(argc, argv);
 
   std::string message = argv[1];
   auto node = rclcpp::Node::make_shared(std::string("test_publisher_") + message);
@@ -100,7 +100,9 @@ int main(int argc, char ** argv)
     publish<test_communication::msg::Builtins>(node, message, get_messages_builtins());
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
+    rclcpp::shutdown();
     return 1;
   }
+  rclcpp::shutdown();
   return 0;
 }
