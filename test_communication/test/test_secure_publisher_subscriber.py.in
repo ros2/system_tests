@@ -18,13 +18,17 @@ def test_secure_publisher_subscriber():
         '@SUBSCRIBER_SHOULD_TIMEOUT@'
     ]
 
+    publisher_env = dict(os.environ)
+    subscriber_env = dict(os.environ)
+
     # TODO (mikaelarguedas) Do we want to test any of this across client libraries??
     # if '@TEST_PUBLISHER_RCL@' == 'rclpy':
     #     publisher_cmd.insert(0, sys.executable)
+    #     publisher_env['PYTHONUNBUFFERED'] = '1'
     # if '@TEST_SUBSCRIBER_RCL@' == 'rclpy':
     #     subscriber_cmd.insert(0, sys.executable)
+    #     subscriber_env['PYTHONUNBUFFERED'] = '1'
 
-    publisher_env = dict(os.environ)
     publisher_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@PUBLISHER_RMW@'
     publisher_env['RMW_IMPLEMENTATION'] = '@PUBLISHER_RMW@'
     publisher_env['ROS_SECURITY_ENABLE'] = '@PUBLISHER_ROS_SECURITY_ENABLE@'
@@ -36,7 +40,6 @@ def test_secure_publisher_subscriber():
         env=publisher_env,
     )
 
-    subscriber_env = dict(os.environ)
     subscriber_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@SUBSCRIBER_RMW@'
     subscriber_env['RMW_IMPLEMENTATION'] = '@SUBSCRIBER_RMW@'
     subscriber_env['ROS_SECURITY_ENABLE'] = '@SUBSCRIBER_ROS_SECURITY_ENABLE@'
