@@ -63,11 +63,11 @@ typename rclcpp::service::Service<T>::SharedPtr reply(
 
 int main(int argc, char ** argv)
 {
-  rclcpp::init(argc, argv);
   if (argc != 2) {
     fprintf(stderr, "Wrong number of arguments, pass one service type\n");
     return 1;
   }
+  rclcpp::init(argc, argv);
 
   auto start = std::chrono::steady_clock::now();
 
@@ -86,6 +86,7 @@ int main(int argc, char ** argv)
       node, service, services_primitives);
   } else {
     fprintf(stderr, "Unknown service argument '%s'\n", service.c_str());
+    rclcpp::shutdown();
     return 1;
   }
   rclcpp::spin(node);
@@ -94,5 +95,6 @@ int main(int argc, char ** argv)
   std::chrono::duration<float> diff = (end - start);
   std::cout << "replied for " << diff.count() << " seconds" << std::endl;
 
+  rclcpp::shutdown();
   return 0;
 }

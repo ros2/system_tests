@@ -75,11 +75,11 @@ rclcpp::subscription::SubscriptionBase::SharedPtr subscribe(
 
 int main(int argc, char ** argv)
 {
-  rclcpp::init(argc, argv);
   if (argc != 2) {
     fprintf(stderr, "Wrong number of arguments, pass one message type\n");
     return 1;
   }
+  rclcpp::init(argc, argv);
 
   auto start = std::chrono::steady_clock::now();
 
@@ -135,6 +135,7 @@ int main(int argc, char ** argv)
       node, message, messages_builtins, received_messages);
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
+    rclcpp::shutdown();
     return 1;
   }
   rclcpp::spin(node);
@@ -143,5 +144,6 @@ int main(int argc, char ** argv)
   std::chrono::duration<float> diff = (end - start);
   std::cout << "subscribed for " << diff.count() << " seconds" << std::endl;
 
+  rclcpp::shutdown();
   return 0;
 }

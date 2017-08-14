@@ -115,7 +115,6 @@ rclcpp::TimerBase::SharedPtr create_timer(
 
 int main(int argc, char ** argv)
 {
-  rclcpp::init(argc, argv);
   if (argc != 3) {
     fprintf(
       stderr,
@@ -128,11 +127,14 @@ int main(int argc, char ** argv)
   std::string topic_name = "chatter";
   bool should_timeout =
     ((0 == strcmp(argv[2], "false")) || (0 == strcmp(argv[2], "0"))) ? false : true;
+
+  rclcpp::init(argc, argv);
   std::shared_ptr<rclcpp::node::Node> node = nullptr;
   try {
     node = rclcpp::Node::make_shared(node_name);
   } catch (std::runtime_error &) {
     fprintf(stderr, "should not have thrown!");
+    rclcpp::shutdown();
     return 1;
   }
   rclcpp::subscription::SubscriptionBase::SharedPtr subscriber;
@@ -181,6 +183,7 @@ int main(int argc, char ** argv)
         node, topic_name, messages_builtins, received_messages);
     } else {
       fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
+      rclcpp::shutdown();
       return 1;
     }
 
@@ -222,15 +225,18 @@ int main(int argc, char ** argv)
         node, topic_name, sub_callback_called, executor);
     } else {
       fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
+      rclcpp::shutdown();
       return 1;
     }
     timer = create_timer(node, timer_callback_called, executor);
     executor.add_node(node);
     executor.spin();
     if (!timer_callback_called || sub_callback_called) {
+      rclcpp::shutdown();
       return 1;
     }
   }
 
+  rclcpp::shutdown();
   return 0;
 }

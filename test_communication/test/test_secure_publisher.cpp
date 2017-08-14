@@ -63,7 +63,6 @@ int8_t attempt_publish(
 
 int main(int argc, char ** argv)
 {
-  rclcpp::init(argc, argv);
   if (argc != 2) {
     fprintf(
       stderr,
@@ -71,6 +70,7 @@ int main(int argc, char ** argv)
       "pass a message type\n");
     return 1;
   }
+  rclcpp::init(argc, argv);
   std::string message = argv[1];
   std::string node_name = "publisher";
   std::string topic_name = "chatter";
@@ -115,7 +115,9 @@ int main(int argc, char ** argv)
       node, topic_name, get_messages_builtins());
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
+    rclcpp::shutdown();
     return 1;
   }
+  rclcpp::shutdown();
   return ret;
 }
