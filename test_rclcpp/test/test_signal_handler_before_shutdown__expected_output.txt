@@ -1,0 +1,9 @@
+Registered custom signal handler.
+Called rclcpp::init.
+Waiting to give an opportunity for interrupt...
+signal_handler(2)
+Custom sigint handler called.
+Calling rclcpp::shutdown...
+Called rclcpp::shutdown.
+Waiting to give an opportunity for interrupt...
+Exiting.

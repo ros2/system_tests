@@ -73,7 +73,7 @@ if(BUILD_TESTING)
       "rclcpp")
   endfunction()
 
-  macro(custom_launch_test test_name executable1 executable2)
+  macro(custom_launch_test_two_executables test_name executable1 executable2)
     set(TEST_NAME "${test_name}")
     set(TEST_EXECUTABLE1 "$<TARGET_FILE:${executable1}>")
     set(TEST_EXECUTABLE1_NAME "${executable1}")
@@ -98,6 +98,39 @@ if(BUILD_TESTING)
     )
     set_tests_properties(${test_name}${target_suffix}
       PROPERTIES DEPENDS "${executable1}${target_suffix} ${executable2}${target_suffix}"
+    )
+  endmacro()
+
+  # Macro for tests that trigger the shutdown of an executable based on particular console output,
+  # then check the output of the executable against different console output.
+  macro(custom_launch_test_executable_output test_name executable)
+
+    set(TEST_NAME "${test_name}")
+    set(TEST_EXECUTABLE "$<TARGET_FILE:${executable}>")
+    set(TEST_EXECUTABLE_NAME "${executable}")
+    set(TEST_EXECUTABLE_TRIGGER_SHUTDOWN_OUTPUT
+      "${CMAKE_CURRENT_SOURCE_DIR}/test/${test_name}__trigger_shutdown")
+    set(TEST_EXECUTABLE_EXPECTED_OUTPUT
+      "${CMAKE_CURRENT_SOURCE_DIR}/test/${test_name}__expected_output")
+    configure_file(
+      test/test_executable_output.py.in
+      ${test_name}${target_suffix}.py.configure
+      @ONLY
+    )
+    file(GENERATE
+      OUTPUT "${test_name}${target_suffix}_$<CONFIG>.py"
+      INPUT "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}.py.configure"
+    )
+    ament_add_nose_test(${test_name}${target_suffix}
+      "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIG>.py"
+      ${ARGN}
+      APPEND_LIBRARY_DIRS "${append_library_dirs}"
+      ENV
+      RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
+      RMW_IMPLEMENTATION=${rmw_implementation}
+    )
+    set_tests_properties(${test_name}${target_suffix}
+      PROPERTIES DEPENDS "${executable}${target_suffix}"
     )
   endmacro()
 
@@ -146,22 +179,42 @@ if(BUILD_TESTING)
       TIMEOUT 30)
 
     # Parameter tests single implementation
-    custom_launch_test(test_parameter_server_cpp
+    custom_launch_test_two_executables(test_parameter_server_cpp
       test_parameters_server_cpp test_remote_parameters_cpp
       TIMEOUT 15)
 
     # Service tests single implementation
-    custom_launch_test(test_services_cpp
+    custom_launch_test_two_executables(test_services_cpp
       test_services_server_cpp test_services_client_cpp
       TIMEOUT 60)
 
-    custom_launch_test(test_client_scope_cpp
+    custom_launch_test_two_executables(test_client_scope_cpp
       test_client_scope_server_cpp test_client_scope_client_cpp
       TIMEOUT 30)
 
-    custom_launch_test(test_client_scope_consistency_cpp
+    custom_launch_test_two_executables(test_client_scope_consistency_cpp
       test_client_scope_consistency_server_cpp test_client_scope_consistency_client_cpp
       TIMEOUT 30)
+
+    # Note (dhood): signal handler tests will be skipped on Windows because there is no opportunity
+    # for signal handling once shutdown is triggered by launch_testing.
+    set(SKIP_TEST "")
+    if(WIN32)
+      set(SKIP_TEST "SKIP_TEST")
+    endif()
+    # Test that a user-defined signal handler is called on interrupt:
+    # after rclcpp::init has been called, but before rclcpp::shutdown has been called.
+    custom_launch_test_executable_output(test_signal_handler_before_shutdown
+      test_signal_handler
+      TIMEOUT 30
+      ${SKIP_TEST})
+
+    # Test that a user-defined signal handler is restored after rclcpp::init and rclcpp::shutdown
+    # have been called.
+    custom_launch_test_executable_output(test_signal_handler_after_shutdown
+      test_signal_handler
+      TIMEOUT 30
+      ${SKIP_TEST})
   endmacro()
 
   set(append_library_dirs "${CMAKE_CURRENT_BINARY_DIR}")
@@ -170,6 +223,8 @@ if(BUILD_TESTING)
   endif()
 
   call_for_each_rmw_implementation(targets)
+
+  custom_executable(test_signal_handler "test/test_signal_handler.cpp")
 
   # Parameter tests single implementation
   custom_executable(test_parameters_server_cpp "test/test_parameters_server.cpp")
