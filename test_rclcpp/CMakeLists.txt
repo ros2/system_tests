@@ -140,7 +140,7 @@ if(BUILD_TESTING)
       TIMEOUT 70)
     custom_gtest(gtest_local_parameters
       "test/test_local_parameters.cpp"
-      TIMEOUT 300)
+      TIMEOUT 90)
     custom_gtest(gtest_services_in_constructor
       "test/test_services_in_constructor.cpp"
       TIMEOUT 30)
