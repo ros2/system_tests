@@ -403,8 +403,9 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), set_parameter_if_not_
 
 int main(int argc, char ** argv)
 {
-  // NOTE: use custom main to ensure that rclcpp::init is called only once
   setvbuf(stdout, NULL, _IONBF, BUFSIZ);
+
+  // NOTE: use custom main to ensure that rclcpp::init is called only once
   rclcpp::init(argc, argv);
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
