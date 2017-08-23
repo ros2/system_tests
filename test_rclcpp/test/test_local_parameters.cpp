@@ -24,6 +24,8 @@
 
 #include "parameter_fixtures.hpp"
 
+using namespace std::chrono_literals;
+
 #ifdef RMW_IMPLEMENTATION
 # define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
 # define CLASSNAME(NAME, SUFFIX) CLASSNAME_(NAME, SUFFIX)
@@ -67,6 +69,9 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous) {
   // TODO(esteve): Make the parameter service automatically start with the node.
   auto parameter_service = std::make_shared<rclcpp::parameter_service::ParameterService>(node);
   auto parameters_client = std::make_shared<rclcpp::parameter_client::SyncParametersClient>(node);
+  if (!parameters_client->wait_for_service(20s)) {
+    ASSERT_TRUE(false) << "service not available after waiting";
+  }
   set_test_parameters(parameters_client);
   verify_test_parameters(parameters_client);
 }
@@ -76,6 +81,9 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous_rep
   // TODO(esteve): Make the parameter service automatically start with the node.
   auto parameter_service = std::make_shared<rclcpp::parameter_service::ParameterService>(node);
   auto parameters_client = std::make_shared<rclcpp::parameter_client::SyncParametersClient>(node);
+  if (!parameters_client->wait_for_service(20s)) {
+    ASSERT_TRUE(false) << "service not available after waiting";
+  }
   set_test_parameters(parameters_client);
   for (int i = 0; i < 10; ++i) {
     printf("iteration: %d\n", i);
@@ -88,6 +96,9 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_asynchronous) {
   // TODO(esteve): Make the parameter service automatically start with the node.
   auto parameter_service = std::make_shared<rclcpp::parameter_service::ParameterService>(node);
   auto parameters_client = std::make_shared<rclcpp::parameter_client::AsyncParametersClient>(node);
+  if (!parameters_client->wait_for_service(20s)) {
+    ASSERT_TRUE(false) << "service not available after waiting";
+  }
   verify_set_parameters_async(node, parameters_client);
   verify_get_parameters_async(node, parameters_client);
 }
@@ -97,6 +108,9 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
   // TODO(esteve): Make the parameter service automatically start with the node.
   auto parameter_service = std::make_shared<rclcpp::parameter_service::ParameterService>(node);
   auto parameters_client = std::make_shared<rclcpp::parameter_client::SyncParametersClient>(node);
+  if (!parameters_client->wait_for_service(20s)) {
+    ASSERT_TRUE(false) << "service not available after waiting";
+  }
   auto set_parameters_results = parameters_client->set_parameters({
     rclcpp::parameter::ParameterVariant("foo", 2),
     rclcpp::parameter::ParameterVariant("bar", "hello"),
@@ -105,6 +119,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
     rclcpp::parameter::ParameterVariant("foobar", true),
     rclcpp::parameter::ParameterVariant("barfoo", std::vector<uint8_t>{0, 1, 2}),
   });
+  printf("Got set_parameters result\n");
 
   // Check to see if they were set.
   for (auto & result : set_parameters_results) {
@@ -198,6 +213,9 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_primiti
   // TODO(esteve): Make the parameter service automatically start with the node.
   auto parameter_service = std::make_shared<rclcpp::parameter_service::ParameterService>(node);
   auto parameters_client = std::make_shared<rclcpp::parameter_client::SyncParametersClient>(node);
+  if (!parameters_client->wait_for_service(20s)) {
+    ASSERT_TRUE(false) << "service not available after waiting";
+  }
   auto set_parameters_results = parameters_client->set_parameters({
     rclcpp::parameter::ParameterVariant("foo", 2),
     rclcpp::parameter::ParameterVariant("bar", "hello"),
@@ -206,6 +224,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_primiti
     rclcpp::parameter::ParameterVariant("foobar", true),
     rclcpp::parameter::ParameterVariant("barfoo", std::vector<uint8_t>{3, 4, 5}),
   });
+  printf("Got set_parameters result\n");
 
   // Check to see if they were set.
   for (auto & result : set_parameters_results) {
@@ -261,6 +280,9 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_variant
   // TODO(esteve): Make the parameter service automatically start with the node.
   auto parameter_service = std::make_shared<rclcpp::parameter_service::ParameterService>(node);
   auto parameters_client = std::make_shared<rclcpp::parameter_client::SyncParametersClient>(node);
+  if (!parameters_client->wait_for_service(20s)) {
+    ASSERT_TRUE(false) << "service not available after waiting";
+  }
   auto set_parameters_results = parameters_client->set_parameters({
     ParameterVariant("foo", 2),
     ParameterVariant("bar", "hello"),
@@ -269,6 +291,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_variant
     ParameterVariant("foobar", true),
     ParameterVariant("barfoo", std::vector<uint8_t>{3, 4, 5}),
   });
+  printf("Got set_parameters result\n");
 
   // Check to see if they were set.
   for (auto & result : set_parameters_results) {
@@ -316,6 +339,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_parameter_or) {
   auto set_parameters_results = node->set_parameters({
     ParameterVariant("foo", 2),
   });
+  printf("Got set_parameters result\n");
 
   // Check to see if they were set.
   for (auto & result : set_parameters_results) {
@@ -351,6 +375,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), set_parameter_if_not_
   auto set_parameters_results = node->set_parameters({
     ParameterVariant("foo", 2),
   });
+  printf("Got set_parameters result\n");
 
   // Check to see if they were set.
   for (auto & result : set_parameters_results) {
@@ -378,6 +403,8 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), set_parameter_if_not_
 
 int main(int argc, char ** argv)
 {
+  setvbuf(stdout, NULL, _IONBF, BUFSIZ);
+
   // NOTE: use custom main to ensure that rclcpp::init is called only once
   rclcpp::init(argc, argv);
   ::testing::InitGoogleTest(&argc, argv);
