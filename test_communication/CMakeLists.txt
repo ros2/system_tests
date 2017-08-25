@@ -56,6 +56,9 @@ if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 
+  find_package(rosidl_runtime_cpp REQUIRED)
+  include_directories(${rosidl_runtime_cpp_INCLUDE_DIRS})
+
   # get the rmw implementations ahead of time
   find_package(rmw_implementation_cmake REQUIRED)
   get_available_rmw_implementations(rmw_implementations2)
