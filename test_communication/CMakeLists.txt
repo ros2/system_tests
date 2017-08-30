@@ -67,16 +67,7 @@ if(BUILD_TESTING)
     if(with_message_argument)
       # adding test for each message type
       foreach(message_file ${message_files})
-        set(SKIP_TEST "")
         get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
-        # TODO(dirk-thomas) publishing Bounded/DynamicArrayPrimitives in OpenSplice is buggy
-        # https://github.com/ros2/rclcpp/issues/219
-        if(
-          (TEST_MESSAGE_TYPE STREQUAL "BoundedArrayPrimitives" OR TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives") AND
-          rmw_implementation STREQUAL "rmw_opensplice_cpp"
-        )
-          set(SKIP_TEST "SKIP_TEST")
-        endif()
         ament_add_test(
           "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
           COMMAND "$<TARGET_FILE:${target}>" "${TEST_MESSAGE_TYPE}"
@@ -85,8 +76,7 @@ if(BUILD_TESTING)
           APPEND_LIBRARY_DIRS "${append_library_dirs}"
           ENV
           RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
-          RMW_IMPLEMENTATION=${rmw_implementation}
-          ${SKIP_TEST})
+          RMW_IMPLEMENTATION=${rmw_implementation})
         set_tests_properties(
           "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
           PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}>"
@@ -190,24 +180,13 @@ if(BUILD_TESTING)
         INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${test_suffix}.py.configured"
       )
 
-      set(SKIP_TEST "")
-      # TODO(dirk-thomas) publishing Bounded/DynamicArrayPrimitives in OpenSplice is buggy
-      # https://github.com/ros2/rclcpp/issues/219
-      if(
-        (TEST_MESSAGE_TYPE STREQUAL "BoundedArrayPrimitives" OR TEST_MESSAGE_TYPE STREQUAL "DynamicArrayPrimitives") AND
-        rmw_implementation1 STREQUAL "rmw_opensplice_cpp"
-      )
-        set(SKIP_TEST "SKIP_TEST")
-      endif()
-      # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)
       ament_add_nose_test(test_publisher_subscriber${test_suffix}
         "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${test_suffix}_$<CONFIG>.py"
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py"
         PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
         APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}/../../rclpy"
         APPEND_LIBRARY_DIRS "${append_library_dirs}"
-        TIMEOUT 15
-        ${SKIP_TEST})
+        TIMEOUT 15)
       set_tests_properties(
         test_publisher_subscriber${test_suffix}
         PROPERTIES DEPENDS "test_publisher_cpp__${rmw_implementation1};test_subscriber_cpp__${rmw_implementation2}"
@@ -217,6 +196,7 @@ if(BUILD_TESTING)
     # test requester / replier
     set(SKIP_TEST "")
 
+    # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)
     # TODO different vendors can't talk to each other right now
     if(NOT rmw_implementation1 STREQUAL rmw_implementation2 AND
       (NOT(rmw_implementation1 MATCHES "(.*)connext(.*)" AND rmw_implementation2 MATCHES "(.*)connext(.*)"))
