@@ -39,6 +39,7 @@ if(BUILD_TESTING)
   rosidl_generate_interfaces(${PROJECT_NAME}
     ${other_message_files}
     DEPENDENCIES test_msgs
+    SKIP_INSTALL
   )
 
   find_package(ament_lint_auto REQUIRED)
