@@ -24,11 +24,10 @@ ament_auto_find_build_dependencies()
 
 option(SECURITY "Activate security" OFF)
 
-
 if(BUILD_TESTING)
 
-  find_package(test_msgs REQUIRED)
   find_package(ament_cmake REQUIRED)
+  find_package(test_msgs REQUIRED)
 
   ament_index_get_resource(interface_files "rosidl_interfaces" "test_msgs")
   string(REPLACE "\n" ";" interface_files "${interface_files}")
@@ -54,7 +53,6 @@ if(BUILD_TESTING)
   foreach(rmw_implementation ${rmw_implementations2})
     find_package("${rmw_implementation}" REQUIRED)
   endforeach()
-
 
   function(custom_test target with_message_argument)
     if(with_message_argument)
