@@ -27,7 +27,7 @@ def replier_callback(request, response, srv_fixtures):
 
 
 def replier(service_name, number_of_cycles):
-    from service_fixtures import get_test_srv
+    from test_msgs.service_fixtures import get_test_srv
     import rclpy
 
     service_pkg = 'test_msgs'
