@@ -9,9 +9,6 @@ endif()
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   # we dont use add_compile_options with pedantic in message packages
   # because the Python C extensions dont comply with it
-  # TODO(mikaelarguedas) change to add_compile_options
-  # once this is not a message package anymore
-  # https://github.com/ros2/system_tests/issues/191
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic")
 elseif(MSVC)
   # /bigobj is needed to avoid error C1128:
