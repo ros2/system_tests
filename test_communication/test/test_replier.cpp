@@ -21,7 +21,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "service_fixtures.hpp"
+#include "test_msgs/service_fixtures.hpp"
 
 template<typename T>
 typename rclcpp::service::Service<T>::SharedPtr reply(
@@ -79,10 +79,10 @@ int main(int argc, char ** argv)
   rclcpp::service::ServiceBase::SharedPtr server;
 
   if (service == "Empty") {
-    server = reply<test_communication::srv::Empty>(
+    server = reply<test_msgs::srv::Empty>(
       node, service, services_empty);
   } else if (service == "Primitives") {
-    server = reply<test_communication::srv::Primitives>(
+    server = reply<test_msgs::srv::Primitives>(
       node, service, services_primitives);
   } else {
     fprintf(stderr, "Unknown service argument '%s'\n", service.c_str());

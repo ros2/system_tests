@@ -19,7 +19,7 @@ import os
 import sys
 
 # this is needed to allow import of test_communication messages
-sys.path.insert(0, os.getcwd())
+# sys.path.insert(0, os.getcwd())
 
 
 def replier_callback(request, response, srv_fixtures):
@@ -34,7 +34,7 @@ def replier(service_name, number_of_cycles):
     from service_fixtures import get_test_srv
     import rclpy
 
-    service_pkg = 'test_communication'
+    service_pkg = 'test_msgs'
     module = importlib.import_module(service_pkg + '.srv')
     srv_mod = getattr(module, service_name)
 

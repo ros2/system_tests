@@ -19,7 +19,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "message_fixtures.hpp"
+#include "test_msgs/message_fixtures.hpp"
 
 template<typename T>
 void publish(
@@ -133,56 +133,56 @@ int main(int argc, char ** argv)
   auto messages_builtins = get_messages_builtins();
 
   if (message == "Empty") {
-    subscriber = subscribe<test_communication::msg::Empty>(
+    subscriber = subscribe<test_msgs::msg::Empty>(
       node, message, messages_empty, received_messages);
-    publish<test_communication::msg::Empty>(node, message, messages_empty);
+    publish<test_msgs::msg::Empty>(node, message, messages_empty);
   } else if (message == "Primitives") {
-    subscriber = subscribe<test_communication::msg::Primitives>(
+    subscriber = subscribe<test_msgs::msg::Primitives>(
       node, message, messages_primitives, received_messages);
-    publish<test_communication::msg::Primitives>(node, message, messages_primitives);
+    publish<test_msgs::msg::Primitives>(node, message, messages_primitives);
   } else if (message == "StaticArrayPrimitives") {
-    subscriber = subscribe<test_communication::msg::StaticArrayPrimitives>(
+    subscriber = subscribe<test_msgs::msg::StaticArrayPrimitives>(
       node, message, messages_static_array_primitives, received_messages);
-    publish<test_communication::msg::StaticArrayPrimitives>(node, message,
+    publish<test_msgs::msg::StaticArrayPrimitives>(node, message,
       messages_static_array_primitives);
   } else if (message == "DynamicArrayPrimitives") {
-    subscriber = subscribe<test_communication::msg::DynamicArrayPrimitives>(
+    subscriber = subscribe<test_msgs::msg::DynamicArrayPrimitives>(
       node, message, messages_dynamic_array_primitives, received_messages);
-    publish<test_communication::msg::DynamicArrayPrimitives>(node, message,
+    publish<test_msgs::msg::DynamicArrayPrimitives>(node, message,
       messages_dynamic_array_primitives);
   } else if (message == "DynamicArrayPrimitivesNested") {
-    subscriber = subscribe<test_communication::msg::DynamicArrayPrimitivesNested>(
+    subscriber = subscribe<test_msgs::msg::DynamicArrayPrimitivesNested>(
       node, message, messages_dynamic_array_primitives_nested, received_messages);
-    publish<test_communication::msg::DynamicArrayPrimitivesNested>(node, message,
+    publish<test_msgs::msg::DynamicArrayPrimitivesNested>(node, message,
       messages_dynamic_array_primitives_nested);
   } else if (message == "BoundedArrayPrimitives") {
-    subscriber = subscribe<test_communication::msg::BoundedArrayPrimitives>(
+    subscriber = subscribe<test_msgs::msg::BoundedArrayPrimitives>(
       node, message, messages_bounded_array_primitives, received_messages);
-    publish<test_communication::msg::BoundedArrayPrimitives>(node, message,
+    publish<test_msgs::msg::BoundedArrayPrimitives>(node, message,
       messages_bounded_array_primitives);
   } else if (message == "Nested") {
-    subscriber = subscribe<test_communication::msg::Nested>(
+    subscriber = subscribe<test_msgs::msg::Nested>(
       node, message, messages_nested, received_messages);
-    publish<test_communication::msg::Nested>(node, message, messages_nested);
+    publish<test_msgs::msg::Nested>(node, message, messages_nested);
   } else if (message == "DynamicArrayNested") {
-    subscriber = subscribe<test_communication::msg::DynamicArrayNested>(
+    subscriber = subscribe<test_msgs::msg::DynamicArrayNested>(
       node, message, messages_dynamic_array_nested, received_messages);
-    publish<test_communication::msg::DynamicArrayNested>(node, message,
+    publish<test_msgs::msg::DynamicArrayNested>(node, message,
       messages_dynamic_array_nested);
   } else if (message == "BoundedArrayNested") {
-    subscriber = subscribe<test_communication::msg::BoundedArrayNested>(
+    subscriber = subscribe<test_msgs::msg::BoundedArrayNested>(
       node, message, messages_bounded_array_nested, received_messages);
-    publish<test_communication::msg::BoundedArrayNested>(node, message,
+    publish<test_msgs::msg::BoundedArrayNested>(node, message,
       messages_bounded_array_nested);
   } else if (message == "StaticArrayNested") {
-    subscriber = subscribe<test_communication::msg::StaticArrayNested>(
+    subscriber = subscribe<test_msgs::msg::StaticArrayNested>(
       node, message, messages_static_array_nested, received_messages);
-    publish<test_communication::msg::StaticArrayNested>(node, message,
+    publish<test_msgs::msg::StaticArrayNested>(node, message,
       messages_static_array_nested);
   } else if (message == "Builtins") {
-    subscriber = subscribe<test_communication::msg::Builtins>(
+    subscriber = subscribe<test_msgs::msg::Builtins>(
       node, message, messages_builtins, received_messages);
-    publish<test_communication::msg::Builtins>(node, message, messages_builtins);
+    publish<test_msgs::msg::Builtins>(node, message, messages_builtins);
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
     rclcpp::shutdown();

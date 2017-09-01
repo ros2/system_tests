@@ -21,7 +21,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "message_fixtures.hpp"
+#include "test_msgs/message_fixtures.hpp"
 
 using namespace std::chrono_literals;
 
@@ -152,34 +152,34 @@ int main(int argc, char ** argv)
     auto messages_static_array_nested = get_messages_static_array_nested();
     auto messages_builtins = get_messages_builtins();
     if (message == "Empty") {
-      subscriber = attempt_subscribe<test_communication::msg::Empty>(
+      subscriber = attempt_subscribe<test_msgs::msg::Empty>(
         node, topic_name, messages_empty, received_messages);
     } else if (message == "Primitives") {
-      subscriber = attempt_subscribe<test_communication::msg::Primitives>(
+      subscriber = attempt_subscribe<test_msgs::msg::Primitives>(
         node, topic_name, messages_primitives, received_messages);
     } else if (message == "StaticArrayPrimitives") {
-      subscriber = attempt_subscribe<test_communication::msg::StaticArrayPrimitives>(
+      subscriber = attempt_subscribe<test_msgs::msg::StaticArrayPrimitives>(
         node, topic_name, messages_static_array_primitives, received_messages);
     } else if (message == "DynamicArrayPrimitives") {
-      subscriber = attempt_subscribe<test_communication::msg::DynamicArrayPrimitives>(
+      subscriber = attempt_subscribe<test_msgs::msg::DynamicArrayPrimitives>(
         node, topic_name, messages_dynamic_array_primitives, received_messages);
     } else if (message == "BoundedArrayPrimitives") {
-      subscriber = attempt_subscribe<test_communication::msg::BoundedArrayPrimitives>(
+      subscriber = attempt_subscribe<test_msgs::msg::BoundedArrayPrimitives>(
         node, topic_name, messages_bounded_array_primitives, received_messages);
     } else if (message == "Nested") {
-      subscriber = attempt_subscribe<test_communication::msg::Nested>(
+      subscriber = attempt_subscribe<test_msgs::msg::Nested>(
         node, topic_name, messages_nested, received_messages);
     } else if (message == "DynamicArrayNested") {
-      subscriber = attempt_subscribe<test_communication::msg::DynamicArrayNested>(
+      subscriber = attempt_subscribe<test_msgs::msg::DynamicArrayNested>(
         node, topic_name, messages_dynamic_array_nested, received_messages);
     } else if (message == "BoundedArrayNested") {
-      subscriber = attempt_subscribe<test_communication::msg::BoundedArrayNested>(
+      subscriber = attempt_subscribe<test_msgs::msg::BoundedArrayNested>(
         node, topic_name, messages_bounded_array_nested, received_messages);
     } else if (message == "StaticArrayNested") {
-      subscriber = attempt_subscribe<test_communication::msg::StaticArrayNested>(
+      subscriber = attempt_subscribe<test_msgs::msg::StaticArrayNested>(
         node, topic_name, messages_static_array_nested, received_messages);
     } else if (message == "Builtins") {
-      subscriber = attempt_subscribe<test_communication::msg::Builtins>(
+      subscriber = attempt_subscribe<test_msgs::msg::Builtins>(
         node, topic_name, messages_builtins, received_messages);
     } else {
       fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
@@ -194,34 +194,34 @@ int main(int argc, char ** argv)
     rclcpp::TimerBase::SharedPtr timer;
     rclcpp::executors::SingleThreadedExecutor executor;
     if (message == "Empty") {
-      subscriber = attempt_subscribe<test_communication::msg::Empty>(
+      subscriber = attempt_subscribe<test_msgs::msg::Empty>(
         node, topic_name, sub_callback_called, executor);
     } else if (message == "Primitives") {
-      subscriber = attempt_subscribe<test_communication::msg::Primitives>(
+      subscriber = attempt_subscribe<test_msgs::msg::Primitives>(
         node, topic_name, sub_callback_called, executor);
     } else if (message == "StaticArrayPrimitives") {
-      subscriber = attempt_subscribe<test_communication::msg::StaticArrayPrimitives>(
+      subscriber = attempt_subscribe<test_msgs::msg::StaticArrayPrimitives>(
         node, topic_name, sub_callback_called, executor);
     } else if (message == "DynamicArrayPrimitives") {
-      subscriber = attempt_subscribe<test_communication::msg::DynamicArrayPrimitives>(
+      subscriber = attempt_subscribe<test_msgs::msg::DynamicArrayPrimitives>(
         node, topic_name, sub_callback_called, executor);
     } else if (message == "BoundedArrayPrimitives") {
-      subscriber = attempt_subscribe<test_communication::msg::BoundedArrayPrimitives>(
+      subscriber = attempt_subscribe<test_msgs::msg::BoundedArrayPrimitives>(
         node, topic_name, sub_callback_called, executor);
     } else if (message == "Nested") {
-      subscriber = attempt_subscribe<test_communication::msg::Nested>(
+      subscriber = attempt_subscribe<test_msgs::msg::Nested>(
         node, topic_name, sub_callback_called, executor);
     } else if (message == "DynamicArrayNested") {
-      subscriber = attempt_subscribe<test_communication::msg::DynamicArrayNested>(
+      subscriber = attempt_subscribe<test_msgs::msg::DynamicArrayNested>(
         node, topic_name, sub_callback_called, executor);
     } else if (message == "BoundedArrayNested") {
-      subscriber = attempt_subscribe<test_communication::msg::BoundedArrayNested>(
+      subscriber = attempt_subscribe<test_msgs::msg::BoundedArrayNested>(
         node, topic_name, sub_callback_called, executor);
     } else if (message == "StaticArrayNested") {
-      subscriber = attempt_subscribe<test_communication::msg::StaticArrayNested>(
+      subscriber = attempt_subscribe<test_msgs::msg::StaticArrayNested>(
         node, topic_name, sub_callback_called, executor);
     } else if (message == "Builtins") {
-      subscriber = attempt_subscribe<test_communication::msg::Builtins>(
+      subscriber = attempt_subscribe<test_msgs::msg::Builtins>(
         node, topic_name, sub_callback_called, executor);
     } else {
       fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());

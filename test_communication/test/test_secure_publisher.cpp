@@ -20,7 +20,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "message_fixtures.hpp"
+#include "test_msgs/message_fixtures.hpp"
 
 template<typename T>
 int8_t attempt_publish(
@@ -84,34 +84,34 @@ int main(int argc, char ** argv)
   int8_t ret;
 
   if (message == "Empty") {
-    ret = attempt_publish<test_communication::msg::Empty>(
+    ret = attempt_publish<test_msgs::msg::Empty>(
       node, topic_name, get_messages_empty());
   } else if (message == "Primitives") {
-    ret = attempt_publish<test_communication::msg::Primitives>(
+    ret = attempt_publish<test_msgs::msg::Primitives>(
       node, topic_name, get_messages_primitives());
   } else if (message == "StaticArrayPrimitives") {
-    ret = attempt_publish<test_communication::msg::StaticArrayPrimitives>(
+    ret = attempt_publish<test_msgs::msg::StaticArrayPrimitives>(
       node, topic_name, get_messages_static_array_primitives());
   } else if (message == "DynamicArrayPrimitives") {
-    ret = attempt_publish<test_communication::msg::DynamicArrayPrimitives>(
+    ret = attempt_publish<test_msgs::msg::DynamicArrayPrimitives>(
       node, topic_name, get_messages_dynamic_array_primitives());
   } else if (message == "BoundedArrayPrimitives") {
-    ret = attempt_publish<test_communication::msg::BoundedArrayPrimitives>(
+    ret = attempt_publish<test_msgs::msg::BoundedArrayPrimitives>(
       node, topic_name, get_messages_bounded_array_primitives());
   } else if (message == "Nested") {
-    ret = attempt_publish<test_communication::msg::Nested>(
+    ret = attempt_publish<test_msgs::msg::Nested>(
       node, topic_name, get_messages_nested());
   } else if (message == "DynamicArrayNested") {
-    ret = attempt_publish<test_communication::msg::DynamicArrayNested>(
+    ret = attempt_publish<test_msgs::msg::DynamicArrayNested>(
       node, topic_name, get_messages_dynamic_array_nested());
   } else if (message == "BoundedArrayNested") {
-    ret = attempt_publish<test_communication::msg::BoundedArrayNested>(
+    ret = attempt_publish<test_msgs::msg::BoundedArrayNested>(
       node, topic_name, get_messages_bounded_array_nested());
   } else if (message == "StaticArrayNested") {
-    ret = attempt_publish<test_communication::msg::StaticArrayNested>(
+    ret = attempt_publish<test_msgs::msg::StaticArrayNested>(
       node, topic_name, get_messages_static_array_nested());
   } else if (message == "Builtins") {
-    ret = attempt_publish<test_communication::msg::Builtins>(
+    ret = attempt_publish<test_msgs::msg::Builtins>(
       node, topic_name, get_messages_builtins());
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
