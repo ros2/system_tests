@@ -15,11 +15,7 @@
 import argparse
 import functools
 import importlib
-import os
 import sys
-
-# this is needed to allow import of test_communication messages
-# sys.path.insert(0, os.getcwd())
 
 
 def replier_callback(request, response, srv_fixtures):

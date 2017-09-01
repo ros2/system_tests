@@ -14,16 +14,12 @@
 
 import argparse
 import importlib
-import os
 import sys
 import time
 
-# # this is needed to allow import of test_communication messages
-# sys.path.insert(0, os.getcwd())
-
 
 def talker(message_name, number_of_cycles):
-    from message_fixtures import get_test_msg
+    from test_msgs.message_fixtures import get_test_msg
     import rclpy
 
     message_pkg = 'test_msgs'

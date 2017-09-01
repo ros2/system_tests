@@ -14,11 +14,7 @@
 
 import argparse
 import importlib
-import os
 import sys
-
-# this is needed to allow import of test_communication messages
-# sys.path.insert(0, os.getcwd())
 
 
 def requester(service_name, number_of_cycles):

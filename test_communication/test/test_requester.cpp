@@ -22,7 +22,7 @@
 #include "rclcpp/exceptions.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-#include "service_fixtures.hpp"
+#include "test_msgs/service_fixtures.hpp"
 
 using namespace std::chrono_literals;
 
