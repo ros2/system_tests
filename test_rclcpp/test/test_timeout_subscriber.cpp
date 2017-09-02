@@ -70,6 +70,7 @@ TEST(CLASSNAME(test_timeout_subscriber, RMW_IMPLEMENTATION), timeout_subscriber)
     EXPECT_LT(blocking_diff, blocking_timeout + tolerance);
   }
 
+  rclcpp::shutdown();
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);
   std::cout << "subscribed for " << diff.count() << " seconds" << std::endl;

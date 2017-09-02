@@ -94,4 +94,5 @@ TEST(CLASSNAME(test_repeated_publisher_subscriber, RMW_IMPLEMENTATION), subscrip
     printf("Destroying publisher and subscriber...\n");
     fflush(stdout);
   }
+  rclcpp::shutdown();
 }

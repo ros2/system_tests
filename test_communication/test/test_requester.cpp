@@ -120,7 +120,9 @@ int main(int argc, char ** argv)
       node, service, get_services_primitives());
   } else {
     fprintf(stderr, "Unknown service argument '%s'\n", service.c_str());
+    rclcpp::shutdown();
     return 1;
   }
+  rclcpp::shutdown();
   return rc;
 }
