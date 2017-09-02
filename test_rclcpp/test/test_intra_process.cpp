@@ -165,4 +165,5 @@ TEST(CLASSNAME(test_intra_process_within_one_node, RMW_IMPLEMENTATION), nominal_
   printf("spin_node_some() - no callbacks expected\n");
   executor.spin_node_some(node);
   ASSERT_EQ(5, counter);
+  rclcpp::shutdown();
 }
