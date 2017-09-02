@@ -1148,11 +1148,11 @@ void get_message(test_msgs__msg__DynamicArrayPrimitivesNested * msg, size_t msg_
   test_msgs__msg__DynamicArrayPrimitives submsg;
   const size_t size = get_message_num(&submsg);
   test_msgs__msg__DynamicArrayPrimitivesNested__init(msg);
-  test_msgs__msg__DynamicArrayPrimitives__Array__init(&msg->msgs, size);
+  test_msgs__msg__DynamicArrayPrimitives__Array__init(&msg->dynamic_array_primitive_values, size);
   switch (msg_num) {
     case 0:
       for (size_t i = 0; i < size; ++i) {
-        get_message(&msg->msgs.data[i], i);
+        get_message(&msg->dynamic_array_primitive_values.data[i], i);
       }
       break;
   }
@@ -1163,8 +1163,8 @@ void verify_message(test_msgs__msg__DynamicArrayPrimitivesNested & message, size
 {
   test_msgs__msg__DynamicArrayPrimitivesNested expected_msg;
   get_message(&expected_msg, msg_num);
-  for (size_t i = 0; i < expected_msg.msgs.size; ++i) {
-    verify_message(message.msgs.data[i], i);
+  for (size_t i = 0; i < expected_msg.dynamic_array_primitive_values.size; ++i) {
+    verify_message(message.dynamic_array_primitive_values.data[i], i);
   }
 }
 
