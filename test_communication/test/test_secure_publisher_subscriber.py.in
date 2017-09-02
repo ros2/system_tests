@@ -1,7 +1,7 @@
 # generated from test_communication/test/test_secure_publisher_subscriber.py.in
 
 import os
-import sys
+# import sys
 
 from launch import LaunchDescriptor
 from launch.exit_handler import primary_exit_handler
