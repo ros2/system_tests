@@ -908,7 +908,7 @@ void get_message(test_communication__msg__BoundedArrayPrimitives * msg, size_t m
       rosidl_generator_c__float32__Array__init(&msg->float32_values, 3);
       rosidl_generator_c__float64__Array__init(&msg->float64_values, 3);
       rosidl_generator_c__int8__Array__init(&msg->int8_values, 3);
-      rosidl_generator_c__uint8__Array__init(&msg->uint8_values, 2);
+      rosidl_generator_c__uint8__Array__init(&msg->uint8_values, 3);
       rosidl_generator_c__int16__Array__init(&msg->int16_values, 3);
       rosidl_generator_c__uint16__Array__init(&msg->uint16_values, 3);
       rosidl_generator_c__int32__Array__init(&msg->int32_values, 3);
