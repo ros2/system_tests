@@ -28,8 +28,20 @@ if(BUILD_TESTING)
   ament_index_get_resource(interface_files "rosidl_interfaces" "test_msgs")
   string(REPLACE "\n" ";" interface_files "${interface_files}")
 
-  string(REGEX MATCHALL "([A-Z][A-Za-z0-9]*\.msg)" message_files "${interface_files}")
-  string(REGEX MATCHALL "([A-Z][A-Za-z0-9]*\.srv)" service_files "${interface_files}")
+  set(message_files "")
+  set(service_files "")
+  foreach(interface_file ${interface_files})
+    string_ends_with("${interface_file}" ".msg" is_message)
+    if(is_message)
+      list(APPEND message_files "${interface_file}")
+      continue()
+    endif()
+    string_ends_with("${interface_file}" ".srv" is_service)
+    if(is_service)
+      list(APPEND service_files "${interface_file}")
+      continue()
+    endif()
+  endforeach()
 
   set(other_message_files
     "msg/FieldsWithSameType.msg"
