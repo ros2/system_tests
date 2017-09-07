@@ -22,7 +22,6 @@ ament_auto_find_build_dependencies()
 option(SECURITY "Activate security" OFF)
 
 if(BUILD_TESTING)
-
   find_package(ament_cmake REQUIRED)
   find_package(test_msgs REQUIRED)
 
