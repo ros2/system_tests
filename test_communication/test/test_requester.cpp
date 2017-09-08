@@ -22,7 +22,7 @@
 #include "rclcpp/exceptions.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-#include "service_fixtures.hpp"
+#include "test_msgs/service_fixtures.hpp"
 
 using namespace std::chrono_literals;
 
@@ -113,10 +113,10 @@ int main(int argc, char ** argv)
 
   int rc;
   if (service == "Empty") {
-    rc = request<test_communication::srv::Empty>(
+    rc = request<test_msgs::srv::Empty>(
       node, service, get_services_empty());
   } else if (service == "Primitives") {
-    rc = request<test_communication::srv::Primitives>(
+    rc = request<test_msgs::srv::Primitives>(
       node, service, get_services_primitives());
   } else {
     fprintf(stderr, "Unknown service argument '%s'\n", service.c_str());

@@ -15,11 +15,7 @@
 import argparse
 import functools
 import importlib
-import os
 import sys
-
-# this is needed to allow import of test_communication messages
-sys.path.insert(0, os.getcwd())
 
 
 def listener_cb(msg, received_messages, expected_msgs):
@@ -43,10 +39,10 @@ def listener_cb(msg, received_messages, expected_msgs):
 
 
 def listener(message_name):
-    from message_fixtures import get_test_msg
+    from test_msgs.message_fixtures import get_test_msg
     import rclpy
 
-    message_pkg = 'test_communication'
+    message_pkg = 'test_msgs'
     module = importlib.import_module(message_pkg + '.msg')
     msg_mod = getattr(module, message_name)
 

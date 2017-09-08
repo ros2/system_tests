@@ -9,9 +9,6 @@ endif()
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   # we dont use add_compile_options with pedantic in message packages
   # because the Python C extensions dont comply with it
-  # TODO(mikaelarguedas) change to add_compile_options
-  # once this is not a message package anymore
-  # https://github.com/ros2/system_tests/issues/191
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic")
 elseif(MSVC)
   # /bigobj is needed to avoid error C1128:
@@ -24,35 +21,38 @@ ament_auto_find_build_dependencies()
 
 option(SECURITY "Activate security" OFF)
 
-set(message_files
-  "msg/BoundedArrayNested.msg"
-  "msg/BoundedArrayPrimitives.msg"
-  "msg/Builtins.msg"
-  "msg/DynamicArrayNested.msg"
-  "msg/DynamicArrayPrimitives.msg"
-  "msg/DynamicArrayPrimitivesNested.msg"
-  "msg/Empty.msg"
-  "msg/Nested.msg"
-  "msg/Primitives.msg"
-  "msg/StaticArrayNested.msg"
-  "msg/StaticArrayPrimitives.msg"
-)
-set(other_message_files
-  "msg/FieldsWithSameType.msg"
-  "msg/UInt32.msg"
-)
-set(service_files
-  "srv/Empty.srv"
-  "srv/Primitives.srv"
-)
-rosidl_generate_interfaces(${PROJECT_NAME}
-  ${message_files}
-  ${other_message_files}
-  ${service_files}
-  DEPENDENCIES builtin_interfaces
-)
-
 if(BUILD_TESTING)
+  find_package(ament_cmake REQUIRED)
+  find_package(test_msgs REQUIRED)
+
+  ament_index_get_resource(interface_files "rosidl_interfaces" "test_msgs")
+  string(REPLACE "\n" ";" interface_files "${interface_files}")
+
+  set(message_files "")
+  set(service_files "")
+  foreach(interface_file ${interface_files})
+    string_ends_with("${interface_file}" ".msg" is_message)
+    if(is_message)
+      list(APPEND message_files "${interface_file}")
+      continue()
+    endif()
+    string_ends_with("${interface_file}" ".srv" is_service)
+    if(is_service)
+      list(APPEND service_files "${interface_file}")
+      continue()
+    endif()
+  endforeach()
+
+  set(other_message_files
+    "msg/FieldsWithSameType.msg"
+    "msg/UInt32.msg"
+  )
+  rosidl_generate_interfaces(${PROJECT_NAME}
+    ${other_message_files}
+    DEPENDENCIES test_msgs
+    SKIP_INSTALL
+  )
+
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 
@@ -503,8 +503,5 @@ if(BUILD_TESTING)
 
   call_for_each_rmw_implementation(targets)
 endif()  # BUILD_TESTING
-
-install(FILES test/__init__.py test/message_fixtures.py
-  DESTINATION "${PYTHON_INSTALL_DIR}/${PROJECT_NAME}")
 
 ament_auto_package()
