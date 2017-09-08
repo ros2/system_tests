@@ -158,7 +158,7 @@ if(BUILD_TESTING)
       TIMEOUT 60)
     custom_gtest(gtest_multiple_service_calls
       "test/test_multiple_service_calls.cpp"
-      TIMEOUT 30)
+      TIMEOUT 60)
     custom_gtest(gtest_timer
       "test/test_timer.cpp"
       TIMEOUT 30)
