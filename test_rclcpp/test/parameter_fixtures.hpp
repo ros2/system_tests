@@ -37,8 +37,8 @@ void set_test_parameters(
     rclcpp::parameter::ParameterVariant("bar", "hello"),
     rclcpp::parameter::ParameterVariant("barstr", std::string("hello_str")),
     rclcpp::parameter::ParameterVariant("baz", 1.45),
-    rclcpp::parameter::ParameterVariant("foo/first", 8),
-    rclcpp::parameter::ParameterVariant("foo/second", 42),
+    rclcpp::parameter::ParameterVariant("foo.first", 8),
+    rclcpp::parameter::ParameterVariant("foo.second", 42),
     rclcpp::parameter::ParameterVariant("foobar", true),
   });
   printf("Got set_parameters result\n");
@@ -61,8 +61,8 @@ void verify_set_parameters_async(
     rclcpp::parameter::ParameterVariant("bar", "hello"),
     rclcpp::parameter::ParameterVariant("barstr", std::string("hello_str")),
     rclcpp::parameter::ParameterVariant("baz", 1.45),
-    rclcpp::parameter::ParameterVariant("foo/first", 8),
-    rclcpp::parameter::ParameterVariant("foo/second", 42),
+    rclcpp::parameter::ParameterVariant("foo.first", 8),
+    rclcpp::parameter::ParameterVariant("foo.second", 42),
     rclcpp::parameter::ParameterVariant("foobar", true),
   });
   rclcpp::spin_until_future_complete(node, set_parameters_results);  // Wait for the results.
@@ -82,7 +82,7 @@ void verify_test_parameters(
   auto parameters_and_prefixes = parameters_client->list_parameters({"foo", "bar"},
       rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE);
   for (auto & name : parameters_and_prefixes.names) {
-    EXPECT_TRUE(name == "foo" || name == "bar" || name == "foo/first" || name == "foo/second");
+    EXPECT_TRUE(name == "foo" || name == "bar" || name == "foo.first" || name == "foo.second");
   }
   for (auto & prefix : parameters_and_prefixes.prefixes) {
     EXPECT_STREQ("foo", prefix.c_str());
@@ -102,7 +102,7 @@ void verify_test_parameters(
   // Test different depth
   auto parameters_and_prefixes5 = parameters_client->list_parameters({"foo"}, 2);
   for (auto & name : parameters_and_prefixes5.names) {
-    EXPECT_TRUE(name == "foo" || name == "foo/first" || name == "foo/second");
+    EXPECT_TRUE(name == "foo" || name == "foo.first" || name == "foo.second");
   }
   for (auto & prefix : parameters_and_prefixes5.prefixes) {
     EXPECT_STREQ("foo", prefix.c_str());
@@ -141,7 +141,7 @@ void verify_test_parameters(
   parameters_and_prefixes = parameters_client->list_parameters({},
       rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE);
   std::vector<std::string> all_names = {
-    "foo", "bar", "barstr", "baz", "foo/first", "foo/second", "foobar"
+    "foo", "bar", "barstr", "baz", "foo.first", "foo.second", "foobar"
   };
   EXPECT_EQ(parameters_and_prefixes.names.size(), all_names.size());
   for (auto & name : all_names) {
@@ -189,7 +189,7 @@ void verify_get_parameters_async(
   rclcpp::spin_until_future_complete(node, result);
   auto parameters_and_prefixes = result.get();
   for (auto & name : parameters_and_prefixes.names) {
-    EXPECT_TRUE(name == "foo" || name == "bar" || name == "foo/first" || name == "foo/second");
+    EXPECT_TRUE(name == "foo" || name == "bar" || name == "foo.first" || name == "foo.second");
   }
   for (auto & prefix : parameters_and_prefixes.prefixes) {
     EXPECT_STREQ("foo", prefix.c_str());
@@ -213,7 +213,7 @@ void verify_get_parameters_async(
   rclcpp::spin_until_future_complete(node, result4a);
   auto parameters_and_prefixes4a = result4a.get();
   for (auto & name : parameters_and_prefixes4a.names) {
-    EXPECT_TRUE(name == "foo" || name == "foo/first" || name == "foo/second");
+    EXPECT_TRUE(name == "foo" || name == "foo.first" || name == "foo.second");
   }
   for (auto & prefix : parameters_and_prefixes4a.prefixes) {
     EXPECT_STREQ("foo", prefix.c_str());
@@ -259,7 +259,7 @@ void verify_get_parameters_async(
   rclcpp::spin_until_future_complete(node, result5);
   parameters_and_prefixes = result5.get();
   std::vector<std::string> all_names = {
-    "foo", "bar", "barstr", "baz", "foo/first", "foo/second", "foobar"
+    "foo", "bar", "barstr", "baz", "foo.first", "foo.second", "foobar"
   };
   EXPECT_EQ(parameters_and_prefixes.names.size(), all_names.size());
   for (auto & name : all_names) {
