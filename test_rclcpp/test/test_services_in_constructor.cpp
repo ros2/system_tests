@@ -44,9 +44,9 @@ public:
       [](
         const std::shared_ptr<test_rclcpp::srv::AddTwoInts::Request> request,
         std::shared_ptr<test_rclcpp::srv::AddTwoInts::Response> response)
-    {
-      response->sum = request->a + request->b;
-    });
+      {
+        response->sum = request->a + request->b;
+      });
   }
 
 private:
