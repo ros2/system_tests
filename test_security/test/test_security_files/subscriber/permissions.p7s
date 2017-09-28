@@ -1,0 +1,78 @@
+MIME-Version: 1.0
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----93475B7278B316B0BA384404B88D9AE7"
+
+This is an S/MIME signed message
+
+------93475B7278B316B0BA384404B88D9AE7
+Content-Type: text/plain
+
+<?xml version="1.0" encoding="UTF-8"?>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.omg.org/spec/DDS-SECURITY/20160303/omg_shared_ca_permissions.xsd">
+  <permissions>
+    <grant name="subscriber_policies">
+      <subject_name>CN=subscriber</subject_name>
+      <validity>
+      <!--
+       Format is CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm]
+                           The time zone may be specified as Z (UTC) or (+|-)hh:mm.
+                           Time zones that aren't specified are considered UTC.
+      -->
+        <not_before>2013-10-26T00:00:00</not_before>
+        <not_after>2023-10-26T22:45:30</not_after>
+      </validity>
+      <allow_rule>
+        <domains>
+          <id>42</id>
+        </domains>
+        <publish>
+          <partitions>
+            <partition>*</partition>
+          </partitions>
+          <topics>
+            <topic>*</topic>
+          </topics>
+        </publish>
+        <subscribe>
+          <partitions>
+            <partition>*</partition>
+          </partitions>
+          <topics>
+            <topic>*</topic>
+          </topics>
+        </subscribe>
+      <subscribe>
+        <topics>
+          <topic>DCPS*</topic>
+        </topics>
+      </subscribe>
+      </allow_rule>
+      <default>DENY</default>
+    </grant>
+  </permissions>
+</dds>
+
+------93475B7278B316B0BA384404B88D9AE7
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+
+MIIC0AYJKoZIhvcNAQcCoIICwTCCAr0CAQExDzANBglghkgBZQMEAgEFADALBgkq
+hkiG9w0BBwGgggEeMIIBGjCBwgIJAPLkqqAez5hkMAoGCCqGSM49BAMCMBYxFDAS
+BgNVBAMMC3Nyb3MydGVzdENBMB4XDTE3MDkyNzAwMjEzOVoXDTI3MDkyNTAwMjEz
+OVowFjEUMBIGA1UEAwwLc3JvczJ0ZXN0Q0EwWTATBgcqhkjOPQIBBggqhkjOPQMB
+BwNCAAQWkVhueDqbuVBb4QxYZexiI1KmfFdJn6o665vcK6BriVn8RlN9FIOT7kyb
+NVW0PYfLUW6T4p9WvjRagLxI2ZtnMAoGCCqGSM49BAMCA0cAMEQCIGqf1qoeJZIq
+pRcdhOoy1uX2HFEvvNT8OxesS63Tu036AiAyvScbIO8XPYiqnrxHnfwHFP3UqrnL
+p/Gh04vy7cSVRjGCAXYwggFyAgEBMCMwFjEUMBIGA1UEAwwLc3JvczJ0ZXN0Q0EC
+CQDy5KqgHs+YZDANBglghkgBZQMEAgEFAKCB5DAYBgkqhkiG9w0BCQMxCwYJKoZI
+hvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xNzA5MjcwMDIxNDhaMC8GCSqGSIb3DQEJ
+BDEiBCAz/omnbpF5VCr10YTgfwFnhg/NV0DmOd4Vo9+smZ7pVDB5BgkqhkiG9w0B
+CQ8xbDBqMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJYIZIAWUDBAECMAoG
+CCqGSIb3DQMHMA4GCCqGSIb3DQMCAgIAgDANBggqhkiG9w0DAgIBQDAHBgUrDgMC
+BzANBggqhkiG9w0DAgIBKDAKBggqhkjOPQQDAgRGMEQCIFGAQl/4IERI8ocjhwet
+YTXig8mtgyLxaH/HXsk5HXphAiBmC//3AsaqXzx98bpBToYSbYnTkE5hHnLroW+Q
+qXdfAg==
+
+------93475B7278B316B0BA384404B88D9AE7--
+
