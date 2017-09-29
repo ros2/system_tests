@@ -49,12 +49,10 @@ void wait_for_future(
   auto start_time = std::chrono::steady_clock::now();
   future_ret = executor.spin_until_future_complete(future, timeout);
   auto elapsed_time = std::chrono::steady_clock::now() - start_time;
-  // *INDENT-OFF*
-  EXPECT_EQ(FutureReturnCode::SUCCESS, future_ret)
-    << "future failed to be set after: "
-    << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed_time).count()
-    << " milliseconds\n";
-  // *INDENT-ON*
+  EXPECT_EQ(FutureReturnCode::SUCCESS, future_ret) <<
+    "future failed to be set after: " <<
+    std::chrono::duration_cast<std::chrono::milliseconds>(elapsed_time).count() <<
+    " milliseconds\n";
 }
 
 TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning) {
@@ -370,9 +368,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), spin_before_subscription)
 TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), create_subscription_with_queue_size) {
   auto node = rclcpp::Node::make_shared("test_subscription");
 
-  // *INDENT-OFF*
   auto callback = [](test_rclcpp::msg::UInt32::ConstSharedPtr) -> void {};
-  // *INDENT-ON*
 
   auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
     "test_subscription", 10, callback);
