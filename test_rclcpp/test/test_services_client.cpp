@@ -87,10 +87,10 @@ TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_return_request) {
   auto result = client->async_send_request(
     request,
     [](rclcpp::client::Client<test_rclcpp::srv::AddTwoInts>::SharedFutureWithRequest future) {
-    EXPECT_EQ(4, future.get().first->a);
-    EXPECT_EQ(5, future.get().first->b);
-    EXPECT_EQ(9, future.get().second->sum);
-  });
+      EXPECT_EQ(4, future.get().first->a);
+      EXPECT_EQ(5, future.get().first->b);
+      EXPECT_EQ(9, future.get().second->sum);
+    });
 
   auto ret = rclcpp::spin_until_future_complete(node, result, 5s);  // Wait for the result.
   ASSERT_EQ(ret, rclcpp::executor::FutureReturnCode::SUCCESS);

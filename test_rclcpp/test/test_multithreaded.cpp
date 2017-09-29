@@ -167,8 +167,8 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
   auto service = node->create_service<test_rclcpp::srv::AddTwoInts>(
     "multi_consumer_clients", callback, qos_profile, callback_group);
 
-  using ClientRequestPair =
-      std::pair<rclcpp::client::Client<test_rclcpp::srv::AddTwoInts>::SharedPtr,
+  using ClientRequestPair = std::pair<
+      rclcpp::client::Client<test_rclcpp::srv::AddTwoInts>::SharedPtr,
       test_rclcpp::srv::AddTwoInts::Request::SharedPtr>;
   using SharedFuture = rclcpp::client::Client<test_rclcpp::srv::AddTwoInts>::SharedFuture;
 

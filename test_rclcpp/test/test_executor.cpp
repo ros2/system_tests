@@ -42,12 +42,14 @@ using namespace std::chrono_literals;
 TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), recursive_spin_call) {
   rclcpp::executors::SingleThreadedExecutor executor;
   auto node = rclcpp::Node::make_shared("recursive_spin_call");
-  auto timer = node->create_wall_timer(0s, [&executor]() {
-    ASSERT_THROW(executor.spin_some(), std::runtime_error);
-    ASSERT_THROW(executor.spin_once(), std::runtime_error);
-    ASSERT_THROW(executor.spin(), std::runtime_error);
-    executor.cancel();
-  });
+  auto timer = node->create_wall_timer(
+    0s,
+    [&executor]() {
+      ASSERT_THROW(executor.spin_some(), std::runtime_error);
+      ASSERT_THROW(executor.spin_once(), std::runtime_error);
+      ASSERT_THROW(executor.spin(), std::runtime_error);
+      executor.cancel();
+    });
   executor.add_node(node);
   executor.spin();
 }
@@ -58,23 +60,26 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), multithreaded_spin_call) {
   std::mutex m;
   bool ready = false;
   std::condition_variable cv;
-  std::thread t([&executor, &m, &cv, &ready]() {
-    std::unique_lock<std::mutex> lock(m);
-    cv.wait(lock, [&ready] {return ready; });
-    ASSERT_THROW(executor.spin_some(), std::runtime_error);
-    ASSERT_THROW(executor.spin_once(), std::runtime_error);
-    ASSERT_THROW(executor.spin(), std::runtime_error);
-    executor.cancel();
-  });
-  auto timer = node->create_wall_timer(0s, [&m, &cv, &ready]() {
-    if (!ready) {
-      {
-        std::lock_guard<std::mutex> lock(m);
-        ready = true;
+  std::thread t(
+    [&executor, &m, &cv, &ready]() {
+      std::unique_lock<std::mutex> lock(m);
+      cv.wait(lock, [&ready] {return ready;});
+      ASSERT_THROW(executor.spin_some(), std::runtime_error);
+      ASSERT_THROW(executor.spin_once(), std::runtime_error);
+      ASSERT_THROW(executor.spin(), std::runtime_error);
+      executor.cancel();
+    });
+  auto timer = node->create_wall_timer(
+    0s,
+    [&m, &cv, &ready]() {
+      if (!ready) {
+        {
+          std::lock_guard<std::mutex> lock(m);
+          ready = true;
+        }
+        cv.notify_one();
       }
-      cv.notify_one();
-    }
-  });
+    });
   executor.add_node(node);
   executor.spin();
   t.join();
@@ -148,10 +153,10 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), notify) {
     auto timer = node->create_wall_timer(
       1ms,
       [&timer_promise](rclcpp::TimerBase & timer)
-    {
-      timer_promise.set_value();
-      timer.cancel();
-    });
+      {
+        timer_promise.set_value();
+        timer.cancel();
+      });
     EXPECT_EQ(std::future_status::ready, timer_future.wait_for(50ms));
     executor.cancel();
 
@@ -181,12 +186,11 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), notify) {
     auto timer = node->create_wall_timer(
       1ms,
       [&publisher]()
-    {
-      test_rclcpp::msg::UInt32 pub_msg;
-      pub_msg.data = 42;
-      publisher->publish(pub_msg);
-    }
-      );
+      {
+        test_rclcpp::msg::UInt32 pub_msg;
+        pub_msg.data = 42;
+        publisher->publish(pub_msg);
+      });
 
     spin_thread.join();
 
@@ -198,11 +202,12 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), notify) {
 
     auto service = node->create_service<test_rclcpp::srv::AddTwoInts>(
       "test_executor_notify_service",
-      [](test_rclcpp::srv::AddTwoInts::Request::SharedPtr request,
-      test_rclcpp::srv::AddTwoInts::Response::SharedPtr response)
-    {
-      response->sum = request->a + request->b;
-    });
+      [](
+        test_rclcpp::srv::AddTwoInts::Request::SharedPtr request,
+        test_rclcpp::srv::AddTwoInts::Response::SharedPtr response)
+      {
+        response->sum = request->a + request->b;
+      });
 
     auto client = node->create_client<test_rclcpp::srv::AddTwoInts>(
       "test_executor_notify_service"

@@ -66,9 +66,11 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), test_spin_until_future_complete_t
 
   // Try to complete the future asynchronously, but not from within spinning.
   {
-    std::shared_future<void> async_future = std::async(std::launch::async, []() {
-      std::this_thread::sleep_for(50ms);
-    });
+    std::shared_future<void> async_future = std::async(
+      std::launch::async,
+      []() {
+        std::this_thread::sleep_for(50ms);
+      });
     auto ret = executor.spin_until_future_complete(async_future, 100ms);
     EXPECT_EQ(FutureReturnCode::SUCCESS, ret);
   }
@@ -78,12 +80,16 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), test_spin_until_future_complete_t
   // Try trigger a timeout while spinning events are being handled.
   {
     std::promise<void> never_set_promise;
-    auto timer = node->create_wall_timer(7ms, []() {
-      // Do nothing.
-    });
-    auto timer2 = node->create_wall_timer(50ms, []() {
-      // Do nothing.
-    });
+    auto timer = node->create_wall_timer(
+      7ms,
+      []() {
+        // Do nothing.
+      });
+    auto timer2 = node->create_wall_timer(
+      50ms,
+      []() {
+        // Do nothing.
+      });
     std::shared_future<void> never_completed_future = never_set_promise.get_future();
     // Try with a timeout long enough for both timers to fire at least once.
     auto ret = executor.spin_until_future_complete(never_completed_future, 75ms);
@@ -96,12 +102,16 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), test_spin_until_future_complete_t
   // Try to complete a future from within a spinning callback, in the presence of other events.
   {
     std::promise<void> timer_fired_promise;
-    auto timer = node->create_wall_timer(50ms, [&timer_fired_promise]() {
-      timer_fired_promise.set_value();
-    });
-    auto timer2 = node->create_wall_timer(1ms, []() {
-      // Do nothing.
-    });
+    auto timer = node->create_wall_timer(
+      50ms,
+      [&timer_fired_promise]() {
+        timer_fired_promise.set_value();
+      });
+    auto timer2 = node->create_wall_timer(
+      1ms,
+      []() {
+        // Do nothing.
+      });
     std::shared_future<void> timer_fired_future = timer_fired_promise.get_future();
     auto ret = executor.spin_until_future_complete(timer_fired_future, 100ms);
     EXPECT_EQ(FutureReturnCode::SUCCESS, ret);

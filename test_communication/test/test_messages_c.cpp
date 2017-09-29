@@ -55,7 +55,7 @@ struct ScopeExit
 {
   explicit ScopeExit(Callable callable)
   : callable_(callable) {}
-  ~ScopeExit() {callable_(); }
+  ~ScopeExit() {callable_();}
 
 private:
   Callable callable_;
@@ -68,7 +68,7 @@ make_scope_exit(Callable callable)
   return ScopeExit<Callable>(callable);
 }
 
-#define SCOPE_EXIT(code) make_scope_exit([&]() {code; })
+#define SCOPE_EXIT(code) make_scope_exit([&]() {code;})
 
 #endif  // SCOPE_EXIT_HPP_
 
@@ -114,19 +114,21 @@ public:
     rcl_publisher_options_t publisher_options = rcl_publisher_get_default_options();
     ret = rcl_publisher_init(&publisher, this->node_ptr, ts, topic_name, &publisher_options);
     ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
-    auto publisher_exit = make_scope_exit([&publisher, this]() {
-      rcl_ret_t ret = rcl_publisher_fini(&publisher, this->node_ptr);
-      EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
-    });
+    auto publisher_exit = make_scope_exit(
+      [&publisher, this]() {
+        rcl_ret_t ret = rcl_publisher_fini(&publisher, this->node_ptr);
+        EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+      });
     rcl_subscription_t subscription = rcl_get_zero_initialized_subscription();
     rcl_subscription_options_t subscription_options = rcl_subscription_get_default_options();
     ret = rcl_subscription_init(
       &subscription, this->node_ptr, ts, topic_name, &subscription_options);
     ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
-    auto subscription_exit = make_scope_exit([&subscription, this]() {
-      rcl_ret_t ret = rcl_subscription_fini(&subscription, this->node_ptr);
-      EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
-    });
+    auto subscription_exit = make_scope_exit(
+      [&subscription, this]() {
+        rcl_ret_t ret = rcl_subscription_fini(&subscription, this->node_ptr);
+        EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+      });
     EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
 
     {
@@ -158,9 +160,10 @@ public:
       size_t nb_msgs = get_message_num(&message);
       for (size_t msg_cnt = 0; msg_cnt < nb_msgs; msg_cnt++) {
         get_message(&message, msg_cnt);
-        auto msg_exit = make_scope_exit([&message]() {
-          fini_message(&message);
-        });
+        auto msg_exit = make_scope_exit(
+          [&message]() {
+            fini_message(&message);
+          });
         ret = rcl_publish(&publisher, &message);
         ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
       }
@@ -172,9 +175,10 @@ public:
       size_t nb_msgs = get_message_num(&message);
       for (size_t msg_cnt = 0; msg_cnt < nb_msgs; msg_cnt++) {
         init_message(&message);
-        auto msg_exit = make_scope_exit([&message]() {
-          fini_message(&message);
-        });
+        auto msg_exit = make_scope_exit(
+          [&message]() {
+            fini_message(&message);
+          });
 
         rcl_wait_set_t wait_set = rcl_get_zero_initialized_wait_set();
         EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();

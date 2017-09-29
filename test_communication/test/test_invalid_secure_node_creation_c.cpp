@@ -34,7 +34,7 @@ struct ScopeExit
 {
   explicit ScopeExit(Callable callable)
   : callable_(callable) {}
-  ~ScopeExit() {callable_(); }
+  ~ScopeExit() {callable_();}
 
 private:
   Callable callable_;
@@ -56,7 +56,7 @@ void custom_putenv(const char * name, const char * value)
 #endif  // _WIN32
 }
 
-#define SCOPE_EXIT(code) make_scope_exit([&]() {code; })
+#define SCOPE_EXIT(code) make_scope_exit([&]() {code;})
 
 #endif  // SCOPE_EXIT_HPP_
 
