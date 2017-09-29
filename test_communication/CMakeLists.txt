@@ -182,9 +182,7 @@ if(BUILD_TESTING)
 
       ament_add_nose_test(test_publisher_subscriber${test_suffix}
         "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${test_suffix}_$<CONFIG>.py"
-        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py"
         PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
-        APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}/../../rclpy"
         APPEND_LIBRARY_DIRS "${append_library_dirs}"
         TIMEOUT 15)
       set_tests_properties(
@@ -232,9 +230,7 @@ if(BUILD_TESTING)
 
       ament_add_nose_test(test_requester_replier${test_suffix}
         "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier${test_suffix}_$<CONFIG>.py"
-        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py"
         PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
-        APPEND_ENV PYTHONPATH="${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_py:${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}/../../rclpy"
         APPEND_LIBRARY_DIRS "${append_library_dirs}"
         TIMEOUT 30
         ${SKIP_TEST})
