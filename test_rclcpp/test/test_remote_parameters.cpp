@@ -31,14 +31,14 @@
 
 using namespace std::chrono_literals;
 
-TEST(CLASSNAME(parameters, rmw_implementation), test_remote_parameters) {
+TEST(CLASSNAME(parameters, rmw_implementation), test_remote_parameters_async) {
   std::string test_server_name = "test_parameters_server";
   // TODO(tfoote) make test_server name parameterizable
   // if (argc >= 2) {
   //   test_server_name = argv[1];
   // }
 
-  auto node = rclcpp::Node::make_shared(std::string("test_remote_parameters"));
+  auto node = rclcpp::Node::make_shared(std::string("test_remote_parameters_async"));
 
   auto parameters_client = std::make_shared<rclcpp::parameter_client::AsyncParametersClient>(node,
       test_server_name);
@@ -51,6 +51,21 @@ TEST(CLASSNAME(parameters, rmw_implementation), test_remote_parameters) {
   verify_get_parameters_async(node, parameters_client);
 }
 
+TEST(CLASSNAME(parameters, rmw_implementation), test_remote_parameters_sync) {
+  std::string test_server_name = "test_parameters_server";
+
+  auto node = rclcpp::Node::make_shared(std::string("test_remote_parameters_sync"));
+
+  auto parameters_client = std::make_shared<rclcpp::parameter_client::SyncParametersClient>(node,
+      test_server_name);
+  if (!parameters_client->wait_for_service(20s)) {
+    ASSERT_TRUE(false) << "service not available after waiting";
+  }
+
+  set_test_parameters(parameters_client);
+
+  verify_test_parameters(parameters_client);
+}
 
 int main(int argc, char ** argv)
 {
