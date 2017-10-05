@@ -181,7 +181,7 @@ if(BUILD_TESTING)
     # Parameter tests single implementation
     custom_launch_test_two_executables(test_parameter_server_cpp
       test_parameters_server_cpp test_remote_parameters_cpp
-      TIMEOUT 30)
+      TIMEOUT 60)
 
     # Service tests single implementation
     custom_launch_test_two_executables(test_services_cpp
