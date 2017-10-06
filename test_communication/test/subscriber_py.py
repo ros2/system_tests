@@ -20,19 +20,19 @@ import sys
 
 def listener_cb(msg, received_messages, expected_msgs):
     known_msg = False
-    for exp in expected_msgs:
-        if msg.__repr__() == exp.__repr__():
-            print('received message #{} of {}'.format(
-                expected_msgs.index(exp) + 1, len(expected_msgs)))
+    msg_repr = repr(msg)
+    for num, exp in expected_msgs:
+        if msg_repr == exp:
+            print('received message #{} of {}'.format(num + 1, len(expected_msgs)))
             known_msg = True
             already_received = False
             for rmsg in received_messages:
-                if rmsg.__repr__() == msg.__repr__():
+                if rmsg == msg_repr:
                     already_received = True
                     break
 
             if not already_received:
-                received_messages.append(msg)
+                received_messages.append(msg_repr)
             break
     if known_msg is False:
         raise RuntimeError('received unexpected message %r' % msg)
@@ -51,7 +51,7 @@ def listener(message_name):
     node = rclpy.create_node('listener')
 
     received_messages = []
-    expected_msgs = get_test_msg(message_name)
+    expected_msgs = [(i, repr(msg)) for i, msg in enumerate(get_test_msg(message_name))]
 
     chatter_callback = functools.partial(
         listener_cb, received_messages=received_messages, expected_msgs=expected_msgs)
