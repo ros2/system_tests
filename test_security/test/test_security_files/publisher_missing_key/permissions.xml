@@ -15,7 +15,9 @@
       </validity>
       <allow_rule>
         <domains>
-          <id>42</id>
+          <id_range>
+            <min>0</min>
+          </id_range>
         </domains>
         <publish>
           <partitions>

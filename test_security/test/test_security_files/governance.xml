@@ -4,7 +4,9 @@
     <domain_access_rules>
         <domain_rule>
             <domains>
-              <id>42</id>
+              <id_range>
+                <min>0</min>
+              </id_range>
             </domains>
             <!-- SPECIFIED IN DDS SECURITY XSD -->
             <!-- <allow_unauthenticated_join>false</allow_unauthenticated_join> -->

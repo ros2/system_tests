@@ -7,13 +7,7 @@ if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
 endif()
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  # we dont use add_compile_options with pedantic in message packages
-  # because the Python C extensions dont comply with it
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic")
-elseif(MSVC)
-  # /bigobj is needed to avoid error C1128:
-  #   https://msdn.microsoft.com/en-us/library/8578y171.aspx
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+  add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
 find_package(ament_cmake_auto REQUIRED)
@@ -22,6 +16,7 @@ ament_auto_find_build_dependencies()
 option(SECURITY "Activate security" OFF)
 
 if(BUILD_TESTING)
+  # No security test on services for now
   find_package(ament_cmake REQUIRED)
   find_package(test_msgs REQUIRED)
 
@@ -29,18 +24,19 @@ if(BUILD_TESTING)
   string(REPLACE "\n" ";" interface_files "${interface_files}")
 
   set(message_files "")
-  set(service_files "")
+
+  # set(service_files "")
   foreach(interface_file ${interface_files})
     string_ends_with("${interface_file}" ".msg" is_message)
     if(is_message)
       list(APPEND message_files "${interface_file}")
       continue()
     endif()
-    string_ends_with("${interface_file}" ".srv" is_service)
-    if(is_service)
-      list(APPEND service_files "${interface_file}")
-      continue()
-    endif()
+    # string_ends_with("${interface_file}" ".srv" is_service)
+    # if(is_service)
+    #   list(APPEND service_files "${interface_file}")
+    #   continue()
+    # endif()
   endforeach()
 
   find_package(ament_lint_auto REQUIRED)
@@ -48,8 +44,8 @@ if(BUILD_TESTING)
 
   # get the rmw implementations ahead of time
   find_package(rmw_implementation_cmake REQUIRED)
-  get_available_rmw_implementations(rmw_implementations2)
-  foreach(rmw_implementation ${rmw_implementations2})
+  get_available_rmw_implementations(rmw_implementations)
+  foreach(rmw_implementation ${rmw_implementations})
     find_package("${rmw_implementation}" REQUIRED)
   endforeach()
 
@@ -62,7 +58,7 @@ if(BUILD_TESTING)
   function(custom_security_test_c target)
     ament_add_gtest(
       "${target}${target_suffix}" ${ARGN}
-      TIMEOUT 90
+      TIMEOUT 10
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
@@ -147,7 +143,7 @@ if(BUILD_TESTING)
           ament_add_nose_test(test_secure_publisher_subscriber${test_suffix}
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
-            TIMEOUT 15
+            TIMEOUT 20
           )
           set_tests_properties(
             test_secure_publisher_subscriber${test_suffix}
@@ -182,7 +178,7 @@ if(BUILD_TESTING)
           ament_add_nose_test(test_secure_publisher_subscriber${test_suffix}
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
-            TIMEOUT 15
+            TIMEOUT 20
           )
           set_tests_properties(
             test_secure_publisher_subscriber${test_suffix}
@@ -217,7 +213,7 @@ if(BUILD_TESTING)
           ament_add_nose_test(test_secure_publisher_subscriber${test_suffix}
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
-            TIMEOUT 15
+            TIMEOUT 20
           )
           set_tests_properties(
             test_secure_publisher_subscriber${test_suffix}
@@ -228,31 +224,31 @@ if(BUILD_TESTING)
     endforeach()
   endmacro()
 
-  # executables secure publisher / subscriber
-  custom_executable(test_secure_publisher_cpp
-    "test/test_secure_publisher.cpp")
-  custom_executable(test_secure_subscriber_cpp
-    "test/test_secure_subscriber.cpp")
-
   macro(targets)
-    set(VALID_ROS_SECURITY_ROOT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/")
+    set(VALID_ROS_SECURITY_ROOT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files")
 
-    if(SECURITY)
-      # TODO(mikaelarguedas) only connext and fastrtps support DDS-Security
-      if(rmw_implementation STREQUAL "rmw_connext_cpp" OR rmw_implementation STREQUAL "rmw_fastrtps_cpp")
-        custom_security_test_c(test_security_nodes_c
-          "test/test_invalid_secure_node_creation_c.cpp")
-        security_tests()
-      endif()
+    # TODO(mikaelarguedas) only connext and fastrtps support DDS-Security for now
+    if(rmw_implementation STREQUAL "rmw_connext_cpp" OR rmw_implementation STREQUAL "rmw_fastrtps_cpp")
+      custom_security_test_c(test_security_nodes_c
+        "test/test_invalid_secure_node_creation_c.cpp")
+      security_tests()
     endif()
   endmacro()
 
-  set(append_library_dirs "${CMAKE_CURRENT_BINARY_DIR}")
-  if(WIN32)
-    set(append_library_dirs "${append_library_dirs}/$<CONFIG>")
-  endif()
+  if(SECURITY)
+    # executables secure publisher / subscriber
+    custom_executable(test_secure_publisher_cpp
+      "test/test_secure_publisher.cpp")
+    custom_executable(test_secure_subscriber_cpp
+      "test/test_secure_subscriber.cpp")
 
-  call_for_each_rmw_implementation(targets)
+    set(append_library_dirs "${CMAKE_CURRENT_BINARY_DIR}")
+    if(WIN32)
+      set(append_library_dirs "${append_library_dirs}/$<CONFIG>")
+    endif()
+
+    call_for_each_rmw_implementation(targets)
+  endif()
 endif()  # BUILD_TESTING
 
 ament_auto_package()

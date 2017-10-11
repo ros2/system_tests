@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include <chrono>
-#include <iostream>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -44,8 +43,7 @@ rclcpp::subscription::SubscriptionBase::SharedPtr attempt_subscribe(
       for (auto expected_message : expected_messages) {
         if (*received_message == *expected_message) {
           *received = true;
-          std::cout << "received message #" << (index + 1) << " of " <<
-            expected_messages.size() << std::endl;
+          printf("received message #%zu of %zu\n", index + 1, expected_messages.size());
           known_message = true;
           break;
         }
@@ -85,7 +83,7 @@ rclcpp::subscription::SubscriptionBase::SharedPtr attempt_subscribe(
   auto subscription_callback =
     [&sub_callback_called, &exec](const typename T::SharedPtr) -> void
     {
-      fprintf(stderr, "***SUB_CALLBACK***");
+      printf("***SUB_CALLBACK***\n");
       sub_callback_called = true;
       exec.cancel();
     };
@@ -103,7 +101,7 @@ rclcpp::TimerBase::SharedPtr create_timer(
   auto timer_callback =
     [&timer_callback_called, &exec]() -> void
     {
-      fprintf(stderr, "***TIMER_CALLBACK***");
+      printf("***TIMER_CALLBACK***\n");
       timer_callback_called = true;
       exec.cancel();
     };
@@ -132,8 +130,8 @@ int main(int argc, char ** argv)
   std::shared_ptr<rclcpp::node::Node> node = nullptr;
   try {
     node = rclcpp::Node::make_shared(node_name);
-  } catch (std::runtime_error &) {
-    fprintf(stderr, "should not have thrown!");
+  } catch (std::runtime_error & exc) {
+    fprintf(stderr, "should not have thrown!\n%s\n", exc.what());
     rclcpp::shutdown();
     return 1;
   }

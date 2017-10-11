@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include <chrono>
-#include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
@@ -27,7 +26,7 @@ int8_t attempt_publish(
   rclcpp::Node::SharedPtr node,
   const std::string & topic_name,
   std::vector<typename T::SharedPtr> messages,
-  size_t number_of_cycles = 100)
+  size_t number_of_cycles = 150)
 {
   auto start = std::chrono::steady_clock::now();
 
@@ -45,7 +44,7 @@ int8_t attempt_publish(
     size_t message_index = 0;
     // publish all messages one by one, shorter sleep between each message
     while (rclcpp::ok() && message_index < messages.size()) {
-      std::cout << "publishing message #" << (message_index + 1) << std::endl;
+      printf("publishing message #%zu\n", message_index + 1);
       publisher->publish(messages[message_index]);
       ++message_index;
       message_rate.sleep();
@@ -56,7 +55,7 @@ int8_t attempt_publish(
 
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);
-  std::cout << "published for " << diff.count() << " seconds" << std::endl;
+  printf("published for %lf seconds\n", diff.count());
 
   return 0;
 }
@@ -77,10 +76,12 @@ int main(int argc, char ** argv)
   std::shared_ptr<rclcpp::node::Node> node = nullptr;
   try {
     node = rclcpp::Node::make_shared(node_name);
-  } catch (std::runtime_error &) {
-    fprintf(stderr, "should not have thrown!");
+  } catch (std::runtime_error & exc) {
+    fprintf(stderr, "should not have thrown!\n%s\n", exc.what());
+    rclcpp::shutdown();
+    return 1;
   }
-  fprintf(stderr, "node created, attempt to publish");
+  fprintf(stderr, "node created, attempt to publish\n");
   int8_t ret;
 
   if (message == "Empty") {
