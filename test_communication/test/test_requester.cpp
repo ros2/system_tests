@@ -66,11 +66,11 @@ int request(
 
     if (std::future_status::ready == status) {
       if (*f.get() == *services[service_index].second) {
-        printf("received reply #%zu of %zu\n", service_index + 1, service.size());
+        printf("received reply #%zu of %zu\n", service_index + 1, services.size());
         ++service_index;
       } else {
-        std::cerr << "received reply for request #" << (service_index + 1) <<
-          " does not match the expected reply" << std::endl;
+        fprintf(stderr, "received reply for request #%zu does not match the expected reply\n",
+          service_index + 1);
         rc = 2;
         break;
       }

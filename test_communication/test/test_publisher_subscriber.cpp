@@ -42,7 +42,7 @@ void publish(
     size_t message_index = 0;
     // publish all messages one by one, shorter sleep between each message
     while (rclcpp::ok() && message_index < messages.size()) {
-      std::cout << "publishing message #" << (message_index + 1) << std::endl;
+      printf("publishing message #%zu\n", message_index + 1);
       publisher->publish(messages[message_index]);
       ++message_index;
       message_rate.sleep();
@@ -73,8 +73,7 @@ rclcpp::subscription::SubscriptionBase::SharedPtr subscribe(
       for (auto expected_message : expected_messages) {
         if (*received_message == *expected_message) {
           *received = true;
-          std::cout << "received message #" << (index + 1) << " of " <<
-            expected_messages.size() << std::endl;
+          printf("received message #%zu of %zu\n", index + 1, expected_messages.size());
           known_message = true;
           break;
         }
@@ -193,7 +192,7 @@ int main(int argc, char ** argv)
 
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);
-  std::cout << "published and subscribed for " << diff.count() << " seconds" << std::endl;
+  printf("published and subscribed for %lf seconds\n", diff.count());
 
   for (auto received : received_messages) {
     if (!received) {
