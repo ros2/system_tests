@@ -192,7 +192,7 @@ int main(int argc, char ** argv)
 
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);
-  printf("published and subscribed for %lf seconds\n", diff.count());
+  printf("published and subscribed for %f seconds\n", diff.count());
 
   for (auto received : received_messages) {
     if (!received) {

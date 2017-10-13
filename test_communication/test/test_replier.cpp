@@ -91,7 +91,7 @@ int main(int argc, char ** argv)
 
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);
-  printf("replied for %lf seconds\n", diff.count());
+  printf("replied for %f seconds\n", diff.count());
 
   rclcpp::shutdown();
   return 0;

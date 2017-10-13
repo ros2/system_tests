@@ -140,7 +140,7 @@ int main(int argc, char ** argv)
 
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);
-  printf("subscribed for %lf seconds", diff.count());
+  printf("subscribed for %f seconds", diff.count());
 
   rclcpp::shutdown();
   return 0;

@@ -54,7 +54,7 @@ void publish(
 
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);
-  printf("published for %lf seconds\n", diff.count());
+  printf("published for %f seconds\n", diff.count());
 }
 
 int main(int argc, char ** argv)

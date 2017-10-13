@@ -93,7 +93,7 @@ int request(
 
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);
-  printf("requested for %lf seconds\n", diff.count());
+  printf("requested for %f seconds\n", diff.count());
 
   return rc;
 }
