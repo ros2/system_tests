@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include <chrono>
-#include <iostream>
 #include <stdexcept>
 #include <string>
 
@@ -73,5 +72,5 @@ TEST(CLASSNAME(test_timeout_subscriber, RMW_IMPLEMENTATION), timeout_subscriber)
   rclcpp::shutdown();
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);
-  std::cout << "subscribed for " << diff.count() << " seconds" << std::endl;
+  printf("subscribed for %lf seconds", diff.count());
 }
