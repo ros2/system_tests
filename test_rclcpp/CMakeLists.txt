@@ -13,10 +13,6 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   # once this is not a message package anymore
   # https://github.com/ros2/system_tests/issues/191
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic")
-elseif(MSVC)
-  # /bigobj is needed to avoid error C1128:
-  #   https://msdn.microsoft.com/en-us/library/8578y171.aspx
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
 endif()
 
 find_package(ament_cmake REQUIRED)
