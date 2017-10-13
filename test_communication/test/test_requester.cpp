@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include <chrono>
-#include <iostream>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -52,7 +51,7 @@ int request(
   // publish the first request up to number_of_cycles times, longer sleep between each cycle
   // publish all requests one by one, shorter sleep between each request
   while (rclcpp::ok() && cycle_index < number_of_cycles && service_index < services.size()) {
-    std::cout << "publishing request #" << (service_index + 1) << std::endl;
+    printf("publishing request #%zu\n", service_index + 1);
     auto f = requester->async_send_request(services[service_index].first);
 
     auto wait_for_response_until = std::chrono::steady_clock::now() + wait_between_services;
@@ -67,8 +66,7 @@ int request(
 
     if (std::future_status::ready == status) {
       if (*f.get() == *services[service_index].second) {
-        std::cout << "received reply #" << (service_index + 1) << " of " <<
-          services.size() << std::endl;
+        printf("received reply #%zu of %zu\n", service_index + 1, service.size());
         ++service_index;
       } else {
         std::cerr << "received reply for request #" << (service_index + 1) <<
@@ -95,7 +93,7 @@ int request(
 
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);
-  std::cout << "requested for " << diff.count() << " seconds" << std::endl;
+  printf("requested for %lf seconds\n", diff.count());
 
   return rc;
 }
