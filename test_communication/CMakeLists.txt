@@ -15,8 +15,6 @@ endif()
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
-option(SECURITY "Activate security" OFF)
-
 if(BUILD_TESTING)
   find_package(ament_cmake REQUIRED)
   find_package(test_msgs REQUIRED)
@@ -111,32 +109,6 @@ if(BUILD_TESTING)
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation})
-    if(TARGET ${target}${target_suffix})
-      target_link_libraries(${target}${target_suffix}
-        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-        ${_AMENT_EXPORT_LIBRARY_TARGETS})
-      add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
-      rosidl_target_interfaces(${target}${target_suffix}
-        ${PROJECT_NAME} "rosidl_typesupport_c")
-      ament_target_dependencies(${target}${target_suffix}
-        "rcl")
-      set_tests_properties(
-        ${target}${target_suffix}
-        PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}${target_suffix}>"
-      )
-    endif()
-  endfunction()
-
-  function(custom_security_test_c target)
-    ament_add_gtest(
-      "${target}${target_suffix}" ${ARGN}
-      TIMEOUT 90
-      APPEND_LIBRARY_DIRS "${append_library_dirs}"
-      ENV
-      RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
-      RMW_IMPLEMENTATION=${rmw_implementation}
-      ROS_SECURITY_ROOT_DIRECTORY="${VALID_ROS_SECURITY_ROOT_DIRECTORY}"
-    )
     if(TARGET ${target}${target_suffix})
       target_link_libraries(${target}${target_suffix}
         ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
@@ -292,152 +264,6 @@ if(BUILD_TESTING)
     endforeach()
   endmacro()
 
-  macro(security_tests)
-    set(suffix "__${rmw_implementation}")
-    set(PUBLISHER_RMW ${rmw_implementation})
-    set(SUBSCRIBER_RMW ${rmw_implementation})
-    # Not testing across client libraries for now
-    set(TEST_PUBLISHER_RCL "rclcpp")
-    set(TEST_SUBSCRIBER_RCL "rclcpp")
-    set(TEST_PUBLISHER_EXECUTABLE "$<TARGET_FILE:test_secure_publisher_cpp>")
-    set(TEST_SUBSCRIBER_EXECUTABLE "$<TARGET_FILE:test_secure_subscriber_cpp>")
-
-    # Test suite for communication without security
-    set(non_secure_comm_PUBLISHER_ROS_SECURITY_ENABLE_LIST "false;false;false;true;false")
-    set(non_secure_comm_SUBSCRIBER_ROS_SECURITY_ENABLE_LIST "false;false;false;false;true")
-    set(non_secure_comm_PUBLISHER_ROS_SECURITY_STRATEGY_LIST "Enforce;garbage;garbage;Permissive;Garbage")
-    set(non_secure_comm_SUBSCRIBER_ROS_SECURITY_STRATEGY_LIST "Enforce;Permissive;Garbage;Garbage;Permissive")
-    set(non_secure_comm_PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY_LIST "garbage;WHATEVER;${VALID_ROS_SECURITY_ROOT_DIRECTORY};garbage;garbage")
-    set(SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY_LIST "${VALID_ROS_SECURITY_ROOT_DIRECTORY};WHATEVER;garbage;garbage;garbage")
-
-    # Test suite for secured communication
-    set(secure_comm_PUBLISHER_ROS_SECURITY_ENABLE_LIST "true;true;true;true")
-    set(secure_comm_SUBSCRIBER_ROS_SECURITY_ENABLE_LIST "true;true;true;true")
-    set(secure_comm_PUBLISHER_ROS_SECURITY_STRATEGY_LIST "Enforce;Enforce;Permissive;Permissive")
-    set(secure_comm_SUBSCRIBER_ROS_SECURITY_STRATEGY_LIST "Enforce;Permissive;Enforce;Permissive")
-
-    # Test suite for one node with security and the second without
-    set(not_connecting_PUBLISHER_ROS_SECURITY_ENABLE_LIST "false;true")
-    set(not_connecting_SUBSCRIBER_ROS_SECURITY_ENABLE_LIST "true;false")
-    set(not_connecting_PUBLISHER_ROS_SECURITY_STRATEGY_LIST "Permissive;Enforce")
-    set(not_connecting_SUBSCRIBER_ROS_SECURITY_STRATEGY_LIST "Enforce;Permissive")
-
-    list(LENGTH non_secure_comm_PUBLISHER_ROS_SECURITY_ENABLE_LIST n_non_secure_tests)
-    list(LENGTH secure_comm_PUBLISHER_ROS_SECURITY_ENABLE_LIST n_secure_communication_tests)
-    list(LENGTH not_connecting_PUBLISHER_ROS_SECURITY_ENABLE_LIST n_not_connecting_tests)
-
-    foreach(message_file ${message_files})
-      get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
-      # TODO(mikaelarguedas) test only few message types to avoid taking to much test time
-      if(TEST_MESSAGE_TYPE STREQUAL "Empty" OR TEST_MESSAGE_TYPE STREQUAL "DynamicArrayNested")
-        set(index 0)
-        # configure all non secure communication tests
-        set(SUBSCRIBER_SHOULD_TIMEOUT "false")
-        while(index LESS ${n_non_secure_tests})
-          # here we define all the variables needed for security template expansion
-          list(GET non_secure_comm_PUBLISHER_ROS_SECURITY_ENABLE_LIST ${index} PUBLISHER_ROS_SECURITY_ENABLE)
-          list(GET SUBSCRIBER_ROS_SECURITY_ENABLE_LIST ${index} SUBSCRIBER_ROS_SECURITY_ENABLE)
-          list(GET PUBLISHER_ROS_SECURITY_STRATEGY_LIST ${index} PUBLISHER_ROS_SECURITY_STRATEGY)
-          list(GET SUBSCRIBER_ROS_SECURITY_STRATEGY_LIST ${index} SUBSCRIBER_ROS_SECURITY_STRATEGY)
-          list(GET PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY_LIST ${index} PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY)
-          list(GET SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY_LIST ${index} SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY)
-
-          set(test_suffix "__${TEST_MESSAGE_TYPE}${suffix}__non_secure_comm_${index}")
-          configure_file(
-            test/test_secure_publisher_subscriber.py.in
-            test_secure_publisher_subscriber${test_suffix}.py.configured
-            @ONLY
-          )
-          file(GENERATE
-            OUTPUT "test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
-            INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}.py.configured"
-          )
-          math(EXPR index "${index} + 1")
-
-          ament_add_nose_test(test_secure_publisher_subscriber${test_suffix}
-            "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
-            APPEND_LIBRARY_DIRS "${append_library_dirs}"
-            TIMEOUT 15
-          )
-          set_tests_properties(
-            test_secure_publisher_subscriber${test_suffix}
-            PROPERTIES DEPENDS "test_secure_publisher_cpp__${rmw_implementation};test_secure_subscriber_cpp__${rmw_implementation}"
-          )
-        endwhile()
-
-        set(index 0)
-        set(SUBSCRIBER_SHOULD_TIMEOUT "false")
-        set(PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY "${VALID_ROS_SECURITY_ROOT_DIRECTORY}")
-        set(SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY "${VALID_ROS_SECURITY_ROOT_DIRECTORY}")
-        # configure all secure communication tests
-        while(index LESS ${n_secure_communication_tests})
-          # here we define all the variables needed for security template expansion
-          list(GET secure_comm_PUBLISHER_ROS_SECURITY_ENABLE_LIST ${index} PUBLISHER_ROS_SECURITY_ENABLE)
-          list(GET secure_comm_SUBSCRIBER_ROS_SECURITY_ENABLE_LIST ${index} SUBSCRIBER_ROS_SECURITY_ENABLE)
-          list(GET secure_comm_PUBLISHER_ROS_SECURITY_STRATEGY_LIST ${index} PUBLISHER_ROS_SECURITY_STRATEGY)
-          list(GET secure_comm_SUBSCRIBER_ROS_SECURITY_STRATEGY_LIST ${index} SUBSCRIBER_ROS_SECURITY_STRATEGY)
-
-          set(test_suffix "__${TEST_MESSAGE_TYPE}${suffix}__secure_comm_${index}")
-          configure_file(
-            test/test_secure_publisher_subscriber.py.in
-            test_secure_publisher_subscriber${test_suffix}.py.configured
-            @ONLY
-          )
-          file(GENERATE
-            OUTPUT "test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
-            INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}.py.configured"
-          )
-          math(EXPR index "${index} + 1")
-
-          ament_add_nose_test(test_secure_publisher_subscriber${test_suffix}
-            "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
-            APPEND_LIBRARY_DIRS "${append_library_dirs}"
-            TIMEOUT 15
-          )
-          set_tests_properties(
-            test_secure_publisher_subscriber${test_suffix}
-            PROPERTIES DEPENDS "test_secure_publisher_cpp__${rmw_implementation};test_secure_subscriber_cpp__${rmw_implementation}"
-          )
-        endwhile()
-
-        set(index 0)
-        set(PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY "${VALID_ROS_SECURITY_ROOT_DIRECTORY}")
-        set(SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY "${VALID_ROS_SECURITY_ROOT_DIRECTORY}")
-        set(SUBSCRIBER_SHOULD_TIMEOUT "true")
-        # configure all not connecting tests
-        while(index LESS ${n_not_connecting_tests})
-          # here we define all the variables needed for security template expansion
-          list(GET not_connecting_PUBLISHER_ROS_SECURITY_ENABLE_LIST ${index} PUBLISHER_ROS_SECURITY_ENABLE)
-          list(GET not_connecting_SUBSCRIBER_ROS_SECURITY_ENABLE_LIST ${index} SUBSCRIBER_ROS_SECURITY_ENABLE)
-          list(GET not_connecting_PUBLISHER_ROS_SECURITY_STRATEGY_LIST ${index} PUBLISHER_ROS_SECURITY_STRATEGY)
-          list(GET not_connecting_SUBSCRIBER_ROS_SECURITY_STRATEGY_LIST ${index} SUBSCRIBER_ROS_SECURITY_STRATEGY)
-
-          set(test_suffix "__${TEST_MESSAGE_TYPE}${suffix}__secure_not_connecting_${index}")
-          configure_file(
-            test/test_secure_publisher_subscriber.py.in
-            test_secure_publisher_subscriber${test_suffix}.py.configured
-            @ONLY
-          )
-          file(GENERATE
-            OUTPUT "test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
-            INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}.py.configured"
-          )
-          math(EXPR index "${index} + 1")
-
-          ament_add_nose_test(test_secure_publisher_subscriber${test_suffix}
-            "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
-            APPEND_LIBRARY_DIRS "${append_library_dirs}"
-            TIMEOUT 15
-          )
-          set_tests_properties(
-            test_secure_publisher_subscriber${test_suffix}
-            PROPERTIES DEPENDS "test_secure_publisher_cpp__${rmw_implementation};test_secure_subscriber_cpp__${rmw_implementation}"
-          )
-        endwhile()
-      endif()
-    endforeach()
-  endmacro()
-
   # publisher combined with a subscriber
   custom_executable(test_publisher_subscriber_cpp
     "test/test_publisher_subscriber.cpp")
@@ -454,26 +280,10 @@ if(BUILD_TESTING)
     "test/test_requester.cpp")
   custom_executable(test_replier_cpp
     "test/test_replier.cpp")
-  # executables secure publisher / subscriber
-  custom_executable(test_secure_publisher_cpp
-    "test/test_secure_publisher.cpp")
-  custom_executable(test_secure_subscriber_cpp
-    "test/test_secure_subscriber.cpp")
 
   macro(targets)
     custom_test_c(test_messages_c
       "test/test_messages_c.cpp")
-
-    set(VALID_ROS_SECURITY_ROOT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/")
-
-    if(SECURITY)
-      # TODO(mikaelarguedas) extend this to connext once 5.2.4 released
-      if(rmw_implementation STREQUAL "rmw_fastrtps_cpp")
-        custom_security_test_c(test_security_nodes_c
-          "test/test_invalid_secure_node_creation_c.cpp")
-        security_tests()
-      endif()
-    endif()
 
     # publisher combined with a subscriber
     custom_test(test_publisher_subscriber_cpp TRUE)

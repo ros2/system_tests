@@ -1,0 +1,4 @@
+V	271009002546Z		1000	unknown	/CN=publisher
+V	271009002551Z		1001	unknown	/CN=subscriber
+V	271009002601Z		1002	unknown	/CN=publisher_invalid_cert
+V	271009002609Z		1003	unknown	/CN=publisher_missing_key
