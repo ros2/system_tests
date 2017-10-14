@@ -72,5 +72,5 @@ TEST(CLASSNAME(test_timeout_subscriber, RMW_IMPLEMENTATION), timeout_subscriber)
   rclcpp::shutdown();
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);
-  printf("subscribed for %f seconds", diff.count());
+  printf("subscribed for %f seconds\n", diff.count());
 }
