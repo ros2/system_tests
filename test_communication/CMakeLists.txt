@@ -10,7 +10,8 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   # we dont use add_compile_options with pedantic in message packages
   # because the Python C extensions dont comply with it
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic")
-elseif(MSVC)
+endif()
+if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND MSVC)
   # /bigobj is needed to avoid error C1128:
   #   https://msdn.microsoft.com/en-us/library/8578y171.aspx
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
