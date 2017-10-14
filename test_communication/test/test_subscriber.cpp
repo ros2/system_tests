@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include <chrono>
-#include <iostream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -42,8 +41,7 @@ rclcpp::subscription::SubscriptionBase::SharedPtr subscribe(
       for (auto expected_message : expected_messages) {
         if (*received_message == *expected_message) {
           *received = true;
-          std::cout << "received message #" << (index + 1) << " of " <<
-            expected_messages.size() << std::endl;
+          printf("received message #%zu of %zu\n", index + 1, expected_messages.size());
           known_message = true;
           break;
         }
@@ -142,7 +140,7 @@ int main(int argc, char ** argv)
 
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);
-  std::cout << "subscribed for " << diff.count() << " seconds" << std::endl;
+  printf("subscribed for %f seconds", diff.count());
 
   rclcpp::shutdown();
   return 0;

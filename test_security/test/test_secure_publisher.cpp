@@ -55,7 +55,7 @@ int8_t attempt_publish(
 
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);
-  printf("published for %lf seconds\n", diff.count());
+  printf("published for %f seconds\n", diff.count());
 
   return 0;
 }

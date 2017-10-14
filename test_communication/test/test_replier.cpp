@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include <chrono>
-#include <iostream>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -42,8 +41,7 @@ typename rclcpp::service::Service<T>::SharedPtr reply(
       size_t index = 0;
       for (auto expected_service : expected_services) {
         if (*received_request == *expected_service.first) {
-          std::cout << "received request #" << (index + 1) << " of " <<
-            expected_services.size() << std::endl;
+          printf("received request #%zu of %zu\n", index + 1, expected_services.size());
           *response = *expected_service.second;
           known_request = true;
           break;
@@ -93,7 +91,7 @@ int main(int argc, char ** argv)
 
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);
-  std::cout << "replied for " << diff.count() << " seconds" << std::endl;
+  printf("replied for %f seconds\n", diff.count());
 
   rclcpp::shutdown();
   return 0;

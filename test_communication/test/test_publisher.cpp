@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include <chrono>
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -44,7 +43,7 @@ void publish(
     size_t message_index = 0;
     // publish all messages one by one, shorter sleep between each message
     while (rclcpp::ok() && message_index < messages.size()) {
-      std::cout << "publishing message #" << (message_index + 1) << std::endl;
+      printf("publishing message #%zu\n", message_index + 1);
       publisher->publish(messages[message_index]);
       ++message_index;
       message_rate.sleep();
@@ -55,7 +54,7 @@ void publish(
 
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);
-  std::cout << "published for " << diff.count() << " seconds" << std::endl;
+  printf("published for %f seconds\n", diff.count());
 }
 
 int main(int argc, char ** argv)
