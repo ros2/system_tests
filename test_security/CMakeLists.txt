@@ -9,6 +9,11 @@ endif()
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
+if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND MSVC)
+  # /bigobj is needed to avoid error C1128:
+  #   https://msdn.microsoft.com/en-us/library/8578y171.aspx
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+endif()
 
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
