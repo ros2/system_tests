@@ -71,12 +71,12 @@ int main(int argc, char ** argv)
   }
   rclcpp::init(argc, argv);
   std::string message = argv[1];
-  std::string name_space = argv[2];
+  std::string namespace_ = argv[2];
   std::string node_name = "publisher";
   std::string topic_name = "chatter";
   std::shared_ptr<rclcpp::node::Node> node = nullptr;
   try {
-    node = rclcpp::Node::make_shared(node_name, name_space);
+    node = rclcpp::Node::make_shared(node_name, namespace_);
   } catch (std::runtime_error & exc) {
     fprintf(stderr, "should not have thrown!\n%s\n", exc.what());
     rclcpp::shutdown();

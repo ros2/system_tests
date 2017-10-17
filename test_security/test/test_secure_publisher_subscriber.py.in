@@ -11,15 +11,15 @@ from launch.launcher import DefaultLauncher
 
 def test_secure_publisher_subscriber():
     now = datetime.datetime.now()
-    namespace_str = '/test_time_{0}_{1}_{2}'.format(now.hour, now.minute, now.second)
+    namespace = '/test_time_{0}_{1}_{2}'.format(now.hour, now.minute, now.second)
 
     ld = LaunchDescriptor()
     publisher_cmd = [
-        '@TEST_PUBLISHER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@', namespace_str
+        '@TEST_PUBLISHER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@', namespace
     ]
     subscriber_cmd = [
         '@TEST_SUBSCRIBER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@',
-        '@SUBSCRIBER_SHOULD_TIMEOUT@', namespace_str
+        '@SUBSCRIBER_SHOULD_TIMEOUT@', namespace
     ]
 
     publisher_env = dict(os.environ)
