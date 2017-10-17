@@ -1,5 +1,6 @@
 # generated from test_communication/test/test_secure_publisher_subscriber.py.in
 
+import datetime
 import os
 # import sys
 
@@ -9,13 +10,16 @@ from launch.launcher import DefaultLauncher
 
 
 def test_secure_publisher_subscriber():
+    now = datetime.datetime.now()
+    namespace = '/test_time_{0}_{1}_{2}'.format(now.hour, now.minute, now.second)
+
     ld = LaunchDescriptor()
     publisher_cmd = [
-        '@TEST_PUBLISHER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@'
+        '@TEST_PUBLISHER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@', namespace
     ]
     subscriber_cmd = [
         '@TEST_SUBSCRIBER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@',
-        '@SUBSCRIBER_SHOULD_TIMEOUT@'
+        '@SUBSCRIBER_SHOULD_TIMEOUT@', namespace
     ]
 
     publisher_env = dict(os.environ)

@@ -113,7 +113,7 @@ rclcpp::TimerBase::SharedPtr create_timer(
 
 int main(int argc, char ** argv)
 {
-  if (argc != 3) {
+  if (argc != 4) {
     fprintf(
       stderr,
       "Wrong number of arguments,\n"
@@ -121,6 +121,7 @@ int main(int argc, char ** argv)
     return 1;
   }
   std::string message = argv[1];
+  std::string namespace_ = argv[3];
   std::string node_name = "subscriber";
   std::string topic_name = "chatter";
   bool should_timeout =
@@ -129,7 +130,7 @@ int main(int argc, char ** argv)
   rclcpp::init(argc, argv);
   std::shared_ptr<rclcpp::node::Node> node = nullptr;
   try {
-    node = rclcpp::Node::make_shared(node_name);
+    node = rclcpp::Node::make_shared(node_name, namespace_);
   } catch (std::runtime_error & exc) {
     fprintf(stderr, "should not have thrown!\n%s\n", exc.what());
     rclcpp::shutdown();
