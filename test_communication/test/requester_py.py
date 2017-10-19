@@ -32,7 +32,7 @@ def requester(service_name, number_of_cycles):
     srv_fixtures = get_test_srv(service_name)
 
     client = node.create_client(srv_mod, 'test_service_' + service_name)
-    while not client.wait_for_service(timeout_sec=1.0):
+    while rclpy.ok() and not client.wait_for_service(timeout_sec=1.0):
         print('service not available, waiting again...')
 
     spin_count = 1
