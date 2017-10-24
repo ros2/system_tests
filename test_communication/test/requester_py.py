@@ -51,7 +51,7 @@ def requester(service_name, number_of_cycles):
     node.destroy_node()
     rclpy.shutdown()
     assert len(received_replies) == len(srv_fixtures), \
-        'Should have received %d responsed from replier' % len(srv_fixtures)
+        'Should have received %d responses from replier' % len(srv_fixtures)
     print('everything went well !')
 
 
