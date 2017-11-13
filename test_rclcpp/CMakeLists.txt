@@ -21,6 +21,8 @@ if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 
+  find_package(ament_cmake_pytest REQUIRED)
+
   set(message_files
     "msg/UInt32.msg"
   )
@@ -84,7 +86,7 @@ if(BUILD_TESTING)
       OUTPUT "${test_name}${target_suffix}_$<CONFIG>.py"
       INPUT "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}.py.configure"
     )
-    ament_add_nose_test(${test_name}${target_suffix}
+    ament_add_pytest_test(${test_name}${target_suffix}
       "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIG>.py"
       ${ARGN}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
@@ -117,7 +119,7 @@ if(BUILD_TESTING)
       OUTPUT "${test_name}${target_suffix}_$<CONFIG>.py"
       INPUT "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}.py.configure"
     )
-    ament_add_nose_test(${test_name}${target_suffix}
+    ament_add_pytest_test(${test_name}${target_suffix}
       "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIG>.py"
       ${ARGN}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
