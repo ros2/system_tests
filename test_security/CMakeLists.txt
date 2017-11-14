@@ -47,6 +47,8 @@ if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 
+  find_package(ament_cmake_pytest REQUIRED)
+
   # get the rmw implementations ahead of time
   find_package(rmw_implementation_cmake REQUIRED)
   get_available_rmw_implementations(rmw_implementations)
@@ -145,7 +147,7 @@ if(BUILD_TESTING)
           )
           math(EXPR index "${index} + 1")
 
-          ament_add_nose_test(test_secure_publisher_subscriber${test_suffix}
+          ament_add_pytest_test(test_secure_publisher_subscriber${test_suffix}
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
             TIMEOUT 20
@@ -180,7 +182,7 @@ if(BUILD_TESTING)
           )
           math(EXPR index "${index} + 1")
 
-          ament_add_nose_test(test_secure_publisher_subscriber${test_suffix}
+          ament_add_pytest_test(test_secure_publisher_subscriber${test_suffix}
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
             TIMEOUT 20
@@ -215,7 +217,7 @@ if(BUILD_TESTING)
           )
           math(EXPR index "${index} + 1")
 
-          ament_add_nose_test(test_secure_publisher_subscriber${test_suffix}
+          ament_add_pytest_test(test_secure_publisher_subscriber${test_suffix}
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
             TIMEOUT 20
