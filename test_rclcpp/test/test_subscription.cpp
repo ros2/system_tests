@@ -371,7 +371,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), create_subscription_with_
   auto callback = [](test_rclcpp::msg::UInt32::ConstSharedPtr) -> void {};
 
   auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
-    "test_subscription", 10, callback);
+    "test_subscription", callback, 10);
 }
 
 int main(int argc, char ** argv)

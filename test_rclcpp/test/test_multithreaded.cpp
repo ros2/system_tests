@@ -69,7 +69,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   // Try to saturate the MultithreadedExecutor's thread pool with subscriptions
   for (uint32_t i = 0; i < num_messages; ++i) {
     auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(
-      node_topic_name, 5 * num_messages, callback, callback_group);
+      node_topic_name, callback, 5 * num_messages, callback_group);
     subscriptions.push_back(sub);
   }
   ASSERT_TRUE(std::numeric_limits<int>::max() > subscriptions.size());
@@ -281,8 +281,10 @@ static inline void multi_access_publisher(bool intra_process)
       printf("Subscription callback %u\n", subscription_counter.load());
       printf("callback() %d with message data %u\n", subscription_counter.load(), msg->data);
     };
-  auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(node_topic_name, num_messages,
+  auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(
+      node_topic_name,
       sub_callback,
+      num_messages,
       sub_callback_group);
 
   // wait a moment for everything to initialize
