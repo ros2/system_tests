@@ -254,6 +254,10 @@ if(BUILD_TESTING)
       set(append_library_dirs "${append_library_dirs}/$<CONFIG>")
     endif()
 
+    # finding gtest once in the highest scope
+    # prevents finding it repeatedly in each local scope
+    ament_find_gtest()
+
     call_for_each_rmw_implementation(targets)
   endif()
 endif()  # BUILD_TESTING
