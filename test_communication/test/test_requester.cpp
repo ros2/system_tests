@@ -116,6 +116,30 @@ int main(int argc, char ** argv)
   } else if (service == "Primitives") {
     rc = request<test_msgs::srv::Primitives>(
       node, service, get_services_primitives());
+  } else if (service == "DynamicArrayPrimitives") {
+    rc = request<test_msgs::srv::DynamicArrayPrimitives>(
+      node, service, get_services_dynamic_array_primitives());
+  } else if (service == "DynamicArrayPrimitivesNested") {
+    rc = request<test_msgs::srv::DynamicArrayPrimitivesNested>(
+      node, service, get_services_dynamic_array_primitives_nested());
+  } else if (service == "BoundedArrayPrimitives") {
+    rc = request<test_msgs::srv::BoundedArrayPrimitives>(
+      node, service, get_services_bounded_array_primitives());
+  } else if (service == "StaticArrayPrimitives") {
+    rc = request<test_msgs::srv::StaticArrayPrimitives>(
+      node, service, get_services_static_array_primitives());
+  } else if (service == "Nested") {
+    rc = request<test_msgs::srv::Nested>(
+      node, service, get_services_nested());
+  } else if (service == "DynamicArrayNested") {
+    rc = request<test_msgs::srv::DynamicArrayNested>(
+      node, service, get_services_dynamic_array_nested());
+  } else if (service == "BoundedArrayNested") {
+    rc = request<test_msgs::srv::BoundedArrayNested>(
+      node, service, get_services_bounded_array_nested());
+  } else if (service == "StaticArrayNested") {
+    rc = request<test_msgs::srv::StaticArrayNested>(
+      node, service, get_services_static_array_nested());
   } else {
     fprintf(stderr, "Unknown service argument '%s'\n", service.c_str());
     rclcpp::shutdown();

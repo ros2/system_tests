@@ -74,6 +74,14 @@ int main(int argc, char ** argv)
 
   auto services_empty = get_services_empty();
   auto services_primitives = get_services_primitives();
+  auto services_dynamic_array_primitives = get_services_dynamic_array_primitives();
+  auto services_dynamic_array_primitives_nested = get_services_dynamic_array_primitives_nested();
+  auto services_bounded_array_primitives = get_services_bounded_array_primitives();
+  auto services_static_array_primitives = get_services_static_array_primitives();
+  auto services_nested = get_services_nested();
+  auto services_dynamic_array_nested = get_services_dynamic_array_nested();
+  auto services_bounded_array_nested = get_services_bounded_array_nested();
+  auto services_static_array_nested = get_services_static_array_nested();
   rclcpp::ServiceBase::SharedPtr server;
 
   if (service == "Empty") {
@@ -82,6 +90,30 @@ int main(int argc, char ** argv)
   } else if (service == "Primitives") {
     server = reply<test_msgs::srv::Primitives>(
       node, service, services_primitives);
+  } else if (service == "DynamicArrayPrimitives") {
+    server = reply<test_msgs::srv::DynamicArrayPrimitives>(
+      node, service, services_dynamic_array_primitives);
+  } else if (service == "DynamicArrayPrimitivesNested") {
+    server = reply<test_msgs::srv::DynamicArrayPrimitivesNested>(
+      node, service, services_dynamic_array_primitives_nested);
+  } else if (service == "BoundedArrayPrimitives") {
+    server = reply<test_msgs::srv::BoundedArrayPrimitives>(
+      node, service, services_bounded_array_primitives);
+  } else if (service == "StaticArrayPrimitives") {
+    server = reply<test_msgs::srv::StaticArrayPrimitives>(
+      node, service, services_static_array_primitives);
+  } else if (service == "Nested") {
+    server = reply<test_msgs::srv::Nested>(
+      node, service, services_nested);
+  } else if (service == "DynamicArrayNested") {
+    server = reply<test_msgs::srv::DynamicArrayNested>(
+      node, service, services_dynamic_array_nested);
+  } else if (service == "BoundedArrayNested") {
+    server = reply<test_msgs::srv::BoundedArrayNested>(
+      node, service, services_bounded_array_nested);
+  } else if (service == "StaticArrayNested") {
+    server = reply<test_msgs::srv::StaticArrayNested>(
+      node, service, services_static_array_nested);
   } else {
     fprintf(stderr, "Unknown service argument '%s'\n", service.c_str());
     rclcpp::shutdown();
