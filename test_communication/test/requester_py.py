@@ -20,17 +20,17 @@ import sys
 def requester(service_name):
     import rclpy
     from test_msgs.service_fixtures import get_test_srv
+
+    # Import the service
+    service_pkg = 'test_msgs'
+    module = importlib.import_module(service_pkg + '.srv')
+    srv_mod = getattr(module, service_name)
+
+    srv_fixtures = get_test_srv(service_name)
+    service_name = 'test_service_' + service_name
+
     rclpy.init(args=[])
-
     try:
-        # Import the service
-        service_pkg = 'test_msgs'
-        module = importlib.import_module(service_pkg + '.srv')
-        srv_mod = getattr(module, service_name)
-
-        srv_fixtures = get_test_srv(service_name)
-        service_name = 'test_service_' + service_name
-
         node = rclpy.create_node('requester')
         try:
             # wait for the service to be available
@@ -39,7 +39,7 @@ def requester(service_name):
             while rclpy.ok() and not client.wait_for_service(timeout_sec=1.0) and tries > 0:
                 print('service not available, waiting again...')
                 tries -= 1
-            assert tries > 0
+            assert tries > 0, 'service still not available, aborting test'
 
             print('requester: beginning request')
             # Make one call to that service
