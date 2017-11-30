@@ -252,6 +252,20 @@ if(BUILD_TESTING)
     set(append_library_dirs "${CMAKE_CURRENT_BINARY_DIR}")
     if(WIN32)
       set(append_library_dirs "${append_library_dirs}/$<CONFIG>")
+    elseif(APPLE)
+      execute_process(
+        COMMAND "brew" "--prefix" "openssl"
+        RESULT_VARIABLE _retcode
+        OUTPUT_VARIABLE _out_var
+        ERROR_VARIABLE _error_var
+      )
+      if(NOT _retcode EQUAL 0)
+        message(FATAL_ERROR "command 'brew --prefix openssl' failed with error code '${_retcode}' and error message '${_error_var}'")
+      endif()
+      string(STRIP "${_out_var}" _out_var)
+      set(openssl_lib_path "${_out_var}/lib")
+      file(TO_NATIVE_PATH "${openssl_lib_path}" openssl_lib_path)
+      set(append_library_dirs "${append_library_dirs};${openssl_lib_path}")
     endif()
 
     # finding gtest once in the highest scope
