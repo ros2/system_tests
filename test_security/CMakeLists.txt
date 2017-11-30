@@ -253,6 +253,9 @@ if(BUILD_TESTING)
     if(WIN32)
       set(append_library_dirs "${append_library_dirs}/$<CONFIG>")
     elseif(APPLE)
+      # connext need the openssl libraries to be on the DYLD_LIBRARY_PATH at runtime
+      # as SIP strips these variables on recent MacOS we populate them here
+      # see https://github.com/ros2/ros2/issues/409
       execute_process(
         COMMAND "brew" "--prefix" "openssl"
         RESULT_VARIABLE _retcode
