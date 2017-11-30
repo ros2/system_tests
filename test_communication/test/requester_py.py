@@ -38,20 +38,19 @@ class Requester(Node):
         client = node.create_client(self.srv_mod, self.service_name)
         tries = 15
         while rclpy.ok() and not client.wait_for_service(timeout_sec=1.0) and tries > 0:
-            self.get_logger().info('service not available, waiting again...')
+            print('service not available, waiting again...')
             tries -= 1
         assert tries > 0
 
-        self.get_logger().info('requester: beginning request')
+        print('requester: beginning request')
         # Make one call to that service
         for req, resp in self.srv_fixtures:
             client.call(req)
             client.wait_for_future()
             assert repr(client.response) == repr(resp), \
                 'unexpected response %r\n\nwas expecting %r' % (client.response, resp)
-            self.get_logger().info(
-                'received reply #%d of %d' % (
-                    self.srv_fixtures.index([req, resp]) + 1, len(self.srv_fixtures)))
+            print('received reply #%d of %d' % (
+                self.srv_fixtures.index([req, resp]) + 1, len(self.srv_fixtures)))
 
 
 if __name__ == '__main__':
