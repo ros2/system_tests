@@ -17,55 +17,52 @@ import importlib
 import sys
 
 
-def requester(service_name, number_of_cycles):
-    from test_msgs.service_fixtures import get_test_srv
+def requester(service_name):
     import rclpy
+    from test_msgs.service_fixtures import get_test_srv
 
+    # Import the service
     service_pkg = 'test_msgs'
     module = importlib.import_module(service_pkg + '.srv')
     srv_mod = getattr(module, service_name)
 
-    rclpy.init(args=[])
-
-    node = rclpy.create_node('requester')
-
     srv_fixtures = get_test_srv(service_name)
+    service_name = 'test_service_' + service_name
 
-    client = node.create_client(srv_mod, 'test_service_' + service_name)
+    rclpy.init(args=[])
+    try:
+        node = rclpy.create_node('requester')
+        try:
+            # wait for the service to be available
+            client = node.create_client(srv_mod, service_name)
+            tries = 15
+            while rclpy.ok() and not client.wait_for_service(timeout_sec=1.0) and tries > 0:
+                print('service not available, waiting again...')
+                tries -= 1
+            assert tries > 0, 'service still not available, aborting test'
 
-    spin_count = 1
-    received_replies = []
-    print('requester: beginning loop')
-    while rclpy.ok() and spin_count < number_of_cycles:
-        for req, resp in srv_fixtures:
-            client.call(req)
-            client.wait_for_future()
-            assert repr(client.response) == repr(resp), \
-                'received unexpected response %r\n\nwas expecting %r' % (client.response, resp)
-            print('received reply #%d of %d' %
-                  (srv_fixtures.index([req, resp]) + 1, len(srv_fixtures)))
-            received_replies.append(resp)
-            spin_count += 1
-            print('spin_count: ' + str(spin_count))
-        break
-    node.destroy_node()
-    rclpy.shutdown()
-    assert len(received_replies) == len(srv_fixtures), \
-        'Should have received %d responses from replier' % len(srv_fixtures)
-    print('everything went well !')
+            print('requester: beginning request')
+            # Make one call to that service
+            for req, resp in srv_fixtures:
+                client.call(req)
+                client.wait_for_future()
+                assert repr(client.response) == repr(resp), \
+                    'unexpected response %r\n\nwas expecting %r' % (client.response, resp)
+                print('received reply #%d of %d' % (
+                    srv_fixtures.index([req, resp]) + 1, len(srv_fixtures)))
+        finally:
+            node.destroy_node()
+    finally:
+        rclpy.shutdown()
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('service_name', default='Primitives',
                         help='name of the ROS message')
-    parser.add_argument('-n', '--number_of_cycles', type=int, default=10,
-                        help='number of sending attempts')
     args = parser.parse_args()
     try:
-        requester(
-            service_name=args.service_name,
-            number_of_cycles=args.number_of_cycles)
+        requester(service_name=args.service_name)
     except KeyboardInterrupt:
         print('requester stopped cleanly')
     except BaseException:
