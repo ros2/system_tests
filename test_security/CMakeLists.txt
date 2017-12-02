@@ -142,7 +142,7 @@ if(BUILD_TESTING)
             @ONLY
           )
           file(GENERATE
-            OUTPUT "test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
+            OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}.py.configured"
           )
           math(EXPR index "${index} + 1")
@@ -177,7 +177,7 @@ if(BUILD_TESTING)
             @ONLY
           )
           file(GENERATE
-            OUTPUT "test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
+            OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}.py.configured"
           )
           math(EXPR index "${index} + 1")
@@ -212,7 +212,7 @@ if(BUILD_TESTING)
             @ONLY
           )
           file(GENERATE
-            OUTPUT "test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
+            OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}.py.configured"
           )
           math(EXPR index "${index} + 1")

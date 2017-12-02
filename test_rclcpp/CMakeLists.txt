@@ -83,7 +83,7 @@ if(BUILD_TESTING)
       @ONLY
     )
     file(GENERATE
-      OUTPUT "${test_name}${target_suffix}_$<CONFIG>.py"
+      OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIG>.py"
       INPUT "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}.py.configure"
     )
     ament_add_pytest_test(${test_name}${target_suffix}
@@ -116,7 +116,7 @@ if(BUILD_TESTING)
       @ONLY
     )
     file(GENERATE
-      OUTPUT "${test_name}${target_suffix}_$<CONFIG>.py"
+      OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIG>.py"
       INPUT "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}.py.configure"
     )
     ament_add_pytest_test(${test_name}${target_suffix}
