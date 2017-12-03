@@ -151,7 +151,7 @@ if(BUILD_TESTING)
         @ONLY
       )
       file(GENERATE
-        OUTPUT "test_publisher_subscriber${test_suffix}_$<CONFIG>.py"
+        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${test_suffix}_$<CONFIG>.py"
         INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${test_suffix}.py.configured"
       )
 
@@ -199,7 +199,7 @@ if(BUILD_TESTING)
         @ONLY
       )
       file(GENERATE
-        OUTPUT "test_requester_replier${test_suffix}_$<CONFIG>.py"
+        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier${test_suffix}_$<CONFIG>.py"
         INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier${test_suffix}.py.configured"
       )
 
