@@ -94,9 +94,11 @@ if(BUILD_TESTING)
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation}
     )
-    set_tests_properties(${test_name}${target_suffix}
-      PROPERTIES DEPENDS "${executable1}${target_suffix} ${executable2}${target_suffix}"
-    )
+    if(TEST ${test_name}${target_suffix})
+      set_tests_properties(${test_name}${target_suffix}
+        PROPERTIES DEPENDS "${executable1}${target_suffix} ${executable2}${target_suffix}"
+      )
+    endif()
   endmacro()
 
   # Macro for tests that trigger the shutdown of an executable based on particular console output,
@@ -127,9 +129,11 @@ if(BUILD_TESTING)
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation}
     )
-    set_tests_properties(${test_name}${target_suffix}
-      PROPERTIES DEPENDS "${executable}${target_suffix}"
-    )
+    if(TEST ${test_name}${target_suffix})
+      set_tests_properties(${test_name}${target_suffix}
+        PROPERTIES DEPENDS "${executable}${target_suffix}"
+      )
+    endif()
   endmacro()
 
   macro(targets)

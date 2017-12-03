@@ -152,10 +152,12 @@ if(BUILD_TESTING)
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
             TIMEOUT 20
           )
-          set_tests_properties(
-            test_secure_publisher_subscriber${test_suffix}
-            PROPERTIES DEPENDS "test_secure_publisher_cpp__${rmw_implementation};test_secure_subscriber_cpp__${rmw_implementation}"
-          )
+          if(TEST test_secure_publisher_subscriber${test_suffix})
+            set_tests_properties(
+              test_secure_publisher_subscriber${test_suffix}
+              PROPERTIES DEPENDS "test_secure_publisher_cpp__${rmw_implementation};test_secure_subscriber_cpp__${rmw_implementation}"
+            )
+          endif()
         endwhile()
 
         set(index 0)
@@ -187,10 +189,12 @@ if(BUILD_TESTING)
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
             TIMEOUT 20
           )
-          set_tests_properties(
-            test_secure_publisher_subscriber${test_suffix}
-            PROPERTIES DEPENDS "test_secure_publisher_cpp__${rmw_implementation};test_secure_subscriber_cpp__${rmw_implementation}"
-          )
+          if(TEST test_secure_publisher_subscriber${test_suffix})
+            set_tests_properties(
+              test_secure_publisher_subscriber${test_suffix}
+              PROPERTIES DEPENDS "test_secure_publisher_cpp__${rmw_implementation};test_secure_subscriber_cpp__${rmw_implementation}"
+            )
+          endif()
         endwhile()
 
         set(index 0)
@@ -222,10 +226,12 @@ if(BUILD_TESTING)
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
             TIMEOUT 20
           )
-          set_tests_properties(
-            test_secure_publisher_subscriber${test_suffix}
-            PROPERTIES DEPENDS "test_secure_publisher_cpp__${rmw_implementation};test_secure_subscriber_cpp__${rmw_implementation}"
-          )
+          if(TEST test_secure_publisher_subscriber${test_suffix})
+            set_tests_properties(
+              test_secure_publisher_subscriber${test_suffix}
+              PROPERTIES DEPENDS "test_secure_publisher_cpp__${rmw_implementation};test_secure_subscriber_cpp__${rmw_implementation}"
+            )
+          endif()
         endwhile()
       endif()
     endforeach()

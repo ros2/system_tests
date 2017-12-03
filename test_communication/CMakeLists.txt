@@ -160,10 +160,12 @@ if(BUILD_TESTING)
         PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
         APPEND_LIBRARY_DIRS "${append_library_dirs}"
         TIMEOUT 15)
-      set_tests_properties(
-        test_publisher_subscriber${test_suffix}
-        PROPERTIES DEPENDS "test_publisher_cpp__${rmw_implementation1};test_subscriber_cpp__${rmw_implementation2}"
-      )
+      if(TEST test_publisher_subscriber${test_suffix})
+        set_tests_properties(
+          test_publisher_subscriber${test_suffix}
+          PROPERTIES DEPENDS "test_publisher_cpp__${rmw_implementation1};test_subscriber_cpp__${rmw_implementation2}"
+        )
+      endif()
     endforeach()
 
     # test requester / replier
@@ -209,11 +211,13 @@ if(BUILD_TESTING)
         APPEND_LIBRARY_DIRS "${append_library_dirs}"
         TIMEOUT 30
         ${SKIP_TEST})
-      set_tests_properties(
-        test_requester_replier${test_suffix}
-        PROPERTIES DEPENDS
-          "test_requester_cpp__${rmw_implementation1};test_replier_cpp__${rmw_implementation2}"
-      )
+      if(TEST test_requester_replier${test_suffix})
+        set_tests_properties(
+          test_requester_replier${test_suffix}
+          PROPERTIES DEPENDS
+            "test_requester_cpp__${rmw_implementation1};test_replier_cpp__${rmw_implementation2}"
+        )
+      endif()
     endforeach()
   endmacro()
 
