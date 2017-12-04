@@ -115,7 +115,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   std::mutex publish_mutex;
   auto publish_callback = [
     msg, &pub, &executor, &counter, &expected_count, &sleep_per_loop, &publish_mutex](
-    rclcpp::timer::TimerBase & timer) -> void
+    rclcpp::TimerBase & timer) -> void
     {
       std::lock_guard<std::mutex> lock(publish_mutex);
       ++msg->data;
@@ -289,7 +289,7 @@ static inline void multi_access_publisher(bool intra_process)
 
   auto timer_callback =
     [&executor, &pub, &msg, &timer_counter, &subscription_counter, &num_messages](
-    rclcpp::timer::TimerBase & timer)
+    rclcpp::TimerBase & timer)
     {
       if (timer_counter.load() >= num_messages) {
         timer.cancel();
@@ -304,7 +304,7 @@ static inline void multi_access_publisher(bool intra_process)
       printf("Publishing message %u\n", timer_counter.load());
       pub->publish(msg);
     };
-  std::vector<rclcpp::timer::TimerBase::SharedPtr> timers;
+  std::vector<rclcpp::TimerBase::SharedPtr> timers;
   // timers will fire simultaneously in each thread
   for (uint32_t i = 0; i < std::min<size_t>(executor.get_number_of_threads(), 16); ++i) {
     timers.push_back(node->create_wall_timer(std::chrono::milliseconds(1), timer_callback));
