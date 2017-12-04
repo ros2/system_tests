@@ -28,7 +28,7 @@
 const double test_epsilon = 1e-6;
 
 void set_test_parameters(
-  std::shared_ptr<rclcpp::parameter_client::SyncParametersClient> parameters_client)
+  std::shared_ptr<rclcpp::SyncParametersClient> parameters_client)
 {
   printf("Setting parameters\n");
   // Set several differnet types of parameters.
@@ -52,7 +52,7 @@ void set_test_parameters(
 
 void verify_set_parameters_async(
   std::shared_ptr<rclcpp::Node> node,
-  std::shared_ptr<rclcpp::parameter_client::AsyncParametersClient> parameters_client)
+  std::shared_ptr<rclcpp::AsyncParametersClient> parameters_client)
 {
   printf("Setting parameters\n");
   // Set several differnet types of parameters.
@@ -75,7 +75,7 @@ void verify_set_parameters_async(
 }
 
 void verify_test_parameters(
-  std::shared_ptr<rclcpp::parameter_client::SyncParametersClient> parameters_client)
+  std::shared_ptr<rclcpp::SyncParametersClient> parameters_client)
 {
   printf("Listing parameters with recursive depth\n");
   // Test recursive depth (=0)
@@ -180,7 +180,7 @@ void verify_test_parameters(
 
 void verify_get_parameters_async(
   std::shared_ptr<rclcpp::Node> node,
-  std::shared_ptr<rclcpp::parameter_client::AsyncParametersClient> parameters_client)
+  std::shared_ptr<rclcpp::AsyncParametersClient> parameters_client)
 {
   printf("Listing parameters with recursive depth\n");
   // Test recursive depth (=0)
