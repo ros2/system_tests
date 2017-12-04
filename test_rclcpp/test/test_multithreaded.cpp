@@ -251,7 +251,7 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
 static inline void multi_access_publisher(bool intra_process)
 {
   // Try to access the same publisher simultaneously
-  auto context = std::make_shared<rclcpp::context::Context>();
+  auto context = std::make_shared<rclcpp::Context>();
   std::string node_topic_name = "multi_access_publisher";
   if (intra_process) {
     node_topic_name += "_intra_process";

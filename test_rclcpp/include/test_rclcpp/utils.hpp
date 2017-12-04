@@ -53,7 +53,7 @@ void wait_for_subscriber(
       }
     };
   while (!predicate() && time_slept < duration_cast<microseconds>(timeout)) {
-    rclcpp::event::Event::SharedPtr graph_event = node->get_graph_event();
+    rclcpp::Event::SharedPtr graph_event = node->get_graph_event();
     node->wait_for_graph_change(graph_event, sleep_period);
     time_slept = duration_cast<std::chrono::microseconds>(steady_clock::now() - start);
   }
