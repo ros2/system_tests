@@ -67,7 +67,7 @@ public:
   }
 
 private:
-  rclcpp::client::ClientBase::SharedPtr client_;
+  rclcpp::ClientBase::SharedPtr client_;
 };
 
 TEST(CLASSNAME(test_services_in_constructor, RMW_IMPLEMENTATION), client_in_constructor) {
