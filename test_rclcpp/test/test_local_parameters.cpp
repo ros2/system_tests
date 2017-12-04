@@ -103,6 +103,60 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_asynchronous) {
   verify_get_parameters_async(node, parameters_client);
 }
 
+class ParametersAsyncNode : public rclcpp::Node
+{
+public:
+  ParametersAsyncNode()
+  : Node("test_local_parameters_async_with_callback")
+  {
+    parameters_client_ =
+      std::make_shared<rclcpp::parameter_client::AsyncParametersClient>(this);
+  }
+
+  void queue_set_parameter_request(rclcpp::executors::SingleThreadedExecutor & executor)
+  {
+    using rclcpp::parameter::ParameterVariant;
+    using SetParametersResult =
+        std::shared_future<std::vector<rcl_interfaces::msg::SetParametersResult>>;
+    auto set_parameters_results = parameters_client_->set_parameters({
+      ParameterVariant("foo", 2),
+      ParameterVariant("bar", "hello"),
+      ParameterVariant("barstr", std::string("hello_str")),
+      ParameterVariant("baz", 1.45),
+      ParameterVariant("foobar", true),
+      ParameterVariant("barfoo", std::vector<uint8_t>{3, 4, 5}),
+    },
+        [&executor](SetParametersResult future)
+        {
+          printf("Got set_parameters result\n");
+          // Check to see if they were set.
+          for (auto & result : future.get()) {
+            ASSERT_TRUE(result.successful);
+          }
+          executor.cancel();
+        }
+      );
+  }
+
+  rclcpp::AsyncParametersClient::SharedPtr parameters_client_;
+};
+
+// Regression test for calling parameter client async services, but having the specified callback
+// go out of scope before it gets called: see https://github.com/ros2/rclcpp/pull/414
+TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_async_with_callback) {
+  auto node = std::make_shared<ParametersAsyncNode>();
+  // TODO(esteve): Make the parameter service automatically start with the node.
+  auto parameter_service = std::make_shared<rclcpp::parameter_service::ParameterService>(node);
+  if (!node->parameters_client_->wait_for_service(20s)) {
+    ASSERT_TRUE(false) << "service not available after waiting";
+  }
+  rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(node);
+  node->queue_set_parameter_request(executor);
+  // When the parameters client receives its response it will cancel the executor.
+  executor.spin();
+}
+
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
   auto node = rclcpp::Node::make_shared("test_parameters_local_helpers");
   // TODO(esteve): Make the parameter service automatically start with the node.
