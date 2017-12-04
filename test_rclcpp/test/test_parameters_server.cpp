@@ -28,7 +28,7 @@ int main(int argc, char ** argv)
   auto node = rclcpp::Node::make_shared(std::string("test_parameters_server"));
 
   // TODO(esteve): Make the parameter service automatically start with the node.
-  auto parameter_service = std::make_shared<rclcpp::parameter_service::ParameterService>(node);
+  auto parameter_service = std::make_shared<rclcpp::ParameterService>(node);
 
   rclcpp::spin(node);
 
