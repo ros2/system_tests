@@ -50,7 +50,7 @@ public:
   }
 
 private:
-  rclcpp::service::ServiceBase::SharedPtr service_;
+  rclcpp::ServiceBase::SharedPtr service_;
 };
 
 TEST(CLASSNAME(test_services_in_constructor, RMW_IMPLEMENTATION), service_in_constructor) {

@@ -23,7 +23,7 @@
 #include "test_msgs/service_fixtures.hpp"
 
 template<typename T>
-typename rclcpp::service::Service<T>::SharedPtr reply(
+typename rclcpp::Service<T>::SharedPtr reply(
   rclcpp::Node::SharedPtr node,
   const std::string & service_type,
   const std::vector<
@@ -74,7 +74,7 @@ int main(int argc, char ** argv)
 
   auto services_empty = get_services_empty();
   auto services_primitives = get_services_primitives();
-  rclcpp::service::ServiceBase::SharedPtr server;
+  rclcpp::ServiceBase::SharedPtr server;
 
   if (service == "Empty") {
     server = reply<test_msgs::srv::Empty>(
