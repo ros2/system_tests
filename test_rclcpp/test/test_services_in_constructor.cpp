@@ -33,11 +33,11 @@
  * possible at some point, but should be now.
  */
 
-class MyNodeWithService : public rclcpp::node::Node
+class MyNodeWithService : public rclcpp::Node
 {
 public:
   MyNodeWithService()
-  : rclcpp::node::Node("node_with_service")
+  : rclcpp::Node("node_with_service")
   {
     service_ = this->create_service<test_rclcpp::srv::AddTwoInts>(
       "test",
@@ -57,11 +57,11 @@ TEST(CLASSNAME(test_services_in_constructor, RMW_IMPLEMENTATION), service_in_con
   auto n = std::make_shared<MyNodeWithService>();
 }
 
-class MyNodeWithClient : public rclcpp::node::Node
+class MyNodeWithClient : public rclcpp::Node
 {
 public:
   MyNodeWithClient()
-  : rclcpp::node::Node("node_with_client")
+  : rclcpp::Node("node_with_client")
   {
     client_ = this->create_client<test_rclcpp::srv::AddTwoInts>("test");
   }

@@ -33,7 +33,7 @@ using namespace std::chrono_literals;
 // This test is concerned with the consistency of the two clients' behavior, not necessarily whether
 // or not they are successful.
 TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_consistency_regression_test) {
-  auto node = rclcpp::node::Node::make_shared("client_scope_consistency_regression_test");
+  auto node = rclcpp::Node::make_shared("client_scope_consistency_regression_test");
 
   // Replicate the settings that caused https://github.com/ros2/system_tests/issues/153
   rmw_qos_profile_t rmw_qos_profile =

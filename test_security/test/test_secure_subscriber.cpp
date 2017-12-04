@@ -128,7 +128,7 @@ int main(int argc, char ** argv)
     ((0 == strcmp(argv[2], "false")) || (0 == strcmp(argv[2], "0"))) ? false : true;
 
   rclcpp::init(argc, argv);
-  std::shared_ptr<rclcpp::node::Node> node = nullptr;
+  std::shared_ptr<rclcpp::Node> node = nullptr;
   try {
     node = rclcpp::Node::make_shared(node_name, namespace_);
   } catch (std::runtime_error & exc) {

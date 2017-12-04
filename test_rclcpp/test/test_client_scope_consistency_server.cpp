@@ -31,7 +31,7 @@ int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
 
-  auto node = rclcpp::node::Node::make_shared("client_scope_consistency_regression_test_server");
+  auto node = rclcpp::Node::make_shared("client_scope_consistency_regression_test_server");
 
   // Replicate the settings that caused https://github.com/ros2/system_tests/issues/153
   rmw_qos_profile_t rmw_qos_profile =

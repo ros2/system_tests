@@ -31,7 +31,7 @@ int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
 
-  auto node = rclcpp::node::Node::make_shared("client_scope_server");
+  auto node = rclcpp::Node::make_shared("client_scope_server");
 
   auto service = node->create_service<test_rclcpp::srv::AddTwoInts>(
     "client_scope", handle_add_two_ints);
