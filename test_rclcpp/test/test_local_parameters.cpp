@@ -109,6 +109,8 @@ public:
   ParametersAsyncNode()
   : Node("test_local_parameters_async_with_callback")
   {
+    parameters_client_ =
+      std::make_shared<rclcpp::parameter_client::AsyncParametersClient>(this);
   }
 
   void queue_set_parameter_request(rclcpp::executors::SingleThreadedExecutor & executor)
@@ -145,9 +147,6 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_async_with_call
   auto node = std::make_shared<ParametersAsyncNode>();
   // TODO(esteve): Make the parameter service automatically start with the node.
   auto parameter_service = std::make_shared<rclcpp::parameter_service::ParameterService>(node);
-  // TODO(dhood): Make the parameter client constructable from Node subclass' constructor.
-  node->parameters_client_ =
-    std::make_shared<rclcpp::parameter_client::AsyncParametersClient>(node);
   if (!node->parameters_client_->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
   }
