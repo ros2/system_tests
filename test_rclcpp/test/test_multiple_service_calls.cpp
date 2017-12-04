@@ -81,6 +81,55 @@ TEST(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), two_service_calls) {
   EXPECT_EQ(1, result1.get()->sum);
 }
 
+// Regression test for async client not being able to queue another request in a response callback.
+// See https://github.com/ros2/rclcpp/pull/415
+TEST(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), recursive_service_call) {
+  auto node = rclcpp::Node::make_shared("test_recursive_service_call");
+
+  auto service = node->create_service<test_rclcpp::srv::AddTwoInts>(
+    "test_recursive_service_call", handle_add_two_ints);
+
+  auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("test_recursive_service_call");
+  if (!client->wait_for_service(20s)) {
+    ASSERT_TRUE(false) << "service not available after waiting";
+  }
+
+  auto request1 = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
+  request1->a = 1;
+  request1->b = 0;
+
+  auto request2 = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
+  request2->a = 2;
+  request2->b = 0;
+
+  bool second_result_received = false;
+  using AddTwoIntsSharedFuture = rclcpp::client::Client<test_rclcpp::srv::AddTwoInts>::SharedFuture;
+
+  auto first_response_received_callback =
+    [&client, &request2, &second_result_received](AddTwoIntsSharedFuture first_future) {
+      EXPECT_EQ(1, first_future.get()->sum);
+      // Trigger another service request from within this callback
+      auto second_response_received_callback =
+        [&second_result_received](AddTwoIntsSharedFuture second_future) {
+          EXPECT_EQ(2, second_future.get()->sum);
+          second_result_received = true;
+        };
+      printf("Sending second request...\n");
+      fflush(stdout);
+      client->async_send_request(request2, second_response_received_callback);
+    };
+  printf("Sending first request...\n");
+  fflush(stdout);
+  client->async_send_request(request1, first_response_received_callback);
+
+  printf("Waiting for reply...\n");
+  fflush(stdout);
+  while (!second_result_received) {
+    rclcpp::spin_some(node);
+  }
+  EXPECT_TRUE(second_result_received);
+}
+
 TEST(CLASSNAME(test_multiple_service_calls, RMW_IMPLEMENTATION), multiple_clients) {
   const uint32_t n = 5;
 
