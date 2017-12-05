@@ -23,7 +23,7 @@
 
 
 template<typename T>
-rclcpp::subscription::SubscriptionBase::SharedPtr subscribe(
+rclcpp::SubscriptionBase::SharedPtr subscribe(
   rclcpp::Node::SharedPtr node,
   const std::string & message_type,
   std::vector<typename T::SharedPtr> & expected_messages,
@@ -96,7 +96,7 @@ int main(int argc, char ** argv)
   auto messages_static_array_nested = get_messages_static_array_nested();
   auto messages_builtins = get_messages_builtins();
 
-  rclcpp::subscription::SubscriptionBase::SharedPtr subscriber;
+  rclcpp::SubscriptionBase::SharedPtr subscriber;
   std::vector<bool> received_messages;  // collect flags about received messages
   if (message == "Empty") {
     subscriber = subscribe<test_msgs::msg::Empty>(

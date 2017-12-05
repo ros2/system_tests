@@ -96,7 +96,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   // wait for delivery to occur.
   const std::chrono::milliseconds sleep_per_loop(10);
   while (subscriptions_size != counter.load()) {
-    rclcpp::utilities::sleep_for(sleep_per_loop);
+    rclcpp::sleep_for(sleep_per_loop);
     executor.spin_some();
   }
   EXPECT_EQ(subscriptions_size, counter.load());
@@ -115,7 +115,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   std::mutex publish_mutex;
   auto publish_callback = [
     msg, &pub, &executor, &counter, &expected_count, &sleep_per_loop, &publish_mutex](
-    rclcpp::timer::TimerBase & timer) -> void
+    rclcpp::TimerBase & timer) -> void
     {
       std::lock_guard<std::mutex> lock(publish_mutex);
       ++msg->data;
@@ -168,9 +168,9 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     "multi_consumer_clients", callback, qos_profile, callback_group);
 
   using ClientRequestPair = std::pair<
-      rclcpp::client::Client<test_rclcpp::srv::AddTwoInts>::SharedPtr,
+      rclcpp::Client<test_rclcpp::srv::AddTwoInts>::SharedPtr,
       test_rclcpp::srv::AddTwoInts::Request::SharedPtr>;
-  using SharedFuture = rclcpp::client::Client<test_rclcpp::srv::AddTwoInts>::SharedFuture;
+  using SharedFuture = rclcpp::Client<test_rclcpp::srv::AddTwoInts>::SharedFuture;
 
 
   std::vector<ClientRequestPair> client_request_pairs;
@@ -186,7 +186,7 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
   int client_request_pairs_size = static_cast<int>(client_request_pairs.size());
 
   executor.add_node(node);
-  rclcpp::utilities::sleep_for(5ms);
+  rclcpp::sleep_for(5ms);
 
   executor.spin_some();
   // No callbacks should have fired
@@ -251,7 +251,7 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
 static inline void multi_access_publisher(bool intra_process)
 {
   // Try to access the same publisher simultaneously
-  auto context = std::make_shared<rclcpp::context::Context>();
+  auto context = std::make_shared<rclcpp::Context>();
   std::string node_topic_name = "multi_access_publisher";
   if (intra_process) {
     node_topic_name += "_intra_process";
@@ -289,13 +289,13 @@ static inline void multi_access_publisher(bool intra_process)
 
   auto timer_callback =
     [&executor, &pub, &msg, &timer_counter, &subscription_counter, &num_messages](
-    rclcpp::timer::TimerBase & timer)
+    rclcpp::TimerBase & timer)
     {
       if (timer_counter.load() >= num_messages) {
         timer.cancel();
         // Wait for pending subscription callbacks to trigger.
         while (subscription_counter < timer_counter) {
-          rclcpp::utilities::sleep_for(1ms);
+          rclcpp::sleep_for(1ms);
         }
         executor.cancel();
         return;
@@ -304,7 +304,7 @@ static inline void multi_access_publisher(bool intra_process)
       printf("Publishing message %u\n", timer_counter.load());
       pub->publish(msg);
     };
-  std::vector<rclcpp::timer::TimerBase::SharedPtr> timers;
+  std::vector<rclcpp::TimerBase::SharedPtr> timers;
   // timers will fire simultaneously in each thread
   for (uint32_t i = 0; i < std::min<size_t>(executor.get_number_of_threads(), 16); ++i) {
     timers.push_back(node->create_wall_timer(std::chrono::milliseconds(1), timer_callback));

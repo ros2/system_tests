@@ -54,7 +54,7 @@ void publish(
 }
 
 template<typename T>
-rclcpp::subscription::SubscriptionBase::SharedPtr subscribe(
+rclcpp::SubscriptionBase::SharedPtr subscribe(
   rclcpp::Node::SharedPtr node,
   const std::string & message_type,
   std::vector<typename T::SharedPtr> & expected_messages,
@@ -115,7 +115,7 @@ int main(int argc, char ** argv)
   std::string message = argv[1];
   auto node = rclcpp::Node::make_shared(std::string("test_publisher_subscriber_") + message);
 
-  rclcpp::subscription::SubscriptionBase::SharedPtr subscriber;
+  rclcpp::SubscriptionBase::SharedPtr subscriber;
   std::vector<bool> received_messages;  // collect flags about received messages
 
   auto messages_empty = get_messages_empty();

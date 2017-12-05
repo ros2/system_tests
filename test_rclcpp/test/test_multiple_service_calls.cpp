@@ -103,7 +103,7 @@ TEST(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), recursive_service_ca
   request2->b = 0;
 
   bool second_result_received = false;
-  using AddTwoIntsSharedFuture = rclcpp::client::Client<test_rclcpp::srv::AddTwoInts>::SharedFuture;
+  using AddTwoIntsSharedFuture = rclcpp::Client<test_rclcpp::srv::AddTwoInts>::SharedFuture;
 
   auto first_response_received_callback =
     [&client, &request2, &second_result_received](AddTwoIntsSharedFuture first_future) {
@@ -140,9 +140,9 @@ TEST(CLASSNAME(test_multiple_service_calls, RMW_IMPLEMENTATION), multiple_client
     "test_multiple_clients", handle_add_two_ints);
 
   using ClientRequestPair = std::pair<
-      rclcpp::client::Client<test_rclcpp::srv::AddTwoInts>::SharedPtr,
+      rclcpp::Client<test_rclcpp::srv::AddTwoInts>::SharedPtr,
       test_rclcpp::srv::AddTwoInts::Request::SharedPtr>;
-  using SharedFuture = rclcpp::client::Client<test_rclcpp::srv::AddTwoInts>::SharedFuture;
+  using SharedFuture = rclcpp::Client<test_rclcpp::srv::AddTwoInts>::SharedFuture;
 
   std::vector<ClientRequestPair> client_request_pairs;
   for (uint32_t i = 0; i < n; ++i) {

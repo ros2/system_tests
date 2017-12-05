@@ -40,7 +40,7 @@ TEST(CLASSNAME(parameters, rmw_implementation), test_remote_parameters_async) {
 
   auto node = rclcpp::Node::make_shared(std::string("test_remote_parameters_async"));
 
-  auto parameters_client = std::make_shared<rclcpp::parameter_client::AsyncParametersClient>(node,
+  auto parameters_client = std::make_shared<rclcpp::AsyncParametersClient>(node,
       test_server_name);
   if (!parameters_client->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
@@ -56,7 +56,7 @@ TEST(CLASSNAME(parameters, rmw_implementation), test_remote_parameters_sync) {
 
   auto node = rclcpp::Node::make_shared(std::string("test_remote_parameters_sync"));
 
-  auto parameters_client = std::make_shared<rclcpp::parameter_client::SyncParametersClient>(node,
+  auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(node,
       test_server_name);
   if (!parameters_client->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";

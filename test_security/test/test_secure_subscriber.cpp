@@ -25,7 +25,7 @@
 using namespace std::chrono_literals;
 
 template<typename T>
-rclcpp::subscription::SubscriptionBase::SharedPtr attempt_subscribe(
+rclcpp::SubscriptionBase::SharedPtr attempt_subscribe(
   rclcpp::Node::SharedPtr node,
   const std::string & topic_name,
   std::vector<typename T::SharedPtr> & expected_messages,
@@ -74,7 +74,7 @@ rclcpp::subscription::SubscriptionBase::SharedPtr attempt_subscribe(
 }
 
 template<typename T>
-rclcpp::subscription::SubscriptionBase::SharedPtr attempt_subscribe(
+rclcpp::SubscriptionBase::SharedPtr attempt_subscribe(
   rclcpp::Node::SharedPtr node,
   const std::string & topic_name,
   bool & sub_callback_called,
@@ -128,7 +128,7 @@ int main(int argc, char ** argv)
     ((0 == strcmp(argv[2], "false")) || (0 == strcmp(argv[2], "0"))) ? false : true;
 
   rclcpp::init(argc, argv);
-  std::shared_ptr<rclcpp::node::Node> node = nullptr;
+  std::shared_ptr<rclcpp::Node> node = nullptr;
   try {
     node = rclcpp::Node::make_shared(node_name, namespace_);
   } catch (std::runtime_error & exc) {
@@ -136,7 +136,7 @@ int main(int argc, char ** argv)
     rclcpp::shutdown();
     return 1;
   }
-  rclcpp::subscription::SubscriptionBase::SharedPtr subscriber;
+  rclcpp::SubscriptionBase::SharedPtr subscriber;
 
   if (!should_timeout) {
     std::vector<bool> received_messages;  // collect flags about received messages

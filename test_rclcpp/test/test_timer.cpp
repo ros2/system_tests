@@ -137,7 +137,7 @@ TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), finite_timer) {
 
   int counter = 0;
   auto callback =
-    [&counter](rclcpp::timer::TimerBase & timer) -> void
+    [&counter](rclcpp::TimerBase & timer) -> void
     {
       ++counter;
       printf("  callback() %d\n", counter);
