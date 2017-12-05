@@ -96,7 +96,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   // wait for delivery to occur.
   const std::chrono::milliseconds sleep_per_loop(10);
   while (subscriptions_size != counter.load()) {
-    rclcpp::utilities::sleep_for(sleep_per_loop);
+    rclcpp::sleep_for(sleep_per_loop);
     executor.spin_some();
   }
   EXPECT_EQ(subscriptions_size, counter.load());
@@ -186,7 +186,7 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
   int client_request_pairs_size = static_cast<int>(client_request_pairs.size());
 
   executor.add_node(node);
-  rclcpp::utilities::sleep_for(5ms);
+  rclcpp::sleep_for(5ms);
 
   executor.spin_some();
   // No callbacks should have fired
@@ -295,7 +295,7 @@ static inline void multi_access_publisher(bool intra_process)
         timer.cancel();
         // Wait for pending subscription callbacks to trigger.
         while (subscription_counter < timer_counter) {
-          rclcpp::utilities::sleep_for(1ms);
+          rclcpp::sleep_for(1ms);
         }
         executor.cancel();
         return;
