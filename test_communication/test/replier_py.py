@@ -26,7 +26,7 @@ def replier_callback(request, response, srv_fixtures):
             return resp
 
 
-def replier(service_name, number_of_cycles):
+def replier(service_name, number_of_cycles, namespace):
     from test_msgs.service_fixtures import get_test_srv
     import rclpy
 
@@ -36,7 +36,7 @@ def replier(service_name, number_of_cycles):
 
     rclpy.init(args=[])
 
-    node = rclpy.create_node('replier')
+    node = rclpy.create_node('replier', namespace=namespace)
 
     srv_fixtures = get_test_srv(service_name)
 
@@ -44,7 +44,7 @@ def replier(service_name, number_of_cycles):
         replier_callback, srv_fixtures=srv_fixtures)
 
     node.create_service(
-        srv_mod, 'test_service_' + service_name, chatter_callback)
+        srv_mod, 'test/service/' + service_name, chatter_callback)
 
     spin_count = 1
     print('replier: beginning loop')
@@ -62,11 +62,15 @@ if __name__ == '__main__':
                         help='name of the ROS message')
     parser.add_argument('-n', '--number_of_cycles', type=int, default=20,
                         help='number of sending attempts')
+    parser.add_argument('namespace', default='',
+                        help='namespace of the ROS node')
     args = parser.parse_args()
     try:
         replier(
             service_name=args.service_name,
-            number_of_cycles=args.number_of_cycles)
+            number_of_cycles=args.number_of_cycles,
+            namespace=args.namespace
+        )
     except KeyboardInterrupt:
         print('server stopped cleanly')
     except BaseException:

@@ -1,5 +1,6 @@
 # generated from test_communication/test/test_requester_replier.py.in
 
+import datetime
 import os
 import sys
 
@@ -9,9 +10,12 @@ from launch.launcher import DefaultLauncher
 
 
 def test_requester_replier():
+    now = datetime.datetime.now()
+    namespace = '/test_time_{0}_{1}_{2}'.format(now.hour, now.minute, now.second)
+
     ld = LaunchDescriptor()
-    requester_cmd = ['@TEST_REQUESTER_EXECUTABLE@', '@TEST_SERVICE_TYPE@']
-    replier_cmd = ['@TEST_REPLIER_EXECUTABLE@', '@TEST_SERVICE_TYPE@']
+    requester_cmd = ['@TEST_REQUESTER_EXECUTABLE@', '@TEST_SERVICE_TYPE@', namespace]
+    replier_cmd = ['@TEST_REPLIER_EXECUTABLE@', '@TEST_SERVICE_TYPE@', namespace]
 
     replier_env = dict(os.environ)
     requester_env = dict(os.environ)
