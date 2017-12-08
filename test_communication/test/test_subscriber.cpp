@@ -67,13 +67,13 @@ rclcpp::SubscriptionBase::SharedPtr subscribe(
   custom_qos_profile.depth = expected_messages.size();
 
   auto subscriber = node->create_subscription<T>(
-    std::string("test_message_") + message_type, callback, custom_qos_profile);
+    std::string("test/message/") + message_type, callback, custom_qos_profile);
   return subscriber;
 }
 
 int main(int argc, char ** argv)
 {
-  if (argc != 2) {
+  if (argc != 3) {
     fprintf(stderr, "Wrong number of arguments, pass one message type\n");
     return 1;
   }
@@ -82,7 +82,9 @@ int main(int argc, char ** argv)
   auto start = std::chrono::steady_clock::now();
 
   std::string message = argv[1];
-  auto node = rclcpp::Node::make_shared(std::string("test_subscriber_") + message);
+  std::string namespace_ = argv[2];
+  auto node = rclcpp::Node::make_shared(
+    std::string("test_subscriber_") + message, namespace_);
 
   auto messages_empty = get_messages_empty();
   auto messages_primitives = get_messages_primitives();
