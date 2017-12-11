@@ -179,9 +179,9 @@ if(BUILD_TESTING)
       set(SKIP_TEST "SKIP_TEST")
     endif()
 
-    # TODO(mikaelarguedas) connext doesn't support C services for now
-    if((client_library1 STREQUAL "rclpy" OR client_library2 STREQUAL "rclpy") AND
-      (rmw_implementation1 MATCHES "(.*)connext(.*)" OR rmw_implementation2 MATCHES "(.*)connext(.*)")
+    # TODO(mikaelarguedas) connext_dynamic doesn't support C services for now
+    if((client_library1 STREQUAL "rclpy" AND rmw_implementation1 MATCHES "rmw_connext_dynamic_cpp") OR
+      (client_library2 STREQUAL "rclpy" AND rmw_implementation2 MATCHES "rmw_connext_dynamic_cpp")
     )
       set(SKIP_TEST "SKIP_TEST")
     endif()
