@@ -73,8 +73,7 @@ int main(int argc, char ** argv)
   std::string namespace_ = argv[2];
   auto node = rclcpp::Node::make_shared(
     std::string("test_replier_") + service,
-    namespace_
-  );
+    namespace_);
 
   auto services_empty = get_services_empty();
   auto services_primitives = get_services_primitives();

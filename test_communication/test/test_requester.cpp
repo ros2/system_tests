@@ -110,8 +110,7 @@ int main(int argc, char ** argv)
   std::string namespace_ = argv[2];
   auto node = rclcpp::Node::make_shared(
     std::string("test_requester_") + service,
-    namespace_
-  );
+    namespace_);
 
   int rc;
   if (service == "Empty") {
