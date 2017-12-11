@@ -186,6 +186,10 @@ if(BUILD_TESTING)
       set(SKIP_TEST "SKIP_TEST")
     endif()
 
+    if(WIN32 AND client_library1 STREQUAL "rclcpp" AND client_library2 STREQUAL "rclpy")
+      set(SKIP_TEST "SKIP_TEST")
+    endif()
+
     set(REQUESTER_RMW ${rmw_implementation1})
     set(REPLIER_RMW ${rmw_implementation2})
     foreach(service_file ${service_files})
