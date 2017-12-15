@@ -18,7 +18,7 @@ import sys
 import time
 
 
-def talker(message_name, number_of_cycles):
+def talker(message_name, number_of_cycles, namespace):
     from test_msgs.message_fixtures import get_test_msg
     import rclpy
 
@@ -28,10 +28,10 @@ def talker(message_name, number_of_cycles):
 
     rclpy.init(args=[])
 
-    node = rclpy.create_node('talker')
+    node = rclpy.create_node('talker', namespace=namespace)
 
     chatter_pub = node.create_publisher(
-        msg_mod, 'test_message_' + message_name)
+        msg_mod, 'test/message/' + message_name)
 
     cycle_count = 0
     print('talker: beginning loop')
@@ -51,14 +51,15 @@ def talker(message_name, number_of_cycles):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('message_name', default='Primitives',
-                        help='name of the ROS message')
+    parser.add_argument('message_name', help='name of the ROS message')
+    parser.add_argument('namespace', help='namespace of the ROS node')
     parser.add_argument('-n', '--number_of_cycles', type=int, default=100,
                         help='number of sending attempts')
     args = parser.parse_args()
     try:
         talker(
             message_name=args.message_name,
+            namespace=args.namespace,
             number_of_cycles=args.number_of_cycles)
     except KeyboardInterrupt:
         print('talker stopped cleanly')

@@ -1,8 +1,8 @@
 # generated from test_communication/test/test_secure_publisher_subscriber.py.in
 
-import datetime
 import os
 # import sys
+import time
 
 from launch import LaunchDescriptor
 from launch.exit_handler import primary_exit_handler
@@ -10,8 +10,7 @@ from launch.launcher import DefaultLauncher
 
 
 def test_secure_publisher_subscriber():
-    now = datetime.datetime.now()
-    namespace = '/test_time_{0}_{1}_{2}'.format(now.hour, now.minute, now.second)
+    namespace = '/test_time_%s' % time.strftime('%H_%M_%S', time.gmtime())
 
     ld = LaunchDescriptor()
     publisher_cmd = [

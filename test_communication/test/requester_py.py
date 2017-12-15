@@ -17,7 +17,7 @@ import importlib
 import sys
 
 
-def requester(service_name):
+def requester(service_name, namespace):
     import rclpy
     from test_msgs.service_fixtures import get_test_srv
 
@@ -27,11 +27,11 @@ def requester(service_name):
     srv_mod = getattr(module, service_name)
 
     srv_fixtures = get_test_srv(service_name)
-    service_name = 'test_service_' + service_name
+    service_name = 'test/service/' + service_name
 
     rclpy.init(args=[])
     try:
-        node = rclpy.create_node('requester')
+        node = rclpy.create_node('requester', namespace=namespace)
         try:
             # wait for the service to be available
             client = node.create_client(srv_mod, service_name)
@@ -58,11 +58,11 @@ def requester(service_name):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('service_name', default='Primitives',
-                        help='name of the ROS message')
+    parser.add_argument('service_name', help='name of the ROS message')
+    parser.add_argument('namespace', help='namespace of the ROS node')
     args = parser.parse_args()
     try:
-        requester(service_name=args.service_name)
+        requester(service_name=args.service_name, namespace=args.namespace)
     except KeyboardInterrupt:
         print('requester stopped cleanly')
     except BaseException:

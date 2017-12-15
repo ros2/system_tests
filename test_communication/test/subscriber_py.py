@@ -38,7 +38,7 @@ def listener_cb(msg, received_messages, expected_msgs):
         raise RuntimeError('received unexpected message %r' % msg)
 
 
-def listener(message_name):
+def listener(message_name, namespace):
     from test_msgs.message_fixtures import get_test_msg
     import rclpy
 
@@ -48,7 +48,7 @@ def listener(message_name):
 
     rclpy.init(args=[])
 
-    node = rclpy.create_node('listener')
+    node = rclpy.create_node('listener', namespace=namespace)
 
     received_messages = []
     expected_msgs = [(i, repr(msg)) for i, msg in enumerate(get_test_msg(message_name))]
@@ -57,7 +57,7 @@ def listener(message_name):
         listener_cb, received_messages=received_messages, expected_msgs=expected_msgs)
 
     node.create_subscription(
-        msg_mod, 'test_message_' + message_name, chatter_callback)
+        msg_mod, 'test/message/' + message_name, chatter_callback)
 
     spin_count = 1
     print('subscriber: beginning loop')
@@ -74,11 +74,11 @@ def listener(message_name):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('message_name', default='Primitives',
-                        help='name of the ROS message')
+    parser.add_argument('message_name', help='name of the ROS message')
+    parser.add_argument('namespace', help='namespace of the ROS node')
     args = parser.parse_args()
     try:
-        listener(message_name=args.message_name)
+        listener(message_name=args.message_name, namespace=args.namespace)
     except KeyboardInterrupt:
         print('subscriber stopped cleanly')
     except BaseException:

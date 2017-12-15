@@ -56,12 +56,12 @@ typename rclcpp::Service<T>::SharedPtr reply(
     };
   // *INDENT-ON*
 
-  return node->create_service<T>(std::string("test_service_") + service_type, callback);
+  return node->create_service<T>(std::string("test/service/") + service_type, callback);
 }
 
 int main(int argc, char ** argv)
 {
-  if (argc != 2) {
+  if (argc != 3) {
     fprintf(stderr, "Wrong number of arguments, pass one service type\n");
     return 1;
   }
@@ -70,7 +70,10 @@ int main(int argc, char ** argv)
   auto start = std::chrono::steady_clock::now();
 
   std::string service = argv[1];
-  auto node = rclcpp::Node::make_shared(std::string("test_replier_") + service);
+  std::string namespace_ = argv[2];
+  auto node = rclcpp::Node::make_shared(
+    std::string("test_replier_") + service,
+    namespace_);
 
   auto services_empty = get_services_empty();
   auto services_primitives = get_services_primitives();

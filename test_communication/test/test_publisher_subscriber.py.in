@@ -2,6 +2,7 @@
 
 import os
 import sys
+import time
 
 from launch import LaunchDescriptor
 from launch.exit_handler import primary_exit_handler
@@ -9,9 +10,10 @@ from launch.launcher import DefaultLauncher
 
 
 def test_publisher_subscriber():
+    namespace = '/test_time_%s' % time.strftime('%H_%M_%S', time.gmtime())
     ld = LaunchDescriptor()
-    publisher_cmd = ['@TEST_PUBLISHER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@']
-    subscriber_cmd = ['@TEST_SUBSCRIBER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@']
+    publisher_cmd = ['@TEST_PUBLISHER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@', namespace]
+    subscriber_cmd = ['@TEST_SUBSCRIBER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@', namespace]
 
     publisher_env = dict(os.environ)
     subscriber_env = dict(os.environ)

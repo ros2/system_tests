@@ -2,6 +2,7 @@
 
 import os
 import sys
+import time
 
 from launch import LaunchDescriptor
 from launch.exit_handler import primary_exit_handler
@@ -9,9 +10,11 @@ from launch.launcher import DefaultLauncher
 
 
 def test_requester_replier():
+    namespace = '/test_time_%s' % time.strftime('%H_%M_%S', time.gmtime())
+
     ld = LaunchDescriptor()
-    requester_cmd = ['@TEST_REQUESTER_EXECUTABLE@', '@TEST_SERVICE_TYPE@']
-    replier_cmd = ['@TEST_REPLIER_EXECUTABLE@', '@TEST_SERVICE_TYPE@']
+    requester_cmd = ['@TEST_REQUESTER_EXECUTABLE@', '@TEST_SERVICE_TYPE@', namespace]
+    replier_cmd = ['@TEST_REPLIER_EXECUTABLE@', '@TEST_SERVICE_TYPE@', namespace]
 
     replier_env = dict(os.environ)
     requester_env = dict(os.environ)

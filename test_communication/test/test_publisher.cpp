@@ -33,7 +33,7 @@ void publish(
   custom_qos_profile.depth = messages.size();
 
   auto publisher = node->create_publisher<T>(
-    std::string("test_message_") + message_type, custom_qos_profile);
+    std::string("test/message/") + message_type, custom_qos_profile);
 
   rclcpp::WallRate cycle_rate(10);
   rclcpp::WallRate message_rate(100);
@@ -59,14 +59,16 @@ void publish(
 
 int main(int argc, char ** argv)
 {
-  if (argc != 2) {
+  if (argc != 3) {
     fprintf(stderr, "Wrong number of arguments, pass one message type\n");
     return 1;
   }
   rclcpp::init(argc, argv);
 
   std::string message = argv[1];
-  auto node = rclcpp::Node::make_shared(std::string("test_publisher_") + message);
+  std::string namespace_ = argv[2];
+  auto node = rclcpp::Node::make_shared(
+    std::string("test_publisher_") + message, namespace_);
 
   if (message == "Empty") {
     publish<test_msgs::msg::Empty>(node, message, get_messages_empty());
