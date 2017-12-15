@@ -58,12 +58,10 @@ def replier(service_name, number_of_cycles, namespace):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('service_name', default='Primitives',
-                        help='name of the ROS message')
+    parser.add_argument('service_name', help='name of the ROS message')
+    parser.add_argument('namespace', help='namespace of the ROS node')
     parser.add_argument('-n', '--number_of_cycles', type=int, default=20,
                         help='number of sending attempts')
-    parser.add_argument('namespace', default='',
-                        help='namespace of the ROS node')
     args = parser.parse_args()
     try:
         replier(
