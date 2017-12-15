@@ -10,7 +10,7 @@ from launch.launcher import DefaultLauncher
 
 
 def test_publisher_subscriber():
-    namespace = '/test_time_%s' % time.strftime("%H_%M_%S", time.gmtime())
+    namespace = '/test_time_%s' % time.strftime('%H_%M_%S', time.gmtime())
     ld = LaunchDescriptor()
     publisher_cmd = ['@TEST_PUBLISHER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@', namespace]
     subscriber_cmd = ['@TEST_SUBSCRIBER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@', namespace]

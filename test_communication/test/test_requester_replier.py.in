@@ -10,7 +10,7 @@ from launch.launcher import DefaultLauncher
 
 
 def test_requester_replier():
-    namespace = '/test_time_%s' % time.strftime("%H_%M_%S", time.gmtime())
+    namespace = '/test_time_%s' % time.strftime('%H_%M_%S', time.gmtime())
 
     ld = LaunchDescriptor()
     requester_cmd = ['@TEST_REQUESTER_EXECUTABLE@', '@TEST_SERVICE_TYPE@', namespace]
