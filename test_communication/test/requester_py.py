@@ -44,10 +44,10 @@ def requester(service_name, namespace):
             print('requester: beginning request')
             # Make one call to that service
             for req, resp in srv_fixtures:
-                client.call(req)
-                client.wait_for_future()
-                assert repr(client.response) == repr(resp), \
-                    'unexpected response %r\n\nwas expecting %r' % (client.response, resp)
+                future = client.call_async(req)
+                rclpy.spin_until_future_complete(node, future)
+                assert repr(future.result()) == repr(resp), \
+                    'unexpected response %r\n\nwas expecting %r' % (future.result(), resp)
                 print('received reply #%d of %d' % (
                     srv_fixtures.index([req, resp]) + 1, len(srv_fixtures)))
         finally:
