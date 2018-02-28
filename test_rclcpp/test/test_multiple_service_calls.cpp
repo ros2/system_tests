@@ -140,8 +140,8 @@ TEST(CLASSNAME(test_multiple_service_calls, RMW_IMPLEMENTATION), multiple_client
     "test_multiple_clients", handle_add_two_ints);
 
   using ClientRequestPair = std::pair<
-      rclcpp::Client<test_rclcpp::srv::AddTwoInts>::SharedPtr,
-      test_rclcpp::srv::AddTwoInts::Request::SharedPtr>;
+    rclcpp::Client<test_rclcpp::srv::AddTwoInts>::SharedPtr,
+    test_rclcpp::srv::AddTwoInts::Request::SharedPtr>;
   using SharedFuture = rclcpp::Client<test_rclcpp::srv::AddTwoInts>::SharedFuture;
 
   std::vector<ClientRequestPair> client_request_pairs;
