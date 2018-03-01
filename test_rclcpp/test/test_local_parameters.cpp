@@ -117,7 +117,7 @@ public:
   {
     using rclcpp::parameter::ParameterVariant;
     using SetParametersResult =
-        std::shared_future<std::vector<rcl_interfaces::msg::SetParametersResult>>;
+      std::shared_future<std::vector<rcl_interfaces::msg::SetParametersResult>>;
     auto set_parameters_results = parameters_client_->set_parameters({
       ParameterVariant("foo", 2),
       ParameterVariant("bar", "hello"),

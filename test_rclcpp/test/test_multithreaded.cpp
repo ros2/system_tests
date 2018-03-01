@@ -168,8 +168,8 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     "multi_consumer_clients", callback, qos_profile, callback_group);
 
   using ClientRequestPair = std::pair<
-      rclcpp::Client<test_rclcpp::srv::AddTwoInts>::SharedPtr,
-      test_rclcpp::srv::AddTwoInts::Request::SharedPtr>;
+    rclcpp::Client<test_rclcpp::srv::AddTwoInts>::SharedPtr,
+    test_rclcpp::srv::AddTwoInts::Request::SharedPtr>;
   using SharedFuture = rclcpp::Client<test_rclcpp::srv::AddTwoInts>::SharedFuture;
 
 
