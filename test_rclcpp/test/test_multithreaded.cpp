@@ -282,10 +282,10 @@ static inline void multi_access_publisher(bool intra_process)
       printf("callback() %d with message data %u\n", subscription_counter.load(), msg->data);
     };
   auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(
-      node_topic_name,
-      sub_callback,
-      num_messages,
-      sub_callback_group);
+    node_topic_name,
+    sub_callback,
+    num_messages,
+    sub_callback_group);
 
   // wait a moment for everything to initialize
   test_rclcpp::wait_for_subscriber(node, node_topic_name);
