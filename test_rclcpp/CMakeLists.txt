@@ -192,11 +192,11 @@ if(BUILD_TESTING)
 
     custom_launch_test_two_executables(test_client_scope_cpp
       test_client_scope_server_cpp test_client_scope_client_cpp
-      TIMEOUT 30)
+      TIMEOUT 60)
 
     custom_launch_test_two_executables(test_client_scope_consistency_cpp
       test_client_scope_consistency_server_cpp test_client_scope_consistency_client_cpp
-      TIMEOUT 30)
+      TIMEOUT 60)
 
     # Note (dhood): signal handler tests will be skipped on Windows because there is no opportunity
     # for signal handling once shutdown is triggered by launch_testing.
