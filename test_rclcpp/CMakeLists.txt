@@ -72,11 +72,16 @@ if(BUILD_TESTING)
   endfunction()
 
   macro(custom_launch_test_two_executables test_name executable1 executable2)
+    cmake_parse_arguments(_ARG "" "ARGS1;ARGS2;RMW1;RMW2" "" ${ARGN})
     set(TEST_NAME "${test_name}")
     set(TEST_EXECUTABLE1 "$<TARGET_FILE:${executable1}>")
+    set(TEST_EXECUTABLE1_ARGS "${_ARG_ARGS1}")
     set(TEST_EXECUTABLE1_NAME "${executable1}")
+    set(TEST_RMW_IMPLEMENTATION1 "${_ARG_RMW1}")
     set(TEST_EXECUTABLE2 "$<TARGET_FILE:${executable2}>")
+    set(TEST_EXECUTABLE2_ARGS "${_ARG_ARGS2}")
     set(TEST_EXECUTABLE2_NAME "${executable2}")
+    set(TEST_RMW_IMPLEMENTATION2 "${_ARG_RMW2}")
     configure_file(
       test/test_two_executables.py.in
       ${test_name}${target_suffix}.py.configure
@@ -88,11 +93,8 @@ if(BUILD_TESTING)
     )
     ament_add_pytest_test(${test_name}${target_suffix}
       "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIG>.py"
-      ${ARGN}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
-      ENV
-      RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
-      RMW_IMPLEMENTATION=${rmw_implementation}
+      ${_ARG_UNPARSED_ARGUMENTS}
     )
     if(TEST ${test_name}${target_suffix})
       set_tests_properties(${test_name}${target_suffix}
@@ -134,6 +136,20 @@ if(BUILD_TESTING)
         PROPERTIES DEPENDS "${executable}${target_suffix}"
       )
     endif()
+  endmacro()
+
+  macro(cross_rmw_tests)
+    # test node names cross rmw
+    if(rmw_implementation1 STREQUAL rmw_implementation2)
+      set(target_suffix "__${rmw_implementation1}")
+    else()
+      set(target_suffix "__${rmw_implementation1}__${rmw_implementation2}")
+    endif()
+    custom_launch_test_two_executables(test_node_name
+      node_with_name node_name_list
+      ARGS1 "${rmw_implementation1}" ARGS2 "node_with_name_${rmw_implementation1}"
+      RMW1 ${rmw_implementation1} RMW2 ${rmw_implementation2}
+      TIMEOUT 15)
   endmacro()
 
   macro(targets)
@@ -183,19 +199,31 @@ if(BUILD_TESTING)
     # Parameter tests single implementation
     custom_launch_test_two_executables(test_parameter_server_cpp
       test_parameters_server_cpp test_remote_parameters_cpp
+      ENV
+      RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
+      RMW_IMPLEMENTATION=${rmw_implementation}
       TIMEOUT 60)
 
     # Service tests single implementation
     custom_launch_test_two_executables(test_services_cpp
       test_services_server_cpp test_services_client_cpp
+      ENV
+      RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
+      RMW_IMPLEMENTATION=${rmw_implementation}
       TIMEOUT 60)
 
     custom_launch_test_two_executables(test_client_scope_cpp
       test_client_scope_server_cpp test_client_scope_client_cpp
+      ENV
+      RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
+      RMW_IMPLEMENTATION=${rmw_implementation}
       TIMEOUT 60)
 
     custom_launch_test_two_executables(test_client_scope_consistency_cpp
       test_client_scope_consistency_server_cpp test_client_scope_consistency_client_cpp
+      ENV
+      RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
+      RMW_IMPLEMENTATION=${rmw_implementation}
       TIMEOUT 60)
 
     # Note (dhood): signal handler tests will be skipped on Windows because there is no opportunity
@@ -217,12 +245,26 @@ if(BUILD_TESTING)
       test_signal_handler
       TIMEOUT 30
       ${SKIP_TEST})
+
+    # Test node names
+    set(rmw_implementation1 "${rmw_implementation}")
+    foreach(rmw_implementation2 ${rmw_implementations})
+      cross_rmw_tests()
+    endforeach()
   endmacro()
 
   set(append_library_dirs "${CMAKE_CURRENT_BINARY_DIR}")
   if(WIN32)
     set(append_library_dirs "${append_library_dirs}/$<CONFIG>")
   endif()
+
+  # Test node names
+  add_executable(node_with_name "test/node_with_name.cpp")
+  ament_target_dependencies(node_with_name
+    "rclcpp")
+  add_executable(node_name_list "test/node_name_list.cpp")
+  ament_target_dependencies(node_name_list
+    "rclcpp")
 
   call_for_each_rmw_implementation(targets)
 
