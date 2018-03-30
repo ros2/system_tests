@@ -43,7 +43,7 @@ int main(int argc, char ** argv)
     printf("\n");
     auto names = node->get_node_graph_interface()->get_node_names();
     for (auto it : names) {
-      printf("%s\n", it.c_str());
+      printf("- %s\n", it.c_str());
       if (argc >= 2 && it == argv[1]) {
         printf("  found expected node name\n");
         rc = 0;
