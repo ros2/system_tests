@@ -71,6 +71,7 @@ if(BUILD_TESTING)
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation}
       ROS_SECURITY_ROOT_DIRECTORY="${VALID_ROS_SECURITY_ROOT_DIRECTORY}"
+      PATH="$ENV{RTI_OPENSSL_BIN}:$ENV{PATH}"
     )
     if(TARGET ${target}${target_suffix})
       target_link_libraries(${target}${target_suffix}
@@ -150,6 +151,8 @@ if(BUILD_TESTING)
           ament_add_pytest_test(test_secure_publisher_subscriber${test_suffix}
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
+            ENV
+            PATH="$ENV{RTI_OPENSSL_BIN}:$ENV{PATH}"
             TIMEOUT 20
           )
           if(TEST test_secure_publisher_subscriber${test_suffix})
@@ -279,15 +282,15 @@ if(BUILD_TESTING)
       # on bionic, Connext need the RTI openssl libraries to be on the LD_LIBRARY_PATH
       # at runtime as the system version of openssl is not supported
       set(append_library_dirs "${append_library_dirs};$ENV{RTI_OPENSSL_LIBS}")
-      execute_process(
-        COMMAND "export" "PATH=$ENV{RTI_OPENSSL_BIN}:$PATH"
-        RESULT_VARIABLE _retcode
-        OUTPUT_VARIABLE _out_var
-        ERROR_VARIABLE _error_var
-      )
-      if(NOT _retcode EQUAL 0)
-        message(FATAL_ERROR "command 'export PATH=$ENV{RTI_OPENSSL_BIN}' failed with error code '${_retcode}' and error message '${_error_var}'")
-      endif()
+      # execute_process(
+      #   COMMAND "export" "PATH=$ENV{RTI_OPENSSL_BIN}:$PATH"
+      #   RESULT_VARIABLE _retcode
+      #   OUTPUT_VARIABLE _out_var
+      #   ERROR_VARIABLE _error_var
+      # )
+      # if(NOT _retcode EQUAL 0)
+      #   message(FATAL_ERROR "command 'export PATH=$ENV{RTI_OPENSSL_BIN}' failed with error code '${_retcode}' and error message '${_error_var}'")
+      # endif()
     endif()
 
     # finding gtest once in the highest scope
