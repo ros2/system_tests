@@ -71,6 +71,8 @@ if(BUILD_TESTING)
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation}
       ROS_SECURITY_ROOT_DIRECTORY="${VALID_ROS_SECURITY_ROOT_DIRECTORY}"
+      # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
+      # at runtime as the system version of OpenSSL is not supported
       PATH="$ENV{RTI_OPENSSL_BIN}:$ENV{PATH}"
     )
     if(TARGET ${target}${target_suffix})
@@ -151,6 +153,8 @@ if(BUILD_TESTING)
           ament_add_pytest_test(test_secure_publisher_subscriber${test_suffix}
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
+            # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
+            # at runtime as the system version of OpenSSL is not supported
             ENV
             PATH="$ENV{RTI_OPENSSL_BIN}:$ENV{PATH}"
             TIMEOUT 20
@@ -279,18 +283,9 @@ if(BUILD_TESTING)
       file(TO_NATIVE_PATH "${openssl_lib_path}" openssl_lib_path)
       set(append_library_dirs "${append_library_dirs};${openssl_lib_path}")
     elseif(UNIX)
-      # on bionic, Connext need the RTI openssl libraries to be on the LD_LIBRARY_PATH
-      # at runtime as the system version of openssl is not supported
+      # on bionic, Connext needs RTI's OpenSSL libraries to be on the LD_LIBRARY_PATH
+      # at runtime as the system version of OpenSSL is not supported
       set(append_library_dirs "${append_library_dirs};$ENV{RTI_OPENSSL_LIBS}")
-      # execute_process(
-      #   COMMAND "export" "PATH=$ENV{RTI_OPENSSL_BIN}:$PATH"
-      #   RESULT_VARIABLE _retcode
-      #   OUTPUT_VARIABLE _out_var
-      #   ERROR_VARIABLE _error_var
-      # )
-      # if(NOT _retcode EQUAL 0)
-      #   message(FATAL_ERROR "command 'export PATH=$ENV{RTI_OPENSSL_BIN}' failed with error code '${_retcode}' and error message '${_error_var}'")
-      # endif()
     endif()
 
     # finding gtest once in the highest scope
