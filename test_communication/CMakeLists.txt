@@ -310,11 +310,39 @@ if(BUILD_TESTING)
     set(append_library_dirs "${append_library_dirs}/$<CONFIG>")
   endif()
 
+  macro(serialize)
+      set(serialize_target_name "test_serialize${target}${target_suffix}")
+      ament_add_gtest(
+      ${serialize_target_name} test/test_message_serialization.cpp
+      TIMEOUT 30
+      ENV
+      RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
+      RMW_IMPLEMENTATION=${rmw_implementation})
+    if(TARGET ${serialize_target_name})
+      target_link_libraries(${serialize_target_name}
+        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
+        ${_AMENT_EXPORT_LIBRARY_TARGETS})
+      add_dependencies(${serialize_target_name} ${PROJECT_NAME})
+      ament_target_dependencies(${serialize_target_name}
+        "rmw"
+        "rosidl_typesupport_c"
+        "rosidl_typesupport_cpp"
+        "test_msgs"
+        ${rmw_implementation}
+      )
+      set_tests_properties(
+        ${serialize_target_name}
+        PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${serialize_target_name}>"
+      )
+    endif()
+  endmacro()
+
   # finding gtest once in the highest scope
   # prevents finding it repeatedly in each local scope
   ament_find_gtest()
 
   call_for_each_rmw_implementation(targets)
+  call_for_each_rmw_implementation(serialize)
 endif()  # BUILD_TESTING
 
 ament_auto_package()
