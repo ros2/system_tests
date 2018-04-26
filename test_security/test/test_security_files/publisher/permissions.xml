@@ -17,6 +17,7 @@
         <domains>
           <id_range>
             <min>0</min>
+            <max>255</max>
           </id_range>
         </domains>
         <publish>
@@ -35,11 +36,6 @@
             <topic>*</topic>
           </topics>
         </subscribe>
-      <subscribe>
-        <topics>
-          <topic>DCPS*</topic>
-        </topics>
-      </subscribe>
       </allow_rule>
       <default>DENY</default>
     </grant>
