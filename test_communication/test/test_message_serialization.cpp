@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <gtest/gtest.h>
+#include <string>
 
 #include "rmw/raw_message.h"
 #include "rmw/rmw.h"
@@ -35,10 +36,11 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
-class CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION) : public ::testing::Test
+class CLASSNAME (TestMessageSerialization, RMW_IMPLEMENTATION) : public ::testing::Test
 {
 public:
-  void SetUp() {
+  void SetUp()
+  {
   }
 };
 
@@ -68,10 +70,12 @@ void fill_c_message(test_msgs__msg__BoundedArrayNested * bounded_array_nested_ms
   bounded_array_nested_msg_c->primitive_values.data[0].uint32_value = 8;
   bounded_array_nested_msg_c->primitive_values.data[0].int64_value = 9;
   bounded_array_nested_msg_c->primitive_values.data[0].uint64_value = 10;
-  rosidl_generator_c__String__assign(&bounded_array_nested_msg_c->primitive_values.data[0].string_value, "hello world");
+  rosidl_generator_c__String__assign(
+    &bounded_array_nested_msg_c->primitive_values.data[0].string_value, "hello world");
 }
 
-void fill_cpp_message(test_msgs::msg::BoundedArrayNested * bounded_array_nested_msg_cpp) {
+void fill_cpp_message(test_msgs::msg::BoundedArrayNested * bounded_array_nested_msg_cpp)
+{
   test_msgs::msg::Primitives primitive_msg_cpp;
   primitive_msg_cpp.bool_value = true;
   primitive_msg_cpp.byte_value = 255;
@@ -127,7 +131,7 @@ TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), de_serialize_c) 
   EXPECT_EQ(9, bounded_array_nested_c_reverse.primitive_values.data[0].int64_value);
   EXPECT_EQ(10u, bounded_array_nested_c_reverse.primitive_values.data[0].uint64_value);
   EXPECT_STREQ(
-      "hello world", bounded_array_nested_c_reverse.primitive_values.data[0].string_value.data);
+    "hello world", bounded_array_nested_c_reverse.primitive_values.data[0].string_value.data);
 
   test_msgs__msg__BoundedArrayNested__fini(&bounded_array_nested_c_reverse);
   test_msgs__msg__BoundedArrayNested__fini(&bounded_array_nested_msg_c);
@@ -171,7 +175,7 @@ TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), de_serialize_cpp
   EXPECT_EQ(9, bounded_array_nested_cpp_reverse.primitive_values[0].int64_value);
   EXPECT_EQ(10u, bounded_array_nested_cpp_reverse.primitive_values[0].uint64_value);
   EXPECT_STREQ(
-      "hello world", bounded_array_nested_cpp_reverse.primitive_values[0].string_value.c_str());
+    "hello world", bounded_array_nested_cpp_reverse.primitive_values[0].string_value.c_str());
 
   rmw_raw_message_fini(&raw_message_cpp);
 }
