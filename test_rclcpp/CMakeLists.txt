@@ -299,7 +299,14 @@ if(BUILD_TESTING)
     PUBLIC ${GTEST_INCLUDE_DIRS})
   target_link_libraries(test_client_scope_consistency_client_cpp
     ${GTEST_LIBRARIES})
+
+  find_package(rmw_fastrtps_cpp REQUIRED)
+  ament_add_gtest(test_typesupport "test/test_typesupport.cpp")
+  target_include_directories(test_typesupport PUBLIC ${rmw_fastrtps_cpp_INCLUDE_DIRS})
+  target_link_libraries(test_typesupport ${rmw_fastrtps_cpp_LIBRARIES})
+  ament_target_dependencies(test_typesupport "rclcpp" "rmw_fastrtps_cpp")
 endif()  # BUILD_TESTING
+
 
 # TODO should not install anything
 ament_package()
