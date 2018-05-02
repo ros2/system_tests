@@ -337,12 +337,41 @@ if(BUILD_TESTING)
     endif()
   endmacro()
 
+  macro(pub_sub_raw)
+      set(target_name "test_publisher_subscriber_raw${target}${target_suffix}")
+      ament_add_gtest(
+      ${target_name} test/test_publisher_subscriber_raw.cpp
+      TIMEOUT 30
+      ENV
+      RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
+      RMW_IMPLEMENTATION=${rmw_implementation})
+    if(TARGET ${target_name})
+      target_link_libraries(${target_name}
+        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
+        ${_AMENT_EXPORT_LIBRARY_TARGETS})
+      add_dependencies(${target_name} ${PROJECT_NAME})
+      ament_target_dependencies(${target_name}
+        "rclcpp"
+        "rmw"
+        "rosidl_typesupport_c"
+        "rosidl_typesupport_cpp"
+        "test_msgs"
+        ${rmw_implementation}
+      )
+      set_tests_properties(
+        ${target_name}
+        PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target_name}>"
+      )
+    endif()
+  endmacro()
+
   # finding gtest once in the highest scope
   # prevents finding it repeatedly in each local scope
   ament_find_gtest()
 
   call_for_each_rmw_implementation(targets)
   call_for_each_rmw_implementation(serialize)
+  call_for_each_rmw_implementation(pub_sub_raw)
 endif()  # BUILD_TESTING
 
 ament_auto_package()
