@@ -73,7 +73,7 @@ if(BUILD_TESTING)
       ROS_SECURITY_ROOT_DIRECTORY="${VALID_ROS_SECURITY_ROOT_DIRECTORY}"
       # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
       # at runtime as the system version of OpenSSL is not supported
-      PATH="$ENV{RTI_OPENSSL_BIN}:$ENV{PATH}"
+      PATH="${TEST_PATH_WITH_RTI_BIN}"
     )
     if(TARGET ${target}${target_suffix})
       target_link_libraries(${target}${target_suffix}
@@ -156,7 +156,7 @@ if(BUILD_TESTING)
             # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
             # at runtime as the system version of OpenSSL is not supported
             ENV
-            PATH="$ENV{RTI_OPENSSL_BIN}:$ENV{PATH}"
+            PATH="${TEST_PATH_WITH_RTI_BIN}"
             TIMEOUT 20
           )
           if(TEST test_secure_publisher_subscriber${test_suffix})
@@ -256,6 +256,13 @@ if(BUILD_TESTING)
   endmacro()
 
   if(SECURITY)
+    # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
+    # at runtime as the system version of OpenSSL is not supported
+    set(ENV_PATH "$ENV{PATH}")
+    set(TEST_PATH_WITH_RTI_BIN $ENV{RTI_OPENSSL_BIN} ${ENV_PATH})
+    if(NOT WIN32)
+      string(REPLACE ";" ":" TEST_PATH_WITH_RTI_BIN "${TEST_PATH_WITH_RTI_BIN}")
+    endif()
     # executables secure publisher / subscriber
     custom_executable(test_secure_publisher_cpp
       "test/test_secure_publisher.cpp")
@@ -285,7 +292,7 @@ if(BUILD_TESTING)
     elseif(UNIX)
       # on bionic, Connext needs RTI's OpenSSL libraries to be on the LD_LIBRARY_PATH
       # at runtime as the system version of OpenSSL is not supported
-      set(append_library_dirs "${append_library_dirs};$ENV{RTI_OPENSSL_LIBS}")
+      set(append_library_dirs "${append_library_dirs}:$ENV{RTI_OPENSSL_LIBS}")
     endif()
 
     # finding gtest once in the highest scope
