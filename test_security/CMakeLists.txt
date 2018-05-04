@@ -71,6 +71,9 @@ if(BUILD_TESTING)
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation}
       ROS_SECURITY_ROOT_DIRECTORY="${VALID_ROS_SECURITY_ROOT_DIRECTORY}"
+      # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
+      # at runtime as the system version of OpenSSL is not supported
+      PATH="${TEST_PATH}"
     )
     if(TARGET ${target}${target_suffix})
       target_link_libraries(${target}${target_suffix}
@@ -150,6 +153,10 @@ if(BUILD_TESTING)
           ament_add_pytest_test(test_secure_publisher_subscriber${test_suffix}
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
+            # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
+            # at runtime as the system version of OpenSSL is not supported
+            ENV
+            PATH="${TEST_PATH}"
             TIMEOUT 20
           )
           if(TEST test_secure_publisher_subscriber${test_suffix})
@@ -187,6 +194,10 @@ if(BUILD_TESTING)
           ament_add_pytest_test(test_secure_publisher_subscriber${test_suffix}
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
+            # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
+            # at runtime as the system version of OpenSSL is not supported
+            ENV
+            PATH="${TEST_PATH}"
             TIMEOUT 20
           )
           if(TEST test_secure_publisher_subscriber${test_suffix})
@@ -224,6 +235,10 @@ if(BUILD_TESTING)
           ament_add_pytest_test(test_secure_publisher_subscriber${test_suffix}
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
+            # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
+            # at runtime as the system version of OpenSSL is not supported
+            ENV
+            PATH="${TEST_PATH}"
             TIMEOUT 20
           )
           if(TEST test_secure_publisher_subscriber${test_suffix})
@@ -239,6 +254,24 @@ if(BUILD_TESTING)
 
   macro(targets)
     set(VALID_ROS_SECURITY_ROOT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files")
+
+    set(ENV_PATH "$ENV{PATH}")
+    file(TO_CMAKE_PATH "${ENV_PATH}" ENV_PATH)
+    set(TEST_PATH "${ENV_PATH}")
+    if(rmw_implementation STREQUAL "rmw_connext_cpp")
+      if(UNIX AND NOT APPLE)
+        # TODO(mikaelarguedas) remove this condition the day we want to use RTI's OpenSSL libraries
+        #  on all platforms
+        # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
+        # at runtime as the system version of OpenSSL is not supported
+        set(RTI_BIN_PATH "$ENV{RTI_OPENSSL_BIN}")
+        file(TO_CMAKE_PATH "${RTI_BIN_PATH}" RTI_BIN_PATH)
+        set(TEST_PATH "${RTI_BIN_PATH};${ENV_PATH}")
+        if(NOT WIN32)
+          string(REPLACE ";" ":" TEST_PATH "${TEST_PATH}")
+        endif()
+      endif()
+    endif()
 
     # TODO(mikaelarguedas) only connext and fastrtps support DDS-Security for now
     if(rmw_implementation STREQUAL "rmw_connext_cpp" OR rmw_implementation STREQUAL "rmw_fastrtps_cpp")
@@ -275,6 +308,10 @@ if(BUILD_TESTING)
       set(openssl_lib_path "${_out_var}/lib")
       file(TO_NATIVE_PATH "${openssl_lib_path}" openssl_lib_path)
       set(append_library_dirs "${append_library_dirs};${openssl_lib_path}")
+    elseif(UNIX)
+      # on bionic, Connext needs RTI's OpenSSL libraries to be on the LD_LIBRARY_PATH
+      # at runtime as the system version of OpenSSL is not supported
+      set(append_library_dirs "${append_library_dirs}:$ENV{RTI_OPENSSL_LIBS}")
     endif()
 
     # finding gtest once in the highest scope
