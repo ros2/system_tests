@@ -194,6 +194,10 @@ if(BUILD_TESTING)
           ament_add_pytest_test(test_secure_publisher_subscriber${test_suffix}
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
+            # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
+            # at runtime as the system version of OpenSSL is not supported
+            ENV
+            PATH="${TEST_PATH_WITH_RTI_BIN}"
             TIMEOUT 20
           )
           if(TEST test_secure_publisher_subscriber${test_suffix})
@@ -231,6 +235,10 @@ if(BUILD_TESTING)
           ament_add_pytest_test(test_secure_publisher_subscriber${test_suffix}
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
+            # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
+            # at runtime as the system version of OpenSSL is not supported
+            ENV
+            PATH="${TEST_PATH_WITH_RTI_BIN}"
             TIMEOUT 20
           )
           if(TEST test_secure_publisher_subscriber${test_suffix})
@@ -247,6 +255,24 @@ if(BUILD_TESTING)
   macro(targets)
     set(VALID_ROS_SECURITY_ROOT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files")
 
+    set(ENV_PATH "$ENV{PATH}")
+    file(TO_CMAKE_PATH "${ENV_PATH}" ENV_PATH)
+    set(TEST_PATH_WITH_RTI_BIN "${ENV_PATH}")
+    if(rmw_implementation STREQUAL "rmw_connext_cpp")
+      if(UNIX AND NOT APPLE)
+        # TODO(mikaelarguedas) remove this condition the day we want to use RTI's OpenSSL libraries
+        #  on all platforms
+        # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
+        # at runtime as the system version of OpenSSL is not supported
+        set(RTI_BIN_PATH "$ENV{RTI_OPENSSL_BIN}")
+        file(TO_CMAKE_PATH "${RTI_BIN_PATH}" RTI_BIN_PATH)
+        set(TEST_PATH_WITH_RTI_BIN "${RTI_BIN_PATH};${ENV_PATH}")
+        if(NOT WIN32)
+          string(REPLACE ";" ":" TEST_PATH_WITH_RTI_BIN "${TEST_PATH_WITH_RTI_BIN}")
+        endif()
+      endif()
+    endif()
+
     # TODO(mikaelarguedas) only connext and fastrtps support DDS-Security for now
     if(rmw_implementation STREQUAL "rmw_connext_cpp" OR rmw_implementation STREQUAL "rmw_fastrtps_cpp")
       custom_security_test_c(test_security_nodes_c
@@ -256,16 +282,6 @@ if(BUILD_TESTING)
   endmacro()
 
   if(SECURITY)
-    # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
-    # at runtime as the system version of OpenSSL is not supported
-    set(ENV_PATH "$ENV{PATH}")
-    file(TO_CMAKE_PATH "${ENV_PATH}" ENV_PATH)
-    set(RTI_BIN_PATH "$ENV{RTI_OPENSSL_BIN}")
-    file(TO_CMAKE_PATH "${RTI_BIN_PATH}" RTI_BIN_PATH)
-    set(TEST_PATH_WITH_RTI_BIN "${RTI_BIN_PATH};${ENV_PATH}")
-    if(NOT WIN32)
-      string(REPLACE ";" ":" TEST_PATH_WITH_RTI_BIN "${TEST_PATH_WITH_RTI_BIN}")
-    endif()
     # executables secure publisher / subscriber
     custom_executable(test_secure_publisher_cpp
       "test/test_secure_publisher.cpp")
