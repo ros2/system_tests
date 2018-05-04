@@ -73,7 +73,7 @@ if(BUILD_TESTING)
       ROS_SECURITY_ROOT_DIRECTORY="${VALID_ROS_SECURITY_ROOT_DIRECTORY}"
       # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
       # at runtime as the system version of OpenSSL is not supported
-      PATH="${TEST_PATH_WITH_RTI_BIN}"
+      PATH="${TEST_PATH}"
     )
     if(TARGET ${target}${target_suffix})
       target_link_libraries(${target}${target_suffix}
@@ -156,7 +156,7 @@ if(BUILD_TESTING)
             # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
             # at runtime as the system version of OpenSSL is not supported
             ENV
-            PATH="${TEST_PATH_WITH_RTI_BIN}"
+            PATH="${TEST_PATH}"
             TIMEOUT 20
           )
           if(TEST test_secure_publisher_subscriber${test_suffix})
@@ -197,7 +197,7 @@ if(BUILD_TESTING)
             # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
             # at runtime as the system version of OpenSSL is not supported
             ENV
-            PATH="${TEST_PATH_WITH_RTI_BIN}"
+            PATH="${TEST_PATH}"
             TIMEOUT 20
           )
           if(TEST test_secure_publisher_subscriber${test_suffix})
@@ -238,7 +238,7 @@ if(BUILD_TESTING)
             # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
             # at runtime as the system version of OpenSSL is not supported
             ENV
-            PATH="${TEST_PATH_WITH_RTI_BIN}"
+            PATH="${TEST_PATH}"
             TIMEOUT 20
           )
           if(TEST test_secure_publisher_subscriber${test_suffix})
@@ -257,7 +257,7 @@ if(BUILD_TESTING)
 
     set(ENV_PATH "$ENV{PATH}")
     file(TO_CMAKE_PATH "${ENV_PATH}" ENV_PATH)
-    set(TEST_PATH_WITH_RTI_BIN "${ENV_PATH}")
+    set(TEST_PATH "${ENV_PATH}")
     if(rmw_implementation STREQUAL "rmw_connext_cpp")
       if(UNIX AND NOT APPLE)
         # TODO(mikaelarguedas) remove this condition the day we want to use RTI's OpenSSL libraries
@@ -266,9 +266,9 @@ if(BUILD_TESTING)
         # at runtime as the system version of OpenSSL is not supported
         set(RTI_BIN_PATH "$ENV{RTI_OPENSSL_BIN}")
         file(TO_CMAKE_PATH "${RTI_BIN_PATH}" RTI_BIN_PATH)
-        set(TEST_PATH_WITH_RTI_BIN "${RTI_BIN_PATH};${ENV_PATH}")
+        set(TEST_PATH "${RTI_BIN_PATH};${ENV_PATH}")
         if(NOT WIN32)
-          string(REPLACE ";" ":" TEST_PATH_WITH_RTI_BIN "${TEST_PATH_WITH_RTI_BIN}")
+          string(REPLACE ";" ":" TEST_PATH "${TEST_PATH}")
         endif()
       endif()
     endif()
