@@ -259,7 +259,10 @@ if(BUILD_TESTING)
     # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
     # at runtime as the system version of OpenSSL is not supported
     set(ENV_PATH "$ENV{PATH}")
-    set(TEST_PATH_WITH_RTI_BIN $ENV{RTI_OPENSSL_BIN} ${ENV_PATH})
+    file(TO_CMAKE_PATH "${ENV_PATH}" ENV_PATH)
+    set(RTI_BIN_PATH "$ENV{RTI_OPENSSL_BIN}")
+    file(TO_CMAKE_PATH "${RTI_BIN_PATH}" RTI_BIN_PATH)
+    set(TEST_PATH_WITH_RTI_BIN "${RTI_BIN_PATH};${ENV_PATH}")
     if(NOT WIN32)
       string(REPLACE ";" ":" TEST_PATH_WITH_RTI_BIN "${TEST_PATH_WITH_RTI_BIN}")
     endif()
