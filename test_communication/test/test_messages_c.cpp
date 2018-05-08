@@ -714,7 +714,10 @@ void get_message(test_msgs__msg__DynamicArrayPrimitives * msg, size_t msg_num)
         msg->uint32_values.data[i] = (uint32_t)i;
         msg->int64_values.data[i] = (int64_t)i;
         msg->uint64_values.data[i] = (uint64_t)i;
-        char tmpstr[5];
+        // Here we use 21 to represent `size` as a string
+        // we need 20 characters to represent all size_t values (assuming it's 64bits)
+        // +1 character for the null-terminator
+        char tmpstr[21];
         snprintf(tmpstr, sizeof(tmpstr), "%zu", i);
         rosidl_generator_c__String__assign(&msg->string_values.data[i], tmpstr);
       }
