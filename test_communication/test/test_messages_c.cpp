@@ -714,7 +714,7 @@ void get_message(test_msgs__msg__DynamicArrayPrimitives * msg, size_t msg_num)
         msg->uint32_values.data[i] = (uint32_t)i;
         msg->int64_values.data[i] = (int64_t)i;
         msg->uint64_values.data[i] = (uint64_t)i;
-        char tmpstr[4];
+        char tmpstr[5];
         snprintf(tmpstr, sizeof(tmpstr), "%zu", i);
         rosidl_generator_c__String__assign(&msg->string_values.data[i], tmpstr);
       }
