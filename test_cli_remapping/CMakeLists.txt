@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.5)
 project(test_cli_remapping)
 
 find_package(ament_cmake_auto REQUIRED)
-ament_auto_find_build_dependencies()
 
 if(BUILD_TESTING)
   # Default to C++14
@@ -14,6 +13,8 @@ if(BUILD_TESTING)
   find_package(ament_cmake REQUIRED)
   find_package(ament_lint_auto REQUIRED)
   find_package(ament_cmake_pytest REQUIRED)
+  find_package(rclcpp REQUIRED)
+  find_package(test_msgs REQUIRED)
 
   ament_lint_auto_find_test_dependencies()
 
