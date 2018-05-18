@@ -33,9 +33,12 @@ int main(int argc, char ** argv)
   auto pub3 = node->create_publisher<test_msgs::msg::Empty>("/fully/qualified/name");
 
   auto do_nothing = [](
-    const test_msgs::srv::Empty::Request::SharedPtr /*request*/,
-    test_msgs::srv::Empty::Response::SharedPtr /*response*/) -> void
-    {};
+    const test_msgs::srv::Empty::Request::SharedPtr request,
+    test_msgs::srv::Empty::Response::SharedPtr response) -> void
+    {
+      static_cast<void>(request);
+      static_cast<void>(response);
+    };
 
   auto srv1 = node->create_service<test_msgs::srv::Empty>("~/private/name", do_nothing);
   auto srv2 = node->create_service<test_msgs::srv::Empty>("relative/name", do_nothing);
