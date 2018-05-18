@@ -6,6 +6,11 @@ find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
 if(BUILD_TESTING)
+  # Default to C++14
+  if(NOT CMAKE_CXX_STANDARD)
+    set(CMAKE_CXX_STANDARD 14)
+  endif()
+
   find_package(ament_cmake REQUIRED)
   find_package(ament_lint_auto REQUIRED)
   find_package(ament_cmake_pytest REQUIRED)
@@ -14,7 +19,6 @@ if(BUILD_TESTING)
 
   add_executable(name_maker_rclcpp
     test/name_maker.cpp)
-  target_compile_features(name_maker_rclcpp PRIVATE cxx_lambdas)
   ament_target_dependencies(name_maker_rclcpp
     "rclcpp"
     "test_msgs")
