@@ -27,7 +27,7 @@ import rclpy
 
 
 def get_environment_variable(name):
-    """Get enironment variable or raise if it does not exist."""
+    """Get environment variable or raise if it does not exist."""
     path = os.getenv(name)
     if not path:
         raise EnvironmentError('Missing environment variable %r' % name)
