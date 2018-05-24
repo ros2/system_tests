@@ -66,8 +66,6 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), to_string) {
 
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous) {
   auto node = rclcpp::Node::make_shared("test_parameters_local_synchronous");
-  // TODO(esteve): Make the parameter service automatically start with the node.
-  auto parameter_service = std::make_shared<rclcpp::ParameterService>(node);
   auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(node);
   if (!parameters_client->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
@@ -78,8 +76,6 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous) {
 
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous_repeated) {
   auto node = rclcpp::Node::make_shared("test_parameters_local_synchronous_repeated");
-  // TODO(esteve): Make the parameter service automatically start with the node.
-  auto parameter_service = std::make_shared<rclcpp::ParameterService>(node);
   auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(node);
   if (!parameters_client->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
@@ -93,8 +89,6 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous_rep
 
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_asynchronous) {
   auto node = rclcpp::Node::make_shared(std::string("test_parameters_local_asynchronous"));
-  // TODO(esteve): Make the parameter service automatically start with the node.
-  auto parameter_service = std::make_shared<rclcpp::ParameterService>(node);
   auto parameters_client = std::make_shared<rclcpp::AsyncParametersClient>(node);
   if (!parameters_client->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
@@ -145,8 +139,6 @@ public:
 // go out of scope before it gets called: see https://github.com/ros2/rclcpp/pull/414
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_async_with_callback) {
   auto node = std::make_shared<ParametersAsyncNode>();
-  // TODO(esteve): Make the parameter service automatically start with the node.
-  auto parameter_service = std::make_shared<rclcpp::ParameterService>(node);
   if (!node->parameters_client_->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
   }
@@ -159,8 +151,6 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_async_with_call
 
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
   auto node = rclcpp::Node::make_shared("test_parameters_local_helpers");
-  // TODO(esteve): Make the parameter service automatically start with the node.
-  auto parameter_service = std::make_shared<rclcpp::ParameterService>(node);
   auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(node);
   if (!parameters_client->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
@@ -264,8 +254,6 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
 
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_primitive_type) {
   auto node = rclcpp::Node::make_shared("test_parameters_local_helpers");
-  // TODO(esteve): Make the parameter service automatically start with the node.
-  auto parameter_service = std::make_shared<rclcpp::ParameterService>(node);
   auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(node);
   if (!parameters_client->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
@@ -331,8 +319,6 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_variant
   using rclcpp::parameter::ParameterVariant;
 
   auto node = rclcpp::Node::make_shared("test_parameters_local_helpers");
-  // TODO(esteve): Make the parameter service automatically start with the node.
-  auto parameter_service = std::make_shared<rclcpp::ParameterService>(node);
   auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(node);
   if (!parameters_client->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
