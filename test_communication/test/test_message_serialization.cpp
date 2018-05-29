@@ -98,15 +98,14 @@ TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), de_serialize_c) 
   auto allocator = rcutils_get_default_allocator();
 
   auto raw_message_c = rmw_get_zero_initialized_raw_message();
-  rmw_initialize_raw_message(&raw_message_c, 0, &allocator);
+  rmw_raw_message_init(&raw_message_c, 0, &allocator);
 
   auto message_c_typesupport = ROSIDL_GET_MSG_TYPE_SUPPORT(test_msgs, msg, BoundedArrayNested);
   test_msgs__msg__BoundedArrayNested bounded_array_nested_msg_c;
   fill_c_message(&bounded_array_nested_msg_c);
 
   auto ret = RMW_RET_OK;
-  ret =
-    rmw_serialize(&bounded_array_nested_msg_c, message_c_typesupport, &raw_message_c);
+  ret = rmw_serialize(&bounded_array_nested_msg_c, message_c_typesupport, &raw_message_c);
   EXPECT_EQ(RMW_RET_OK, ret);
   EXPECT_EQ(76u, raw_message_c.buffer_length);  // measured from wireshark
 
@@ -142,7 +141,7 @@ TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), de_serialize_cpp
   auto allocator = rcutils_get_default_allocator();
 
   auto raw_message_cpp = rmw_get_zero_initialized_raw_message();
-  rmw_initialize_raw_message(&raw_message_cpp, 0, &allocator);
+  rmw_raw_message_init(&raw_message_cpp, 0, &allocator);
 
   auto message_cpp_typesupport =
     rosidl_typesupport_cpp::get_message_type_support_handle<test_msgs::msg::BoundedArrayNested>();
@@ -184,10 +183,10 @@ TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), cdr_integrity) {
   auto allocator = rcutils_get_default_allocator();
 
   auto raw_message_c = rmw_get_zero_initialized_raw_message();
-  rmw_initialize_raw_message(&raw_message_c, 0, &allocator);
+  rmw_raw_message_init(&raw_message_c, 0, &allocator);
 
   auto raw_message_cpp = rmw_get_zero_initialized_raw_message();
-  rmw_initialize_raw_message(&raw_message_cpp, 0, &allocator);
+  rmw_raw_message_init(&raw_message_cpp, 0, &allocator);
 
   auto message_c_typesupport = ROSIDL_GET_MSG_TYPE_SUPPORT(test_msgs, msg, BoundedArrayNested);
   auto message_cpp_typesupport =

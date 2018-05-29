@@ -311,17 +311,19 @@ if(BUILD_TESTING)
   endif()
 
   macro(serialize)
-      set(serialize_target_name "test_serialize${target}${target_suffix}")
-      ament_add_gtest(
+    set(serialize_target_name "test_serialize${target}${target_suffix}")
+    ament_add_gtest(
       ${serialize_target_name} test/test_message_serialization.cpp
       TIMEOUT 30
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
-      RMW_IMPLEMENTATION=${rmw_implementation})
+      RMW_IMPLEMENTATION=${rmw_implementation}
+    )
     if(TARGET ${serialize_target_name})
       target_link_libraries(${serialize_target_name}
         ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-        ${_AMENT_EXPORT_LIBRARY_TARGETS})
+        ${_AMENT_EXPORT_LIBRARY_TARGETS}
+      )
       add_dependencies(${serialize_target_name} ${PROJECT_NAME})
       ament_target_dependencies(${serialize_target_name}
         "rmw"
@@ -338,17 +340,19 @@ if(BUILD_TESTING)
   endmacro()
 
   macro(pub_sub_raw)
-      set(target_name "test_publisher_subscriber_raw${target}${target_suffix}")
-      ament_add_gtest(
+    set(target_name "test_publisher_subscriber_raw${target}${target_suffix}")
+    ament_add_gtest(
       ${target_name} test/test_publisher_subscriber_raw.cpp
       TIMEOUT 30
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
-      RMW_IMPLEMENTATION=${rmw_implementation})
+      RMW_IMPLEMENTATION=${rmw_implementation}
+    )
     if(TARGET ${target_name})
       target_link_libraries(${target_name}
         ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-        ${_AMENT_EXPORT_LIBRARY_TARGETS})
+        ${_AMENT_EXPORT_LIBRARY_TARGETS}
+      )
       add_dependencies(${target_name} ${PROJECT_NAME})
       ament_target_dependencies(${target_name}
         "rclcpp"

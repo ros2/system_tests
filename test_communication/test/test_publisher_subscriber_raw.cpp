@@ -78,4 +78,5 @@ TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), raw_callback) {
     rclcpp::spin_some(node);
     loop_rate.sleep();
   }
+  EXPECT_GT(counter, 0u);
 }
