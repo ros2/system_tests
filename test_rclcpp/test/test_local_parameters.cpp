@@ -178,42 +178,48 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
 
   // Test variables that are set, verifying that types are obeyed, and defaults not used.
   EXPECT_TRUE(parameters_client->has_parameter("foo"));
-  EXPECT_THROW(baz = parameters_client->get_parameter<double>("foo"), std::runtime_error);
+  EXPECT_THROW(baz = parameters_client->get_parameter<double>("foo"),
+    rclcpp::ParameterTypeException);
   EXPECT_NO_THROW(foo = parameters_client->get_parameter<int>("foo"));
   EXPECT_EQ(foo, 2);
   EXPECT_NO_THROW(foo = parameters_client->get_parameter("foo", 42));
   EXPECT_EQ(foo, 2);
 
   EXPECT_TRUE(parameters_client->has_parameter("bar"));
-  EXPECT_THROW(foo = parameters_client->get_parameter<int>("bar"), std::runtime_error);
+  EXPECT_THROW(foo = parameters_client->get_parameter<int>("bar"),
+    rclcpp::ParameterTypeException);
   EXPECT_NO_THROW(bar = parameters_client->get_parameter<std::string>("bar"));
   EXPECT_EQ(bar, "hello");
   EXPECT_NO_THROW(bar = parameters_client->get_parameter<std::string>("bar", "goodbye"));
   EXPECT_EQ(bar, "hello");
 
   EXPECT_TRUE(parameters_client->has_parameter("barstr"));
-  EXPECT_THROW(foobar = parameters_client->get_parameter<bool>("barstr"), std::runtime_error);
+  EXPECT_THROW(foobar = parameters_client->get_parameter<bool>("barstr"),
+    rclcpp::ParameterTypeException);
   EXPECT_NO_THROW(barstr = parameters_client->get_parameter<std::string>("barstr"));
   EXPECT_EQ(barstr, "hello_str");
   EXPECT_NO_THROW(barstr = parameters_client->get_parameter("barstr", std::string("heya")));
   EXPECT_EQ(barstr, "hello_str");
 
   EXPECT_TRUE(parameters_client->has_parameter("baz"));
-  EXPECT_THROW(foobar = parameters_client->get_parameter<bool>("baz"), std::runtime_error);
+  EXPECT_THROW(foobar = parameters_client->get_parameter<bool>("baz"),
+    rclcpp::ParameterTypeException);
   EXPECT_NO_THROW(baz = parameters_client->get_parameter<double>("baz"));
   EXPECT_DOUBLE_EQ(baz, 1.45);
   EXPECT_NO_THROW(baz = parameters_client->get_parameter("baz", -4.2));
   EXPECT_DOUBLE_EQ(baz, 1.45);
 
   EXPECT_TRUE(parameters_client->has_parameter("foobar"));
-  EXPECT_THROW(baz = parameters_client->get_parameter<double>("foobar"), std::runtime_error);
+  EXPECT_THROW(baz = parameters_client->get_parameter<double>("foobar"),
+    rclcpp::ParameterTypeException);
   EXPECT_NO_THROW(foobar = parameters_client->get_parameter<bool>("foobar"));
   EXPECT_EQ(foobar, true);
   EXPECT_NO_THROW(foobar = parameters_client->get_parameter("foobar", false));
   EXPECT_EQ(foobar, true);
 
   EXPECT_TRUE(parameters_client->has_parameter("barfoo"));
-  EXPECT_THROW(bar = parameters_client->get_parameter<std::string>("barfoo"), std::runtime_error);
+  EXPECT_THROW(bar = parameters_client->get_parameter<std::string>("barfoo"),
+    rclcpp::ParameterTypeException);
   EXPECT_NO_THROW(barfoo = parameters_client->get_parameter<std::vector<uint8_t>>("barfoo"));
   EXPECT_EQ(barfoo[0], 0);
   EXPECT_EQ(barfoo[1], 1);
@@ -288,7 +294,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_primiti
   EXPECT_EQ(2, foo);
 
   // Throw on type error
-  EXPECT_THROW(got_param = node->get_parameter("foo", foostr), std::runtime_error);
+  EXPECT_THROW(got_param = node->get_parameter("foo", foostr), rclcpp::ParameterTypeException);
 
   // No throw on non-existent param, param shouldn't change
   foo = 1000;
