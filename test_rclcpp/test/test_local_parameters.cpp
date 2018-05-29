@@ -34,17 +34,17 @@ using namespace std::chrono_literals;
 #endif
 
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), to_string) {
-  rclcpp::parameter::ParameterVariant pv("foo", "bar");
-  rclcpp::parameter::ParameterVariant pv2("foo2", "bar2");
+  rclcpp::Parameter pv("foo", "bar");
+  rclcpp::Parameter pv2("foo2", "bar2");
   std::string json_dict = std::to_string(pv);
   EXPECT_STREQ(
     "{\"name\": \"foo\", \"type\": \"string\", \"value\": \"bar\"}",
     json_dict.c_str());
-  json_dict = rclcpp::parameter::_to_json_dict_entry(pv);
+  json_dict = rclcpp::_to_json_dict_entry(pv);
   EXPECT_STREQ(
     "\"foo\": {\"type\": \"string\", \"value\": \"bar\"}",
     json_dict.c_str());
-  std::vector<rclcpp::parameter::ParameterVariant> vpv;
+  std::vector<rclcpp::Parameter> vpv;
   vpv.push_back(pv);
   vpv.push_back(pv2);
   json_dict = std::to_string(vpv);
@@ -53,12 +53,12 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), to_string) {
     "\"foo2\": {\"type\": \"string\", \"value\": \"bar2\"}}",
     json_dict.c_str());
 
-  pv = rclcpp::parameter::ParameterVariant("foo", 2.1);
+  pv = rclcpp::Parameter("foo", 2.1);
   // TODO(tfoote) convert the value to a float and use epsilon test.
   EXPECT_STREQ(
     "{\"name\": \"foo\", \"type\": \"double\", \"value\": \"2.100000\"}",
     std::to_string(pv).c_str());
-  pv = rclcpp::parameter::ParameterVariant("foo", 8);
+  pv = rclcpp::Parameter("foo", 8);
   EXPECT_STREQ(
     "{\"name\": \"foo\", \"type\": \"integer\", \"value\": \"8\"}",
     std::to_string(pv).c_str());
@@ -109,16 +109,16 @@ public:
 
   void queue_set_parameter_request(rclcpp::executors::SingleThreadedExecutor & executor)
   {
-    using rclcpp::parameter::ParameterVariant;
+    using rclcpp::Parameter;
     using SetParametersResult =
       std::shared_future<std::vector<rcl_interfaces::msg::SetParametersResult>>;
     auto set_parameters_results = parameters_client_->set_parameters({
-      ParameterVariant("foo", 2),
-      ParameterVariant("bar", "hello"),
-      ParameterVariant("barstr", std::string("hello_str")),
-      ParameterVariant("baz", 1.45),
-      ParameterVariant("foobar", true),
-      ParameterVariant("barfoo", std::vector<uint8_t>{3, 4, 5}),
+      Parameter("foo", 2),
+      Parameter("bar", "hello"),
+      Parameter("barstr", std::string("hello_str")),
+      Parameter("baz", 1.45),
+      Parameter("foobar", true),
+      Parameter("barfoo", std::vector<uint8_t>{3, 4, 5}),
     },
         [&executor](SetParametersResult future)
         {
@@ -156,12 +156,12 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
     ASSERT_TRUE(false) << "service not available after waiting";
   }
   auto set_parameters_results = parameters_client->set_parameters({
-    rclcpp::parameter::ParameterVariant("foo", 2),
-    rclcpp::parameter::ParameterVariant("bar", "hello"),
-    rclcpp::parameter::ParameterVariant("barstr", std::string("hello_str")),
-    rclcpp::parameter::ParameterVariant("baz", 1.45),
-    rclcpp::parameter::ParameterVariant("foobar", true),
-    rclcpp::parameter::ParameterVariant("barfoo", std::vector<uint8_t>{0, 1, 2}),
+    rclcpp::Parameter("foo", 2),
+    rclcpp::Parameter("bar", "hello"),
+    rclcpp::Parameter("barstr", std::string("hello_str")),
+    rclcpp::Parameter("baz", 1.45),
+    rclcpp::Parameter("foobar", true),
+    rclcpp::Parameter("barfoo", std::vector<uint8_t>{0, 1, 2}),
   });
   printf("Got set_parameters result\n");
 
@@ -265,12 +265,12 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_primiti
     ASSERT_TRUE(false) << "service not available after waiting";
   }
   auto set_parameters_results = parameters_client->set_parameters({
-    rclcpp::parameter::ParameterVariant("foo", 2),
-    rclcpp::parameter::ParameterVariant("bar", "hello"),
-    rclcpp::parameter::ParameterVariant("barstr", std::string("hello_str")),
-    rclcpp::parameter::ParameterVariant("baz", 1.45),
-    rclcpp::parameter::ParameterVariant("foobar", true),
-    rclcpp::parameter::ParameterVariant("barfoo", std::vector<uint8_t>{3, 4, 5}),
+    rclcpp::Parameter("foo", 2),
+    rclcpp::Parameter("bar", "hello"),
+    rclcpp::Parameter("barstr", std::string("hello_str")),
+    rclcpp::Parameter("baz", 1.45),
+    rclcpp::Parameter("foobar", true),
+    rclcpp::Parameter("barfoo", std::vector<uint8_t>{3, 4, 5}),
   });
   printf("Got set_parameters result\n");
 
@@ -322,7 +322,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_primiti
 }
 
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_variant_type) {
-  using rclcpp::parameter::ParameterVariant;
+  using rclcpp::Parameter;
 
   auto node = rclcpp::Node::make_shared("test_parameters_local_helpers");
   auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(node);
@@ -330,12 +330,12 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_variant
     ASSERT_TRUE(false) << "service not available after waiting";
   }
   auto set_parameters_results = parameters_client->set_parameters({
-    ParameterVariant("foo", 2),
-    ParameterVariant("bar", "hello"),
-    ParameterVariant("barstr", std::string("hello_str")),
-    ParameterVariant("baz", 1.45),
-    ParameterVariant("foobar", true),
-    ParameterVariant("barfoo", std::vector<uint8_t>{3, 4, 5}),
+    Parameter("foo", 2),
+    Parameter("bar", "hello"),
+    Parameter("barstr", std::string("hello_str")),
+    Parameter("baz", 1.45),
+    Parameter("foobar", true),
+    Parameter("barfoo", std::vector<uint8_t>{3, 4, 5}),
   });
   printf("Got set_parameters result\n");
 
@@ -346,13 +346,13 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_variant
 
   bool got_param = false;
 
-  ParameterVariant foo;
-  ParameterVariant foostr;
+  Parameter foo;
+  Parameter foostr;
 
-  ParameterVariant bar;
-  ParameterVariant baz;
-  ParameterVariant foobar;
-  ParameterVariant barfoo;
+  Parameter bar;
+  Parameter baz;
+  Parameter foobar;
+  Parameter barfoo;
 
   EXPECT_NO_THROW(got_param = node->get_parameter("foo", foo));
   EXPECT_EQ(true, got_param);
@@ -379,11 +379,11 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_variant
 }
 
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_parameter_or) {
-  using rclcpp::parameter::ParameterVariant;
+  using rclcpp::Parameter;
 
   auto node = rclcpp::Node::make_shared("test_parameters_get_parameter_or");
   auto set_parameters_results = node->set_parameters({
-    ParameterVariant("foo", 2),
+    Parameter("foo", 2),
   });
   printf("Got set_parameters result\n");
 
@@ -415,11 +415,11 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_parameter_or) {
 }
 
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), set_parameter_if_not_set) {
-  using rclcpp::parameter::ParameterVariant;
+  using rclcpp::Parameter;
 
   auto node = rclcpp::Node::make_shared("test_parameters_set_parameter_if_not_set");
   auto set_parameters_results = node->set_parameters({
-    ParameterVariant("foo", 2),
+    Parameter("foo", 2),
   });
   printf("Got set_parameters result\n");
 
