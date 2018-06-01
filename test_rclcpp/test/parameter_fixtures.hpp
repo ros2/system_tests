@@ -33,13 +33,13 @@ void set_test_parameters(
   printf("Setting parameters\n");
   // Set several differnet types of parameters.
   auto set_parameters_results = parameters_client->set_parameters({
-    rclcpp::parameter::ParameterVariant("foo", 2),
-    rclcpp::parameter::ParameterVariant("bar", "hello"),
-    rclcpp::parameter::ParameterVariant("barstr", std::string("hello_str")),
-    rclcpp::parameter::ParameterVariant("baz", 1.45),
-    rclcpp::parameter::ParameterVariant("foo.first", 8),
-    rclcpp::parameter::ParameterVariant("foo.second", 42),
-    rclcpp::parameter::ParameterVariant("foobar", true),
+    rclcpp::Parameter("foo", 2),
+    rclcpp::Parameter("bar", "hello"),
+    rclcpp::Parameter("barstr", std::string("hello_str")),
+    rclcpp::Parameter("baz", 1.45),
+    rclcpp::Parameter("foo.first", 8),
+    rclcpp::Parameter("foo.second", 42),
+    rclcpp::Parameter("foobar", true),
   });
   printf("Got set_parameters result\n");
 
@@ -57,13 +57,13 @@ void verify_set_parameters_async(
   printf("Setting parameters\n");
   // Set several differnet types of parameters.
   auto set_parameters_results = parameters_client->set_parameters({
-    rclcpp::parameter::ParameterVariant("foo", 2),
-    rclcpp::parameter::ParameterVariant("bar", "hello"),
-    rclcpp::parameter::ParameterVariant("barstr", std::string("hello_str")),
-    rclcpp::parameter::ParameterVariant("baz", 1.45),
-    rclcpp::parameter::ParameterVariant("foo.first", 8),
-    rclcpp::parameter::ParameterVariant("foo.second", 42),
-    rclcpp::parameter::ParameterVariant("foobar", true),
+    rclcpp::Parameter("foo", 2),
+    rclcpp::Parameter("bar", "hello"),
+    rclcpp::Parameter("barstr", std::string("hello_str")),
+    rclcpp::Parameter("baz", 1.45),
+    rclcpp::Parameter("foo.first", 8),
+    rclcpp::Parameter("foo.second", 42),
+    rclcpp::Parameter("foobar", true),
   });
   rclcpp::spin_until_future_complete(node, set_parameters_results);  // Wait for the results.
   printf("Got set_parameters result\n");
