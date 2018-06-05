@@ -19,9 +19,9 @@ import random
 import sys
 import time
 
-from launch import LaunchDescriptor
-from launch.exit_handler import primary_exit_handler
-from launch.launcher import DefaultLauncher
+from launch.legacy import LaunchDescriptor
+from launch.legacy.exit_handler import primary_exit_handler
+from launch.legacy.launcher import DefaultLauncher
 import pytest
 import rclpy
 
