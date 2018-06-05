@@ -266,3 +266,44 @@ initial_params_node:
         command = (node_fixture['executable'], '__params:=' + yaml_file.name)
         actual_test = make_coroutine_test(check_func=check_params)
         assert 0 == launch_process_and_coroutine(command, actual_test)
+
+
+def test_multiple_parameter_files(node_fixture):
+    def check_params():
+        nonlocal node_fixture
+        resp = get_params(node_fixture['node'], ('i1', 'i2', 'i3'))
+        if 3 == len(resp.values):
+            assert ParameterType.PARAMETER_INTEGER == resp.values[0].type
+            assert ParameterType.PARAMETER_INTEGER == resp.values[1].type
+            assert ParameterType.PARAMETER_INTEGER == resp.values[2].type
+            assert 42 == resp.values[0].integer_value
+            assert 12345 == resp.values[1].integer_value
+            assert -27 == resp.values[2].integer_value
+            return True
+        print(resp)
+        return False
+
+    with tempfile.NamedTemporaryFile(mode='w') as first_yaml_file:
+        first_yaml_file.write("""
+initial_params_node:
+    ros__parameters:
+        i1: 42
+        i2: -27
+""")
+        first_yaml_file.flush()
+        with tempfile.NamedTemporaryFile(mode='w') as second_yaml_file:
+            second_yaml_file.write("""
+initial_params_node:
+    ros__parameters:
+        i2: 12345
+        i3: -27
+""")
+            second_yaml_file.flush()
+
+            command = (
+                node_fixture['executable'],
+                '__params:=' + first_yaml_file.name,
+                '__params:=' + second_yaml_file.name
+            )
+            actual_test = make_coroutine_test(check_func=check_params)
+            assert 0 == launch_process_and_coroutine(command, actual_test)
