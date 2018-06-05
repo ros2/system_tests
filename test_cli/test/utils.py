@@ -23,10 +23,10 @@ from launch.launcher import DefaultLauncher
 
 def require_environment_variable(name):
     """Get environment variable or raise if it does not exist."""
-    path = os.getenv(name)
-    if path is not None:
+    env = os.getenv(name)
+    if env is None:
         raise EnvironmentError('Missing environment variable "%s"' % name)
-    return path
+    return env
 
 
 def launch_process_and_coroutine(command, coroutine):
