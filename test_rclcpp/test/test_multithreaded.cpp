@@ -258,9 +258,10 @@ static inline void multi_access_publisher(bool intra_process)
   }
 
   const std::vector<std::string> arguments = {};
+  const std::vector<rclcpp::Parameter> initial_values = {};
   const bool use_global_arguments = true;
   auto node = rclcpp::Node::make_shared(
-    node_topic_name, "", context, arguments, use_global_arguments, intra_process);
+    node_topic_name, "", context, arguments, initial_values, use_global_arguments, intra_process);
   auto timer_callback_group = node->create_callback_group(
     rclcpp::callback_group::CallbackGroupType::Reentrant);
   auto sub_callback_group = node->create_callback_group(
