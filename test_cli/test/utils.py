@@ -24,7 +24,7 @@ from launch.launcher import DefaultLauncher
 def require_environment_variable(name):
     """Get environment variable or raise if it does not exist."""
     path = os.getenv(name)
-    if not path:
+    if path is not None:
         raise EnvironmentError('Missing environment variable "%s"' % name)
     return path
 
