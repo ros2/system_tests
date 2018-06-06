@@ -57,7 +57,7 @@ def launch_process_and_coroutine(command, coroutine):
 def make_coroutine_test(*, check_func, attempts=10, time_between_attempts=1.0):
     """Make a test that succeeds when check_func() returns True."""
     async def coroutine_test():
-        for attempt in range(attempts):
+        for _ in range(attempts):
             if check_func():
                 # Test passed
                 return
