@@ -111,7 +111,7 @@ def test_double_params(node_fixture):
             assert ParameterType.PARAMETER_DOUBLE == resp.values[0].type
             assert ParameterType.PARAMETER_DOUBLE == resp.values[1].type
             assert pytest.approx(3.14) == resp.values[0].double_value
-            assert pytest.approx(2.718) == resp.values[1].double_value
+            assert pytest.approx(-2.718) == resp.values[1].double_value
             return True
         print(resp)
         return False
@@ -121,7 +121,7 @@ def test_double_params(node_fixture):
 initial_params_node:
     ros__parameters:
         d1: 3.14
-        d2: 2.718
+        d2: -2.718
 """)
         yaml_file.flush()
 
@@ -221,8 +221,8 @@ def test_double_array_params(node_fixture):
         if 2 == len(resp.values):
             assert ParameterType.PARAMETER_DOUBLE_ARRAY == resp.values[0].type
             assert ParameterType.PARAMETER_DOUBLE_ARRAY == resp.values[1].type
-            assert resp.values[0].double_array_value == pytest.approx([3.14, 2.718])
-            assert resp.values[1].double_array_value == pytest.approx([1234.5, 9999.0])
+            assert resp.values[0].double_array_value == pytest.approx([3.14, -2.718])
+            assert resp.values[1].double_array_value == pytest.approx([1234.5, -9999.0])
             return True
         print(resp)
         return False
@@ -231,8 +231,8 @@ def test_double_array_params(node_fixture):
         yaml_file.write("""
 initial_params_node:
     ros__parameters:
-        da1: [3.14, 2.718]
-        da2: [1234.5, 9999.0]
+        da1: [3.14, -2.718]
+        da2: [1234.5, -9999.0]
 """)
         yaml_file.flush()
 
