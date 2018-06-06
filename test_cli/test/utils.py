@@ -14,6 +14,7 @@
 
 import asyncio
 import os
+import random
 import sys
 import tempfile
 
@@ -76,12 +77,17 @@ class NamedTemporaryFile:
     This allows the file to be closed to allow opening by other processes on windows.
     """
 
-    def __init__(self):
-        self._tempfile = tempfile.NamedTemporaryFile(mode='w', delete=False)
+    def __init__(self, mode='w'):
+        self._tempdir = tempfile.TemporaryDirectory(prefix='test_cli_')
+        self._mode = mode
 
     def __enter__(self):
-        return self._tempfile
+        directory = self._tempdir.__enter__()
+        name = ''.join(random.choice('abcdefghijklmnopqrstuvwxyz') for _ in range(10))
+        self._filename = os.path.join(directory, name)
+        self._file = open(self._filename, mode=self._mode)
+        return self._file
 
     def __exit__(self, t, v, tb):
-        os.unlink(self._tempfile.name)
-        return self._tempfile.__exit__(t, v, tb)
+        self._file.close()
+        self._tempdir.__exit__(t, v, tb)

@@ -14,8 +14,8 @@
 
 import pytest
 from rcl_interfaces.msg import ParameterType
+from rcl_interfaces.srv import GetParameters
 import rclpy
-from ros2param.api import call_get_parameters
 
 from .utils import launch_process_and_coroutine
 from .utils import make_coroutine_test
@@ -44,8 +44,21 @@ def node_fixture(request):
 
 
 def get_params(node, param_names):
-    return call_get_parameters(
-        node=node, node_name='initial_params_node', parameter_names=param_names)
+    client = node.create_client(GetParameters, '/initial_params_node/get_parameters')
+
+    if not client.service_is_ready():
+        return GetParameters.Response()
+
+    request = GetParameters.Request()
+    request.names = param_names
+    future = client.call_async(request)
+    rclpy.spin_until_future_complete(node, future)
+
+    # handle response
+    response = future.result()
+    if response is None:
+        raise future.exception()
+    return response
 
 
 def test_bool_params(node_fixture):
