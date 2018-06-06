@@ -15,6 +15,7 @@
 import asyncio
 import os
 import sys
+import tempfile
 
 from launch.legacy import LaunchDescriptor
 from launch.legacy.exit_handler import primary_exit_handler
@@ -66,3 +67,21 @@ def make_coroutine_test(*, check_func, attempts=10, time_between_attempts=1.0):
         assert check_func()
 
     return coroutine_test
+
+
+class NamedTemporaryFile:
+    """
+    Create a named temporary file.
+
+    This allows the file to be closed to allow opening by other processes on windows.
+    """
+
+    def __init__(self):
+        self._tempfile = tempfile.NamedTemporaryFile(mode='w', delete=False)
+
+    def __enter__(self):
+        return self._tempfile
+
+    def __exit__(self, t, v, tb):
+        os.unlink(self._tempfile.name)
+        return self._tempfile.__exit__(t, v, tb)

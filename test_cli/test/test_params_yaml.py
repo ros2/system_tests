@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import tempfile
-
 import pytest
 from rcl_interfaces.msg import ParameterType
 import rclpy
@@ -21,6 +19,7 @@ from ros2param.api import call_get_parameters
 
 from .utils import launch_process_and_coroutine
 from .utils import make_coroutine_test
+from .utils import NamedTemporaryFile
 from .utils import require_environment_variable
 
 
@@ -62,7 +61,7 @@ def test_bool_params(node_fixture):
         print(resp)
         return False
 
-    with tempfile.NamedTemporaryFile(mode='w') as yaml_file:
+    with NamedTemporaryFile() as yaml_file:
         yaml_file.write("""
 initial_params_node:
     ros__parameters:
@@ -70,6 +69,8 @@ initial_params_node:
         b2: True
 """)
         yaml_file.flush()
+        # close so it can be opened again on windows
+        yaml_file.close()
 
         command = (node_fixture['executable'], '__params:=' + yaml_file.name)
         actual_test = make_coroutine_test(check_func=check_params)
@@ -89,7 +90,7 @@ def test_integer_params(node_fixture):
         print(resp)
         return False
 
-    with tempfile.NamedTemporaryFile(mode='w') as yaml_file:
+    with NamedTemporaryFile() as yaml_file:
         yaml_file.write("""
 initial_params_node:
     ros__parameters:
@@ -97,6 +98,7 @@ initial_params_node:
         i2: -27
 """)
         yaml_file.flush()
+        yaml_file.close()
 
         command = (node_fixture['executable'], '__params:=' + yaml_file.name)
         actual_test = make_coroutine_test(check_func=check_params)
@@ -116,7 +118,7 @@ def test_double_params(node_fixture):
         print(resp)
         return False
 
-    with tempfile.NamedTemporaryFile(mode='w') as yaml_file:
+    with NamedTemporaryFile() as yaml_file:
         yaml_file.write("""
 initial_params_node:
     ros__parameters:
@@ -124,6 +126,7 @@ initial_params_node:
         d2: -2.718
 """)
         yaml_file.flush()
+        yaml_file.close()
 
         command = (node_fixture['executable'], '__params:=' + yaml_file.name)
         actual_test = make_coroutine_test(check_func=check_params)
@@ -143,7 +146,7 @@ def test_string_params(node_fixture):
         print(resp)
         return False
 
-    with tempfile.NamedTemporaryFile(mode='w') as yaml_file:
+    with NamedTemporaryFile() as yaml_file:
         yaml_file.write("""
 initial_params_node:
     ros__parameters:
@@ -151,6 +154,7 @@ initial_params_node:
         s2: world
 """)
         yaml_file.flush()
+        yaml_file.close()
 
         command = (node_fixture['executable'], '__params:=' + yaml_file.name)
         actual_test = make_coroutine_test(check_func=check_params)
@@ -173,7 +177,7 @@ def test_bool_array_params(node_fixture):
         print(resp)
         return False
 
-    with tempfile.NamedTemporaryFile(mode='w') as yaml_file:
+    with NamedTemporaryFile() as yaml_file:
         yaml_file.write("""
 initial_params_node:
     ros__parameters:
@@ -181,6 +185,7 @@ initial_params_node:
         ba2: [false, true]
 """)
         yaml_file.flush()
+        yaml_file.close()
 
         command = (node_fixture['executable'], '__params:=' + yaml_file.name)
         actual_test = make_coroutine_test(check_func=check_params)
@@ -200,7 +205,7 @@ def test_integer_array_params(node_fixture):
         print(resp)
         return False
 
-    with tempfile.NamedTemporaryFile(mode='w') as yaml_file:
+    with NamedTemporaryFile() as yaml_file:
         yaml_file.write("""
 initial_params_node:
     ros__parameters:
@@ -208,6 +213,7 @@ initial_params_node:
         ia2: [1234, 5678]
 """)
         yaml_file.flush()
+        yaml_file.close()
 
         command = (node_fixture['executable'], '__params:=' + yaml_file.name)
         actual_test = make_coroutine_test(check_func=check_params)
@@ -227,7 +233,7 @@ def test_double_array_params(node_fixture):
         print(resp)
         return False
 
-    with tempfile.NamedTemporaryFile(mode='w') as yaml_file:
+    with NamedTemporaryFile() as yaml_file:
         yaml_file.write("""
 initial_params_node:
     ros__parameters:
@@ -235,6 +241,7 @@ initial_params_node:
         da2: [1234.5, -9999.0]
 """)
         yaml_file.flush()
+        yaml_file.close()
 
         command = (node_fixture['executable'], '__params:=' + yaml_file.name)
         actual_test = make_coroutine_test(check_func=check_params)
@@ -254,7 +261,7 @@ def test_string_array_params(node_fixture):
         print(resp)
         return False
 
-    with tempfile.NamedTemporaryFile(mode='w') as yaml_file:
+    with NamedTemporaryFile() as yaml_file:
         yaml_file.write("""
 initial_params_node:
     ros__parameters:
@@ -262,6 +269,7 @@ initial_params_node:
         sa2: ['and', 'seven']
 """)
         yaml_file.flush()
+        yaml_file.close()
 
         command = (node_fixture['executable'], '__params:=' + yaml_file.name)
         actual_test = make_coroutine_test(check_func=check_params)
@@ -283,7 +291,7 @@ def test_multiple_parameter_files(node_fixture):
         print(resp)
         return False
 
-    with tempfile.NamedTemporaryFile(mode='w') as first_yaml_file:
+    with NamedTemporaryFile() as first_yaml_file:
         first_yaml_file.write("""
 initial_params_node:
     ros__parameters:
@@ -291,7 +299,8 @@ initial_params_node:
         i2: -27
 """)
         first_yaml_file.flush()
-        with tempfile.NamedTemporaryFile(mode='w') as second_yaml_file:
+        first_yaml_file.close()
+        with NamedTemporaryFile() as second_yaml_file:
             second_yaml_file.write("""
 initial_params_node:
     ros__parameters:
@@ -299,6 +308,7 @@ initial_params_node:
         i3: -27
 """)
             second_yaml_file.flush()
+            second_yaml_file.close()
 
             command = (
                 node_fixture['executable'],
