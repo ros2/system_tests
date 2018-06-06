@@ -26,7 +26,7 @@ if(BUILD_TESTING)
     test/test_params_yaml.py
     ENV
       INITIAL_PARAMS_RCLCPP=$<TARGET_FILE:initial_params_rclcpp>
-    TIMEOUT 120)
+  )
   set_tests_properties(test_params_yaml
     PROPERTIES DEPENDS
       initial_params_rclcpp)
