@@ -132,8 +132,14 @@ void verify_test_parameters(
 
   printf("Getting nonexistent parameters\n");
   // Get a few non existant parameters
-  for (auto & parameter : parameters_client->get_parameters({"not_foo", "not_baz"})) {
-    EXPECT_STREQ("There should be no matches", parameter.get_name().c_str());
+  {
+    std::vector<rclcpp::Parameter> retrieved_params =
+      parameters_client->get_parameters({"not_foo", "not_baz"});
+    ASSERT_EQ(2u, retrieved_params.size());
+    EXPECT_STREQ("not_foo", retrieved_params[0].get_name().c_str());
+    EXPECT_STREQ("not_baz", retrieved_params[1].get_name().c_str());
+    EXPECT_EQ(rclcpp::ParameterType::PARAMETER_NOT_SET, retrieved_params[0].get_type());
+    EXPECT_EQ(rclcpp::ParameterType::PARAMETER_NOT_SET, retrieved_params[1].get_type());
   }
 
   printf("Listing parameters with recursive depth\n");
@@ -246,10 +252,15 @@ void verify_get_parameters_async(
 
   printf("Getting nonexistent parameters\n");
   // Get a few non existant parameters
-  auto result3 = parameters_client->get_parameters({"not_foo", "not_baz"});
-  rclcpp::spin_until_future_complete(node, result3);
-  for (auto & parameter : result3.get()) {
-    EXPECT_STREQ("There should be no matches", parameter.get_name().c_str());
+  {
+    auto result3 = parameters_client->get_parameters({"not_foo", "not_baz"});
+    rclcpp::spin_until_future_complete(node, result3);
+    std::vector<rclcpp::Parameter> retrieved_params = result3.get();
+    ASSERT_EQ(2u, retrieved_params.size());
+    EXPECT_STREQ("not_foo", retrieved_params[0].get_name().c_str());
+    EXPECT_STREQ("not_baz", retrieved_params[1].get_name().c_str());
+    EXPECT_EQ(rclcpp::ParameterType::PARAMETER_NOT_SET, retrieved_params[0].get_type());
+    EXPECT_EQ(rclcpp::ParameterType::PARAMETER_NOT_SET, retrieved_params[1].get_type());
   }
 
   printf("Listing parameters with recursive depth\n");
