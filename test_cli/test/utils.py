@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import asyncio
 import os
 import random
 import sys
@@ -54,20 +53,6 @@ def launch_process_and_coroutine(command, coroutine):
     launcher.add_launch_descriptor(ld)
     return_code = launcher.launch()
     return return_code
-
-
-def make_coroutine_test(*, check_func, attempts=10, time_between_attempts=1.0):
-    """Make a test that succeeds when check_func() returns True."""
-    async def coroutine_test():
-        for _ in range(attempts):
-            if check_func():
-                # Test passed
-                return
-            await asyncio.sleep(time_between_attempts)
-        # final attempt to check condition
-        assert check_func()
-
-    return coroutine_test
 
 
 class NamedTemporaryFile:
