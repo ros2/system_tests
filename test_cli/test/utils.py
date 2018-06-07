@@ -51,7 +51,7 @@ class HelperCommand:
         self._proc.kill()
 
 
-class NamedTemporaryFile:
+class TemporaryFileWithContent:
     """Create a named temporary file with content."""
 
     def __init__(self, content):

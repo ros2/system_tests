@@ -19,8 +19,8 @@ import rclpy
 
 from .utils import BackgroundExecutor
 from .utils import HelperCommand
-from .utils import NamedTemporaryFile
 from .utils import require_environment_variable
+from .utils import TemporaryFileWithContent
 
 
 CLIENT_LIBRARY_EXECUTABLES = (
@@ -61,7 +61,7 @@ bool_params:
         b1: False
         b2: True
 """
-    with NamedTemporaryFile(param_file_content) as yaml_file:
+    with TemporaryFileWithContent(param_file_content) as yaml_file:
         command = (node_fixture['executable'], '__params:=' + yaml_file, '__node:=bool_params')
 
         with HelperCommand(command):
@@ -81,7 +81,7 @@ int_params:
         i1: 42
         i2: -27
 """
-    with NamedTemporaryFile(param_file_content) as yaml_file:
+    with TemporaryFileWithContent(param_file_content) as yaml_file:
         command = (node_fixture['executable'], '__params:=' + yaml_file, '__node:=int_params')
 
         with HelperCommand(command):
@@ -101,7 +101,7 @@ double_params:
         d1: 3.14
         d2: -2.718
 """
-    with NamedTemporaryFile(param_file_content) as yaml_file:
+    with TemporaryFileWithContent(param_file_content) as yaml_file:
         command = (node_fixture['executable'], '__params:=' + yaml_file, '__node:=double_params')
 
         with HelperCommand(command):
@@ -121,7 +121,7 @@ str_params:
         s1: hello
         s2: world
 """
-    with NamedTemporaryFile(param_file_content) as yaml_file:
+    with TemporaryFileWithContent(param_file_content) as yaml_file:
         command = (node_fixture['executable'], '__params:=' + yaml_file, '__node:=str_params')
 
         with HelperCommand(command):
@@ -144,7 +144,7 @@ ba_params:
         ba1: [true, false]
         ba2: [false, true]
 """
-    with NamedTemporaryFile(param_file_content) as yaml_file:
+    with TemporaryFileWithContent(param_file_content) as yaml_file:
         command = (node_fixture['executable'], '__params:=' + yaml_file, '__node:=ba_params')
 
         with HelperCommand(command):
@@ -164,7 +164,7 @@ ia_params:
         ia1: [42, -27]
         ia2: [1234, 5678]
 """
-    with NamedTemporaryFile(param_file_content) as yaml_file:
+    with TemporaryFileWithContent(param_file_content) as yaml_file:
         command = (node_fixture['executable'], '__params:=' + yaml_file, '__node:=ia_params')
 
         with HelperCommand(command):
@@ -184,7 +184,7 @@ da_params:
         da1: [3.14, -2.718]
         da2: [1234.5, -9999.0]
 """
-    with NamedTemporaryFile(param_file_content) as yaml_file:
+    with TemporaryFileWithContent(param_file_content) as yaml_file:
         command = (node_fixture['executable'], '__params:=' + yaml_file, '__node:=da_params')
 
         with HelperCommand(command):
@@ -204,7 +204,7 @@ sa_params:
         sa1: ['Four', 'score']
         sa2: ['and', 'seven']
 """
-    with NamedTemporaryFile(param_file_content) as yaml_file:
+    with TemporaryFileWithContent(param_file_content) as yaml_file:
         command = (node_fixture['executable'], '__params:=' + yaml_file, '__node:=sa_params')
 
         with HelperCommand(command):
@@ -231,8 +231,8 @@ multi_params:
         i3: -27
 """
 
-    with NamedTemporaryFile(first_yaml_content) as first_yaml_file:
-        with NamedTemporaryFile(second_yaml_content) as second_yaml_file:
+    with TemporaryFileWithContent(first_yaml_content) as first_yaml_file:
+        with TemporaryFileWithContent(second_yaml_content) as second_yaml_file:
             command = (
                 node_fixture['executable'],
                 '__params:=' + first_yaml_file,
