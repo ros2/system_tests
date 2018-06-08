@@ -44,14 +44,17 @@ def node_fixture(request):
 
 
 def get_params(node, node_name, param_names, wfs_timeout=5.0):
+    client = node.create_client(GetParameters, '/{name}/get_parameters'.format(name=node_name))
+    resp = None
     with BackgroundExecutor(node):
-        client = node.create_client(GetParameters, '/{name}/get_parameters'.format(name=node_name))
         assert client.wait_for_service(timeout_sec=wfs_timeout)
         request = GetParameters.Request()
         request.names = param_names
         resp = client.call(request)
-        node.destroy_client(client)
-        return resp
+
+    # Don't destroy client while spinning ros2/rmw_fastrtps#205
+    node.destroy_client(client)
+    return resp
 
 
 def test_bool_params(node_fixture):
