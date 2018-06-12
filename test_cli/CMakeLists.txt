@@ -5,6 +5,13 @@ project(test_cli)
 find_package(ament_cmake_auto REQUIRED)
 
 if(BUILD_TESTING)
+  set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE}")
+  if(WIN32)
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+      set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE_DEBUG}")
+    endif()
+  endif()
+
   # Default to C++14
   if(NOT CMAKE_CXX_STANDARD)
     set(CMAKE_CXX_STANDARD 14)
@@ -24,6 +31,7 @@ if(BUILD_TESTING)
 
   ament_add_pytest_test(test_params_yaml
     test/test_params_yaml.py
+    PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
     ENV
       INITIAL_PARAMS_RCLCPP=$<TARGET_FILE:initial_params_rclcpp>
   )

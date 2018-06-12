@@ -5,6 +5,13 @@ project(test_cli_remapping)
 find_package(ament_cmake_auto REQUIRED)
 
 if(BUILD_TESTING)
+  set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE}")
+  if(WIN32)
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+      set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE_DEBUG}")
+    endif()
+  endif()
+
   # Default to C++14
   if(NOT CMAKE_CXX_STANDARD)
     set(CMAKE_CXX_STANDARD 14)
@@ -26,6 +33,7 @@ if(BUILD_TESTING)
 
   ament_add_pytest_test(test_cli_remapping
     test/test_cli_remapping.py
+    PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
     ENV
       NAME_MAKER_RCLCPP=$<TARGET_FILE:name_maker_rclcpp>
       NAME_MAKER_RCLPY=${CMAKE_CURRENT_SOURCE_DIR}/test/name_maker.py
