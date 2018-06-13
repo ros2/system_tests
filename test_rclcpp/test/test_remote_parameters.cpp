@@ -67,6 +67,22 @@ TEST(CLASSNAME(parameters, rmw_implementation), test_remote_parameters_sync) {
   verify_test_parameters(parameters_client);
 }
 
+TEST(CLASSNAME(parameters, rmw_implementation), test_set_remote_parameters_atomically_sync) {
+  std::string test_server_name = "test_parameters_server";
+
+  auto node = rclcpp::Node::make_shared(std::string("test_set_remote_parameters_atomically_sync"));
+
+  auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(node,
+      test_server_name);
+  if (!parameters_client->wait_for_service(20s)) {
+    ASSERT_TRUE(false) << "service not available after waiting";
+  }
+
+  set_test_parameters_atomically(parameters_client);
+
+  verify_test_parameters(parameters_client);
+}
+
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);

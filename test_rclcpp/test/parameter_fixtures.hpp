@@ -50,6 +50,26 @@ void set_test_parameters(
   }
 }
 
+void set_test_parameters_atomically(
+  std::shared_ptr<rclcpp::SyncParametersClient> parameters_client)
+{
+  printf("Setting parameters atomically\n");
+  // Set several differnet types of parameters.
+  auto set_parameters_result = parameters_client->set_parameters_atomically({
+    rclcpp::Parameter("foo", 2),
+    rclcpp::Parameter("bar", "hello"),
+    rclcpp::Parameter("barstr", std::string("hello_str")),
+    rclcpp::Parameter("baz", 1.45),
+    rclcpp::Parameter("foo.first", 8),
+    rclcpp::Parameter("foo.second", 42),
+    rclcpp::Parameter("foobar", true),
+  });
+  printf("Got set_parameters_atomically result\n");
+
+  // Check to see if they were set.
+  ASSERT_TRUE(set_parameters_result.successful);
+}
+
 void verify_set_parameters_async(
   std::shared_ptr<rclcpp::Node> node,
   std::shared_ptr<rclcpp::AsyncParametersClient> parameters_client)
