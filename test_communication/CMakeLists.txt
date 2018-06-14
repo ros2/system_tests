@@ -339,10 +339,10 @@ if(BUILD_TESTING)
     endif()
   endmacro()
 
-  macro(pub_sub_raw)
-    set(target_name "test_publisher_subscriber_raw${target}${target_suffix}")
+  macro(pub_sub_serialized)
+    set(target_name "test_publisher_subscriber_serialized${target}${target_suffix}")
     ament_add_gtest(
-      ${target_name} test/test_publisher_subscriber_raw.cpp
+      ${target_name} test/test_publisher_subscriber_serialized.cpp
       TIMEOUT 30
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
@@ -375,7 +375,7 @@ if(BUILD_TESTING)
 
   call_for_each_rmw_implementation(targets)
   call_for_each_rmw_implementation(serialize)
-  call_for_each_rmw_implementation(pub_sub_raw)
+  call_for_each_rmw_implementation(pub_sub_serialized)
 endif()  # BUILD_TESTING
 
 ament_auto_package()
