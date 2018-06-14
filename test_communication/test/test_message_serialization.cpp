@@ -110,7 +110,7 @@ TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), de_serialize_c) 
   EXPECT_EQ(RMW_RET_OK, ret);
   EXPECT_EQ(76u, serialized_message_c.buffer_length);  // measured from wireshark
 
-  printf("serialized data length: %u\n", serialized_message_c.buffer_length);
+  printf("serialized data length: %zu\n", serialized_message_c.buffer_length);
   print_serialized_buffer(serialized_message_c, "serialized message c");
 
   test_msgs__msg__BoundedArrayNested bounded_array_nested_c_reverse;
