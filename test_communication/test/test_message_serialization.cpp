@@ -15,7 +15,7 @@
 #include <gtest/gtest.h>
 #include <string>
 
-#include "rmw/raw_message.h"
+#include "rmw/serialized_message.h"
 #include "rmw/rmw.h"
 
 #include "test_msgs/msg/bounded_array_nested.h"
@@ -44,11 +44,12 @@ public:
   }
 };
 
-void print_raw_buffer(const rmw_message_raw_t & raw_msg, std::string prefix = "")
+void print_serialized_buffer(
+  const rmw_serialized_message_t & serialized_msg, std::string prefix = "")
 {
   printf("%s\n", prefix.c_str());
-  for (unsigned int i = 0; i < raw_msg.buffer_length; ++i) {
-    printf("%02x ", raw_msg.buffer[i]);
+  for (unsigned int i = 0; i < serialized_msg.buffer_length; ++i) {
+    printf("%02x ", serialized_msg.buffer[i]);
   }
   printf("\n");
 }
@@ -97,24 +98,25 @@ void fill_cpp_message(test_msgs::msg::BoundedArrayNested * bounded_array_nested_
 TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), de_serialize_c) {
   auto allocator = rcutils_get_default_allocator();
 
-  auto raw_message_c = rmw_get_zero_initialized_raw_message();
-  auto ret = rmw_raw_message_init(&raw_message_c, 0, &allocator);
+  auto serialized_message_c = rmw_get_zero_initialized_serialized_message();
+  auto ret = rmw_serialized_message_init(&serialized_message_c, 0, &allocator);
   ASSERT_EQ(RMW_RET_OK, ret);
 
   auto message_c_typesupport = ROSIDL_GET_MSG_TYPE_SUPPORT(test_msgs, msg, BoundedArrayNested);
   test_msgs__msg__BoundedArrayNested bounded_array_nested_msg_c;
   fill_c_message(&bounded_array_nested_msg_c);
 
-  ret = rmw_serialize(&bounded_array_nested_msg_c, message_c_typesupport, &raw_message_c);
+  ret = rmw_serialize(&bounded_array_nested_msg_c, message_c_typesupport, &serialized_message_c);
   EXPECT_EQ(RMW_RET_OK, ret);
-  EXPECT_EQ(76u, raw_message_c.buffer_length);  // measured from wireshark
+  EXPECT_EQ(76u, serialized_message_c.buffer_length);  // measured from wireshark
 
-  printf("serialized data length: %u\n", raw_message_c.buffer_length);
-  print_raw_buffer(raw_message_c, "raw message c");
+  printf("serialized data length: %u\n", serialized_message_c.buffer_length);
+  print_serialized_buffer(serialized_message_c, "serialized message c");
 
   test_msgs__msg__BoundedArrayNested bounded_array_nested_c_reverse;
   test_msgs__msg__BoundedArrayNested__init(&bounded_array_nested_c_reverse);
-  ret = rmw_deserialize(&raw_message_c, message_c_typesupport, &bounded_array_nested_c_reverse);
+  ret =
+    rmw_deserialize(&serialized_message_c, message_c_typesupport, &bounded_array_nested_c_reverse);
   EXPECT_EQ(RMW_RET_OK, ret);
   EXPECT_EQ(true, bounded_array_nested_c_reverse.primitive_values.data[0].bool_value);
   EXPECT_EQ(255, bounded_array_nested_c_reverse.primitive_values.data[0].byte_value);
@@ -134,15 +136,15 @@ TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), de_serialize_c) 
 
   test_msgs__msg__BoundedArrayNested__fini(&bounded_array_nested_c_reverse);
   test_msgs__msg__BoundedArrayNested__fini(&bounded_array_nested_msg_c);
-  ret = rmw_raw_message_fini(&raw_message_c);
+  ret = rmw_serialized_message_fini(&serialized_message_c);
   ASSERT_EQ(RMW_RET_OK, ret);
 }
 
 TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), de_serialize_cpp) {
   auto allocator = rcutils_get_default_allocator();
 
-  auto raw_message_cpp = rmw_get_zero_initialized_raw_message();
-  auto ret = rmw_raw_message_init(&raw_message_cpp, 0, &allocator);
+  auto serialized_message_cpp = rmw_get_zero_initialized_serialized_message();
+  auto ret = rmw_serialized_message_init(&serialized_message_cpp, 0, &allocator);
   ASSERT_EQ(RMW_RET_OK, ret);
 
   auto message_cpp_typesupport =
@@ -152,14 +154,14 @@ TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), de_serialize_cpp
   fill_cpp_message(&bounded_array_nested_msg_cpp);
 
   ret =
-    rmw_serialize(&bounded_array_nested_msg_cpp, message_cpp_typesupport, &raw_message_cpp);
+    rmw_serialize(&bounded_array_nested_msg_cpp, message_cpp_typesupport, &serialized_message_cpp);
   EXPECT_EQ(RMW_RET_OK, ret);
-  EXPECT_EQ(76u, raw_message_cpp.buffer_length);
-  print_raw_buffer(raw_message_cpp, "raw message cpp");
+  EXPECT_EQ(76u, serialized_message_cpp.buffer_length);
+  print_serialized_buffer(serialized_message_cpp, "serialized message cpp");
 
   test_msgs::msg::BoundedArrayNested bounded_array_nested_cpp_reverse;
-  ret =
-    rmw_deserialize(&raw_message_cpp, message_cpp_typesupport, &bounded_array_nested_cpp_reverse);
+  ret = rmw_deserialize(
+    &serialized_message_cpp, message_cpp_typesupport, &bounded_array_nested_cpp_reverse);
   EXPECT_EQ(RMW_RET_OK, ret);
   EXPECT_EQ(true, bounded_array_nested_cpp_reverse.primitive_values[0].bool_value);
   EXPECT_EQ(255, bounded_array_nested_cpp_reverse.primitive_values[0].byte_value);
@@ -177,19 +179,19 @@ TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), de_serialize_cpp
   EXPECT_STREQ(
     "hello world", bounded_array_nested_cpp_reverse.primitive_values[0].string_value.c_str());
 
-  ret = rmw_raw_message_fini(&raw_message_cpp);
+  ret = rmw_serialized_message_fini(&serialized_message_cpp);
   ASSERT_EQ(RMW_RET_OK, ret);
 }
 
 TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), cdr_integrity) {
   auto allocator = rcutils_get_default_allocator();
 
-  auto raw_message_c = rmw_get_zero_initialized_raw_message();
-  auto ret = rmw_raw_message_init(&raw_message_c, 0, &allocator);
+  auto serialized_message_c = rmw_get_zero_initialized_serialized_message();
+  auto ret = rmw_serialized_message_init(&serialized_message_c, 0, &allocator);
   ASSERT_EQ(RMW_RET_OK, ret);
 
-  auto raw_message_cpp = rmw_get_zero_initialized_raw_message();
-  ret = rmw_raw_message_init(&raw_message_cpp, 0, &allocator);
+  auto serialized_message_cpp = rmw_get_zero_initialized_serialized_message();
+  ret = rmw_serialized_message_init(&serialized_message_cpp, 0, &allocator);
   ASSERT_EQ(RMW_RET_OK, ret);
 
   auto message_c_typesupport = ROSIDL_GET_MSG_TYPE_SUPPORT(test_msgs, msg, BoundedArrayNested);
@@ -203,26 +205,26 @@ TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), cdr_integrity) {
   test_msgs::msg::BoundedArrayNested msg_cpp;
   fill_cpp_message(&msg_cpp);
 
-  ret = rmw_serialize(&msg_c, message_c_typesupport, &raw_message_c);
+  ret = rmw_serialize(&msg_c, message_c_typesupport, &serialized_message_c);
   ASSERT_EQ(RMW_RET_OK, ret);
-  ret = rmw_serialize(&msg_cpp, message_cpp_typesupport, &raw_message_cpp);
+  ret = rmw_serialize(&msg_cpp, message_cpp_typesupport, &serialized_message_cpp);
   EXPECT_EQ(RMW_RET_OK, ret);
 
-  print_raw_buffer(raw_message_c, "raw message c");
-  print_raw_buffer(raw_message_cpp, "raw message cpp");
+  print_serialized_buffer(serialized_message_c, "serialized message c");
+  print_serialized_buffer(serialized_message_cpp, "serialized message cpp");
 
   test_msgs__msg__BoundedArrayNested msg_c_reverse;
   test_msgs__msg__BoundedArrayNested__init(&msg_c_reverse);
   test_msgs::msg::BoundedArrayNested msg_cpp_reverse;
-  ret = rmw_deserialize(&raw_message_cpp, message_c_typesupport, &msg_c_reverse);
+  ret = rmw_deserialize(&serialized_message_cpp, message_c_typesupport, &msg_c_reverse);
   EXPECT_EQ(RMW_RET_OK, ret);
-  ret = rmw_deserialize(&raw_message_c, message_cpp_typesupport, &msg_cpp_reverse);
+  ret = rmw_deserialize(&serialized_message_c, message_cpp_typesupport, &msg_cpp_reverse);
   EXPECT_EQ(RMW_RET_OK, ret);
 
   test_msgs__msg__BoundedArrayNested__fini(&msg_c);
   test_msgs__msg__BoundedArrayNested__fini(&msg_c_reverse);
-  ret = rmw_raw_message_fini(&raw_message_c);
+  ret = rmw_serialized_message_fini(&serialized_message_c);
   ASSERT_EQ(RMW_RET_OK, ret);
-  ret = rmw_raw_message_fini(&raw_message_cpp);
+  ret = rmw_serialized_message_fini(&serialized_message_cpp);
   ASSERT_EQ(RMW_RET_OK, ret);
 }
