@@ -57,6 +57,10 @@ if(BUILD_TESTING)
 
   find_package(ament_cmake_pytest REQUIRED)
 
+  # Provides PYTHON_EXECUTABLE_DEBUG
+  find_package(python_cmake_module REQUIRED)
+  find_package(PythonExtra REQUIRED)
+
   # get the rmw implementations ahead of time
   find_package(rmw_implementation_cmake REQUIRED)
   get_available_rmw_implementations(rmw_implementations2)

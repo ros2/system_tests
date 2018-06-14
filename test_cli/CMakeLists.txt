@@ -5,6 +5,9 @@ project(test_cli)
 find_package(ament_cmake_auto REQUIRED)
 
 if(BUILD_TESTING)
+  # Provides PYTHON_EXECUTABLE_DEBUG
+  find_package(python_cmake_module REQUIRED)
+  find_package(PythonExtra REQUIRED)
   set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE}")
   if(WIN32)
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
