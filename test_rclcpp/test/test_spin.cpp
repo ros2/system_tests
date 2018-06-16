@@ -202,7 +202,7 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), cancel) {
       FAIL();
     };
   auto subscription = node->create_subscription<test_rclcpp::msg::UInt32>(
-    "cancel", 10, subscription_callback);
+    "cancel", subscription_callback, 10);
 
   auto cancel_callback = [&executor, &pub, &msg]()
     {
