@@ -315,69 +315,72 @@ if(BUILD_TESTING)
   endif()
 
   macro(serialize)
-    if(${rmw_implementation} STREQUAL "rmw_connext_cpp" OR ${rmw_implementation} STREQUAL "rmw_fastrtps_cpp")
-      set(serialize_target_name "test_serialize${target}${target_suffix}")
-      ament_add_gtest(
-        ${serialize_target_name} test/test_message_serialization.cpp
-        TIMEOUT 30
-        ENV
-        RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
-        RMW_IMPLEMENTATION=${rmw_implementation}
+    if(${rmw_implementation} STREQUAL "rmw_connext_dynamic_cpp" OR ${rmw_implementation} STREQUAL "rmw_opensplice_cpp")
+      message(STATUS "skipping serialize tests for ${rmw_implementation}")
+      set(SKIP_TEST "SKIP_TEST")
+    endif()
+
+    set(serialize_target_name "test_serialize${target}${target_suffix}")
+    ament_add_gtest(
+      ${serialize_target_name} test/test_message_serialization.cpp
+      TIMEOUT 30
+      ENV
+      RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
+      RMW_IMPLEMENTATION=${rmw_implementation}
+      ${SKIP_TEST}
+    )
+    if(TARGET ${serialize_target_name})
+      target_link_libraries(${serialize_target_name}
+        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
+        ${_AMENT_EXPORT_LIBRARY_TARGETS}
       )
-      if(TARGET ${serialize_target_name})
-        target_link_libraries(${serialize_target_name}
-          ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-          ${_AMENT_EXPORT_LIBRARY_TARGETS}
-        )
-        add_dependencies(${serialize_target_name} ${PROJECT_NAME})
-        ament_target_dependencies(${serialize_target_name}
-          "rmw"
-          "rosidl_typesupport_c"
-          "rosidl_typesupport_cpp"
-          "test_msgs"
-          ${rmw_implementation}
-        )
-        set_tests_properties(
-          ${serialize_target_name}
-          PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${serialize_target_name}>"
-        )
-      endif()
-    else()
-      message(STATUS "skipping serilization tests for ${rmw_implementation}")
+      add_dependencies(${serialize_target_name} ${PROJECT_NAME})
+      ament_target_dependencies(${serialize_target_name}
+        "rmw"
+        "rosidl_typesupport_c"
+        "rosidl_typesupport_cpp"
+        "test_msgs"
+        ${rmw_implementation}
+      )
+      set_tests_properties(
+        ${serialize_target_name}
+        PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${serialize_target_name}>"
+      )
     endif()
   endmacro()
 
   macro(pub_sub_serialized)
-    if(${rmw_implementation} STREQUAL "rmw_connext_cpp" OR ${rmw_implementation} STREQUAL "rmw_fastrtps_cpp")
-      set(target_name "test_publisher_subscriber_serialized${target}${target_suffix}")
-      ament_add_gtest(
-        ${target_name} test/test_publisher_subscriber_serialized.cpp
-        TIMEOUT 30
-        ENV
-        RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
-        RMW_IMPLEMENTATION=${rmw_implementation}
+    if(${rmw_implementation} STREQUAL "rmw_connext_dynamic_cpp" OR ${rmw_implementation} STREQUAL "rmw_opensplice_cpp")
+      message(STATUS "skipping serialize tests for ${rmw_implementation}")
+      set(SKIP_TEST "SKIP_TEST")
+    endif()
+    set(target_name "test_publisher_subscriber_serialized${target}${target_suffix}")
+    ament_add_gtest(
+      ${target_name} test/test_publisher_subscriber_serialized.cpp
+      TIMEOUT 30
+      ENV
+      RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
+      RMW_IMPLEMENTATION=${rmw_implementation}
+      ${SKIP_TEST}
+    )
+    if(TARGET ${target_name})
+      target_link_libraries(${target_name}
+        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
+        ${_AMENT_EXPORT_LIBRARY_TARGETS}
       )
-      if(TARGET ${target_name})
-        target_link_libraries(${target_name}
-          ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-          ${_AMENT_EXPORT_LIBRARY_TARGETS}
-        )
-        add_dependencies(${target_name} ${PROJECT_NAME})
-        ament_target_dependencies(${target_name}
-          "rclcpp"
-          "rmw"
-          "rosidl_typesupport_c"
-          "rosidl_typesupport_cpp"
-          "test_msgs"
-          ${rmw_implementation}
-        )
-        set_tests_properties(
-          ${target_name}
-          PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target_name}>"
-        )
-      endif()
-    else()
-      message(STATUS "skipping serialized pub/sub tests for ${rmw_implementation}")
+      add_dependencies(${target_name} ${PROJECT_NAME})
+      ament_target_dependencies(${target_name}
+        "rclcpp"
+        "rmw"
+        "rosidl_typesupport_c"
+        "rosidl_typesupport_cpp"
+        "test_msgs"
+        ${rmw_implementation}
+      )
+      set_tests_properties(
+        ${target_name}
+        PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target_name}>"
+      )
     endif()
   endmacro()
 
