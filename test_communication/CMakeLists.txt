@@ -315,6 +315,12 @@ if(BUILD_TESTING)
   endif()
 
   macro(serialize)
+    set(SKIP_TEST "")
+    if(${rmw_implementation} STREQUAL "rmw_connext_dynamic_cpp" OR ${rmw_implementation} STREQUAL "rmw_opensplice_cpp")
+      message(STATUS "skipping serialize tests for ${rmw_implementation}")
+      set(SKIP_TEST "SKIP_TEST")
+    endif()
+
     set(serialize_target_name "test_serialize${target}${target_suffix}")
     ament_add_gtest(
       ${serialize_target_name} test/test_message_serialization.cpp
@@ -322,6 +328,7 @@ if(BUILD_TESTING)
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation}
+      ${SKIP_TEST}
     )
     if(TARGET ${serialize_target_name})
       target_link_libraries(${serialize_target_name}
@@ -344,6 +351,11 @@ if(BUILD_TESTING)
   endmacro()
 
   macro(pub_sub_serialized)
+    set(SKIP_TEST "")
+    if(${rmw_implementation} STREQUAL "rmw_connext_dynamic_cpp" OR ${rmw_implementation} STREQUAL "rmw_opensplice_cpp")
+      message(STATUS "skipping serialize tests for ${rmw_implementation}")
+      set(SKIP_TEST "SKIP_TEST")
+    endif()
     set(target_name "test_publisher_subscriber_serialized${target}${target_suffix}")
     ament_add_gtest(
       ${target_name} test/test_publisher_subscriber_serialized.cpp
@@ -351,6 +363,7 @@ if(BUILD_TESTING)
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation}
+      ${SKIP_TEST}
     )
     if(TARGET ${target_name})
       target_link_libraries(${target_name}
