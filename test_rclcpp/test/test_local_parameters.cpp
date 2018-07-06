@@ -129,7 +129,7 @@ public:
           }
           executor.cancel();
         }
-      );
+    );
   }
 
   rclcpp::AsyncParametersClient::SharedPtr parameters_client_;
