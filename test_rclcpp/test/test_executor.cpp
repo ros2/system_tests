@@ -211,7 +211,7 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), notify) {
 
     auto client = node->create_client<test_rclcpp::srv::AddTwoInts>(
       "test_executor_notify_service"
-      );
+    );
     if (!client->wait_for_service(20s)) {
       ASSERT_TRUE(false) << "service not available after waiting";
     }
