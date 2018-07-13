@@ -47,7 +47,7 @@ if(BUILD_TESTING)
   # disable xmllint since it currently fails to pass
   # - the referenced schema are hosted via https which xmllint doesn't support
   # - the xml files don't follow the schema
-  set(ament_xmllint_FOUND TRUE)
+  set(ament_cmake_xmllint_FOUND TRUE)
 
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
