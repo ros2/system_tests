@@ -278,8 +278,13 @@ if(BUILD_TESTING)
       endif()
     endif()
 
-    # TODO(mikaelarguedas) only connext and fastrtps support DDS-Security for now
-    if(rmw_implementation STREQUAL "rmw_connext_cpp" OR rmw_implementation STREQUAL "rmw_fastrtps_cpp")
+    # TODO(mikaelarguedas) only Connext and FastRTPS support DDS-Security for now
+    if(
+      rmw_implementation STREQUAL "rmw_connext_cpp" OR
+      rmw_implementation STREQUAL "rmw_connext_dynamic_cpp" OR
+      rmw_implementation STREQUAL "rmw_fastrtps_cpp" OR
+      rmw_implementation STREQUAL "rmw_fastrtps_dynamic_cpp"
+    )
       custom_security_test_c(test_security_nodes_c
         "test/test_invalid_secure_node_creation_c.cpp")
       security_tests()
