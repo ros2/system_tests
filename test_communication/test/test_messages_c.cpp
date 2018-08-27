@@ -143,7 +143,7 @@ public:
         0,  // number_of_services
         rcl_get_default_allocator());
       EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
-      ret = rcl_wait_set_clear_guard_conditions(&wait_set);
+      ret = rcl_wait_set_clear(&wait_set);
       EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
       const rcl_guard_condition_t * graph_guard_condition =
         rcl_node_get_graph_guard_condition(this->node_ptr);
@@ -191,7 +191,7 @@ public:
           0,  // number_of_services
           rcl_get_default_allocator());
         EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
-        ret = rcl_wait_set_clear_subscriptions(&wait_set);
+        ret = rcl_wait_set_clear(&wait_set);
         EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
         ret = rcl_wait_set_add_subscription(&wait_set, &subscription);
         EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
