@@ -40,6 +40,7 @@ class HelperCommand:
 
         # Execute python files using same python used to start this test
         if command[0][-3:] == '.py':
+            self._command = list(self._command)
             self._command.insert(0, sys.executable)
             self._env['PYTHONUNBUFFERED'] = '1'
 
