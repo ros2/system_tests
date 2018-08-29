@@ -25,6 +25,7 @@ from .utils import TemporaryFileWithContent
 
 CLIENT_LIBRARY_EXECUTABLES = (
     require_environment_variable('INITIAL_PARAMS_RCLCPP'),
+    require_environment_variable('INITIAL_PARAMS_RCLPY'),
 )
 
 

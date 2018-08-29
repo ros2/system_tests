@@ -37,6 +37,7 @@ if(BUILD_TESTING)
     PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
     ENV
       INITIAL_PARAMS_RCLCPP=$<TARGET_FILE:initial_params_rclcpp>
+      INITIAL_PARAMS_RCLPY=${CMAKE_CURRENT_LIST_DIR}/test/initial_params.py
   )
   set_tests_properties(test_params_yaml
     PROPERTIES DEPENDS
