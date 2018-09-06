@@ -43,7 +43,7 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), recursive_spin_call) {
   rclcpp::executors::SingleThreadedExecutor executor;
   auto node = rclcpp::Node::make_shared("recursive_spin_call");
   auto timer = node->create_wall_timer(
-    0s,
+    1mss,
     [&executor]() {
       ASSERT_THROW(executor.spin_some(), std::runtime_error);
       ASSERT_THROW(executor.spin_once(), std::runtime_error);
@@ -70,7 +70,7 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), multithreaded_spin_call) {
       executor.cancel();
     });
   auto timer = node->create_wall_timer(
-    0s,
+    1ms,
     [&m, &cv, &ready]() {
       if (!ready) {
         {
