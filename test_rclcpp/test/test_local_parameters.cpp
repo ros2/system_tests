@@ -430,11 +430,8 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_parameter_or_set_
   {
     // try to get with default a parameter that is already set
     int64_t foo_value = -1;
-    node->get_parameter_or("foo", foo_value, static_cast<int64_t>(42));
+    node->get_parameter_or_set_default("foo", foo_value, static_cast<int64_t>(42));
     ASSERT_EQ(foo_value, 2);
-    int64_t foo_value2 = -1;
-    ASSERT_TRUE(node->get_parameter("foo", foo_value2));
-    ASSERT_EQ(foo_value2, 2);
   }
 
   {
