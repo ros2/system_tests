@@ -54,6 +54,24 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), recursive_spin_call) {
   executor.spin();
 }
 
+TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), spin_some_max_duration) {
+  rclcpp::executors::SingleThreadedExecutor executor;
+  auto node = rclcpp::Node::make_shared("spin_some_max_duration");
+  auto timer = node->create_wall_timer(
+    0s,
+    [&executor]() {
+      // Do nothing
+    });
+  executor.add_node(node);
+
+  const auto max_duration = 10ms;
+  const auto start = std::chrono::steady_clock::now();
+  executor.spin_some(max_duration);
+  const auto end = std::chrono::steady_clock::now();
+  ASSERT_LT(max_duration, end - start);
+  ASSERT_GT(max_duration + 5ms, end - start);
+}
+
 TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), multithreaded_spin_call) {
   rclcpp::executors::SingleThreadedExecutor executor;
   auto node = rclcpp::Node::make_shared("multithreaded_spin_call");
