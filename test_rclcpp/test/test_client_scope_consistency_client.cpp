@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <inttypes.h>
+
 #include <chrono>
 #include <iostream>
 #include <memory>
@@ -71,7 +73,7 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_consistency_reg
         printf("received correct result\n");
         std::cout.flush();
       } else {
-        printf("received incorrect result: %zd\n", result1.get()->sum);
+        printf("received incorrect result: %" PRId64 "\n", result1.get()->sum);
         std::cout.flush();
       }
     } else {
@@ -107,7 +109,7 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_consistency_reg
         printf("received correct result\n");
         std::cout.flush();
       } else {
-        printf("received incorrect result: %zd\n", result2.get()->sum);
+        printf("received incorrect result: %" PRId64 "\n", result2.get()->sum);
         std::cout.flush();
       }
     } else {
