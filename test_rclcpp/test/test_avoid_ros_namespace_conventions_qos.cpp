@@ -62,7 +62,7 @@ TEST(
     };
   // code to do the publish function
   auto publish_func =
-    [&custom_qos](
+    [](
     rclcpp::Publisher<test_rclcpp::msg::UInt32>::SharedPtr publisher,
     test_rclcpp::msg::UInt32::SharedPtr msg)
     {

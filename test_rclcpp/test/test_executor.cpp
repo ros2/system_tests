@@ -59,7 +59,7 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), spin_some_max_duration) {
   auto node = rclcpp::Node::make_shared("spin_some_max_duration");
   auto timer = node->create_wall_timer(
     0s,
-    [&executor]() {
+    []() {
       // Do nothing
     });
   executor.add_node(node);
@@ -113,7 +113,14 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), multiple_executors) {
 
   // Initialize executor 1.
   rclcpp::executors::SingleThreadedExecutor executor1;
-  auto callback1 = [&counter1, &counter_goal, &executor1]() {
+  // I'm not a huge fan of unspecified capture variables in a lambda, but it
+  // is necessary in this case.  On MacOS High Sierra and later, clang
+  // complains if we try to pass "counter_goal" as a specific lambda capture
+  // since it is a const.  On the other hand, MSVC 2017 (19.12.25834.0)
+  // complains if you do *not* have the capture.  To let both compilers be
+  // happy, we just let the compiler figure out the captures it wants; this
+  // is doubly OK because this is just for a test.
+  auto callback1 = [&]() {
       if (counter1 == counter_goal) {
         executor1.cancel();
         return;
@@ -127,7 +134,8 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), multiple_executors) {
   // Initialize executor 2.
   rclcpp::executors::SingleThreadedExecutor executor2;
 
-  auto callback2 = [&counter2, &counter_goal, &executor2]() {
+  // This lambda has the same problem & solution as the callback1 lambda above.
+  auto callback2 = [&]() {
       if (counter2 == counter_goal) {
         executor2.cancel();
         return;
