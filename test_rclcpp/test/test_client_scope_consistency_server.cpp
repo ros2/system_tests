@@ -40,6 +40,7 @@ int main(int argc, char ** argv)
     10,
     RMW_QOS_POLICY_RELIABILITY_RELIABLE,
     RMW_QOS_POLICY_DURABILITY_VOLATILE,
+    false,
     false
   };
   auto service = node->create_service<test_rclcpp::srv::AddTwoInts>(
