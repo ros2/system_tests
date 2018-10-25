@@ -83,6 +83,9 @@ int main(int argc, char ** argv)
   } else if (message == "DynamicArrayPrimitivesNested") {
     publish<test_msgs::msg::DynamicArrayPrimitivesNested>(
       node, message, get_messages_dynamic_array_primitives_nested());
+  } else if (message == "DynamicArrayStaticArrayPrimitivesNested") {
+    publish<test_msgs::msg::DynamicArrayStaticArrayPrimitivesNested>(
+      node, message, get_messages_dynamic_array_static_array_primitives_nested());
   } else if (message == "BoundedArrayPrimitives") {
     publish<test_msgs::msg::BoundedArrayPrimitives>(
       node, message, get_messages_bounded_array_primitives());
