@@ -127,9 +127,13 @@ if(BUILD_TESTING)
     list(LENGTH not_connecting_PUBLISHER_ROS_SECURITY_ENABLE_LIST n_not_connecting_tests)
 
     foreach(message_file ${message_files})
+      get_filename_component(TEST_MESSAGE_NS "${message_file}" DIRECTORY)
+      get_filename_component(TEST_MESSAGE_NS "${TEST_MESSAGE_NS}" NAME)
       get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
       # TODO(mikaelarguedas) test only few message types to avoid taking to much test time
-      if(TEST_MESSAGE_TYPE STREQUAL "Empty" OR TEST_MESSAGE_TYPE STREQUAL "DynamicArrayNested")
+      if(TEST_MESSAGE_NS STREQUAL "msg" AND (
+        TEST_MESSAGE_TYPE STREQUAL "Empty" OR
+        TEST_MESSAGE_TYPE STREQUAL "DynamicArrayNested"))
         set(index 0)
         # configure all non secure communication tests
         set(SUBSCRIBER_SHOULD_TIMEOUT "false")
