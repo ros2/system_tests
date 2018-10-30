@@ -28,6 +28,11 @@ if(BUILD_TESTING)
   set(message_files "")
   set(service_files "")
   foreach(interface_file ${interface_files})
+    get_filename_component(interface_ns "${interface_file}" DIRECTORY)
+    get_filename_component(interface_ns "${interface_ns}" NAME)
+    if(interface_ns STREQUAL "action")
+      continue()
+    endif()
     string_ends_with("${interface_file}" ".msg" is_message)
     if(is_message)
       list(APPEND message_files "${interface_file}")
@@ -70,11 +75,9 @@ if(BUILD_TESTING)
     if(with_message_argument)
       # adding test for each message type
       foreach(message_file ${message_files})
-        get_filename_component(TEST_MESSAGE_NS "${message_file}" DIRECTORY)
-        get_filename_component(TEST_MESSAGE_NS "${TEST_MESSAGE_NS}" NAME)
         get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
         ament_add_test(
-          "${target}${target_suffix}__${TEST_MESSAGE_NS}_${TEST_MESSAGE_TYPE}"
+          "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
           COMMAND "$<TARGET_FILE:${target}>" "${TEST_MESSAGE_TYPE}"
           TIMEOUT 15
           GENERATE_RESULT_FOR_RETURN_CODE_ZERO
@@ -83,7 +86,7 @@ if(BUILD_TESTING)
           RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
           RMW_IMPLEMENTATION=${rmw_implementation})
         set_tests_properties(
-          "${target}${target_suffix}__${TEST_MESSAGE_NS}_${TEST_MESSAGE_TYPE}"
+          "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
           PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}>"
         )
       endforeach()
@@ -146,11 +149,9 @@ if(BUILD_TESTING)
     set(PUBLISHER_RMW ${rmw_implementation1})
     set(SUBSCRIBER_RMW ${rmw_implementation2})
     foreach(message_file ${message_files})
-      get_filename_component(TEST_MESSAGE_NS "${message_file}" DIRECTORY)
-      get_filename_component(TEST_MESSAGE_NS "${TEST_MESSAGE_NS}" NAME)
       get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
 
-      set(test_suffix "__${TEST_MESSAGE_NS}__${TEST_MESSAGE_TYPE}${suffix}")
+      set(test_suffix "__${TEST_MESSAGE_TYPE}${suffix}")
       configure_file(
         test/test_publisher_subscriber.py.in
         test_publisher_subscriber${test_suffix}.py.configured
@@ -195,10 +196,8 @@ if(BUILD_TESTING)
     set(REQUESTER_RMW ${rmw_implementation1})
     set(REPLIER_RMW ${rmw_implementation2})
     foreach(service_file ${service_files})
-      get_filename_component(TEST_SERVICE_NS "${service_file}" DIRECTORY)
-      get_filename_component(TEST_SERVICE_NS "${TEST_SERVICE_NS}" NAME)
       get_filename_component(TEST_SERVICE_TYPE "${service_file}" NAME_WE)
-      set(test_suffix "__${TEST_SERVICE_NS}__${TEST_SERVICE_TYPE}${suffix}")
+      set(test_suffix "__${TEST_SERVICE_TYPE}${suffix}")
       configure_file(
         test/test_requester_replier.py.in
         test_requester_replier${test_suffix}.py.configured
