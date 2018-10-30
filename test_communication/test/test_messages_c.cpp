@@ -88,22 +88,22 @@ public:
   {
     rcl_ret_t ret;
     ret = rcl_init(0, nullptr, rcl_get_default_allocator());
-    ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+    ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
     this->node_ptr = new rcl_node_t;
     *this->node_ptr = rcl_get_zero_initialized_node();
     const char * name = "node_name";
     rcl_node_options_t node_options = rcl_node_get_default_options();
     ret = rcl_node_init(this->node_ptr, name, "", &node_options);
-    ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+    ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
   }
 
   void TearDown()
   {
     rcl_ret_t ret = rcl_node_fini(this->node_ptr);
     delete this->node_ptr;
-    EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+    EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
     ret = rcl_shutdown();
-    EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+    EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
   }
   template<typename MessageT>
   void test_message_type(const char * topic_name, const rosidl_message_type_support_t * ts)
@@ -113,27 +113,27 @@ public:
 
     rcl_publisher_options_t publisher_options = rcl_publisher_get_default_options();
     ret = rcl_publisher_init(&publisher, this->node_ptr, ts, topic_name, &publisher_options);
-    ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+    ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
     auto publisher_exit = make_scope_exit(
       [&publisher, this]() {
         rcl_ret_t ret = rcl_publisher_fini(&publisher, this->node_ptr);
-        EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+        EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
       });
     rcl_subscription_t subscription = rcl_get_zero_initialized_subscription();
     rcl_subscription_options_t subscription_options = rcl_subscription_get_default_options();
     ret = rcl_subscription_init(
       &subscription, this->node_ptr, ts, topic_name, &subscription_options);
-    ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+    ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
     auto subscription_exit = make_scope_exit(
       [&subscription, this]() {
         rcl_ret_t ret = rcl_subscription_fini(&subscription, this->node_ptr);
-        EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+        EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
       });
-    EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+    EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
 
     {
       rcl_wait_set_t wait_set = rcl_get_zero_initialized_wait_set();
-      EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+      EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
       ret = rcl_wait_set_init(
         &wait_set,
         0,  // number_of_subscriptions
@@ -142,16 +142,16 @@ public:
         0,  // number_of_clients
         0,  // number_of_services
         rcl_get_default_allocator());
-      EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+      EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
       ret = rcl_wait_set_clear(&wait_set);
-      EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+      EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
       const rcl_guard_condition_t * graph_guard_condition =
         rcl_node_get_graph_guard_condition(this->node_ptr);
       ret = rcl_wait_set_add_guard_condition(
         &wait_set, graph_guard_condition);
-      EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+      EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
       ret = rcl_wait(&wait_set, -1);
-      ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+      ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
     }
 
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
@@ -165,7 +165,7 @@ public:
             fini_message(&message);
           });
         ret = rcl_publish(&publisher, &message);
-        ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+        ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
       }
     }
 
@@ -181,7 +181,7 @@ public:
           });
 
         rcl_wait_set_t wait_set = rcl_get_zero_initialized_wait_set();
-        EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+        EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
         ret = rcl_wait_set_init(
           &wait_set,
           1,  // number_of_subscriptions
@@ -190,15 +190,15 @@ public:
           0,  // number_of_clients
           0,  // number_of_services
           rcl_get_default_allocator());
-        EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+        EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
         ret = rcl_wait_set_clear(&wait_set);
-        EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+        EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
         ret = rcl_wait_set_add_subscription(&wait_set, &subscription);
-        EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+        EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
         ret = rcl_wait(&wait_set, -1);
-        ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+        ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
         ret = rcl_take(&subscription, &message, nullptr);
-        ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string_safe();
+        ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
         verify_message(message, msg_cnt);
       }
     }
