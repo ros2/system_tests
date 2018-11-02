@@ -57,7 +57,7 @@ void print_serialized_buffer(
 void fill_c_message(test_msgs__msg__BoundedArrayNested * bounded_array_nested_msg_c)
 {
   test_msgs__msg__BoundedArrayNested__init(bounded_array_nested_msg_c);
-  test_msgs__msg__Primitives__Array__init(&bounded_array_nested_msg_c->primitive_values, 1);
+  test_msgs__msg__Primitives__Sequence__init(&bounded_array_nested_msg_c->primitive_values, 1);
   bounded_array_nested_msg_c->primitive_values.data[0].bool_value = true;
   bounded_array_nested_msg_c->primitive_values.data[0].byte_value = 255;
   bounded_array_nested_msg_c->primitive_values.data[0].char_value = 'k';

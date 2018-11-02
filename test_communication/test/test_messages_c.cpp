@@ -39,7 +39,7 @@
 #include "test_msgs/msg/builtins.h"
 
 #include "rosidl_generator_c/string_functions.h"
-#include "rosidl_generator_c/primitives_array_functions.h"
+#include "rosidl_generator_c/primitives_sequence_functions.h"
 #include "rosidl_generator_c/message_type_support_struct.h"
 #include "rcl/error_handling.h"
 
@@ -583,37 +583,37 @@ void get_message(test_msgs__msg__DynamicArrayPrimitives * msg, size_t msg_num)
   const size_t size = 2000;
   switch (msg_num) {
     case 0:
-      rosidl_generator_c__bool__Array__init(&msg->bool_values, 0);
-      rosidl_generator_c__byte__Array__init(&msg->byte_values, 0);
-      rosidl_generator_c__char__Array__init(&msg->char_values, 0);
-      rosidl_generator_c__float32__Array__init(&msg->float32_values, 0);
-      rosidl_generator_c__float64__Array__init(&msg->float64_values, 0);
-      rosidl_generator_c__int8__Array__init(&msg->int8_values, 0);
-      rosidl_generator_c__uint8__Array__init(&msg->uint8_values, 0);
-      rosidl_generator_c__int16__Array__init(&msg->int16_values, 0);
-      rosidl_generator_c__uint16__Array__init(&msg->uint16_values, 0);
-      rosidl_generator_c__int32__Array__init(&msg->int32_values, 0);
-      rosidl_generator_c__uint32__Array__init(&msg->uint32_values, 0);
-      rosidl_generator_c__int64__Array__init(&msg->int64_values, 0);
-      rosidl_generator_c__uint64__Array__init(&msg->uint64_values, 0);
-      rosidl_generator_c__String__Array__init(&msg->string_values, 0);
+      rosidl_generator_c__bool__Sequence__init(&msg->bool_values, 0);
+      rosidl_generator_c__byte__Sequence__init(&msg->byte_values, 0);
+      rosidl_generator_c__char__Sequence__init(&msg->char_values, 0);
+      rosidl_generator_c__float32__Sequence__init(&msg->float32_values, 0);
+      rosidl_generator_c__float64__Sequence__init(&msg->float64_values, 0);
+      rosidl_generator_c__int8__Sequence__init(&msg->int8_values, 0);
+      rosidl_generator_c__uint8__Sequence__init(&msg->uint8_values, 0);
+      rosidl_generator_c__int16__Sequence__init(&msg->int16_values, 0);
+      rosidl_generator_c__uint16__Sequence__init(&msg->uint16_values, 0);
+      rosidl_generator_c__int32__Sequence__init(&msg->int32_values, 0);
+      rosidl_generator_c__uint32__Sequence__init(&msg->uint32_values, 0);
+      rosidl_generator_c__int64__Sequence__init(&msg->int64_values, 0);
+      rosidl_generator_c__uint64__Sequence__init(&msg->uint64_values, 0);
+      rosidl_generator_c__String__Sequence__init(&msg->string_values, 0);
       msg->check = 0;
       break;
     case 1:
-      rosidl_generator_c__bool__Array__init(&msg->bool_values, 1);
-      rosidl_generator_c__byte__Array__init(&msg->byte_values, 1);
-      rosidl_generator_c__char__Array__init(&msg->char_values, 1);
-      rosidl_generator_c__float32__Array__init(&msg->float32_values, 1);
-      rosidl_generator_c__float64__Array__init(&msg->float64_values, 1);
-      rosidl_generator_c__int8__Array__init(&msg->int8_values, 1);
-      rosidl_generator_c__uint8__Array__init(&msg->uint8_values, 1);
-      rosidl_generator_c__int16__Array__init(&msg->int16_values, 1);
-      rosidl_generator_c__uint16__Array__init(&msg->uint16_values, 1);
-      rosidl_generator_c__int32__Array__init(&msg->int32_values, 1);
-      rosidl_generator_c__uint32__Array__init(&msg->uint32_values, 1);
-      rosidl_generator_c__int64__Array__init(&msg->int64_values, 1);
-      rosidl_generator_c__uint64__Array__init(&msg->uint64_values, 1);
-      rosidl_generator_c__String__Array__init(&msg->string_values, 1);
+      rosidl_generator_c__bool__Sequence__init(&msg->bool_values, 1);
+      rosidl_generator_c__byte__Sequence__init(&msg->byte_values, 1);
+      rosidl_generator_c__char__Sequence__init(&msg->char_values, 1);
+      rosidl_generator_c__float32__Sequence__init(&msg->float32_values, 1);
+      rosidl_generator_c__float64__Sequence__init(&msg->float64_values, 1);
+      rosidl_generator_c__int8__Sequence__init(&msg->int8_values, 1);
+      rosidl_generator_c__uint8__Sequence__init(&msg->uint8_values, 1);
+      rosidl_generator_c__int16__Sequence__init(&msg->int16_values, 1);
+      rosidl_generator_c__uint16__Sequence__init(&msg->uint16_values, 1);
+      rosidl_generator_c__int32__Sequence__init(&msg->int32_values, 1);
+      rosidl_generator_c__uint32__Sequence__init(&msg->uint32_values, 1);
+      rosidl_generator_c__int64__Sequence__init(&msg->int64_values, 1);
+      rosidl_generator_c__uint64__Sequence__init(&msg->uint64_values, 1);
+      rosidl_generator_c__String__Sequence__init(&msg->string_values, 1);
 
       msg->bool_values.data[0] = true;
       msg->byte_values.data[0] = 0xff;
@@ -632,20 +632,20 @@ void get_message(test_msgs__msg__DynamicArrayPrimitives * msg, size_t msg_num)
       msg->check = 1;
       break;
     case 2:
-      rosidl_generator_c__bool__Array__init(&msg->bool_values, 2);
-      rosidl_generator_c__byte__Array__init(&msg->byte_values, 2);
-      rosidl_generator_c__char__Array__init(&msg->char_values, 2);
-      rosidl_generator_c__float32__Array__init(&msg->float32_values, 3);
-      rosidl_generator_c__float64__Array__init(&msg->float64_values, 3);
-      rosidl_generator_c__int8__Array__init(&msg->int8_values, 3);
-      rosidl_generator_c__uint8__Array__init(&msg->uint8_values, 2);
-      rosidl_generator_c__int16__Array__init(&msg->int16_values, 3);
-      rosidl_generator_c__uint16__Array__init(&msg->uint16_values, 2);
-      rosidl_generator_c__int32__Array__init(&msg->int32_values, 3);
-      rosidl_generator_c__uint32__Array__init(&msg->uint32_values, 2);
-      rosidl_generator_c__int64__Array__init(&msg->int64_values, 3);
-      rosidl_generator_c__uint64__Array__init(&msg->uint64_values, 2);
-      rosidl_generator_c__String__Array__init(&msg->string_values, 3);
+      rosidl_generator_c__bool__Sequence__init(&msg->bool_values, 2);
+      rosidl_generator_c__byte__Sequence__init(&msg->byte_values, 2);
+      rosidl_generator_c__char__Sequence__init(&msg->char_values, 2);
+      rosidl_generator_c__float32__Sequence__init(&msg->float32_values, 3);
+      rosidl_generator_c__float64__Sequence__init(&msg->float64_values, 3);
+      rosidl_generator_c__int8__Sequence__init(&msg->int8_values, 3);
+      rosidl_generator_c__uint8__Sequence__init(&msg->uint8_values, 2);
+      rosidl_generator_c__int16__Sequence__init(&msg->int16_values, 3);
+      rosidl_generator_c__uint16__Sequence__init(&msg->uint16_values, 2);
+      rosidl_generator_c__int32__Sequence__init(&msg->int32_values, 3);
+      rosidl_generator_c__uint32__Sequence__init(&msg->uint32_values, 2);
+      rosidl_generator_c__int64__Sequence__init(&msg->int64_values, 3);
+      rosidl_generator_c__uint64__Sequence__init(&msg->uint64_values, 2);
+      rosidl_generator_c__String__Sequence__init(&msg->string_values, 3);
 
       msg->bool_values.data[0] = false;
       msg->bool_values.data[1] = true;
@@ -685,20 +685,20 @@ void get_message(test_msgs__msg__DynamicArrayPrimitives * msg, size_t msg_num)
       msg->check = 2;
       break;
     case 3:
-      rosidl_generator_c__bool__Array__init(&msg->bool_values, size);
-      rosidl_generator_c__byte__Array__init(&msg->byte_values, size);
-      rosidl_generator_c__char__Array__init(&msg->char_values, size);
-      rosidl_generator_c__float32__Array__init(&msg->float32_values, size);
-      rosidl_generator_c__float64__Array__init(&msg->float64_values, size);
-      rosidl_generator_c__int8__Array__init(&msg->int8_values, size);
-      rosidl_generator_c__uint8__Array__init(&msg->uint8_values, size);
-      rosidl_generator_c__int16__Array__init(&msg->int16_values, size);
-      rosidl_generator_c__uint16__Array__init(&msg->uint16_values, size);
-      rosidl_generator_c__int32__Array__init(&msg->int32_values, size);
-      rosidl_generator_c__uint32__Array__init(&msg->uint32_values, size);
-      rosidl_generator_c__int64__Array__init(&msg->int64_values, size);
-      rosidl_generator_c__uint64__Array__init(&msg->uint64_values, size);
-      rosidl_generator_c__String__Array__init(&msg->string_values, size);
+      rosidl_generator_c__bool__Sequence__init(&msg->bool_values, size);
+      rosidl_generator_c__byte__Sequence__init(&msg->byte_values, size);
+      rosidl_generator_c__char__Sequence__init(&msg->char_values, size);
+      rosidl_generator_c__float32__Sequence__init(&msg->float32_values, size);
+      rosidl_generator_c__float64__Sequence__init(&msg->float64_values, size);
+      rosidl_generator_c__int8__Sequence__init(&msg->int8_values, size);
+      rosidl_generator_c__uint8__Sequence__init(&msg->uint8_values, size);
+      rosidl_generator_c__int16__Sequence__init(&msg->int16_values, size);
+      rosidl_generator_c__uint16__Sequence__init(&msg->uint16_values, size);
+      rosidl_generator_c__int32__Sequence__init(&msg->int32_values, size);
+      rosidl_generator_c__uint32__Sequence__init(&msg->uint32_values, size);
+      rosidl_generator_c__int64__Sequence__init(&msg->int64_values, size);
+      rosidl_generator_c__uint64__Sequence__init(&msg->uint64_values, size);
+      rosidl_generator_c__String__Sequence__init(&msg->string_values, size);
 
       for (size_t i = 0; i < size; ++i) {
         msg->bool_values.data[i] = (i % 2 != 0) ? true : false;
@@ -724,20 +724,20 @@ void get_message(test_msgs__msg__DynamicArrayPrimitives * msg, size_t msg_num)
       msg->check = 3;
       break;
     case 4:
-      rosidl_generator_c__bool__Array__init(&msg->bool_values, 0);
-      rosidl_generator_c__byte__Array__init(&msg->byte_values, 0);
-      rosidl_generator_c__char__Array__init(&msg->char_values, 0);
-      rosidl_generator_c__float32__Array__init(&msg->float32_values, 0);
-      rosidl_generator_c__float64__Array__init(&msg->float64_values, 0);
-      rosidl_generator_c__int8__Array__init(&msg->int8_values, 0);
-      rosidl_generator_c__uint8__Array__init(&msg->uint8_values, 0);
-      rosidl_generator_c__int16__Array__init(&msg->int16_values, 0);
-      rosidl_generator_c__uint16__Array__init(&msg->uint16_values, 0);
-      rosidl_generator_c__int32__Array__init(&msg->int32_values, 0);
-      rosidl_generator_c__uint32__Array__init(&msg->uint32_values, 0);
-      rosidl_generator_c__int64__Array__init(&msg->int64_values, 0);
-      rosidl_generator_c__uint64__Array__init(&msg->uint64_values, 0);
-      rosidl_generator_c__String__Array__init(&msg->string_values, 0);
+      rosidl_generator_c__bool__Sequence__init(&msg->bool_values, 0);
+      rosidl_generator_c__byte__Sequence__init(&msg->byte_values, 0);
+      rosidl_generator_c__char__Sequence__init(&msg->char_values, 0);
+      rosidl_generator_c__float32__Sequence__init(&msg->float32_values, 0);
+      rosidl_generator_c__float64__Sequence__init(&msg->float64_values, 0);
+      rosidl_generator_c__int8__Sequence__init(&msg->int8_values, 0);
+      rosidl_generator_c__uint8__Sequence__init(&msg->uint8_values, 0);
+      rosidl_generator_c__int16__Sequence__init(&msg->int16_values, 0);
+      rosidl_generator_c__uint16__Sequence__init(&msg->uint16_values, 0);
+      rosidl_generator_c__int32__Sequence__init(&msg->int32_values, 0);
+      rosidl_generator_c__uint32__Sequence__init(&msg->uint32_values, 0);
+      rosidl_generator_c__int64__Sequence__init(&msg->int64_values, 0);
+      rosidl_generator_c__uint64__Sequence__init(&msg->uint64_values, 0);
+      rosidl_generator_c__String__Sequence__init(&msg->string_values, 0);
       msg->check = 4;
       break;
   }
@@ -833,7 +833,7 @@ void get_message(test_msgs__msg__DynamicArrayNested * msg, size_t msg_num)
   test_msgs__msg__Primitives submsg;
   const size_t size = get_message_num(&submsg);
   test_msgs__msg__DynamicArrayNested__init(msg);
-  test_msgs__msg__Primitives__Array__init(&msg->primitive_values, size);
+  test_msgs__msg__Primitives__Sequence__init(&msg->primitive_values, size);
   switch (msg_num) {
     case 0:
       for (size_t i = 0; i < size; ++i) {
@@ -909,20 +909,20 @@ void get_message(test_msgs__msg__BoundedArrayPrimitives * msg, size_t msg_num)
   test_msgs__msg__BoundedArrayPrimitives__init(msg);
   switch (msg_num) {
     case 0:
-      rosidl_generator_c__bool__Array__init(&msg->bool_values, 3);
-      rosidl_generator_c__byte__Array__init(&msg->byte_values, 3);
-      rosidl_generator_c__char__Array__init(&msg->char_values, 3);
-      rosidl_generator_c__float32__Array__init(&msg->float32_values, 3);
-      rosidl_generator_c__float64__Array__init(&msg->float64_values, 3);
-      rosidl_generator_c__int8__Array__init(&msg->int8_values, 3);
-      rosidl_generator_c__uint8__Array__init(&msg->uint8_values, 3);
-      rosidl_generator_c__int16__Array__init(&msg->int16_values, 3);
-      rosidl_generator_c__uint16__Array__init(&msg->uint16_values, 3);
-      rosidl_generator_c__int32__Array__init(&msg->int32_values, 3);
-      rosidl_generator_c__uint32__Array__init(&msg->uint32_values, 3);
-      rosidl_generator_c__int64__Array__init(&msg->int64_values, 3);
-      rosidl_generator_c__uint64__Array__init(&msg->uint64_values, 3);
-      rosidl_generator_c__String__Array__init(&msg->string_values, 3);
+      rosidl_generator_c__bool__Sequence__init(&msg->bool_values, 3);
+      rosidl_generator_c__byte__Sequence__init(&msg->byte_values, 3);
+      rosidl_generator_c__char__Sequence__init(&msg->char_values, 3);
+      rosidl_generator_c__float32__Sequence__init(&msg->float32_values, 3);
+      rosidl_generator_c__float64__Sequence__init(&msg->float64_values, 3);
+      rosidl_generator_c__int8__Sequence__init(&msg->int8_values, 3);
+      rosidl_generator_c__uint8__Sequence__init(&msg->uint8_values, 3);
+      rosidl_generator_c__int16__Sequence__init(&msg->int16_values, 3);
+      rosidl_generator_c__uint16__Sequence__init(&msg->uint16_values, 3);
+      rosidl_generator_c__int32__Sequence__init(&msg->int32_values, 3);
+      rosidl_generator_c__uint32__Sequence__init(&msg->uint32_values, 3);
+      rosidl_generator_c__int64__Sequence__init(&msg->int64_values, 3);
+      rosidl_generator_c__uint64__Sequence__init(&msg->uint64_values, 3);
+      rosidl_generator_c__String__Sequence__init(&msg->string_values, 3);
 
       msg->bool_values.data[0] = false;
       msg->bool_values.data[1] = true;
@@ -969,20 +969,20 @@ void get_message(test_msgs__msg__BoundedArrayPrimitives * msg, size_t msg_num)
       msg->check = 2;
       break;
     case 1:
-      rosidl_generator_c__bool__Array__init(&msg->bool_values, 0);
-      rosidl_generator_c__byte__Array__init(&msg->byte_values, 0);
-      rosidl_generator_c__char__Array__init(&msg->char_values, 0);
-      rosidl_generator_c__float32__Array__init(&msg->float32_values, 0);
-      rosidl_generator_c__float64__Array__init(&msg->float64_values, 0);
-      rosidl_generator_c__int8__Array__init(&msg->int8_values, 0);
-      rosidl_generator_c__uint8__Array__init(&msg->uint8_values, 0);
-      rosidl_generator_c__int16__Array__init(&msg->int16_values, 0);
-      rosidl_generator_c__uint16__Array__init(&msg->uint16_values, 0);
-      rosidl_generator_c__int32__Array__init(&msg->int32_values, 0);
-      rosidl_generator_c__uint32__Array__init(&msg->uint32_values, 0);
-      rosidl_generator_c__int64__Array__init(&msg->int64_values, 0);
-      rosidl_generator_c__uint64__Array__init(&msg->uint64_values, 0);
-      rosidl_generator_c__String__Array__init(&msg->string_values, 0);
+      rosidl_generator_c__bool__Sequence__init(&msg->bool_values, 0);
+      rosidl_generator_c__byte__Sequence__init(&msg->byte_values, 0);
+      rosidl_generator_c__char__Sequence__init(&msg->char_values, 0);
+      rosidl_generator_c__float32__Sequence__init(&msg->float32_values, 0);
+      rosidl_generator_c__float64__Sequence__init(&msg->float64_values, 0);
+      rosidl_generator_c__int8__Sequence__init(&msg->int8_values, 0);
+      rosidl_generator_c__uint8__Sequence__init(&msg->uint8_values, 0);
+      rosidl_generator_c__int16__Sequence__init(&msg->int16_values, 0);
+      rosidl_generator_c__uint16__Sequence__init(&msg->uint16_values, 0);
+      rosidl_generator_c__int32__Sequence__init(&msg->int32_values, 0);
+      rosidl_generator_c__uint32__Sequence__init(&msg->uint32_values, 0);
+      rosidl_generator_c__int64__Sequence__init(&msg->int64_values, 0);
+      rosidl_generator_c__uint64__Sequence__init(&msg->uint64_values, 0);
+      rosidl_generator_c__String__Sequence__init(&msg->string_values, 0);
       msg->check = 4;
       break;
   }
@@ -1079,7 +1079,7 @@ void get_message(test_msgs__msg__BoundedArrayNested * msg, size_t msg_num)
   test_msgs__msg__Primitives submsg;
   const size_t size = get_message_num(&submsg);
   test_msgs__msg__BoundedArrayNested__init(msg);
-  test_msgs__msg__Primitives__Array__init(&msg->primitive_values, size);
+  test_msgs__msg__Primitives__Sequence__init(&msg->primitive_values, size);
   switch (msg_num) {
     case 0:
       for (size_t i = 0; i < size; ++i) {
@@ -1155,7 +1155,8 @@ void get_message(test_msgs__msg__DynamicArrayPrimitivesNested * msg, size_t msg_
   test_msgs__msg__DynamicArrayPrimitives submsg;
   const size_t size = get_message_num(&submsg);
   test_msgs__msg__DynamicArrayPrimitivesNested__init(msg);
-  test_msgs__msg__DynamicArrayPrimitives__Array__init(&msg->dynamic_array_primitive_values, size);
+  test_msgs__msg__DynamicArrayPrimitives__Sequence__init(
+    &msg->dynamic_array_primitive_values, size);
   switch (msg_num) {
     case 0:
       for (size_t i = 0; i < size; ++i) {
