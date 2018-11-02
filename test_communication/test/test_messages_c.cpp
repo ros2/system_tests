@@ -39,7 +39,7 @@
 #include "test_msgs/msg/builtins.h"
 
 #include "rosidl_generator_c/string_functions.h"
-#include "rosidl_generator_c/primitives_array_functions.h"
+#include "rosidl_generator_c/primitives_sequence_functions.h"
 #include "rosidl_generator_c/message_type_support_struct.h"
 #include "rcl/error_handling.h"
 
