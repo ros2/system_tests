@@ -10,7 +10,10 @@ from launch.legacy.launcher import DefaultLauncher
 
 
 def test_secure_publisher_subscriber():
-    namespace = '/test_time_%s' % time.strftime('%H_%M_%S', time.gmtime())
+    # TODO Timestamping tests via the node's namespace is no longer appropriate,
+    # given the FQN is used to lookup security artifacts from secure root directory.
+    # namespace = '/test_time_%s' % time.strftime('%H_%M_%S', time.gmtime())
+    namespace = '/'
 
     ld = LaunchDescriptor()
     publisher_cmd = [
