@@ -121,11 +121,13 @@ int main(int argc, char ** argv)
   auto messages_empty = get_messages_empty();
   auto messages_primitives = get_messages_primitives();
   auto messages_static_array_primitives = get_messages_static_array_primitives();
+  auto messages_static_array_primitives_nested = get_messages_static_array_primitives_nested();
   auto messages_dynamic_array_primitives = get_messages_dynamic_array_primitives();
   auto messages_dynamic_array_primitives_nested = get_messages_dynamic_array_primitives_nested();
   auto messages_dynamic_array_static_array_primitives_nested =
     get_messages_dynamic_array_static_array_primitives_nested();
   auto messages_bounded_array_primitives = get_messages_bounded_array_primitives();
+  auto messages_bounded_array_primitives_nested = get_messages_bounded_array_primitives_nested();
   auto messages_nested = get_messages_nested();
   auto messages_dynamic_array_nested = get_messages_dynamic_array_nested();
   auto messages_bounded_array_nested = get_messages_bounded_array_nested();
@@ -145,6 +147,11 @@ int main(int argc, char ** argv)
       node, message, messages_static_array_primitives, received_messages);
     publish<test_msgs::msg::StaticArrayPrimitives>(node, message,
       messages_static_array_primitives);
+  } else if (message == "StaticArrayPrimitivesNested") {
+    subscriber = subscribe<test_msgs::msg::StaticArrayPrimitivesNested>(
+      node, message, messages_static_array_primitives_nested, received_messages);
+    publish<test_msgs::msg::StaticArrayPrimitivesNested>(node, message,
+      messages_static_array_primitives_nested);
   } else if (message == "DynamicArrayPrimitives") {
     subscriber = subscribe<test_msgs::msg::DynamicArrayPrimitives>(
       node, message, messages_dynamic_array_primitives, received_messages);
@@ -165,6 +172,11 @@ int main(int argc, char ** argv)
       node, message, messages_bounded_array_primitives, received_messages);
     publish<test_msgs::msg::BoundedArrayPrimitives>(node, message,
       messages_bounded_array_primitives);
+  } else if (message == "BoundedArrayPrimitivesNested") {
+    subscriber = subscribe<test_msgs::msg::BoundedArrayPrimitivesNested>(
+      node, message, messages_bounded_array_primitives_nested, received_messages);
+    publish<test_msgs::msg::BoundedArrayPrimitivesNested>(node, message,
+      messages_bounded_array_primitives_nested);
   } else if (message == "Nested") {
     subscriber = subscribe<test_msgs::msg::Nested>(
       node, message, messages_nested, received_messages);
