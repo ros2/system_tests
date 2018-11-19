@@ -148,7 +148,7 @@ public:
       const rcl_guard_condition_t * graph_guard_condition =
         rcl_node_get_graph_guard_condition(this->node_ptr);
       ret = rcl_wait_set_add_guard_condition(
-        &wait_set, graph_guard_condition);
+        &wait_set, graph_guard_condition, NULL);
       EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
       ret = rcl_wait(&wait_set, -1);
       ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
@@ -193,7 +193,7 @@ public:
         EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
         ret = rcl_wait_set_clear(&wait_set);
         EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
-        ret = rcl_wait_set_add_subscription(&wait_set, &subscription);
+        ret = rcl_wait_set_add_subscription(&wait_set, &subscription, NULL);
         EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
         ret = rcl_wait(&wait_set, -1);
         ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
