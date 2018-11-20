@@ -21,6 +21,7 @@ ament_auto_find_build_dependencies()
 if(BUILD_TESTING)
   find_package(ament_cmake REQUIRED)
   find_package(test_msgs REQUIRED)
+  find_package(osrf_testing_tools_cpp REQUIRED)
 
   ament_index_get_resource(interface_files "rosidl_interfaces" "test_msgs")
   string(REPLACE "\n" ";" interface_files "${interface_files}")
@@ -124,6 +125,9 @@ if(BUILD_TESTING)
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation})
     if(TARGET ${target}${target_suffix})
+      target_include_directories(${target}${target_suffix}
+        PUBLIC ${osrf_testing_tools_cpp_INCLUDE_DIRS}
+      )
       target_link_libraries(${target}${target_suffix}
         ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
         ${_AMENT_EXPORT_LIBRARY_TARGETS})
