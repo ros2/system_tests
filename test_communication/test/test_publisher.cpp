@@ -77,6 +77,9 @@ int main(int argc, char ** argv)
   } else if (message == "StaticArrayPrimitives") {
     publish<test_msgs::msg::StaticArrayPrimitives>(
       node, message, get_messages_static_array_primitives());
+  } else if (message == "StaticArrayPrimitivesNested") {
+    publish<test_msgs::msg::StaticArrayPrimitivesNested>(
+      node, message, get_messages_static_array_primitives_nested());
   } else if (message == "DynamicArrayPrimitives") {
     publish<test_msgs::msg::DynamicArrayPrimitives>(
       node, message, get_messages_dynamic_array_primitives());
@@ -89,6 +92,9 @@ int main(int argc, char ** argv)
   } else if (message == "BoundedArrayPrimitives") {
     publish<test_msgs::msg::BoundedArrayPrimitives>(
       node, message, get_messages_bounded_array_primitives());
+  } else if (message == "BoundedArrayPrimitivesNested") {
+    publish<test_msgs::msg::BoundedArrayPrimitivesNested>(
+      node, message, get_messages_bounded_array_primitives_nested());
   } else if (message == "Nested") {
     publish<test_msgs::msg::Nested>(node, message, get_messages_nested());
   } else if (message == "DynamicArrayNested") {
