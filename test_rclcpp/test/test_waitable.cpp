@@ -14,6 +14,7 @@
 
 #include <chrono>
 #include <future>
+#include <memory>
 
 #include "gtest/gtest.h"
 
@@ -27,12 +28,12 @@
 #endif
 
 
-class WaitableWithTimer: public rclcpp::Waitable
+class WaitableWithTimer : public rclcpp::Waitable
 {
 public:
   RCLCPP_SMART_PTR_DEFINITIONS_NOT_COPYABLE(WaitableWithTimer)
 
-  WaitableWithTimer(rclcpp::Clock::SharedPtr clock)
+  explicit WaitableWithTimer(rclcpp::Clock::SharedPtr clock)
   {
     size_t period_nanoseconds = 100000;
 
@@ -40,7 +41,7 @@ public:
     *timer_ = rcl_get_zero_initialized_timer();
     rcl_clock_t * clock_handle = clock->get_clock_handle();
     rcl_ret_t ret = rcl_timer_init(timer_.get(), clock_handle, period_nanoseconds, nullptr,
-      rcl_get_default_allocator());
+        rcl_get_default_allocator());
     if (RCL_RET_OK != ret) {
       throw std::runtime_error("failed to create timer");
     }
