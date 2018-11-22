@@ -190,6 +190,9 @@ if(BUILD_TESTING)
     custom_gtest(gtest_services_in_constructor
       "test/test_services_in_constructor.cpp"
       TIMEOUT 30)
+    custom_gtest(gtest_waitable
+      "test/test_waitable.cpp"
+      TIMEOUT 30)
 
     # Parameter tests single implementation
     custom_launch_test_two_executables(test_parameter_server_cpp
