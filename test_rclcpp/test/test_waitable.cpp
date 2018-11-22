@@ -70,7 +70,7 @@ public:
   is_ready(rcl_wait_set_t * wait_set) override
   {
     if (timer_idx_ < wait_set->size_of_timers) {
-      return nullptr == wait_set->timers[timer_idx_];
+      return nullptr != wait_set->timers[timer_idx_];
     }
     return false;
   }
