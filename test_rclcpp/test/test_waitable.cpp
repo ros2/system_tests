@@ -47,18 +47,15 @@ public:
     }
   }
 
-  RCLCPP_PUBLIC
   virtual
   ~WaitableWithTimer() = default;
 
-  RCLCPP_PUBLIC
   size_t
   get_number_of_ready_timers() override
   {
     return 1u;
   }
 
-  RCLCPP_PUBLIC
   bool
   add_to_wait_set(rcl_wait_set_t * wait_set) override
   {
@@ -66,7 +63,6 @@ public:
     return RCL_RET_OK == ret;
   }
 
-  RCLCPP_PUBLIC
   bool
   is_ready(rcl_wait_set_t * wait_set) override
   {
@@ -76,7 +72,6 @@ public:
     return false;
   }
 
-  RCLCPP_PUBLIC
   void
   execute() override
   {
