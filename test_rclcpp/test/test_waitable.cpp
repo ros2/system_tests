@@ -40,8 +40,13 @@ public:
     timer_.reset(new rcl_timer_t);
     *timer_ = rcl_get_zero_initialized_timer();
     rcl_clock_t * clock_handle = clock->get_clock_handle();
-    rcl_ret_t ret = rcl_timer_init(timer_.get(), clock_handle, period_nanoseconds, nullptr,
-        rcl_get_default_allocator());
+    rcl_ret_t ret = rcl_timer_init(
+      timer_.get(),
+      clock_handle,
+      rclcpp::contexts::default_context::get_global_default_context()->get_rcl_context().get(),
+      period_nanoseconds,
+      nullptr,
+      rcl_get_default_allocator());
     if (RCL_RET_OK != ret) {
       throw std::runtime_error("failed to create timer");
     }
