@@ -17,6 +17,7 @@
 
 #include "gtest/gtest.h"
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp/scope_exit.hpp"
 #include "test_rclcpp/srv/add_two_ints.hpp"
 
 #ifdef RMW_IMPLEMENTATION
@@ -35,14 +36,14 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), wait_for_service_shutdown) {
 
   auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("wait_for_service_shutdown");
 
-  auto shutdown_thread = std::thread(
+  std::thread shutdown_thread(
     []() {
       std::this_thread::sleep_for(1s);
       rclcpp::shutdown();
     });
+  RCLCPP_SCOPE_EXIT({shutdown_thread.join();});
   auto start = std::chrono::steady_clock::now();
   client->wait_for_service(15s);
   auto end = std::chrono::steady_clock::now();
   ASSERT_LE(end - start, 10s);
-  shutdown_thread.join();
 }
