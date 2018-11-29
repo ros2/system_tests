@@ -32,6 +32,7 @@
 using namespace std::chrono_literals;
 
 TEST(CLASSNAME(parameters, rmw_implementation), test_remote_parameters_async) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   std::string test_server_name = "test_parameters_server";
   // TODO(tfoote) make test_server name parameterizable
   // if (argc >= 2) {
@@ -52,6 +53,7 @@ TEST(CLASSNAME(parameters, rmw_implementation), test_remote_parameters_async) {
 }
 
 TEST(CLASSNAME(parameters, rmw_implementation), test_remote_parameters_sync) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   std::string test_server_name = "test_parameters_server";
 
   auto node = rclcpp::Node::make_shared(std::string("test_remote_parameters_sync"));
@@ -68,6 +70,7 @@ TEST(CLASSNAME(parameters, rmw_implementation), test_remote_parameters_sync) {
 }
 
 TEST(CLASSNAME(parameters, rmw_implementation), test_set_remote_parameters_atomically_sync) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   std::string test_server_name = "test_parameters_server";
 
   auto node = rclcpp::Node::make_shared(std::string("test_set_remote_parameters_atomically_sync"));
@@ -81,13 +84,4 @@ TEST(CLASSNAME(parameters, rmw_implementation), test_set_remote_parameters_atomi
   set_test_parameters_atomically(parameters_client);
 
   verify_test_parameters(parameters_client);
-}
-
-int main(int argc, char ** argv)
-{
-  rclcpp::init(argc, argv);
-  ::testing::InitGoogleTest(&argc, argv);
-  int ret = RUN_ALL_TESTS();
-  rclcpp::shutdown();
-  return ret;
 }

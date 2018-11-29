@@ -34,6 +34,7 @@ using namespace std::chrono_literals;
 #endif
 
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), to_string) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   rclcpp::Parameter pv("foo", "bar");
   rclcpp::Parameter pv2("foo2", "bar2");
   std::string json_dict = std::to_string(pv);
@@ -65,6 +66,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), to_string) {
 }
 
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared("test_parameters_local_synchronous");
   auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(node);
   if (!parameters_client->wait_for_service(20s)) {
@@ -75,6 +77,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous) {
 }
 
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous_repeated) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared("test_parameters_local_synchronous_repeated");
   auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(node);
   if (!parameters_client->wait_for_service(20s)) {
@@ -88,6 +91,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous_rep
 }
 
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_asynchronous) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared(std::string("test_parameters_local_asynchronous"));
   auto parameters_client = std::make_shared<rclcpp::AsyncParametersClient>(node);
   if (!parameters_client->wait_for_service(20s)) {
@@ -138,6 +142,7 @@ public:
 // Regression test for calling parameter client async services, but having the specified callback
 // go out of scope before it gets called: see https://github.com/ros2/rclcpp/pull/414
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_async_with_callback) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = std::make_shared<ParametersAsyncNode>();
   if (!node->parameters_client_->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
@@ -150,6 +155,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_async_with_call
 }
 
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared("test_parameters_local_helpers");
   auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(node);
   if (!parameters_client->wait_for_service(20s)) {
@@ -259,6 +265,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
 }
 
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_primitive_type) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared("test_parameters_local_helpers");
   auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(node);
   if (!parameters_client->wait_for_service(20s)) {
@@ -322,6 +329,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_primiti
 }
 
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_variant_type) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   using rclcpp::Parameter;
 
   auto node = rclcpp::Node::make_shared("test_parameters_local_helpers");
@@ -379,6 +387,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_variant
 }
 
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_parameter_or) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   using rclcpp::Parameter;
 
   auto node = rclcpp::Node::make_shared("test_parameters_get_parameter_or");
@@ -415,6 +424,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_parameter_or) {
 }
 
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_parameter_or_set) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   using rclcpp::Parameter;
 
   auto node = rclcpp::Node::make_shared("test_parameters_get_parameter_or_set_default");
@@ -447,6 +457,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_parameter_or_set)
 }
 
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), set_parameter_if_not_set) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   using rclcpp::Parameter;
 
   auto node = rclcpp::Node::make_shared("test_parameters_set_parameter_if_not_set");
@@ -482,11 +493,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), set_parameter_if_not_
 int main(int argc, char ** argv)
 {
   setvbuf(stdout, NULL, _IONBF, BUFSIZ);
-
-  // NOTE: use custom main to ensure that rclcpp::init is called only once
-  rclcpp::init(argc, argv);
   ::testing::InitGoogleTest(&argc, argv);
   int ret = RUN_ALL_TESTS();
-  rclcpp::shutdown();
   return ret;
 }

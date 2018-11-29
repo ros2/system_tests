@@ -90,6 +90,7 @@ public:
 };  // class WaitableWithTimer
 
 TEST(CLASSNAME(test_waitable, RMW_IMPLEMENTATION), waitable_with_timer) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared("waitable_with_timer");
   auto waitable = WaitableWithTimer::make_shared(node->get_clock());
   auto group = node->create_callback_group(rclcpp::callback_group::CallbackGroupType::Reentrant);
@@ -99,13 +100,4 @@ TEST(CLASSNAME(test_waitable, RMW_IMPLEMENTATION), waitable_with_timer) {
   rclcpp::spin_until_future_complete(node, fut);
 
   EXPECT_TRUE(fut.get());
-}
-
-int main(int argc, char ** argv)
-{
-  rclcpp::init(0, nullptr);
-  ::testing::InitGoogleTest(&argc, argv);
-  int ret = RUN_ALL_TESTS();
-  rclcpp::shutdown();
-  return ret;
 }

@@ -35,6 +35,7 @@ using namespace std::chrono_literals;
 // This test is concerned with the consistency of the two clients' behavior, not necessarily whether
 // or not they are successful.
 TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_consistency_regression_test) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared("client_scope_consistency_regression_test");
 
   // Replicate the settings that caused https://github.com/ros2/system_tests/issues/153
@@ -122,13 +123,4 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_consistency_reg
     printf("destroying second client\n");
     std::cout.flush();
   }
-}
-
-int main(int argc, char ** argv)
-{
-  rclcpp::init(argc, argv);
-  ::testing::InitGoogleTest(&argc, argv);
-  int ret = RUN_ALL_TESTS();
-  rclcpp::shutdown();
-  return ret;
 }

@@ -31,6 +31,7 @@
 using namespace std::chrono_literals;
 
 TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_regression_test) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared("client_scope_regression_test");
 
   // Extra scope so the first client will be deleted afterwards
@@ -88,13 +89,4 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_regression_test
     printf("destroying second client\n");
     std::cout.flush();
   }
-}
-
-int main(int argc, char ** argv)
-{
-  rclcpp::init(argc, argv);
-  ::testing::InitGoogleTest(&argc, argv);
-  int ret = RUN_ALL_TESTS();
-  rclcpp::shutdown();
-  return ret;
 }

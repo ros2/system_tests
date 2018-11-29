@@ -137,16 +137,19 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
 }
 
 TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_single_producer) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   // multiple subscriptions, single publisher
   multi_consumer_pub_sub_test(false);
 }
 
 TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_intra_process) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   // multiple subscriptions, single publisher, intra-process
   multi_consumer_pub_sub_test(true);
 }
 
 TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   // multiple clients, single server
   auto node = rclcpp::Node::make_shared("multi_consumer_clients");
   rclcpp::executors::MultiThreadedExecutor executor;
@@ -252,6 +255,7 @@ static inline void multi_access_publisher(bool intra_process)
 {
   // Try to access the same publisher simultaneously
   auto context = std::make_shared<rclcpp::Context>();
+  context->init(0, nullptr);
   std::string node_topic_name = "multi_access_publisher";
   if (intra_process) {
     node_topic_name += "_intra_process";
@@ -323,20 +327,11 @@ static inline void multi_access_publisher(bool intra_process)
 }
 
 TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_access_publisher) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   multi_access_publisher(false);
 }
 
 TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_access_publisher_intra_process) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   multi_access_publisher(true);
-}
-
-
-int main(int argc, char ** argv)
-{
-  // use custom main to ensure that rclcpp::init is called only once
-  rclcpp::init(argc, argv);
-  ::testing::InitGoogleTest(&argc, argv);
-  int ret = RUN_ALL_TESTS();
-  rclcpp::shutdown();
-  return ret;
 }

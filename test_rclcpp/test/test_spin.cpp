@@ -37,6 +37,7 @@ using namespace std::chrono_literals;
    Ensures that the timeout behavior of spin_until_future_complete is correct.
  */
 TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), test_spin_until_future_complete_timeout) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   using rclcpp::executor::FutureReturnCode;
   rclcpp::executors::SingleThreadedExecutor executor;
 
@@ -124,6 +125,7 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), test_spin_until_future_complete_t
 }
 
 TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared("test_spin");
 
   // Construct a fake future to wait on
@@ -145,6 +147,7 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete) {
 }
 
 TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete_timeout) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared("test_spin");
 
   // Construct a fake future to wait on
@@ -168,6 +171,7 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete_timeou
 }
 
 TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete_interrupted) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared("test_spin");
 
   // Construct a fake future to wait on
@@ -191,6 +195,7 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete_interr
 }
 
 TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), cancel) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared("cancel");
   rclcpp::executors::SingleThreadedExecutor executor;
   auto pub = node->create_publisher<test_rclcpp::msg::UInt32>("cancel", 10);
@@ -213,14 +218,4 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), cancel) {
   auto timer = node->create_wall_timer(std::chrono::milliseconds(5), cancel_callback);
   executor.add_node(node);
   executor.spin();
-}
-
-int main(int argc, char ** argv)
-{
-  // NOTE: use custom main to ensure that rclcpp::init is called only once
-  rclcpp::init(0, nullptr);
-  ::testing::InitGoogleTest(&argc, argv);
-  int ret = RUN_ALL_TESTS();
-  rclcpp::shutdown();
-  return ret;
 }

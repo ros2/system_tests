@@ -27,6 +27,7 @@
 #endif
 
 TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_fire_regularly) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared("test_timer_fire_regularly");
 
   int counter = 0;
@@ -81,6 +82,7 @@ TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_fire_regularly) {
 }
 
 TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_during_wait) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared("test_timer_during_wait");
 
   int counter = 0;
@@ -133,6 +135,7 @@ TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_during_wait) {
 
 
 TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), finite_timer) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared("finite_timer");
 
   int counter = 0;
@@ -163,14 +166,4 @@ TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), finite_timer) {
 
     EXPECT_EQ(counter, 2);
   }
-}
-
-int main(int argc, char ** argv)
-{
-  // NOTE: use custom main to ensure that rclcpp::init is called only once
-  rclcpp::init(0, nullptr);
-  ::testing::InitGoogleTest(&argc, argv);
-  int ret = RUN_ALL_TESTS();
-  rclcpp::shutdown();
-  return ret;
 }

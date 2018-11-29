@@ -32,6 +32,7 @@
 using namespace std::chrono_literals;
 
 TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_noreqid) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared("test_services_client_no_reqid");
 
   auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("add_two_ints_noreqid");
@@ -52,6 +53,7 @@ TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_noreqid) {
 }
 
 TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_reqid) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared("test_services_client_add_reqid");
 
   auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("add_two_ints_reqid");
@@ -72,6 +74,7 @@ TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_reqid) {
 }
 
 TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_return_request) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared("test_services_client_return_request");
 
   auto client = node->create_client<test_rclcpp::srv::AddTwoInts>(
@@ -94,13 +97,4 @@ TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_return_request) {
 
   auto ret = rclcpp::spin_until_future_complete(node, result, 5s);  // Wait for the result.
   ASSERT_EQ(ret, rclcpp::executor::FutureReturnCode::SUCCESS);
-}
-
-int main(int argc, char ** argv)
-{
-  rclcpp::init(argc, argv);
-  ::testing::InitGoogleTest(&argc, argv);
-  int ret = RUN_ALL_TESTS();
-  rclcpp::shutdown();
-  return ret;
 }

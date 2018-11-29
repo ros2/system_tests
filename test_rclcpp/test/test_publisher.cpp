@@ -34,6 +34,7 @@
 
 // Short test for the const reference publish signature.
 TEST(CLASSNAME(test_publisher, RMW_IMPLEMENTATION), publish_with_const_reference) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   // topic name
   std::string topic_name = "test_publish_with_const_reference";
   // code to create the callback and subscription
@@ -66,13 +67,4 @@ TEST(CLASSNAME(test_publisher, RMW_IMPLEMENTATION), publish_with_const_reference
   // call the test template
   single_message_pub_sub_fixture<test_rclcpp::msg::UInt32>(
     topic_name, counter, create_subscription_func, publish_func);
-}
-
-int main(int argc, char ** argv)
-{
-  rclcpp::init(argc, argv);
-  ::testing::InitGoogleTest(&argc, argv);
-  int ret = RUN_ALL_TESTS();
-  rclcpp::shutdown();
-  return ret;
 }
