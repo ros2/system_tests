@@ -37,6 +37,7 @@ TEST(
   CLASSNAME(test_avoid_ros_namespace_conventions_qos, RMW_IMPLEMENTATION),
   pub_sub_works
 ) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   // topic name
   std::string topic_name = "test_avoid_ros_namespace_conventions_qos";
   // code to create the callback and subscription
@@ -71,13 +72,4 @@ TEST(
   // call the test template
   single_message_pub_sub_fixture<test_rclcpp::msg::UInt32>(
     topic_name, counter, create_subscription_func, publish_func, custom_qos);
-}
-
-int main(int argc, char ** argv)
-{
-  rclcpp::init(argc, argv);
-  ::testing::InitGoogleTest(&argc, argv);
-  int ret = RUN_ALL_TESTS();
-  rclcpp::shutdown();
-  return ret;
 }

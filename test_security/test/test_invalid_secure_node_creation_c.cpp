@@ -71,6 +71,7 @@ void custom_putenv(const char * name, const char * value)
 class CLASSNAME (TestInvalidSecureNode, RMW_IMPLEMENTATION) : public ::testing::Test
 {
 public:
+  rcl_context_t context;
   rcl_node_t * node_ptr;
   void SetUp()
   {
@@ -80,7 +81,7 @@ public:
   {
     rcl_ret_t ret = rcl_node_fini(this->node_ptr);
     delete this->node_ptr;
-    ret = rcl_shutdown();
+    ret = rcl_shutdown(&context);
     EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
   }
 
@@ -95,13 +96,17 @@ public:
     custom_putenv("ROS_SECURITY_ENABLE", ROS_SECURITY_ENABLE);
     custom_putenv("ROS_SECURITY_STRATEGY", ROS_SECURITY_STRATEGY);
     rcl_ret_t ret;
-    ret = rcl_init(0, nullptr, rcl_get_default_allocator());
+    rcl_init_options_t init_options = rcl_get_zero_initialized_init_options();
+    ret = rcl_init_options_init(&init_options, rcl_get_default_allocator());
+    ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
+    context = rcl_get_zero_initialized_context();
+    ret = rcl_init(0, nullptr, &init_options, &context);
     ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
     this->node_ptr = new rcl_node_t;
     *this->node_ptr = rcl_get_zero_initialized_node();
     // const char * name = "node_name";
     rcl_node_options_t node_options = rcl_node_get_default_options();
-    ret = rcl_node_init(this->node_ptr, node_name, "", &node_options);
+    ret = rcl_node_init(this->node_ptr, node_name, "", &context, &node_options);
     if (should_fail_participant_creation) {
       ASSERT_EQ(RCL_RET_ERROR, ret) << rcl_get_error_string().str;
     } else {

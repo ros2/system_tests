@@ -40,6 +40,7 @@
 using namespace std::chrono_literals;
 
 TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), recursive_spin_call) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   rclcpp::executors::SingleThreadedExecutor executor;
   auto node = rclcpp::Node::make_shared("recursive_spin_call");
   auto timer = node->create_wall_timer(
@@ -55,6 +56,7 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), recursive_spin_call) {
 }
 
 TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), spin_some_max_duration) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   rclcpp::executors::SingleThreadedExecutor executor;
   auto node = rclcpp::Node::make_shared("spin_some_max_duration");
   auto timer = node->create_wall_timer(
@@ -73,6 +75,7 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), spin_some_max_duration) {
 }
 
 TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), multithreaded_spin_call) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   rclcpp::executors::SingleThreadedExecutor executor;
   auto node = rclcpp::Node::make_shared("multithreaded_spin_call");
   std::mutex m;
@@ -105,6 +108,7 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), multithreaded_spin_call) {
 
 // Try spinning 2 single-threaded executors in two separate threads.
 TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), multiple_executors) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   std::atomic_uint counter1;
   counter1 = 0;
   std::atomic_uint counter2;
@@ -165,6 +169,7 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), multiple_executors) {
 // Check that the executor is notified when a node adds a new timer, publisher, subscription,
 // service or client.
 TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), notify) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   rclcpp::executors::SingleThreadedExecutor executor;
   auto executor_spin_lambda = [&executor]() {
       executor.spin();
@@ -254,12 +259,3 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), notify) {
 // test removing a node
 
 // test notify with multiple nodes
-
-int main(int argc, char ** argv)
-{
-  rclcpp::init(argc, argv);
-  ::testing::InitGoogleTest(&argc, argv);
-  int ret = RUN_ALL_TESTS();
-  rclcpp::shutdown();
-  return ret;
-}

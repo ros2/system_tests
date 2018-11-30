@@ -40,8 +40,13 @@ public:
     timer_.reset(new rcl_timer_t);
     *timer_ = rcl_get_zero_initialized_timer();
     rcl_clock_t * clock_handle = clock->get_clock_handle();
-    rcl_ret_t ret = rcl_timer_init(timer_.get(), clock_handle, period_nanoseconds, nullptr,
-        rcl_get_default_allocator());
+    rcl_ret_t ret = rcl_timer_init(
+      timer_.get(),
+      clock_handle,
+      rclcpp::contexts::default_context::get_global_default_context()->get_rcl_context().get(),
+      period_nanoseconds,
+      nullptr,
+      rcl_get_default_allocator());
     if (RCL_RET_OK != ret) {
       throw std::runtime_error("failed to create timer");
     }
@@ -85,6 +90,7 @@ public:
 };  // class WaitableWithTimer
 
 TEST(CLASSNAME(test_waitable, RMW_IMPLEMENTATION), waitable_with_timer) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared("waitable_with_timer");
   auto waitable = WaitableWithTimer::make_shared(node->get_clock());
   auto group = node->create_callback_group(rclcpp::callback_group::CallbackGroupType::Reentrant);
@@ -94,13 +100,4 @@ TEST(CLASSNAME(test_waitable, RMW_IMPLEMENTATION), waitable_with_timer) {
   rclcpp::spin_until_future_complete(node, fut);
 
   EXPECT_TRUE(fut.get());
-}
-
-int main(int argc, char ** argv)
-{
-  rclcpp::init(0, nullptr);
-  ::testing::InitGoogleTest(&argc, argv);
-  int ret = RUN_ALL_TESTS();
-  rclcpp::shutdown();
-  return ret;
 }

@@ -14,6 +14,7 @@
 
 #include <chrono>
 #include <string>
+#include <thread>
 #include <vector>
 
 #include "rclcpp/rclcpp.hpp"
@@ -45,11 +46,9 @@ void publish(
       publisher->publish(messages[message_index]);
       ++message_index;
       message_rate.sleep();
-      rclcpp::spin_some(node);
     }
     ++cycle_index;
     cycle_rate.sleep();
-    rclcpp::spin_some(node);
   }
 }
 
@@ -134,6 +133,10 @@ int main(int argc, char ** argv)
   auto messages_static_array_nested = get_messages_static_array_nested();
   auto messages_builtins = get_messages_builtins();
 
+  std::thread spin_thread([node]() {
+      rclcpp::spin(node);
+    });
+
   if (message == "Empty") {
     subscriber = subscribe<test_msgs::msg::Empty>(
       node, message, messages_empty, received_messages);
@@ -202,11 +205,10 @@ int main(int argc, char ** argv)
     publish<test_msgs::msg::Builtins>(node, message, messages_builtins);
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
-    rclcpp::shutdown();
     return 1;
   }
 
-  rclcpp::spin_some(node);
+  spin_thread.join();
 
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);

@@ -54,6 +54,7 @@ private:
 };
 
 TEST(CLASSNAME(test_services_in_constructor, RMW_IMPLEMENTATION), service_in_constructor) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto n = std::make_shared<MyNodeWithService>();
 }
 
@@ -71,15 +72,6 @@ private:
 };
 
 TEST(CLASSNAME(test_services_in_constructor, RMW_IMPLEMENTATION), client_in_constructor) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto n = std::make_shared<MyNodeWithClient>();
-}
-
-int main(int argc, char ** argv)
-{
-  // NOTE: use custom main to ensure that rclcpp::init is called only once
-  rclcpp::init(0, nullptr);
-  ::testing::InitGoogleTest(&argc, argv);
-  int ret = RUN_ALL_TESTS();
-  rclcpp::shutdown();
-  return ret;
 }
