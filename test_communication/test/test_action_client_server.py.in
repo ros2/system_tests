@@ -1,0 +1,56 @@
+# generated from test_communication/test/test_action_client_server.py.in
+
+import os
+import sys
+import time
+
+from launch.legacy import LaunchDescriptor
+from launch.legacy.exit_handler import primary_exit_handler
+from launch.legacy.launcher import DefaultLauncher
+
+
+def test_action_client_server():
+    namespace = '/test_time_%s' % time.strftime('%H_%M_%S', time.gmtime())
+
+    ld = LaunchDescriptor()
+    action_client_cmd = ['@TEST_ACTION_CLIENT_EXECUTABLE@', '@TEST_ACTION_TYPE@', namespace]
+    action_server_cmd = ['@TEST_ACTION_SERVER_EXECUTABLE@', '@TEST_ACTION_TYPE@', namespace]
+
+    action_server_env = dict(os.environ)
+    action_client_env = dict(os.environ)
+
+    if '@TEST_ACTION_SERVER_RCL@' == 'rclpy':
+        action_server_cmd.insert(0, sys.executable)
+        action_server_env['PYTHONUNBUFFERED'] = '1'
+    if '@TEST_ACTION_CLIENT_RCL@' == 'rclpy':
+        action_client_cmd.insert(0, sys.executable)
+        action_client_env['PYTHONUNBUFFERED'] = '1'
+
+    action_server_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@ACTION_SERVER_RMW@'
+    action_server_env['RMW_IMPLEMENTATION'] = '@ACTION_SERVER_RMW@'
+    ld.add_process(
+        cmd=action_server_cmd,
+        name='test_action_server',
+        env=action_server_env,
+    )
+
+    action_client_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@ACTION_CLIENT_RMW@'
+    action_client_env['RMW_IMPLEMENTATION'] = '@ACTION_CLIENT_RMW@'
+    ld.add_process(
+        cmd=action_client_cmd,
+        name='test_action_client',
+        env=action_client_env,
+        exit_handler=primary_exit_handler,
+    )
+
+    launcher = DefaultLauncher()
+    launcher.add_launch_descriptor(ld)
+    rc = launcher.launch()
+
+    assert rc == 0, \
+        "The launch file failed with exit code '" + str(rc) + "'. " \
+        'May be the action client did not receive any completed goals from the action server?'
+
+
+if __name__ == '__main__':
+    test_action_client_server()

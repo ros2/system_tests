@@ -27,6 +27,7 @@
   <test_depend>osrf_testing_tools_cpp</test_depend>
   <test_depend>rcl</test_depend>
   <test_depend>rclcpp</test_depend>
+  <test_depend>rclcpp_action</test_depend>
   <test_depend>rclpy</test_depend>
   <test_depend>rmw_implementation</test_depend>
   <test_depend>rmw_implementation_cmake</test_depend>
