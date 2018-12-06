@@ -266,7 +266,7 @@ if(BUILD_TESTING)
         set_tests_properties(
           test_action_client_server${test_suffix}
           PROPERTIES DEPENDS
-            "test_requester_cpp__${rmw_implementation1};test_replier_cpp__${rmw_implementation2}"
+            "test_action_client_cpp__${rmw_implementation1};test_action_server_cpp__${rmw_implementation2}"
         )
       endif()
     endforeach()
