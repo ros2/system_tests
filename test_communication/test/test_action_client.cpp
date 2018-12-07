@@ -129,7 +129,7 @@ generate_fibonacci_goal_tests()
   {
     ActionClientTest<test_msgs::action::Fibonacci> test;
     size_t order = 10;
-    test.goal.order = order;
+    test.goal.order = static_cast<int32_t>(order);
     test.result_is_valid =
       [order, valid_fibo_seq](auto result) -> bool {
         if (result->sequence.size() != (order + 1)) {
