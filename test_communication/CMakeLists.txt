@@ -28,20 +28,23 @@ if(BUILD_TESTING)
 
   set(message_files "")
   set(service_files "")
+  set(action_files "")
   foreach(interface_file ${interface_files})
     get_filename_component(interface_ns "${interface_file}" DIRECTORY)
     get_filename_component(interface_ns "${interface_ns}" NAME)
-    if(interface_ns STREQUAL "action")
-      continue()
-    endif()
     string_ends_with("${interface_file}" ".msg" is_message)
     if(is_message AND interface_ns STREQUAL "msg")
       list(APPEND message_files "${interface_file}")
       continue()
     endif()
     string_ends_with("${interface_file}" ".srv" is_service)
-    if(is_service)
+    if(is_service AND interface_ns STREQUAL "srv")
       list(APPEND service_files "${interface_file}")
+      continue()
+    endif()
+    string_ends_with("${interface_file}" ".idl" is_action)
+    if(is_action AND interface_ns STREQUAL "action")
+      list(APPEND action_files "${interface_file}")
       continue()
     endif()
   endforeach()
@@ -113,7 +116,9 @@ if(BUILD_TESTING)
     rosidl_target_interfaces(${target}
       ${PROJECT_NAME} "rosidl_typesupport_cpp")
     ament_target_dependencies(${target}
-      "rclcpp")
+      "rclcpp"
+      "rclcpp_action"
+    )
   endfunction()
 
   function(custom_test_c target)
@@ -226,6 +231,45 @@ if(BUILD_TESTING)
         )
       endif()
     endforeach()
+
+    # test action client / server
+    # Note: taking same exclusions as services since actions use services too
+    # set(SKIP_TEST "")
+
+    # TODO(wjwwood): actions do not support python
+    if(client_library1 STREQUAL "rclpy" OR client_library2 STREQUAL "rclpy")
+      set(SKIP_TEST "SKIP_TEST")
+    endif()
+
+    set(ACTION_CLIENT_RMW ${rmw_implementation1})
+    set(ACTION_SERVER_RMW ${rmw_implementation2})
+    foreach(action_file ${action_files})
+      get_filename_component(TEST_ACTION_TYPE "${action_file}" NAME_WE)
+      set(test_suffix "__${TEST_ACTION_TYPE}${suffix}")
+      configure_file(
+        test/test_action_client_server.py.in
+        test_action_client_server${test_suffix}.py.configured
+        @ONLY
+      )
+      file(GENERATE
+        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/test_action_client_server${test_suffix}_$<CONFIG>.py"
+        INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_action_client_server${test_suffix}.py.configured"
+      )
+
+      ament_add_pytest_test(test_action_client_server${test_suffix}
+        "${CMAKE_CURRENT_BINARY_DIR}/test_action_client_server${test_suffix}_$<CONFIG>.py"
+        PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
+        APPEND_LIBRARY_DIRS "${append_library_dirs}"
+        TIMEOUT 30
+        ${SKIP_TEST})
+      if(TEST test_action_client_server${test_suffix})
+        set_tests_properties(
+          test_action_client_server${test_suffix}
+          PROPERTIES DEPENDS
+            "test_action_client_cpp__${rmw_implementation1};test_action_server_cpp__${rmw_implementation2}"
+        )
+      endif()
+    endforeach()
   endmacro()
 
   macro(configure_template _client_library1 _client_library2)
@@ -236,6 +280,8 @@ if(BUILD_TESTING)
     set(TEST_SUBSCRIBER_RCL "${_client_library2}")
     set(TEST_REQUESTER_RCL "${_client_library1}")
     set(TEST_REPLIER_RCL "${_client_library2}")
+    set(TEST_ACTION_CLIENT_RCL "${_client_library1}")
+    set(TEST_ACTION_SERVER_RCL "${_client_library2}")
 
     if(_client_library1 STREQUAL _client_library2)
       set(suffix "__${_client_library1}")
@@ -254,17 +300,21 @@ if(BUILD_TESTING)
     if(_client_library1 STREQUAL "rclpy")
       set(TEST_PUBLISHER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/publisher_py.py")
       set(TEST_REQUESTER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/requester_py.py")
+      # TODO(wjwwood): actions do not support python
     elseif(_client_library1 STREQUAL "rclcpp")
       set(TEST_PUBLISHER_EXECUTABLE "$<TARGET_FILE:test_publisher_cpp>")
       set(TEST_REQUESTER_EXECUTABLE "$<TARGET_FILE:test_requester_cpp>")
+      set(TEST_ACTION_CLIENT_EXECUTABLE "$<TARGET_FILE:test_action_client_cpp>")
     endif()
 
     if(_client_library2 STREQUAL "rclpy")
       set(TEST_SUBSCRIBER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/subscriber_py.py")
       set(TEST_REPLIER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/replier_py.py")
+      # TODO(wjwwood): actions do not support python
     elseif(_client_library2 STREQUAL "rclcpp")
       set(TEST_SUBSCRIBER_EXECUTABLE "$<TARGET_FILE:test_subscriber_cpp>")
       set(TEST_REPLIER_EXECUTABLE "$<TARGET_FILE:test_replier_cpp>")
+      set(TEST_ACTION_SERVER_EXECUTABLE "$<TARGET_FILE:test_action_server_cpp>")
     endif()
   endmacro()
 
@@ -298,6 +348,11 @@ if(BUILD_TESTING)
     "test/test_requester.cpp")
   custom_executable(test_replier_cpp
     "test/test_replier.cpp")
+  # executables action client / server
+  custom_executable(test_action_client_cpp
+    "test/test_action_client.cpp")
+  custom_executable(test_action_server_cpp
+    "test/test_action_server.cpp")
 
   macro(targets)
     custom_test_c(test_messages_c
@@ -380,6 +435,7 @@ if(BUILD_TESTING)
       add_dependencies(${target_name} ${PROJECT_NAME})
       ament_target_dependencies(${target_name}
         "rclcpp"
+        "rclcpp_action"
         "rmw"
         "rosidl_typesupport_c"
         "rosidl_typesupport_cpp"
