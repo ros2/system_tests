@@ -176,8 +176,9 @@ if(BUILD_TESTING)
       set(rmw_implementation2_is_fastrtps TRUE)
     endif()
     if(
+      WIN32 AND (
       (rmw_implementation1_is_connext AND rmw_implementation2_is_fastrtps) OR
-      (rmw_implementation1_is_fastrtps AND rmw_implementation2_is_connext)
+      (rmw_implementation1_is_fastrtps AND rmw_implementation2_is_connext))
     )
       set(SKIP_TEST "SKIP_TEST")
     endif()
