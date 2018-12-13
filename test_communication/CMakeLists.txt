@@ -155,6 +155,33 @@ if(BUILD_TESTING)
     else()
       set(suffix "${suffix}__${rmw_implementation1}__${rmw_implementation2}")
     endif()
+
+    set(SKIP_TEST "")
+
+    # TODO(wjwwood): Connext and Fast-RTPS do not currently communicate over pub/sub
+    set(rmw_implementation1_is_connext FALSE)
+    set(rmw_implementation1_is_fastrtps FALSE)
+    set(rmw_implementation2_is_connext FALSE)
+    set(rmw_implementation2_is_fastrtps FALSE)
+    if(rmw_implementation1 MATCHES "(.*)connext(.*)")
+      set(rmw_implementation1_is_connext TRUE)
+    endif()
+    if(rmw_implementation1 MATCHES "(.*)fastrtps(.*)")
+      set(rmw_implementation1_is_fastrtps TRUE)
+    endif()
+    if(rmw_implementation2 MATCHES "(.*)connext(.*)")
+      set(rmw_implementation2_is_connext TRUE)
+    endif()
+    if(rmw_implementation2 MATCHES "(.*)fastrtps(.*)")
+      set(rmw_implementation2_is_fastrtps TRUE)
+    endif()
+    if(
+      (rmw_implementation1_is_connext AND rmw_implementation2_is_fastrtps) OR
+      (rmw_implementation1_is_fastrtps AND rmw_implementation2_is_connext)
+    )
+      set(SKIP_TEST "SKIP_TEST")
+    endif()
+
     set(PUBLISHER_RMW ${rmw_implementation1})
     set(SUBSCRIBER_RMW ${rmw_implementation2})
     foreach(message_file ${message_files})
@@ -175,7 +202,8 @@ if(BUILD_TESTING)
         "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${test_suffix}_$<CONFIG>.py"
         PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
         APPEND_LIBRARY_DIRS "${append_library_dirs}"
-        TIMEOUT 15)
+        TIMEOUT 15
+        ${SKIP_TEST})
       if(TEST test_publisher_subscriber${test_suffix})
         set_tests_properties(
           test_publisher_subscriber${test_suffix}
