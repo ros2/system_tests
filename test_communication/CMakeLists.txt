@@ -167,7 +167,7 @@ if(BUILD_TESTING)
     if(rmw_implementation2 MATCHES "(.*)fastrtps(.*)")
       set(rmw_implementation2_is_fastrtps TRUE)
     endif()
-    if (WIN32 AND (rmw_implementation1_is_fastrtps OR rmw_implementation2_is_fastrtps))
+    if(WIN32 AND (rmw_implementation1_is_fastrtps OR rmw_implementation2_is_fastrtps))
       set(SKIP_TEST "SKIP_TEST")
     endif()
 
