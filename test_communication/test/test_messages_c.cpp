@@ -123,7 +123,11 @@ public:
   }
 
   template<typename MessageT>
-  void test_message_type(const char * topic_name, const rosidl_message_type_support_t * ts)
+  void
+  test_message_type(
+    const char * topic_name,
+    const rosidl_message_type_support_t * ts,
+    rcl_context_t * context)
   {
     rcl_ret_t ret;
     rcl_publisher_t publisher = rcl_get_zero_initialized_publisher();
@@ -158,6 +162,7 @@ public:
         0,  // number_of_timers
         0,  // number_of_clients
         0,  // number_of_services
+        context,
         rcl_get_default_allocator());
       EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
       ret = rcl_wait_set_clear(&wait_set);
@@ -206,6 +211,7 @@ public:
           0,  // number_of_timers
           0,  // number_of_clients
           0,  // number_of_services
+          context,
           rcl_get_default_allocator());
         EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
         ret = rcl_wait_set_clear(&wait_set);
@@ -362,7 +368,7 @@ DEFINE_FINI_MESSAGE(test_msgs__msg__Primitives)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_primitives) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_msgs, msg, Primitives);
-  test_message_type<test_msgs__msg__Primitives>("test_primitives", ts);
+  test_message_type<test_msgs__msg__Primitives>("test_primitives", ts, this->context_ptr);
 }
 
 template<>
@@ -395,7 +401,7 @@ DEFINE_FINI_MESSAGE(test_msgs__msg__Nested)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_nested) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_msgs, msg, Nested);
-  test_message_type<test_msgs__msg__Nested>("test_nested", ts);
+  test_message_type<test_msgs__msg__Nested>("test_nested", ts, this->context_ptr);
 }
 
 
@@ -439,7 +445,7 @@ DEFINE_FINI_MESSAGE(test_msgs__msg__Builtins)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_builtins) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_msgs, msg, Builtins);
-  test_message_type<test_msgs__msg__Builtins>("test_builtins", ts);
+  test_message_type<test_msgs__msg__Builtins>("test_builtins", ts, this->context_ptr);
 }
 
 
@@ -534,8 +540,8 @@ DEFINE_FINI_MESSAGE(test_msgs__msg__StaticArrayPrimitives)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_staticarrayprimitives) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_msgs, msg, StaticArrayPrimitives);
-  test_message_type<test_msgs__msg__StaticArrayPrimitives>("test_staticarrayprimitives",
-    ts);
+  test_message_type<test_msgs__msg__StaticArrayPrimitives>(
+    "test_staticarrayprimitives", ts, this->context_ptr);
 }
 
 template<>
@@ -576,8 +582,8 @@ DEFINE_FINI_MESSAGE(test_msgs__msg__StaticArrayNested)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_staticarraynested) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_msgs, msg, StaticArrayNested);
-  test_message_type<test_msgs__msg__StaticArrayNested>("test_staticarraynested",
-    ts);
+  test_message_type<test_msgs__msg__StaticArrayNested>(
+    "test_staticarraynested", ts, this->context_ptr);
 }
 
 template<>
@@ -827,8 +833,8 @@ DEFINE_FINI_MESSAGE(test_msgs__msg__DynamicArrayPrimitives)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_dynamicarrayprimitives) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_msgs, msg, DynamicArrayPrimitives);
-  test_message_type<test_msgs__msg__DynamicArrayPrimitives>("test_dynamicarrayprimitives",
-    ts);
+  test_message_type<test_msgs__msg__DynamicArrayPrimitives>(
+    "test_dynamicarrayprimitives", ts, this->context_ptr);
 }
 
 template<>
@@ -902,8 +908,8 @@ DEFINE_FINI_MESSAGE(test_msgs__msg__DynamicArrayNested)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_dynamicarraynested) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_msgs, msg, DynamicArrayNested);
-  test_message_type<test_msgs__msg__DynamicArrayNested>("test_dynamicarraynested",
-    ts);
+  test_message_type<test_msgs__msg__DynamicArrayNested>(
+    "test_dynamicarraynested", ts, this->context_ptr);
 }
 
 
@@ -1072,8 +1078,8 @@ DEFINE_FINI_MESSAGE(test_msgs__msg__BoundedArrayPrimitives)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_boundedarrayprimitives) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_msgs, msg, BoundedArrayPrimitives);
-  test_message_type<test_msgs__msg__BoundedArrayPrimitives>("test_boundedarrayprimitives",
-    ts);
+  test_message_type<test_msgs__msg__BoundedArrayPrimitives>(
+    "test_boundedarrayprimitives", ts, this->context_ptr);
 }
 
 template<>
@@ -1148,8 +1154,8 @@ DEFINE_FINI_MESSAGE(test_msgs__msg__BoundedArrayNested)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_boundedarraynested) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_msgs, msg, BoundedArrayNested);
-  test_message_type<test_msgs__msg__BoundedArrayNested>("test_boundedarraynested",
-    ts);
+  test_message_type<test_msgs__msg__BoundedArrayNested>(
+    "test_boundedarraynested", ts, this->context_ptr);
 }
 
 template<>
@@ -1198,5 +1204,5 @@ TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_dynamicarraynest
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_msgs, msg, DynamicArrayPrimitivesNested);
   test_message_type<test_msgs__msg__DynamicArrayPrimitivesNested>(
-    "test_dynamicarraynestedprimitives", ts);
+    "test_dynamicarraynestedprimitives", ts, this->context_ptr);
 }
