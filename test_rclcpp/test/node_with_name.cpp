@@ -28,8 +28,17 @@ int main(int argc, char ** argv)
   printf("Starting node with name: %s\n", node_name.c_str());
   std::cout.flush();
 
-  auto node = rclcpp::Node::make_shared(node_name);
-  rclcpp::spin(node);
+  rclcpp::Node::SharedPtr node;
+  try {
+    node = rclcpp::Node::make_shared(node_name);
+  } catch (rclcpp::exceptions::RCLError) {
+    // test may pass and send SIGINT before node finishes initializing ros2/build_cop#153
+    printf("Likely received SIGINT before node initialization finished.\n");
+  };
+
+  if (node) {
+    rclcpp::spin(node);
+  }
   rclcpp::shutdown();
   return 0;
 }
