@@ -31,9 +31,9 @@ int main(int argc, char ** argv)
   rclcpp::Node::SharedPtr node;
   try {
     node = rclcpp::Node::make_shared(node_name);
-  } catch (rclcpp::exceptions::RCLError) {
+  } catch (rclcpp::exceptions::RCLError & e) {
     // test may pass and send SIGINT before node finishes initializing ros2/build_cop#153
-    printf("Likely received SIGINT before node initialization finished.\n");
+    printf("Ignoring RCLError: %s\n", e.what());
   };
 
   if (node) {
