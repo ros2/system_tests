@@ -34,7 +34,7 @@ int main(int argc, char ** argv)
   } catch (rclcpp::exceptions::RCLError & e) {
     // test may pass and send SIGINT before node finishes initializing ros2/build_cop#153
     printf("Ignoring RCLError: %s\n", e.what());
-  };
+  }
 
   if (node) {
     rclcpp::spin(node);
