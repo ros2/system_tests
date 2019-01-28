@@ -19,9 +19,16 @@ import random
 import sys
 import time
 
-from launch.legacy import LaunchDescriptor
-from launch.legacy.exit_handler import primary_exit_handler
-from launch.legacy.launcher import DefaultLauncher
+from launch import LaunchDescription
+from launch import LaunchService
+from launch.actions import EmitEvent
+from launch.actions import ExecuteProcess
+from launch.actions import OpaqueCoroutine
+from launch.actions import RegisterEventHandler
+from launch.event_handlers import OnExecutionComplete
+from launch.events import Shutdown
+from launch_testing import LaunchTestService
+
 import pytest
 import rclpy
 
@@ -61,12 +68,10 @@ def remapping_test(*, cli_args):
     """Return a decorator that returns a test function."""
     def real_decorator(coroutine_test):
         """Return a test function that runs a coroutine test in a loop with a launched process."""
-        nonlocal cli_args
 
         @functools.wraps(coroutine_test)
         def test_func(node_fixture):
             """Run an executable with cli_args and coroutine test in the same asyncio loop."""
-            nonlocal cli_args
 
             # Create a command launching a name_maker executable specified by the pytest fixture
             command = [node_fixture['executable']]
@@ -80,20 +85,17 @@ def remapping_test(*, cli_args):
                 command.insert(0, sys.executable)
                 env['PYTHONUNBUFFERED'] = '1'
 
-            ld = LaunchDescriptor()
-            ld.add_process(
-                cmd=command,
-                name='name_maker_' + coroutine_test.__name__,
-                env=env
-            )
-            ld.add_coroutine(
-                coroutine_test(node_fixture),
-                name=coroutine_test.__name__,
-                exit_handler=primary_exit_handler
-            )
-            launcher = DefaultLauncher()
-            launcher.add_launch_descriptor(ld)
-            return_code = launcher.launch()
+            ld = LaunchDescription()
+            launch_test = LaunchTestService()
+            launch_test.add_fixture_action(ld, ExecuteProcess(
+                cmd=command, name='name_maker_' + coroutine_test.__name__, env=env
+            ))
+            launch_test.add_test_action(ld, OpaqueCoroutine(
+                coroutine=coroutine_test, args=[node_fixture], ignore_context=True
+            ))
+            launch_service = LaunchService()
+            launch_service.include_launch_description(ld)
+            return_code = launch_test.run(launch_service)
             assert return_code == 0, 'Launch failed with exit code %r' % (return_code,)
         return test_func
     return real_decorator
