@@ -28,7 +28,7 @@ int main(int argc, char ** argv)
 
   int num_nodes = ::strtol(argv[1], nullptr, 10);
 
-  printf("Waiting for %d nodes with name: node_with_name\n", num_nodes);
+  printf("Waiting for %d nodes with name: node_with_name_N\n", num_nodes);
   std::cout.flush();
 
   auto node_name = std::string("node_check_names");

@@ -10,23 +10,19 @@ from launch.legacy.launcher import DefaultLauncher
 def test_@TEST_NUM_NODES@_nodes():
     ld = LaunchDescriptor()
 
-    for i in range(0, @TEST_NUM_NODES@):
-        cmd = ['@TEST_EXECUTABLE1@']
-        env = None
-        if '@TEST_RMW_IMPLEMENTATION@':
-            env = dict(os.environ)
-            env['RMW_IMPLEMENTATION'] = '@TEST_RMW_IMPLEMENTATION@'
-        ld.add_process(
-            cmd=cmd,
-            name='node_with_name' + str(i),
-            env=env,
-        )
-
-    cmd = ['@TEST_EXECUTABLE2@'] + '@TEST_NUM_NODES@'.split(' ')
     env = None
     if '@TEST_RMW_IMPLEMENTATION@':
         env = dict(os.environ)
         env['RMW_IMPLEMENTATION'] = '@TEST_RMW_IMPLEMENTATION@'
+
+    for i in range(@TEST_NUM_NODES@):
+        ld.add_process(
+            cmd=['@TEST_EXECUTABLE1@'],
+            name='node_with_name_' + str(i),
+            env=env,
+        )
+
+    cmd = ['@TEST_EXECUTABLE2@'] + '@TEST_NUM_NODES@'.split(' ')
     ld.add_process(
         cmd=cmd,
         name='node_check_names',

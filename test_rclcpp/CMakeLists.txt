@@ -109,10 +109,9 @@ if(BUILD_TESTING)
   endmacro()
 
   macro(custom_launch_n_nodes num_nodes)
-    cmake_parse_arguments(_ARG "" "RMW" "" ${ARGN})
     set(TEST_EXECUTABLE1 "$<TARGET_FILE:node_with_name>")
     set(TEST_EXECUTABLE2 "$<TARGET_FILE:node_check_names>")
-    set(TEST_RMW_IMPLEMENTATION "${_ARG_RMW}")
+    set(TEST_RMW_IMPLEMENTATION "${rmw_implementation}")
     set(TEST_NUM_NODES "${num_nodes}")
     configure_file(
       test/test_n_nodes.py.in
@@ -262,7 +261,6 @@ if(BUILD_TESTING)
       TIMEOUT 60)
 
     custom_launch_n_nodes(10
-      RMW ${rmw_implementation}
       TIMEOUT 15)
 
     # Note (dhood): signal handler tests will be skipped on Windows because there is no opportunity
