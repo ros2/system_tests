@@ -20,7 +20,15 @@ int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
 
-  printf("Waiting for 10 nodes with name: node_with_name\n");
+  if (argc < 2) {
+    fprintf(
+      stderr, "Must pass at least one argument with the expected number of nodes\n");
+    return 1;
+  }
+
+  int num_nodes = ::strtol(argv[1], nullptr, 10);
+
+  printf("Waiting for %d nodes with name: node_with_name\n", num_nodes);
   std::cout.flush();
 
   auto node_name = std::string("node_check_names");
@@ -42,7 +50,7 @@ int main(int argc, char ** argv)
         counter++;
       }
     }
-    if (counter >= 10) {
+    if (counter >= num_nodes) {
       break;
     }
     std::cout.flush();
@@ -54,8 +62,8 @@ int main(int argc, char ** argv)
 
   exec.remove_node(node);
   rclcpp::shutdown();
-  if (counter < 10) {
-    fprintf(stderr, "Did not find all 10 nodes\n");
+  if (counter < num_nodes) {
+    fprintf(stderr, "Did not find all %d nodes\n", num_nodes);
     return 1;
   }
   return 0;

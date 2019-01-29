@@ -108,27 +108,28 @@ if(BUILD_TESTING)
     endif()
   endmacro()
 
-  macro(custom_launch_ten_nodes)
+  macro(custom_launch_n_nodes num_nodes)
     cmake_parse_arguments(_ARG "" "RMW" "" ${ARGN})
     set(TEST_EXECUTABLE1 "$<TARGET_FILE:node_with_name>")
     set(TEST_EXECUTABLE2 "$<TARGET_FILE:node_check_names>")
     set(TEST_RMW_IMPLEMENTATION "${_ARG_RMW}")
+    set(TEST_NUM_NODES "${num_nodes}")
     configure_file(
-      test/test_ten_nodes.py.in
-      test_ten_nodes${target_suffix}.py.configure
+      test/test_n_nodes.py.in
+      test_n_nodes${target_suffix}.py.configure
       @ONLY
     )
     file(GENERATE
-      OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/test_ten_nodes${target_suffix}_$<CONFIG>.py"
-      INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_ten_nodes${target_suffix}.py.configure"
+      OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/test_n_nodes${target_suffix}_$<CONFIG>.py"
+      INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_n_nodes${target_suffix}.py.configure"
     )
-    ament_add_pytest_test(test_ten_nodes${target_suffix}
-      "${CMAKE_CURRENT_BINARY_DIR}/test_ten_nodes${target_suffix}_$<CONFIG>.py"
+    ament_add_pytest_test(test_n_nodes${target_suffix}
+      "${CMAKE_CURRENT_BINARY_DIR}/test_n_nodes${target_suffix}_$<CONFIG>.py"
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       ${_ARG_UNPARSED_ARGUMENTS}
     )
-    if(TEST test_ten_nodes${target_suffix})
-      set_tests_properties(test_ten_nodes${target_suffix}
+    if(TEST test_n_nodes${target_suffix})
+      set_tests_properties(test_n_nodes${target_suffix}
         PROPERTIES DEPENDS "node_with_name${target_suffix} node_check_names${target_suffix}"
       )
     endif()
@@ -260,7 +261,8 @@ if(BUILD_TESTING)
       RMW_IMPLEMENTATION=${rmw_implementation}
       TIMEOUT 60)
 
-    custom_launch_ten_nodes(RMW ${rmw_implementation}
+    custom_launch_n_nodes(10
+      RMW ${rmw_implementation}
       TIMEOUT 15)
 
     # Note (dhood): signal handler tests will be skipped on Windows because there is no opportunity

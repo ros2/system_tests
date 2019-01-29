@@ -1,4 +1,4 @@
-# generated from test_rclcpp/test/test_ten_executables.py.in
+# generated from test_rclcpp/test/test_n_nodes.py.in
 
 import os
 
@@ -7,10 +7,10 @@ from launch.legacy.exit_handler import primary_exit_handler
 from launch.legacy.launcher import DefaultLauncher
 
 
-def test_ten_nodes():
+def test_@TEST_NUM_NODES@_nodes():
     ld = LaunchDescriptor()
 
-    for i in range(0, 10):
+    for i in range(0, @TEST_NUM_NODES@):
         cmd = ['@TEST_EXECUTABLE1@']
         env = None
         if '@TEST_RMW_IMPLEMENTATION@':
@@ -22,13 +22,13 @@ def test_ten_nodes():
             env=env,
         )
 
+    cmd = ['@TEST_EXECUTABLE2@'] + '@TEST_NUM_NODES@'.split(' ')
     env = None
     if '@TEST_RMW_IMPLEMENTATION@':
         env = dict(os.environ)
         env['RMW_IMPLEMENTATION'] = '@TEST_RMW_IMPLEMENTATION@'
-
     ld.add_process(
-        cmd=['@TEST_EXECUTABLE2@'],
+        cmd=cmd,
         name='node_check_names',
         env=env,
         exit_handler=primary_exit_handler,
@@ -42,4 +42,4 @@ def test_ten_nodes():
 
 
 if __name__ == '__main__':
-    test_ten_nodes()
+    test_@TEST_NUM_NODES@_nodes()
