@@ -29,13 +29,13 @@ const double test_epsilon = 1e-6;
 
 void declare_test_parameters(std::shared_ptr<rclcpp::Node> node)
 {
-  node->create_parameter("foo");
-  node->create_parameter("bar");
-  node->create_parameter("barstr");
-  node->create_parameter("baz");
-  node->create_parameter("foo.first");
-  node->create_parameter("foo.second");
-  node->create_parameter("foobar");
+  node->declare_parameter("foo");
+  node->declare_parameter("bar");
+  node->declare_parameter("barstr");
+  node->declare_parameter("baz");
+  node->declare_parameter("foo.first");
+  node->declare_parameter("foo.second");
+  node->declare_parameter("foobar");
 }
 
 void set_test_parameters(
