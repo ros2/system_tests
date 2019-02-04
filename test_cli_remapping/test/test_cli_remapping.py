@@ -21,12 +21,8 @@ import time
 
 from launch import LaunchDescription
 from launch import LaunchService
-from launch.actions import EmitEvent
 from launch.actions import ExecuteProcess
 from launch.actions import OpaqueCoroutine
-from launch.actions import RegisterEventHandler
-from launch.event_handlers import OnExecutionComplete
-from launch.events import Shutdown
 from launch_testing import LaunchTestService
 
 import pytest
@@ -68,11 +64,9 @@ def remapping_test(*, cli_args):
     """Return a decorator that returns a test function."""
     def real_decorator(coroutine_test):
         """Return a test function that runs a coroutine test in a loop with a launched process."""
-
         @functools.wraps(coroutine_test)
         def test_func(node_fixture):
             """Run an executable with cli_args and coroutine test in the same asyncio loop."""
-
             # Create a command launching a name_maker executable specified by the pytest fixture
             command = [node_fixture['executable']]
             # format command line arguments with random string from test fixture
@@ -93,7 +87,7 @@ def remapping_test(*, cli_args):
             launch_test.add_test_action(ld, OpaqueCoroutine(
                 coroutine=coroutine_test, args=[node_fixture], ignore_context=True
             ))
-            launch_service = LaunchService()
+            launch_service = LaunchService(debug=True)
             launch_service.include_launch_description(ld)
             return_code = launch_test.run(launch_service)
             assert return_code == 0, 'Launch failed with exit code %r' % (return_code,)
