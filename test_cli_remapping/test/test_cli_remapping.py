@@ -87,7 +87,7 @@ def remapping_test(*, cli_args):
             launch_test.add_test_action(ld, OpaqueCoroutine(
                 coroutine=coroutine_test, args=[node_fixture], ignore_context=True
             ))
-            launch_service = LaunchService(debug=True)
+            launch_service = LaunchService()
             launch_service.include_launch_description(ld)
             return_code = launch_test.run(launch_service)
             assert return_code == 0, 'Launch failed with exit code %r' % (return_code,)

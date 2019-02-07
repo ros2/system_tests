@@ -1,51 +1,54 @@
 # generated from test_rclcpp/test/test_executable_output.py.in
 # generated code does not contain a copyright notice
 
-from launch.legacy import LaunchDescriptor
-from launch.legacy.exit_handler import primary_exit_handler
-from launch.legacy.launcher import DefaultLauncher
-from launch.legacy.output_handler import ConsoleOutput
-
-from launch_testing import create_handler
+from launch import LaunchDescription
+from launch import LaunchService
+from launch.actions import ExecuteProcess
+from launch_testing import LaunchTestService
+from launch_testing.output import create_output_lines_filter
+from launch_testing.output import create_output_test_from_file
 
 
 def @TEST_NAME@():
-    ld = LaunchDescriptor()
+    launch_test = LaunchTestService()
+    launch_description = LaunchDescription()
 
-    output_handlers = [ConsoleOutput()]
-
-    shutdown_trigger_handler = create_handler(
-        '@TEST_EXECUTABLE_NAME@',
-        ld,
-        '@TEST_EXECUTABLE_TRIGGER_SHUTDOWN_OUTPUT@',
-        exit_on_match=True,
-        filtered_rmw_implementation='@rmw_implementation@',
-    )
-    output_handlers.append(shutdown_trigger_handler)
-
-    output_check_handler = create_handler(
-        '@TEST_EXECUTABLE_NAME@',
-        ld,
-        '@TEST_EXECUTABLE_EXPECTED_OUTPUT@',
-        exit_on_match=False,
-        filtered_rmw_implementation='@rmw_implementation@',
-    )
-    output_handlers.append(output_check_handler)
-
-    ld.add_process(
-        cmd=['@TEST_EXECUTABLE@'],
-        name='@TEST_EXECUTABLE_NAME@',
-        exit_handler=primary_exit_handler,
-        output_handlers=output_handlers,
+    action = launch_test.add_fixture_action(
+        launch_description, ExecuteProcess(
+            cmd=['@TEST_EXECUTABLE@'],
+            name='@TEST_EXECUTABLE_NAME@',
+            sigterm_timeout='15',
+            output='screen'
+        ), exit_allowed=True
     )
 
-    launcher = DefaultLauncher()
-    launcher.add_launch_descriptor(ld)
-    rc = launcher.launch()
+    launch_test.add_output_test(
+        launch_description, action,
+        output_test=create_output_test_from_file(
+            output_file='@TEST_EXECUTABLE_EXPECTED_OUTPUT@'
+        ),
+        output_filter=create_output_lines_filter(
+            filtered_rmw_implementation='@rmw_implementation@'
+        )
+    )
+
+    launch_test.add_output_test(
+        launch_description, action,
+        output_test=create_output_test_from_file(
+            output_file='@TEST_EXECUTABLE_TRIGGER_SHUTDOWN_OUTPUT@'
+        ),
+        output_filter=create_output_lines_filter(
+            filtered_rmw_implementation='@rmw_implementation@'
+        ),
+        test_suffix='trigger_shutdown_output',
+        side_effect='shutdown'
+    )
+
+    launch_service = LaunchService()
+    launch_service.include_launch_description(launch_description)
+    rc = launch_test.run(launch_service)
 
     assert rc == 0, "The launch file failed with exit code '" + str(rc) + "'. "
-
-    output_check_handler.check()
 
 
 if __name__ == '__main__':

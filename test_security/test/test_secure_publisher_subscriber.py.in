@@ -4,9 +4,10 @@ import os
 # import sys
 import time
 
-from launch.legacy import LaunchDescriptor
-from launch.legacy.exit_handler import primary_exit_handler
-from launch.legacy.launcher import DefaultLauncher
+from launch import LaunchDescription
+from launch import LaunchService
+from launch.actions import ExecuteProcess
+from launch_testing import LaunchTestService
 
 
 def test_secure_publisher_subscriber():
@@ -15,7 +16,9 @@ def test_secure_publisher_subscriber():
     # namespace = '/test_time_%s' % time.strftime('%H_%M_%S', time.gmtime())
     namespace = '/'
 
-    ld = LaunchDescriptor()
+    launch_test = LaunchTestService()
+    launch_description = LaunchDescription()
+
     publisher_cmd = [
         '@TEST_PUBLISHER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@', namespace
     ]
@@ -40,10 +43,13 @@ def test_secure_publisher_subscriber():
     publisher_env['ROS_SECURITY_ENABLE'] = '@PUBLISHER_ROS_SECURITY_ENABLE@'
     publisher_env['ROS_SECURITY_STRATEGY'] = '@PUBLISHER_ROS_SECURITY_STRATEGY@'
     publisher_env['ROS_SECURITY_ROOT_DIRECTORY'] = '@PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY@'
-    ld.add_process(
-        cmd=publisher_cmd,
-        name='test_publisher',
-        env=publisher_env,
+
+    launch_test.add_fixture_action(
+        launch_description, ExecuteProcess(
+            cmd=publisher_cmd,
+            name='test_publisher',
+            env=publisher_env,
+        )
     )
 
     subscriber_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@SUBSCRIBER_RMW@'
@@ -51,16 +57,18 @@ def test_secure_publisher_subscriber():
     subscriber_env['ROS_SECURITY_ENABLE'] = '@SUBSCRIBER_ROS_SECURITY_ENABLE@'
     subscriber_env['ROS_SECURITY_STRATEGY'] = '@SUBSCRIBER_ROS_SECURITY_STRATEGY@'
     subscriber_env['ROS_SECURITY_ROOT_DIRECTORY'] = '@SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY@'
-    ld.add_process(
-        cmd=subscriber_cmd,
-        name='test_subscriber',
-        env=subscriber_env,
-        exit_handler=primary_exit_handler,
+
+    launch_test.add_test_action(
+        launch_description, ExecuteProcess(
+            cmd=subscriber_cmd,
+            name='test_subscriber',
+            env=subscriber_env,
+        )
     )
 
-    launcher = DefaultLauncher()
-    launcher.add_launch_descriptor(ld)
-    rc = launcher.launch()
+    launch_service = LaunchService()
+    launch_service.include_launch_description(launch_description)
+    rc = launch_test.run(launch_service)
 
     assert rc == 0, \
         "The launch file failed with exit code '" + str(rc) + "'. " \
