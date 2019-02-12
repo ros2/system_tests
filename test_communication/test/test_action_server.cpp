@@ -123,11 +123,13 @@ generate_expected_fibonacci_goals(rclcpp::Logger logger)
         const auto goal = goal_handle->get_goal();
         rclcpp::Rate loop_rate(10);
 
-        auto feedback = std::make_shared<test_msgs::action::Fibonacci::Feedback>();
-        feedback->sequence.push_back(0);
-        feedback->sequence.push_back(1);
+        auto feedback = std::make_shared<
+          test_msgs::action::Fibonacci::Impl::FeedbackMessage>();
+        feedback->feedback.sequence.push_back(0);
+        feedback->feedback.sequence.push_back(1);
 
-        auto result = std::make_shared<test_msgs::action::Fibonacci::Result>();
+        auto result = std::make_shared<
+          test_msgs::action::Fibonacci::Impl::GetResultService::Response>();
 
         if (goal->order <= 0) {
           RCLCPP_ERROR(logger, "expected a goal > 0, got %d", goal->order);
@@ -141,13 +143,14 @@ generate_expected_fibonacci_goals(rclcpp::Logger logger)
           }
           // Check if the goal was canceled.
           if (goal_handle->is_canceling()) {
-            result->sequence = feedback->sequence;
+            result->result.sequence = feedback->feedback.sequence;
             goal_handle->set_canceled(result);
             RCLCPP_INFO(logger, "goal was canceled");
             return;
           }
           // Update the sequence.
-          feedback->sequence.push_back(feedback->sequence[i] + feedback->sequence[i - 1]);
+          feedback->feedback.sequence.push_back(
+            feedback->feedback.sequence[i] + feedback->feedback.sequence[i - 1]);
           // Publish the current state as feedback.
           goal_handle->publish_feedback(feedback);
           RCLCPP_INFO(logger, "publishing feedback for goal");
@@ -155,7 +158,7 @@ generate_expected_fibonacci_goals(rclcpp::Logger logger)
           loop_rate.sleep();
         }
 
-        result->sequence = feedback->sequence;
+        result->result.sequence = feedback->feedback.sequence;
         goal_handle->set_succeeded(result);
         RCLCPP_INFO(logger, "goal succeeded");
       };
