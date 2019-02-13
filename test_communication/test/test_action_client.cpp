@@ -12,10 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <cstdlib>
-
 #include <chrono>
 #include <functional>
+#include <random>
 #include <string>
 #include <vector>
 
@@ -178,18 +177,20 @@ generate_nested_message_goal_tests()
 {
   std::vector<ActionClientTest<test_msgs::action::NestedMessage>> result;
 
-  const int32_t initial_value = rand() % 12345 + 1;
+  std::default_random_engine generator;
+  std::uniform_int_distribution<int> distribution(1, 12345);
+  const int32_t initial_value = distribution(generator);
   const int32_t expected_feedback_value = 2 * initial_value;
   const int32_t expected_result_value = 4 * initial_value;
 
   {
     ActionClientTest<test_msgs::action::NestedMessage> test;
-    test.goal.nested_field_no_pkg.duration_value.sec = initial_value; 
+    test.goal.nested_field_no_pkg.duration_value.sec = initial_value;
     test.result_is_valid =
       [initial_value, expected_result_value](auto result) -> bool {
         if (result->nested_field.int32_value != expected_result_value) {
           fprintf(stderr, "expected result %d but got %d for initial value %d\n",
-          expected_result_value, result->nested_field.int32_value, initial_value);
+            expected_result_value, result->nested_field.int32_value, initial_value);
           return false;
         }
         return true;
@@ -198,7 +199,7 @@ generate_nested_message_goal_tests()
       [initial_value, expected_feedback_value](auto feedback) -> bool {
         if (feedback->nested_different_pkg.sec != expected_feedback_value) {
           fprintf(stderr, "expected feedback %d but got %d for initial value %d\n",
-          expected_feedback_value, feedback->nested_different_pkg.sec, initial_value);
+            expected_feedback_value, feedback->nested_different_pkg.sec, initial_value);
           return false;
         }
         return true;
@@ -225,7 +226,8 @@ int main(int argc, char ** argv)
   if (action == "Fibonacci") {
     rc = send_goals<test_msgs::action::Fibonacci>(node, action, generate_fibonacci_goal_tests());
   } else if (action == "NestedMessage") {
-    rc = send_goals<test_msgs::action::NestedMessage>(node, action, generate_nested_message_goal_tests());
+    rc = send_goals<test_msgs::action::NestedMessage>(
+      node, action, generate_nested_message_goal_tests());
   } else {
     fprintf(stderr, "Unknown action type '%s'\n", action.c_str());
     return 1;
