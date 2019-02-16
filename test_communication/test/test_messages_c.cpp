@@ -473,9 +473,9 @@ void get_message(test_msgs__msg__StaticArrayPrimitives * msg, size_t msg_num)
     msg->byte_values[0] = 0;
     msg->byte_values[1] = 0xff;
     msg->byte_values[2] = 0;
-    msg->char_values[0] = '\0';
-    msg->char_values[1] = '\x7f';
-    msg->char_values[2] = '\0';
+    msg->char_values[0] = 0;
+    msg->char_values[1] = 255;
+    msg->char_values[2] = 0;
     msg->float32_values[0] = 0.0f;
     msg->float32_values[1] = 1.125f;
     msg->float32_values[2] = -2.125f;
@@ -640,7 +640,7 @@ void get_message(test_msgs__msg__DynamicArrayPrimitives * msg, size_t msg_num)
 
       msg->bool_values.data[0] = true;
       msg->byte_values.data[0] = 0xff;
-      msg->char_values.data[0] = '\x7f';
+      msg->char_values.data[0] = 255;
       msg->float32_values.data[0] = 1.125f;
       msg->float64_values.data[0] = 1.125;
       msg->int8_values.data[0] = (std::numeric_limits<int8_t>::max)();
@@ -674,8 +674,8 @@ void get_message(test_msgs__msg__DynamicArrayPrimitives * msg, size_t msg_num)
       msg->bool_values.data[1] = true;
       msg->byte_values.data[0] = 0x00;
       msg->byte_values.data[1] = 0xff;
-      msg->char_values.data[0] = '\0';
-      msg->char_values.data[1] = '\x7f';
+      msg->char_values.data[0] = 0;
+      msg->char_values.data[1] = 255;
       msg->float32_values.data[0] = 0.0f;
       msg->float32_values.data[1] = 1.125f;
       msg->float32_values.data[2] = -2.125f;
@@ -953,9 +953,9 @@ void get_message(test_msgs__msg__BoundedArrayPrimitives * msg, size_t msg_num)
       msg->byte_values.data[0] = 0x00;
       msg->byte_values.data[1] = 0x01;
       msg->byte_values.data[2] = 0xff;
-      msg->char_values.data[0] = '\0';
-      msg->char_values.data[1] = '\1';
-      msg->char_values.data[2] = '\255';
+      msg->char_values.data[0] = 0;
+      msg->char_values.data[1] = 1;
+      msg->char_values.data[2] = 255;
       msg->float32_values.data[0] = 0.0f;
       msg->float32_values.data[1] = 1.125f;
       msg->float32_values.data[2] = -2.125f;
