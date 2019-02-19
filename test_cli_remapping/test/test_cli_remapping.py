@@ -155,6 +155,7 @@ async def test_topic_replacement(node_fixture):
         rclpy.spin_once(node_fixture['node'], timeout_sec=0)
     assert name in get_topics(node_fixture) and name not in get_services(node_fixture)
 
+
 @remapping_test(cli_args=('rosservice://~/private/name:=/remapped/s{random_string}',))
 async def test_service_replacement(node_fixture):
     name = '/remapped/s{random_string}'.format(**node_fixture)
