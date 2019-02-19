@@ -43,7 +43,7 @@ CLIENT_LIBRARY_EXECUTABLES = (
 )
 
 
-@pytest.fixture(scope='module', params=CLIENT_LIBRARY_EXECUTABLES)
+@pytest.fixture(params=CLIENT_LIBRARY_EXECUTABLES)
 def node_fixture(request):
     """Create a fixture with a node, name_maker executable, and random string."""
     rclpy.init()
@@ -78,7 +78,6 @@ def remapping_test(*, cli_args):
             if command[0][-3:] == '.py':
                 command.insert(0, sys.executable)
                 env['PYTHONUNBUFFERED'] = '1'
-
             ld = LaunchDescription()
             launch_test = LaunchTestService()
             launch_test.add_fixture_action(ld, ExecuteProcess(
@@ -155,7 +154,6 @@ async def test_topic_replacement(node_fixture):
         await asyncio.sleep(TIME_BETWEEN_ATTEMPTS)
         rclpy.spin_once(node_fixture['node'], timeout_sec=0)
     assert name in get_topics(node_fixture) and name not in get_services(node_fixture)
-
 
 @remapping_test(cli_args=('rosservice://~/private/name:=/remapped/s{random_string}',))
 async def test_service_replacement(node_fixture):
