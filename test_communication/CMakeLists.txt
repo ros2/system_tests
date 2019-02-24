@@ -149,6 +149,8 @@ if(BUILD_TESTING)
   endfunction()
 
   macro(multi_targets)
+    # Define option to skip tests which interfere with address sanitizer.
+    option(SKIP_ASAN_INCOMPATIBLE_TESTS "Skip tests which are address sanitizer incompatible" OFF)
     # test publish / subscribe messages
     if(rmw_implementation1 STREQUAL rmw_implementation2)
       set(suffix "${suffix}__${rmw_implementation1}")
@@ -168,6 +170,9 @@ if(BUILD_TESTING)
       set(rmw_implementation2_is_fastrtps TRUE)
     endif()
     if(WIN32 AND (rmw_implementation1_is_fastrtps OR rmw_implementation2_is_fastrtps))
+      set(SKIP_TEST "SKIP_TEST")
+    endif()
+    if(SKIP_ASAN_INCOMPATIBLE_TESTS)
       set(SKIP_TEST "SKIP_TEST")
     endif()
 
@@ -216,6 +221,9 @@ if(BUILD_TESTING)
     if((client_library1 STREQUAL "rclpy" AND rmw_implementation1 MATCHES "rmw_connext_dynamic_cpp") OR
       (client_library2 STREQUAL "rclpy" AND rmw_implementation2 MATCHES "rmw_connext_dynamic_cpp")
     )
+      set(SKIP_TEST "SKIP_TEST")
+    endif()
+    if(SKIP_ASAN_INCOMPATIBLE_TESTS)
       set(SKIP_TEST "SKIP_TEST")
     endif()
 
