@@ -198,9 +198,9 @@ generate_expected_nested_message_goals(rclcpp::Logger logger)
         const int32_t feedback_value = 2 * initial_value;
         const int32_t result_value = 4 * initial_value;
 
-        auto feedback = std::make_shared<test_msgs::action::NestedMessage::Feedback>();
+        auto feedback = std::make_shared<test_msgs::action::NestedMessage::Impl::FeedbackMessage>();
 
-        auto result = std::make_shared<test_msgs::action::NestedMessage::Result>();
+        auto response = std::make_shared<test_msgs::action::NestedMessage::Impl::GetResultService::Response>();
 
         if (initial_value <= 0) {
           RCLCPP_ERROR(logger, "expected a goal > 0, got %d", initial_value);
@@ -214,13 +214,13 @@ generate_expected_nested_message_goals(rclcpp::Logger logger)
           }
           // Check if the goal was canceled.
           if (goal_handle->is_canceling()) {
-            result->nested_field.int32_value = result_value;
-            goal_handle->set_canceled(result);
+            response->result.nested_field.int32_value = result_value;
+            goal_handle->set_canceled(response);
             RCLCPP_INFO(logger, "goal was canceled");
             return;
           }
           // Update the feedback;
-          feedback->nested_different_pkg.sec = feedback_value;
+          feedback->feedback.nested_different_pkg.sec = feedback_value;
           // Publish the current state as feedback.
           goal_handle->publish_feedback(feedback);
           RCLCPP_INFO(logger, "publishing feedback for goal");
@@ -228,8 +228,8 @@ generate_expected_nested_message_goals(rclcpp::Logger logger)
           loop_rate.sleep();
         }
 
-        result->nested_field.int32_value = result_value;
-        goal_handle->set_succeeded(result);
+        response->result.nested_field.int32_value = result_value;
+        goal_handle->set_succeeded(response);
         RCLCPP_INFO(logger, "goal succeeded");
       };
 
