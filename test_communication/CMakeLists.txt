@@ -253,11 +253,6 @@ if(BUILD_TESTING)
     # Note: taking same exclusions as services since actions use services too
     # set(SKIP_TEST "")
 
-    # TODO(wjwwood): actions do not support python
-    if(client_library1 STREQUAL "rclpy" OR client_library2 STREQUAL "rclpy")
-      set(SKIP_TEST "SKIP_TEST")
-    endif()
-
     set(ACTION_CLIENT_RMW ${rmw_implementation1})
     set(ACTION_SERVER_RMW ${rmw_implementation2})
     foreach(action_file ${action_files})
@@ -317,7 +312,7 @@ if(BUILD_TESTING)
     if(_client_library1 STREQUAL "rclpy")
       set(TEST_PUBLISHER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/publisher_py.py")
       set(TEST_REQUESTER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/requester_py.py")
-      # TODO(wjwwood): actions do not support python
+      set(TEST_ACTION_CLIENT_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/action_client_py.py")
     elseif(_client_library1 STREQUAL "rclcpp")
       set(TEST_PUBLISHER_EXECUTABLE "$<TARGET_FILE:test_publisher_cpp>")
       set(TEST_REQUESTER_EXECUTABLE "$<TARGET_FILE:test_requester_cpp>")
@@ -327,7 +322,7 @@ if(BUILD_TESTING)
     if(_client_library2 STREQUAL "rclpy")
       set(TEST_SUBSCRIBER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/subscriber_py.py")
       set(TEST_REPLIER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/replier_py.py")
-      # TODO(wjwwood): actions do not support python
+      set(TEST_ACTION_SERVER_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/test/action_server_py.py")
     elseif(_client_library2 STREQUAL "rclcpp")
       set(TEST_SUBSCRIBER_EXECUTABLE "$<TARGET_FILE:test_subscriber_cpp>")
       set(TEST_REPLIER_EXECUTABLE "$<TARGET_FILE:test_replier_cpp>")
