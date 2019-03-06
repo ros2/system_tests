@@ -20,6 +20,7 @@ from test_msgs.action import NestedMessage
 
 
 class ActionClientTest:
+
     def __init__(self, goal):
         self.goal = goal
 

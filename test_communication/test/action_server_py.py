@@ -13,14 +13,15 @@
 # limitations under the License.
 
 import argparse
-import time
 import sys
+import time
 
 from test_msgs.action import Fibonacci
 from test_msgs.action import NestedMessage
 
 
 class ExpectedGoal:
+
     def is_goal_expected(self, goal):
         raise NotImplementedError('is_goal_expected() is not implemented')
 
