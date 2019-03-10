@@ -96,7 +96,8 @@ def generate_fibonacci_goal_tests():
 
     test = ActionClientTest(goal)
 
-    def is_feedback_valid(feedback):
+    def is_feedback_valid(feedback_message):
+        feedback = feedback_message.feedback
         if len(feedback.sequence) > (order + 1):
             print('Feedback sequence is greater than goal order', file=sys.stderr)
             return False
@@ -107,7 +108,8 @@ def generate_fibonacci_goal_tests():
                 return False
         return True
 
-    def is_result_valid(result):
+    def is_result_valid(get_result_response):
+        result = get_result_response.result
         if len(result.sequence) != (order + 1):
             print('Result sequence does not equal goal order', file=sys.stderr)
             return False
@@ -138,7 +140,8 @@ def generate_nested_message_goal_tests():
 
     test = ActionClientTest(goal)
 
-    def is_feedback_valid(feedback):
+    def is_feedback_valid(feedback_message):
+        feedback = feedback_message.feedback
         if feedback.nested_different_pkg.sec != expected_feedback_value:
             print('Expected feedback {} but got {} for initial value {}'.format(
                 expected_feedback_value, feedback.nested_different_pkg.sec, initial_value),
@@ -146,7 +149,8 @@ def generate_nested_message_goal_tests():
             return False
         return True
 
-    def is_result_valid(result):
+    def is_result_valid(get_result_response):
+        result = get_result_response.result
         if result.nested_field.int32_value != expected_result_value:
             print('Expected result {} but got {} for initial value {}'.format(
                 expected_result_value, result.nested_field.int32_value, initial_value),
