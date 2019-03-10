@@ -9,15 +9,20 @@ from launch import LaunchService
 from launch.actions import ExecuteProcess
 from launch_testing import LaunchTestService
 
+import pytest
 
-def test_publisher_subscriber():
+MESSAGE_TYPES = '@TEST_MESSAGE_TYPES@'.split(';')
+
+
+@pytest.mark.parametrize('message_type', MESSAGE_TYPES)
+def test_publisher_subscriber(message_type):
     namespace = '/test_time_%s' % time.strftime('%H_%M_%S', time.gmtime())
 
     launch_test = LaunchTestService()
     launch_description = LaunchDescription()
 
-    publisher_cmd = ['@TEST_PUBLISHER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@', namespace]
-    subscriber_cmd = ['@TEST_SUBSCRIBER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@', namespace]
+    publisher_cmd = ['@TEST_PUBLISHER_EXECUTABLE@', message_type, namespace]
+    subscriber_cmd = ['@TEST_SUBSCRIBER_EXECUTABLE@', message_type, namespace]
 
     publisher_env = dict(os.environ)
     subscriber_env = dict(os.environ)
@@ -61,4 +66,5 @@ def test_publisher_subscriber():
 
 
 if __name__ == '__main__':
-    test_publisher_subscriber()
+    for message_type in MESSAGE_TYPES:
+        test_publisher_subscriber(message_type)
