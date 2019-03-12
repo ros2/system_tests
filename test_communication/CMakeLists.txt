@@ -173,33 +173,35 @@ if(BUILD_TESTING)
 
     set(PUBLISHER_RMW ${rmw_implementation1})
     set(SUBSCRIBER_RMW ${rmw_implementation2})
+    set(TEST_MESSAGE_TYPES "")
     foreach(message_file ${message_files})
-      get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
-
-      set(test_suffix "__${TEST_MESSAGE_TYPE}${suffix}")
-      configure_file(
-        test/test_publisher_subscriber.py.in
-        test_publisher_subscriber${test_suffix}.py.configured
-        @ONLY
-      )
-      file(GENERATE
-        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${test_suffix}_$<CONFIG>.py"
-        INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${test_suffix}.py.configured"
-      )
-
-      ament_add_pytest_test(test_publisher_subscriber${test_suffix}
-        "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${test_suffix}_$<CONFIG>.py"
-        PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
-        APPEND_LIBRARY_DIRS "${append_library_dirs}"
-        TIMEOUT 15
-        ${SKIP_TEST})
-      if(TEST test_publisher_subscriber${test_suffix})
-        set_tests_properties(
-          test_publisher_subscriber${test_suffix}
-          PROPERTIES DEPENDS "test_publisher_cpp__${rmw_implementation1};test_subscriber_cpp__${rmw_implementation2}"
-        )
-      endif()
+      get_filename_component(message_type "${message_file}" NAME_WE)
+      list(APPEND TEST_MESSAGE_TYPES "${message_type}")
     endforeach()
+    configure_file(
+      test/test_publisher_subscriber.py.in
+      test_publisher_subscriber${suffix}.py.configured
+      @ONLY
+    )
+    file(GENERATE
+      OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${suffix}_$<CONFIG>.py"
+      INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${suffix}.py.configured"
+    )
+
+    list(LENGTH TEST_MESSAGE_TYPES length)
+    math(EXPR timeout "${length} * 15")
+    ament_add_pytest_test(test_publisher_subscriber${suffix}
+      "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${suffix}_$<CONFIG>.py"
+      PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
+      APPEND_LIBRARY_DIRS "${append_library_dirs}"
+      TIMEOUT ${timeout}
+      ${SKIP_TEST})
+    if(TEST test_publisher_subscriber${suffix})
+      set_tests_properties(
+        test_publisher_subscriber${suffix}
+        PROPERTIES DEPENDS "test_publisher_cpp__${rmw_implementation1};test_subscriber_cpp__${rmw_implementation2}"
+      )
+    endif()
 
     # test requester / replier
     set(SKIP_TEST "")
@@ -221,33 +223,36 @@ if(BUILD_TESTING)
 
     set(REQUESTER_RMW ${rmw_implementation1})
     set(REPLIER_RMW ${rmw_implementation2})
+    set(TEST_SERVICE_TYPES "")
     foreach(service_file ${service_files})
-      get_filename_component(TEST_SERVICE_TYPE "${service_file}" NAME_WE)
-      set(test_suffix "__${TEST_SERVICE_TYPE}${suffix}")
-      configure_file(
-        test/test_requester_replier.py.in
-        test_requester_replier${test_suffix}.py.configured
-        @ONLY
-      )
-      file(GENERATE
-        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier${test_suffix}_$<CONFIG>.py"
-        INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier${test_suffix}.py.configured"
-      )
-
-      ament_add_pytest_test(test_requester_replier${test_suffix}
-        "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier${test_suffix}_$<CONFIG>.py"
-        PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
-        APPEND_LIBRARY_DIRS "${append_library_dirs}"
-        TIMEOUT 30
-        ${SKIP_TEST})
-      if(TEST test_requester_replier${test_suffix})
-        set_tests_properties(
-          test_requester_replier${test_suffix}
-          PROPERTIES DEPENDS
-            "test_requester_cpp__${rmw_implementation1};test_replier_cpp__${rmw_implementation2}"
-        )
-      endif()
+      get_filename_component(service_type "${service_file}" NAME_WE)
+      list(APPEND TEST_SERVICE_TYPES "${service_type}")
     endforeach()
+    configure_file(
+      test/test_requester_replier.py.in
+      test_requester_replier${suffix}.py.configured
+      @ONLY
+    )
+    file(GENERATE
+      OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier${suffix}_$<CONFIG>.py"
+      INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier${suffix}.py.configured"
+    )
+
+    list(LENGTH TEST_SERVICE_TYPES length)
+    math(EXPR timeout "${length} * 30")
+    ament_add_pytest_test(test_requester_replier${suffix}
+      "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier${suffix}_$<CONFIG>.py"
+      PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
+      APPEND_LIBRARY_DIRS "${append_library_dirs}"
+      TIMEOUT ${timeout}
+      ${SKIP_TEST})
+    if(TEST test_requester_replier${suffix})
+      set_tests_properties(
+        test_requester_replier${suffix}
+        PROPERTIES DEPENDS
+          "test_requester_cpp__${rmw_implementation1};test_replier_cpp__${rmw_implementation2}"
+      )
+    endif()
 
     # test action client / server
     # Note: taking same exclusions as services since actions use services too
@@ -255,33 +260,36 @@ if(BUILD_TESTING)
 
     set(ACTION_CLIENT_RMW ${rmw_implementation1})
     set(ACTION_SERVER_RMW ${rmw_implementation2})
+    set(TEST_ACTION_TYPES "")
     foreach(action_file ${action_files})
-      get_filename_component(TEST_ACTION_TYPE "${action_file}" NAME_WE)
-      set(test_suffix "__${TEST_ACTION_TYPE}${suffix}")
-      configure_file(
-        test/test_action_client_server.py.in
-        test_action_client_server${test_suffix}.py.configured
-        @ONLY
-      )
-      file(GENERATE
-        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/test_action_client_server${test_suffix}_$<CONFIG>.py"
-        INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_action_client_server${test_suffix}.py.configured"
-      )
-
-      ament_add_pytest_test(test_action_client_server${test_suffix}
-        "${CMAKE_CURRENT_BINARY_DIR}/test_action_client_server${test_suffix}_$<CONFIG>.py"
-        PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
-        APPEND_LIBRARY_DIRS "${append_library_dirs}"
-        TIMEOUT 30
-        ${SKIP_TEST})
-      if(TEST test_action_client_server${test_suffix})
-        set_tests_properties(
-          test_action_client_server${test_suffix}
-          PROPERTIES DEPENDS
-            "test_action_client_cpp__${rmw_implementation1};test_action_server_cpp__${rmw_implementation2}"
-        )
-      endif()
+      get_filename_component(action_type "${action_file}" NAME_WE)
+      list(APPEND TEST_ACTION_TYPES "${action_type}")
     endforeach()
+    configure_file(
+      test/test_action_client_server.py.in
+      test_action_client_server${suffix}.py.configured
+      @ONLY
+    )
+    file(GENERATE
+      OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/test_action_client_server${suffix}_$<CONFIG>.py"
+      INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_action_client_server${suffix}.py.configured"
+    )
+
+    list(LENGTH TEST_ACTION_TYPES length)
+    math(EXPR timeout "${length} * 30")
+    ament_add_pytest_test(test_action_client_server${suffix}
+      "${CMAKE_CURRENT_BINARY_DIR}/test_action_client_server${suffix}_$<CONFIG>.py"
+      PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
+      APPEND_LIBRARY_DIRS "${append_library_dirs}"
+      TIMEOUT ${timeout}
+      ${SKIP_TEST})
+    if(TEST test_action_client_server${suffix})
+      set_tests_properties(
+        test_action_client_server${suffix}
+        PROPERTIES DEPENDS
+          "test_action_client_cpp__${rmw_implementation1};test_action_server_cpp__${rmw_implementation2}"
+      )
+    endif()
   endmacro()
 
   macro(configure_template _client_library1 _client_library2)

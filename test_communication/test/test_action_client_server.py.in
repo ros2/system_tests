@@ -9,15 +9,20 @@ from launch import LaunchService
 from launch.actions import ExecuteProcess
 from launch_testing import LaunchTestService
 
+import pytest
 
-def test_action_client_server():
+ACTION_TYPES = '@TEST_ACTION_TYPES@'.split(';')
+
+
+@pytest.mark.parametrize('action_type', ACTION_TYPES)
+def test_action_client_server(action_type):
     namespace = '/test_time_%s' % time.strftime('%H_%M_%S', time.gmtime())
 
     launch_test = LaunchTestService()
     launch_description = LaunchDescription()
 
-    action_client_cmd = ['@TEST_ACTION_CLIENT_EXECUTABLE@', '@TEST_ACTION_TYPE@', namespace]
-    action_server_cmd = ['@TEST_ACTION_SERVER_EXECUTABLE@', '@TEST_ACTION_TYPE@', namespace]
+    action_client_cmd = ['@TEST_ACTION_CLIENT_EXECUTABLE@', action_type, namespace]
+    action_server_cmd = ['@TEST_ACTION_SERVER_EXECUTABLE@', action_type, namespace]
 
     action_server_env = dict(os.environ)
     action_client_env = dict(os.environ)
@@ -61,4 +66,5 @@ def test_action_client_server():
 
 
 if __name__ == '__main__':
-    test_action_client_server()
+    for action_type in ACTION_TYPES:
+        test_action_client_server(action_type)
