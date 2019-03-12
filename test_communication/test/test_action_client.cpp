@@ -94,7 +94,7 @@ send_goals(
       return 1;
     }
 
-    if (!goal_tests[test_index].result_is_valid(result_future.get().response)) {
+    if (!goal_tests[test_index].result_is_valid(result_future.get().result)) {
       RCLCPP_ERROR(logger, "invalid goal result");
       return 1;
     }

@@ -147,7 +147,8 @@ generate_expected_fibonacci_goals(rclcpp::Logger logger)
             return;
           }
           // Update the sequence.
-          feedback->sequence.push_back(feedback->sequence[i] + feedback->sequence[i - 1]);
+          feedback->sequence.push_back(
+            feedback->sequence[i] + feedback->sequence[i - 1]);
           // Publish the current state as feedback.
           goal_handle->publish_feedback(feedback);
           RCLCPP_INFO(logger, "publishing feedback for goal");
