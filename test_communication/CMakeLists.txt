@@ -130,9 +130,6 @@ if(BUILD_TESTING)
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation})
     if(TARGET ${target}${target_suffix})
-      target_include_directories(${target}${target_suffix}
-        PUBLIC ${osrf_testing_tools_cpp_INCLUDE_DIRS}
-      )
       target_link_libraries(${target}${target_suffix}
         ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
         ${_AMENT_EXPORT_LIBRARY_TARGETS})
@@ -140,7 +137,7 @@ if(BUILD_TESTING)
       rosidl_target_interfaces(${target}${target_suffix}
         ${PROJECT_NAME} "rosidl_typesupport_c")
       ament_target_dependencies(${target}${target_suffix}
-        "rcl")
+        "osrf_testing_tools_cpp" "rcl")
       set_tests_properties(
         ${target}${target_suffix}
         PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}${target_suffix}>"
