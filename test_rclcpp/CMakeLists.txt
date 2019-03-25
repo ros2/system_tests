@@ -16,7 +16,7 @@ if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 
-  find_package(ament_cmake_pytest REQUIRED)
+  find_package(launch_testing_ament_cmake REQUIRED)
 
   set(message_files
     "msg/UInt32.msg"
@@ -96,8 +96,9 @@ if(BUILD_TESTING)
       OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIG>.py"
       INPUT "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}.py.configure"
     )
-    ament_add_pytest_test(${test_name}${target_suffix}
+    add_launch_test(
       "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIG>.py"
+      TARGET "${test_name}${target_suffix}"
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       ${_ARG_UNPARSED_ARGUMENTS}
     )
@@ -122,8 +123,9 @@ if(BUILD_TESTING)
       OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/test_n_nodes${target_suffix}_$<CONFIG>.py"
       INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_n_nodes${target_suffix}.py.configure"
     )
-    ament_add_pytest_test(test_n_nodes${target_suffix}
+    add_launch_test(
       "${CMAKE_CURRENT_BINARY_DIR}/test_n_nodes${target_suffix}_$<CONFIG>.py"
+      TARGET test_n_nodes${target_suffix}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       ${_ARG_UNPARSED_ARGUMENTS}
     )
@@ -154,8 +156,9 @@ if(BUILD_TESTING)
       OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIG>.py"
       INPUT "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}.py.configure"
     )
-    ament_add_pytest_test(${test_name}${target_suffix}
+    add_launch_test(
       "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIG>.py"
+      TARGET ${test_name}${target_suffix}
       ${ARGN}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       ENV

@@ -3,13 +3,17 @@
 import os
 
 from launch import LaunchDescription
-from launch import LaunchService
 from launch.actions import ExecuteProcess
-from launch_testing.legacy import LaunchTestService
+from launch.actions import OpaqueFunction
+
+import launch_testing
+import launch_testing.asserts
+import launch_testing_ros
+
+import unittest
 
 
-def test_@TEST_NUM_NODES@_nodes():
-    launch_test = LaunchTestService()
+def generate_test_description(ready_fn):
     launch_description = LaunchDescription()
 
     env = None
@@ -18,29 +22,34 @@ def test_@TEST_NUM_NODES@_nodes():
         env['RMW_IMPLEMENTATION'] = '@TEST_RMW_IMPLEMENTATION@'
 
     for i in range(@TEST_NUM_NODES@):
-        launch_test.add_fixture_action(
-            launch_description, ExecuteProcess(
+        launch_description.add_action(
+            ExecuteProcess(
                 cmd=['@TEST_EXECUTABLE1@'],
                 name='node_with_name_' + str(i),
                 env=env,
             )
         )
 
-    cmd = ['@TEST_EXECUTABLE2@'] + '@TEST_NUM_NODES@'.split(' ')
-    launch_test.add_test_action(
-        launch_description, ExecuteProcess(
-            cmd=cmd,
-            name='node_check_names',
-            env=env
-        )
+    checking_process = ExecuteProcess(
+        cmd=['@TEST_EXECUTABLE2@'] + '@TEST_NUM_NODES@'.split(' '),
+        name='node_check_names',
+        env=env
     )
+    launch_description.add_action(checking_process)
+    launch_description.add_action(
+        OpaqueFunction(function=lambda context: ready_fn())
+    )
+    return launch_description, locals()
 
-    launch_service = LaunchService()
-    launch_service.include_launch_description(launch_description)
-    rc = launch_test.run(launch_service)
 
-    assert rc == 0, "The launch file failed with exit code '" + str(rc) + "'. "
+class TestNNodes(unittest.TestCase):
+
+    def test_@TEST_NUM_NODES@_nodes(self, checking_process):
+        self.proc_info.assertWaitForShutdown(checking_process, timeout=10)
 
 
-if __name__ == '__main__':
-    test_@TEST_NUM_NODES@_nodes()
+@launch_testing.post_shutdown_test()
+class TestNNodesAfterShutdown(unittest.TestCase):
+
+    def test_@TEST_NUM_NODES@_nodes(self):
+        launch_testing.asserts.assertExitCodes(self.proc_info)

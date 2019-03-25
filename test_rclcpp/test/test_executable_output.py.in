@@ -2,54 +2,54 @@
 # generated code does not contain a copyright notice
 
 from launch import LaunchDescription
-from launch import LaunchService
 from launch.actions import ExecuteProcess
-from launch_testing.legacy import LaunchTestService
-from launch_testing.legacy.output import create_output_lines_filter
-from launch_testing.legacy.output import create_output_test_from_file
+from launch.actions import OpaqueFunction
+
+import launch_testing
+import launch_testing.asserts
+import launch_testing_ros
+
+import unittest
 
 
-def @TEST_NAME@():
-    launch_test = LaunchTestService()
+def generate_test_description(ready_fn):
     launch_description = LaunchDescription()
-
-    action = launch_test.add_fixture_action(
-        launch_description, ExecuteProcess(
-            cmd=['@TEST_EXECUTABLE@'],
-            name='@TEST_EXECUTABLE_NAME@',
-            sigterm_timeout='15',
-            output='screen'
-        ), exit_allowed=True
+    proc_under_test = ExecuteProcess(
+        cmd=['@TEST_EXECUTABLE@'],
+        name='@TEST_EXECUTABLE_NAME@',
+        sigterm_timeout='15',
+        output='screen'
     )
+    launch_description.add_action(proc_under_test)
+    launch_description.add_action(
+        OpaqueFunction(function=lambda context: ready_fn())
+    )
+    return launch_description, locals()
 
-    launch_test.add_output_test(
-        launch_description, action,
-        output_test=create_output_test_from_file(
-            output_file='@TEST_EXECUTABLE_EXPECTED_OUTPUT@'
-        ),
-        output_filter=create_output_lines_filter(
+
+class TestExecutableOutput(unittest.TestCase):
+
+    def @TEST_NAME@(self, proc_under_test):
+        output_filter = launch_testing_ros.tools.basic_output_filter(
             filtered_rmw_implementation='@rmw_implementation@'
         )
-    )
+        self.proc_output.assertWaitFor(
+            expected_output=launch_testing.tools.expected_output_from_file(
+                path='@TEST_EXECUTABLE_TRIGGER_SHUTDOWN_OUTPUT@'
+            ), process=proc_under_test, output_filter=output_filter, timeout=10
+        )
 
-    launch_test.add_output_test(
-        launch_description, action,
-        output_test=create_output_test_from_file(
-            output_file='@TEST_EXECUTABLE_TRIGGER_SHUTDOWN_OUTPUT@'
-        ),
-        output_filter=create_output_lines_filter(
+
+@launch_testing.post_shutdown_test()
+class TestExecutableOutputAfterShutdown(unittest.TestCase):
+
+    def @TEST_NAME@(self, proc_under_test):
+        output_filter = launch_testing_ros.tools.basic_output_filter(
             filtered_rmw_implementation='@rmw_implementation@'
-        ),
-        test_suffix='trigger_shutdown_output',
-        side_effect='shutdown'
-    )
-
-    launch_service = LaunchService()
-    launch_service.include_launch_description(launch_description)
-    rc = launch_test.run(launch_service)
-
-    assert rc == 0, "The launch file failed with exit code '" + str(rc) + "'. "
-
-
-if __name__ == '__main__':
-    @TEST_NAME@()
+        )
+        launch_testing.asserts.assertInStdout(
+            self.proc_output,
+            expected_output=launch_testing.tools.expected_output_from_file(
+                path='@TEST_EXECUTABLE_EXPECTED_OUTPUT@'
+            ), process=proc_under_test, output_filter=output_filter
+        )
