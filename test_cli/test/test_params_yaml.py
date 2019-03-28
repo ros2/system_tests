@@ -177,8 +177,8 @@ ia_params:
         assert 2 == len(resp.values)
         assert ParameterType.PARAMETER_INTEGER_ARRAY == resp.values[0].type
         assert ParameterType.PARAMETER_INTEGER_ARRAY == resp.values[1].type
-        assert resp.values[0].integer_array_value == [42, -27]
-        assert resp.values[1].integer_array_value == [1234, 5678]
+        assert resp.values[0].integer_array_value.tolist() == [42, -27]
+        assert resp.values[1].integer_array_value.tolist() == [1234, 5678]
 
 
 def test_double_array_params(node_fixture):
