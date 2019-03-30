@@ -38,7 +38,7 @@ def receive_goals(node, action_type, expected_goals):
                 return expected_goal.execute_goal(goal_handle)
         # Not an expected goal (this should not happen)
         print('Unexpected goal received by action server', file=sys.stderr)
-        goal_handle.set_aborted()
+        goal_handle.abort()
         return action_type.Result()
 
     action_name = 'test/action/' + action_type.__name__
@@ -61,12 +61,12 @@ def generate_expected_fibonacci_goals():
 
         for i in range(1, goal.order):
             if not rclpy.ok():
-                goal_handle.set_aborted()
+                goal_handle.abort()
                 return Fibonacci.Result()
 
             # Check if the goal was canceled
             if goal_handle.is_cancel_requested:
-                goal_handle.set_canceled()
+                goal_handle.cancel()
                 result = Fibonacci.Result()
                 result.sequence = feedback.sequence
                 print('Goal was canceled')
@@ -85,7 +85,7 @@ def generate_expected_fibonacci_goals():
         # Send final result
         result = Fibonacci.Result()
         result.sequence = feedback.sequence
-        goal_handle.set_succeeded()
+        goal_handle.succeed()
         print('Goal succeeded')
         return result
 
@@ -118,12 +118,12 @@ def generate_expected_nested_message_goals():
         num_feedback = 10
         for i in range(0, num_feedback):
             if not rclpy.ok():
-                goal_handle.set_aborted()
+                goal_handle.abort()
                 return NestedMessage.Result()
 
             # Check if the goal was canceled
             if goal_handle.is_cancel_requested:
-                goal_handle.set_canceled()
+                goal_handle.cancel()
                 print('Goal was canceled')
                 return result
 
@@ -135,7 +135,7 @@ def generate_expected_nested_message_goals():
             time.sleep(0.1)
 
         # Send final result
-        goal_handle.set_succeeded()
+        goal_handle.succeed()
         print('Goal succeeded')
         return result
 
