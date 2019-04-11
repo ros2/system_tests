@@ -66,7 +66,7 @@ def generate_expected_fibonacci_goals():
 
             # Check if the goal was canceled
             if goal_handle.is_cancel_requested:
-                goal_handle.cancel()
+                goal_handle.canceled()
                 result = Fibonacci.Result()
                 result.sequence = feedback.sequence
                 print('Goal was canceled')
@@ -123,7 +123,7 @@ def generate_expected_nested_message_goals():
 
             # Check if the goal was canceled
             if goal_handle.is_cancel_requested:
-                goal_handle.cancel()
+                goal_handle.canceled()
                 print('Goal was canceled')
                 return result
 

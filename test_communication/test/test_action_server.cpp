@@ -142,7 +142,7 @@ generate_expected_fibonacci_goals(rclcpp::Logger logger)
           // Check if the goal was canceled.
           if (goal_handle->is_canceling()) {
             result->sequence = feedback->sequence;
-            goal_handle->cancel(result);
+            goal_handle->canceled(result);
             RCLCPP_INFO(logger, "goal was canceled");
             return;
           }
@@ -213,7 +213,7 @@ generate_expected_nested_message_goals(rclcpp::Logger logger)
           // Check if the goal was canceled.
           if (goal_handle->is_canceling()) {
             result->nested_field.int32_value = result_value;
-            goal_handle->cancel(result);
+            goal_handle->canceled(result);
             RCLCPP_INFO(logger, "goal was canceled");
             return;
           }
