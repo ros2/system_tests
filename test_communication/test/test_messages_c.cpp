@@ -162,6 +162,7 @@ public:
         0,  // number_of_timers
         0,  // number_of_clients
         0,  // number_of_services
+        0,  // number_of_events
         context,
         rcl_get_default_allocator());
       EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
@@ -211,6 +212,7 @@ public:
           0,  // number_of_timers
           0,  // number_of_clients
           0,  // number_of_services
+          0,  // number_of_events
           context,
           rcl_get_default_allocator());
         EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
