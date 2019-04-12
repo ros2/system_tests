@@ -62,9 +62,9 @@ def generate_test_description(action_type, ready_fn):
 
 class TestActionClientServer(unittest.TestCase):
 
-    def test_client_finishes_in_a_finite_amount_of_time(self, action_client_process):
+    def test_client_finishes_in_a_finite_amount_of_time(self, proc_info, action_client_process):
         """Test that the second executable terminates after a finite amount of time."""
-        self.proc_info.assertWaitForShutdown(process=action_client_process, timeout=10)
+        proc_info.assertWaitForShutdown(process=action_client_process, timeout=10)
 
 
 @launch_testing.post_shutdown_test()

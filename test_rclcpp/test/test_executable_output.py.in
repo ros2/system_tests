@@ -29,11 +29,11 @@ def generate_test_description(ready_fn):
 
 class TestExecutableOutput(unittest.TestCase):
 
-    def @TEST_NAME@(self, proc_under_test):
+    def @TEST_NAME@(self, proc_output, proc_under_test):
         output_filter = launch_testing_ros.tools.basic_output_filter(
             filtered_rmw_implementation='@rmw_implementation@'
         )
-        self.proc_output.assertWaitFor(
+        proc_output.assertWaitFor(
             expected_output=launch_testing.tools.expected_output_from_file(
                 path='@TEST_EXECUTABLE_TRIGGER_SHUTDOWN_OUTPUT@'
             ), process=proc_under_test, output_filter=output_filter, timeout=10
@@ -43,12 +43,12 @@ class TestExecutableOutput(unittest.TestCase):
 @launch_testing.post_shutdown_test()
 class TestExecutableOutputAfterShutdown(unittest.TestCase):
 
-    def @TEST_NAME@(self, proc_under_test):
+    def @TEST_NAME@(self, proc_output, proc_under_test):
         output_filter = launch_testing_ros.tools.basic_output_filter(
             filtered_rmw_implementation='@rmw_implementation@'
         )
         launch_testing.asserts.assertInStdout(
-            self.proc_output,
+            proc_output,
             expected_output=launch_testing.tools.expected_output_from_file(
                 path='@TEST_EXECUTABLE_EXPECTED_OUTPUT@'
             ), process=proc_under_test, output_filter=output_filter

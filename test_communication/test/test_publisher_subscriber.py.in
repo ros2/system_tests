@@ -61,9 +61,9 @@ def generate_test_description(message_type, ready_fn):
 
 class TestPublisherSubscriber(unittest.TestCase):
 
-    def test_subscriber_terminates_in_a_finite_amount_of_time(self, subscriber_process):
+    def test_subscriber_terminates_in_a_finite_amount_of_time(self, proc_info, subscriber_process):
         """Test that the subscriber terminates after a finite amount of time."""
-        self.proc_info.assertWaitForShutdown(process=subscriber_process, timeout=10)
+        proc_info.assertWaitForShutdown(process=subscriber_process, timeout=10)
 
 
 @launch_testing.post_shutdown_test()

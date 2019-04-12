@@ -44,12 +44,12 @@ def generate_test_description(ready_fn):
 
 class TestNNodes(unittest.TestCase):
 
-    def test_@TEST_NUM_NODES@_nodes(self, checking_process):
-        self.proc_info.assertWaitForShutdown(checking_process, timeout=10)
+    def test_@TEST_NUM_NODES@_nodes(self, proc_info, checking_process):
+        proc_info.assertWaitForShutdown(checking_process, timeout=10)
 
 
 @launch_testing.post_shutdown_test()
 class TestNNodesAfterShutdown(unittest.TestCase):
 
-    def test_@TEST_NUM_NODES@_nodes(self):
-        launch_testing.asserts.assertExitCodes(self.proc_info)
+    def test_@TEST_NUM_NODES@_nodes(self, proc_info):
+        launch_testing.asserts.assertExitCodes(proc_info)
