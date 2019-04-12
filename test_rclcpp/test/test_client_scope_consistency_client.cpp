@@ -39,14 +39,7 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_consistency_reg
   auto node = rclcpp::Node::make_shared("client_scope_consistency_regression_test");
 
   // Replicate the settings that caused https://github.com/ros2/system_tests/issues/153
-  rmw_qos_profile_t rmw_qos_profile =
-  {
-    RMW_QOS_POLICY_HISTORY_KEEP_LAST,
-    10,
-    RMW_QOS_POLICY_RELIABILITY_RELIABLE,
-    RMW_QOS_POLICY_DURABILITY_VOLATILE,
-    false
-  };
+  rmw_qos_profile_t rmw_qos_profile = rmw_qos_profile_default;
   rclcpp::executor::FutureReturnCode ret1;
 
   // Extra scope so the first client will be deleted afterwards
