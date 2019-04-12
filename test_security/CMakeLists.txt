@@ -51,7 +51,7 @@ if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 
-  find_package(ament_cmake_pytest REQUIRED)
+  find_package(launch_testing_ament_cmake REQUIRED)
 
   # get the rmw implementations ahead of time
   find_package(rmw_implementation_cmake REQUIRED)
@@ -158,8 +158,9 @@ if(BUILD_TESTING)
           )
           math(EXPR index "${index} + 1")
 
-          ament_add_pytest_test(test_secure_publisher_subscriber${test_suffix}
+          add_launch_test(
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
+            TARGET test_secure_publisher_subscriber${test_suffix}
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
             # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
             # at runtime as the system version of OpenSSL is not supported
@@ -199,8 +200,9 @@ if(BUILD_TESTING)
           )
           math(EXPR index "${index} + 1")
 
-          ament_add_pytest_test(test_secure_publisher_subscriber${test_suffix}
+          add_launch_test(
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
+            TARGET test_secure_publisher_subscriber${test_suffix}
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
             # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
             # at runtime as the system version of OpenSSL is not supported
@@ -240,8 +242,9 @@ if(BUILD_TESTING)
           )
           math(EXPR index "${index} + 1")
 
-          ament_add_pytest_test(test_secure_publisher_subscriber${test_suffix}
+          add_launch_test(
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
+            TARGET test_secure_publisher_subscriber${test_suffix}
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
             # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
             # at runtime as the system version of OpenSSL is not supported
