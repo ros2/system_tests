@@ -278,10 +278,11 @@ if(BUILD_TESTING)
         set(RTI_BIN_PATH "$ENV{RTI_OPENSSL_BIN}")
         file(TO_CMAKE_PATH "${RTI_BIN_PATH}" RTI_BIN_PATH)
         set(TEST_PATH "${RTI_BIN_PATH};${ENV_PATH}")
-        if(NOT WIN32)
-          string(REPLACE ";" ":" TEST_PATH "${TEST_PATH}")
-        endif()
       endif()
+    endif()
+
+    if(NOT WIN32)
+      string(REPLACE ";" ":" TEST_PATH "${TEST_PATH}")
     endif()
 
     # TODO(mikaelarguedas) only Connext and FastRTPS support DDS-Security for now
