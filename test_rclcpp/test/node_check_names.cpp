@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <algorithm>
 #include <string>
+#include <vector>
 
 #include "rclcpp/rclcpp.hpp"
 
@@ -43,10 +45,24 @@ int main(int argc, char ** argv)
   std::string node_to_look_for("node_with_name");
   while (rclcpp::ok()) {
     printf("\n");
-    auto names = node->get_node_graph_interface()->get_node_names();
+    auto qualified_names = node->get_node_graph_interface()->get_node_names();
+    std::vector<std::string> names;
+    std::transform(qualified_names.begin(),
+      qualified_names.end(),
+      std::back_inserter(names),
+      [](std::string qn) {
+        auto found_occurrence = qn.rfind("/");
+        if ((found_occurrence == std::string::npos) || (found_occurrence + 1 >= qn.length())) {
+          return std::string("");
+        }
+        return qn.substr(found_occurrence + 1);
+      }
+    );
     for (auto it : names) {
       printf("- %s\n", it.c_str());
-      if (it.compare(0, node_to_look_for.length(), node_to_look_for) == 0) {
+      printf("- sanity comparison follows ->\n- |%s|\n- |%s|\n", node_to_look_for.c_str(),
+        it.c_str());
+      if (it.compare(node_to_look_for) == 0) {
         counter++;
       }
     }
@@ -64,6 +80,7 @@ int main(int argc, char ** argv)
   rclcpp::shutdown();
   if (counter < num_nodes) {
     fprintf(stderr, "Did not find all %d nodes\n", num_nodes);
+    fprintf(stderr, "Found %d nodes\n", counter);
     return 1;
   }
   return 0;

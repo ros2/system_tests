@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <algorithm>
 #include <string>
+#include <vector>
 
 #include "rclcpp/rclcpp.hpp"
 
@@ -41,10 +43,23 @@ int main(int argc, char ** argv)
     std::chrono::steady_clock::now() + 10s;
   while (rc && rclcpp::ok()) {
     printf("\n");
-    auto names = node->get_node_graph_interface()->get_node_names();
+    auto qualified_names = node->get_node_graph_interface()->get_node_names();
+    std::vector<std::string> names;
+    std::transform(qualified_names.begin(),
+      qualified_names.end(),
+      std::back_inserter(names),
+      [](std::string qn) {
+        auto found_occurrence = qn.rfind("/");
+        if ((found_occurrence == std::string::npos) || (found_occurrence + 1 >= qn.length())) {
+          return std::string("");
+        }
+        return qn.substr(found_occurrence + 1);
+      }
+    );
     for (auto it : names) {
       printf("- %s\n", it.c_str());
-      if (argc >= 2 && it == argv[1]) {
+      printf("- |%s|\n- |%s|\n", it.c_str(), argv[1]);
+      if (argc >= 2 && it.compare(argv[1]) == 0) {
         printf("  found expected node name\n");
         rc = 0;
       }
