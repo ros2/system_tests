@@ -54,7 +54,7 @@ class TestTwoExecutables(unittest.TestCase):
 
     def @TEST_NAME@(self, executable_2):
         """Test that the second executable terminates after a finite amount of time."""
-        self.proc_info.assertWaitForShutdown(process=executable_2, timeout=10)
+        self.proc_info.assertWaitForShutdown(process=executable_2, timeout=30)
 
 
 @launch_testing.post_shutdown_test()
