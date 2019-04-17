@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "rclcpp/rclcpp.hpp"
@@ -29,7 +30,7 @@ int main(int argc, char ** argv)
   }
 
   int num_nodes = ::strtol(argv[1], nullptr, 10);
-
+  std::string node_to_look_for("node_with_name");
   printf("Waiting for %d nodes with name: node_with_name_N\n", num_nodes);
   std::cout.flush();
 
@@ -42,30 +43,23 @@ int main(int argc, char ** argv)
   int counter = 0;
   const std::chrono::steady_clock::time_point max_runtime =
     std::chrono::steady_clock::now() + std::chrono::seconds(10);
-  std::string node_to_look_for("node_with_name");
+
   while (rclcpp::ok()) {
-    printf("\n");
-    auto qualified_names = node->get_node_graph_interface()->get_node_names();
+    auto names_namespaces = node->get_node_graph_interface()->get_node_names_and_namespaces();
     std::vector<std::string> names;
-    std::transform(qualified_names.begin(),
-      qualified_names.end(),
+    std::transform(names_namespaces.begin(),
+      names_namespaces.end(),
       std::back_inserter(names),
-      [](std::string qn) {
-        auto found_occurrence = qn.rfind("/");
-        if ((found_occurrence == std::string::npos) || (found_occurrence + 1 >= qn.length())) {
-          return std::string("");
-        }
-        return qn.substr(found_occurrence + 1);
-      }
+      [](std::pair<std::string, std::string> nns) {return nns.first;}
     );
+    printf("BEGIN DISCOVERED NODES\n");
     for (auto it : names) {
-      printf("- %s\n", it.c_str());
-      printf("- sanity comparison follows ->\n- |%s|\n- |%s|\n", node_to_look_for.c_str(),
-        it.c_str());
-      if (it.compare(node_to_look_for) == 0) {
+      printf("- \"%s\"\n", it.c_str());
+      if (it.compare(0, node_to_look_for.length(), node_to_look_for) == 0) {
         counter++;
       }
     }
+    printf("END DISCOVERED NODES\n");
     if (counter >= num_nodes) {
       break;
     }
