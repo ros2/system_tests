@@ -75,8 +75,10 @@ send_goals(
       };
 
     // send the request
+    auto send_goal_options = typename rclcpp_action::Client<ActionT>::SendGoalOptions();
+    send_goal_options.feedback_callback = feedback_callback;
     auto goal_handle_future =
-      action_client->async_send_goal(goal_tests[test_index].goal, feedback_callback);
+      action_client->async_send_goal(goal_tests[test_index].goal, send_goal_options);
 
     using rclcpp::executor::FutureReturnCode;
     // wait for the sent goal to be accepted
