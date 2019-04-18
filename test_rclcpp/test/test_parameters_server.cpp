@@ -12,25 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <chrono>
-#include <iostream>
-#include <memory>
-#include <stdexcept>
-#include <string>
-#include <vector>
-
 #include "rclcpp/rclcpp.hpp"
-
 
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
 
-  auto node = rclcpp::Node::make_shared("test_parameters_server", "/",
+  auto node = rclcpp::Node::make_shared(
+    "test_parameters_server",
+    "/",
     rclcpp::NodeOptions().allow_undeclared_parameters(true));
 
   rclcpp::spin(node);
 
-  rclcpp::shutdown();
   return 0;
 }
