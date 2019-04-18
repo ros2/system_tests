@@ -108,6 +108,32 @@ if(BUILD_TESTING)
     endif()
   endmacro()
 
+  macro(custom_launch_n_nodes num_nodes)
+    set(TEST_EXECUTABLE1 "$<TARGET_FILE:node_with_name>")
+    set(TEST_EXECUTABLE2 "$<TARGET_FILE:node_check_names>")
+    set(TEST_RMW_IMPLEMENTATION "${rmw_implementation}")
+    set(TEST_NUM_NODES "${num_nodes}")
+    configure_file(
+      test/test_n_nodes.py.in
+      test_n_nodes${target_suffix}.py.configure
+      @ONLY
+    )
+    file(GENERATE
+      OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/test_n_nodes${target_suffix}_$<CONFIG>.py"
+      INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_n_nodes${target_suffix}.py.configure"
+    )
+    ament_add_pytest_test(test_n_nodes${target_suffix}
+      "${CMAKE_CURRENT_BINARY_DIR}/test_n_nodes${target_suffix}_$<CONFIG>.py"
+      APPEND_LIBRARY_DIRS "${append_library_dirs}"
+      ${_ARG_UNPARSED_ARGUMENTS}
+    )
+    if(TEST test_n_nodes${target_suffix})
+      set_tests_properties(test_n_nodes${target_suffix}
+        PROPERTIES DEPENDS "node_with_name${target_suffix} node_check_names${target_suffix}"
+      )
+    endif()
+  endmacro()
+
   # Macro for tests that trigger the shutdown of an executable based on particular console output,
   # then check the output of the executable against different console output.
   macro(custom_launch_test_executable_output test_name executable)
@@ -234,6 +260,9 @@ if(BUILD_TESTING)
       RMW_IMPLEMENTATION=${rmw_implementation}
       TIMEOUT 60)
 
+    custom_launch_n_nodes(10
+      TIMEOUT 15)
+
     # Note (dhood): signal handler tests will be skipped on Windows because there is no opportunity
     # for signal handling once shutdown is triggered by launch_testing.
     set(SKIP_TEST "")
@@ -272,6 +301,9 @@ if(BUILD_TESTING)
     "rclcpp")
   add_executable(node_name_list "test/node_name_list.cpp")
   ament_target_dependencies(node_name_list
+    "rclcpp")
+  add_executable(node_check_names "test/node_check_names.cpp")
+  ament_target_dependencies(node_check_names
     "rclcpp")
 
   call_for_each_rmw_implementation(targets)

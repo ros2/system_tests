@@ -1,0 +1,41 @@
+# generated from test_rclcpp/test/test_n_nodes.py.in
+
+import os
+
+from launch.legacy import LaunchDescriptor
+from launch.legacy.exit_handler import primary_exit_handler
+from launch.legacy.launcher import DefaultLauncher
+
+
+def test_@TEST_NUM_NODES@_nodes():
+    ld = LaunchDescriptor()
+
+    env = None
+    if '@TEST_RMW_IMPLEMENTATION@':
+        env = dict(os.environ)
+        env['RMW_IMPLEMENTATION'] = '@TEST_RMW_IMPLEMENTATION@'
+
+    for i in range(@TEST_NUM_NODES@):
+        ld.add_process(
+            cmd=['@TEST_EXECUTABLE1@'],
+            name='node_with_name_' + str(i),
+            env=env,
+        )
+
+    cmd = ['@TEST_EXECUTABLE2@'] + '@TEST_NUM_NODES@'.split(' ')
+    ld.add_process(
+        cmd=cmd,
+        name='node_check_names',
+        env=env,
+        exit_handler=primary_exit_handler,
+    )
+
+    launcher = DefaultLauncher()
+    launcher.add_launch_descriptor(ld)
+    rc = launcher.launch()
+
+    assert rc == 0, "The launch file failed with exit code '" + str(rc) + "'. "
+
+
+if __name__ == '__main__':
+    test_@TEST_NUM_NODES@_nodes()

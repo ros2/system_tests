@@ -37,7 +37,8 @@ TEST(CLASSNAME(test_intra_process_within_one_node, RMW_IMPLEMENTATION), nominal_
   rclcpp::init(0, nullptr);
 
   // use intra process = true
-  auto node = rclcpp::Node::make_shared("test_intra_process", "", true);
+  auto node = rclcpp::Node::make_shared("test_intra_process",
+      rclcpp::NodeOptions().use_intra_process_comms(true));
 
   rmw_qos_profile_t custom_qos_profile = rmw_qos_profile_default;
   custom_qos_profile.depth = 10;
