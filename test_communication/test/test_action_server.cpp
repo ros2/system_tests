@@ -23,6 +23,7 @@
 #include "rclcpp_action/rclcpp_action.hpp"
 
 #include "test_msgs/action/fibonacci.hpp"
+#include "test_msgs/action/nested_message.hpp"
 
 template<typename ActionT>
 struct ExpectedGoalRequest
@@ -141,12 +142,13 @@ generate_expected_fibonacci_goals(rclcpp::Logger logger)
           // Check if the goal was canceled.
           if (goal_handle->is_canceling()) {
             result->sequence = feedback->sequence;
-            goal_handle->set_canceled(result);
+            goal_handle->canceled(result);
             RCLCPP_INFO(logger, "goal was canceled");
             return;
           }
           // Update the sequence.
-          feedback->sequence.push_back(feedback->sequence[i] + feedback->sequence[i - 1]);
+          feedback->sequence.push_back(
+            feedback->sequence[i] + feedback->sequence[i - 1]);
           // Publish the current state as feedback.
           goal_handle->publish_feedback(feedback);
           RCLCPP_INFO(logger, "publishing feedback for goal");
@@ -155,7 +157,77 @@ generate_expected_fibonacci_goals(rclcpp::Logger logger)
         }
 
         result->sequence = feedback->sequence;
-        goal_handle->set_succeeded(result);
+        goal_handle->succeed(result);
+        RCLCPP_INFO(logger, "goal succeeded");
+      };
+
+    result.push_back(expected_goal);
+  }
+
+  return result;
+}
+
+std::vector<ExpectedGoalRequest<test_msgs::action::NestedMessage>>
+generate_expected_nested_message_goals(rclcpp::Logger logger)
+{
+  std::vector<ExpectedGoalRequest<test_msgs::action::NestedMessage>> result;
+
+  {
+    ExpectedGoalRequest<test_msgs::action::NestedMessage> expected_goal;
+
+    expected_goal.goal_is_expected =
+      [](auto goal) {
+        if (goal && goal->nested_field_no_pkg.duration_value.sec > 0) {
+          return true;
+        }
+        return false;
+      };
+
+    expected_goal.goal_is_valid =
+      [](auto) {
+        return true;
+      };
+
+    expected_goal.execute_goal =
+      [logger](auto goal_handle) {
+        const auto goal = goal_handle->get_goal();
+        rclcpp::Rate loop_rate(10);
+        const int32_t initial_value = goal->nested_field_no_pkg.duration_value.sec;
+        const int32_t feedback_value = 2 * initial_value;
+        const int32_t result_value = 4 * initial_value;
+
+        auto feedback = std::make_shared<test_msgs::action::NestedMessage::Feedback>();
+
+        auto result = std::make_shared<test_msgs::action::NestedMessage::Result>();
+
+        if (initial_value <= 0) {
+          RCLCPP_ERROR(logger, "expected a goal > 0, got %d", initial_value);
+          return;
+        }
+        const size_t num_feedback = 10;
+
+        for (size_t i = 1; i < num_feedback; ++i) {
+          if (!rclcpp::ok()) {
+            return;
+          }
+          // Check if the goal was canceled.
+          if (goal_handle->is_canceling()) {
+            result->nested_field.int32_value = result_value;
+            goal_handle->canceled(result);
+            RCLCPP_INFO(logger, "goal was canceled");
+            return;
+          }
+          // Update the feedback;
+          feedback->nested_different_pkg.sec = feedback_value;
+          // Publish the current state as feedback.
+          goal_handle->publish_feedback(feedback);
+          RCLCPP_INFO(logger, "publishing feedback for goal");
+
+          loop_rate.sleep();
+        }
+
+        result->nested_field.int32_value = result_value;
+        goal_handle->succeed(result);
         RCLCPP_INFO(logger, "goal succeeded");
       };
 
@@ -184,6 +256,9 @@ int main(int argc, char ** argv)
   if (action == "Fibonacci") {
     server = receive_goals<test_msgs::action::Fibonacci>(
       node, action, generate_expected_fibonacci_goals(node->get_logger()));
+  } else if (action == "NestedMessage") {
+    server = receive_goals<test_msgs::action::NestedMessage>(
+      node, action, generate_expected_nested_message_goals(node->get_logger()));
   } else {
     fprintf(stderr, "Unknown action type '%s'\n", action.c_str());
     return 1;

@@ -4,16 +4,25 @@ import os
 import sys
 import time
 
-from launch.legacy import LaunchDescriptor
-from launch.legacy.exit_handler import primary_exit_handler
-from launch.legacy.launcher import DefaultLauncher
+from launch import LaunchDescription
+from launch import LaunchService
+from launch.actions import ExecuteProcess
+from launch_testing import LaunchTestService
+
+import pytest
+
+MESSAGE_TYPES = '@TEST_MESSAGE_TYPES@'.split(';')
 
 
-def test_publisher_subscriber():
+@pytest.mark.parametrize('message_type', MESSAGE_TYPES)
+def test_publisher_subscriber(message_type):
     namespace = '/test_time_%s' % time.strftime('%H_%M_%S', time.gmtime())
-    ld = LaunchDescriptor()
-    publisher_cmd = ['@TEST_PUBLISHER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@', namespace]
-    subscriber_cmd = ['@TEST_SUBSCRIBER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@', namespace]
+
+    launch_test = LaunchTestService()
+    launch_description = LaunchDescription()
+
+    publisher_cmd = ['@TEST_PUBLISHER_EXECUTABLE@', message_type, namespace]
+    subscriber_cmd = ['@TEST_SUBSCRIBER_EXECUTABLE@', message_type, namespace]
 
     publisher_env = dict(os.environ)
     subscriber_env = dict(os.environ)
@@ -27,24 +36,29 @@ def test_publisher_subscriber():
 
     publisher_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@PUBLISHER_RMW@'
     publisher_env['RMW_IMPLEMENTATION'] = '@PUBLISHER_RMW@'
-    ld.add_process(
-        cmd=publisher_cmd,
-        name='test_publisher',
-        env=publisher_env,
+
+    launch_test.add_fixture_action(
+        launch_description, ExecuteProcess(
+            cmd=publisher_cmd,
+            name='test_publisher',
+            env=publisher_env,
+        )
     )
 
     subscriber_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@SUBSCRIBER_RMW@'
     subscriber_env['RMW_IMPLEMENTATION'] = '@SUBSCRIBER_RMW@'
-    ld.add_process(
-        cmd=subscriber_cmd,
-        name='test_subscriber',
-        env=subscriber_env,
-        exit_handler=primary_exit_handler,
+
+    launch_test.add_test_action(
+        launch_description, ExecuteProcess(
+            cmd=subscriber_cmd,
+            name='test_subscriber',
+            env=subscriber_env,
+        )
     )
 
-    launcher = DefaultLauncher()
-    launcher.add_launch_descriptor(ld)
-    rc = launcher.launch()
+    launch_service = LaunchService()
+    launch_service.include_launch_description(launch_description)
+    rc = launch_test.run(launch_service)
 
     assert rc == 0, \
         "The launch file failed with exit code '" + str(rc) + "'. " \
@@ -52,4 +66,5 @@ def test_publisher_subscriber():
 
 
 if __name__ == '__main__':
-    test_publisher_subscriber()
+    for message_type in MESSAGE_TYPES:
+        test_publisher_subscriber(message_type)

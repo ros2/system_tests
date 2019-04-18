@@ -176,11 +176,14 @@ if(BUILD_TESTING)
     else()
       set(target_suffix "__${rmw_implementation1}__${rmw_implementation2}")
     endif()
+    # TODO(hidmic): enable tests once FastRTPS <=> (Opensplice|Connext) interoperation
+    # issues are resolved (see https://github.com/ros2/rmw_fastrtps/issues/246).
     custom_launch_test_two_executables(test_node_name
       node_with_name node_name_list
       ARGS1 "${rmw_implementation1}" ARGS2 "node_with_name_${rmw_implementation1}"
       RMW1 ${rmw_implementation1} RMW2 ${rmw_implementation2}
-      TIMEOUT 15)
+      TIMEOUT 15
+      ${SKIP_TEST})
   endmacro()
 
   macro(targets)

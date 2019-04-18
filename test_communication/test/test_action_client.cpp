@@ -14,6 +14,7 @@
 
 #include <chrono>
 #include <functional>
+#include <random>
 #include <string>
 #include <vector>
 
@@ -23,6 +24,7 @@
 #include "rclcpp_action/rclcpp_action.hpp"
 
 #include "test_msgs/action/fibonacci.hpp"
+#include "test_msgs/action/nested_message.hpp"
 
 using namespace std::chrono_literals;
 
@@ -92,7 +94,7 @@ send_goals(
       return 1;
     }
 
-    if (!goal_tests[test_index].result_is_valid(result_future.get().response)) {
+    if (!goal_tests[test_index].result_is_valid(result_future.get().result)) {
       RCLCPP_ERROR(logger, "invalid goal result");
       return 1;
     }
@@ -170,6 +172,44 @@ generate_fibonacci_goal_tests()
   return result;
 }
 
+std::vector<ActionClientTest<test_msgs::action::NestedMessage>>
+generate_nested_message_goal_tests()
+{
+  std::vector<ActionClientTest<test_msgs::action::NestedMessage>> result;
+
+  std::default_random_engine generator;
+  std::uniform_int_distribution<int> distribution(1, 12345);
+  const int32_t initial_value = distribution(generator);
+  const int32_t expected_feedback_value = 2 * initial_value;
+  const int32_t expected_result_value = 4 * initial_value;
+
+  {
+    ActionClientTest<test_msgs::action::NestedMessage> test;
+    test.goal.nested_field_no_pkg.duration_value.sec = initial_value;
+    test.result_is_valid =
+      [initial_value, expected_result_value](auto result) -> bool {
+        if (result->nested_field.int32_value != expected_result_value) {
+          fprintf(stderr, "expected result %d but got %d for initial value %d\n",
+            expected_result_value, result->nested_field.int32_value, initial_value);
+          return false;
+        }
+        return true;
+      };
+    test.feedback_is_valid =
+      [initial_value, expected_feedback_value](auto feedback) -> bool {
+        if (feedback->nested_different_pkg.sec != expected_feedback_value) {
+          fprintf(stderr, "expected feedback %d but got %d for initial value %d\n",
+            expected_feedback_value, feedback->nested_different_pkg.sec, initial_value);
+          return false;
+        }
+        return true;
+      };
+    result.push_back(test);
+  }
+
+  return result;
+}
+
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
@@ -185,6 +225,9 @@ int main(int argc, char ** argv)
   int rc;
   if (action == "Fibonacci") {
     rc = send_goals<test_msgs::action::Fibonacci>(node, action, generate_fibonacci_goal_tests());
+  } else if (action == "NestedMessage") {
+    rc = send_goals<test_msgs::action::NestedMessage>(
+      node, action, generate_nested_message_goal_tests());
   } else {
     fprintf(stderr, "Unknown action type '%s'\n", action.c_str());
     return 1;

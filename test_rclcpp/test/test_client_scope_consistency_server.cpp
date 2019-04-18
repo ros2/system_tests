@@ -34,14 +34,7 @@ int main(int argc, char ** argv)
   auto node = rclcpp::Node::make_shared("client_scope_consistency_regression_test_server");
 
   // Replicate the settings that caused https://github.com/ros2/system_tests/issues/153
-  rmw_qos_profile_t rmw_qos_profile =
-  {
-    RMW_QOS_POLICY_HISTORY_KEEP_LAST,
-    10,
-    RMW_QOS_POLICY_RELIABILITY_RELIABLE,
-    RMW_QOS_POLICY_DURABILITY_VOLATILE,
-    false
-  };
+  rmw_qos_profile_t rmw_qos_profile = rmw_qos_profile_default;
   auto service = node->create_service<test_rclcpp::srv::AddTwoInts>(
     "client_scope", handle_add_two_ints, rmw_qos_profile);
 
