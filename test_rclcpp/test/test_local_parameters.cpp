@@ -417,44 +417,6 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_variant
   EXPECT_EQ(true, got_param);
 }
 
-TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_parameter_or) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
-  using rclcpp::Parameter;
-
-  auto node = rclcpp::Node::make_shared("test_parameters_get_parameter_or");
-  node->declare_parameter("foo");
-  auto set_parameters_results = node->set_parameters({
-    Parameter("foo", 2),
-  });
-  printf("Got set_parameters result\n");
-
-  // Check to see if they were set.
-  for (auto & result : set_parameters_results) {
-    ASSERT_TRUE(result.successful);
-  }
-
-  {
-    // try to get with default a parameter that is already set
-    int64_t foo_value = -1;
-    node->get_parameter_or("foo", foo_value, static_cast<int64_t>(42));
-    ASSERT_EQ(foo_value, 2);
-    int64_t foo_value2 = -1;
-    ASSERT_TRUE(node->get_parameter("foo", foo_value2));
-    ASSERT_EQ(foo_value2, 2);
-  }
-
-  {
-    // try to get with default a parameter that is not set
-    int64_t bar_value = -1;
-    node->get_parameter_or("bar", bar_value, static_cast<int64_t>(42));
-    ASSERT_EQ(bar_value, 42);
-    // ensure it is still unset
-    int64_t bar_value2 = -1;
-    ASSERT_FALSE(node->get_parameter("bar", bar_value2));
-    ASSERT_EQ(bar_value2, -1);
-  }
-}
-
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_parameter_or_set) {
   if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   using rclcpp::Parameter;
