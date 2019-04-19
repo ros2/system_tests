@@ -401,8 +401,9 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_variant
   EXPECT_FALSE(got_param);
 
   // Throw on non-existent param for returning version
-  EXPECT_THROW(node->get_parameter("no_such_param"), std::out_of_range);
-
+  EXPECT_THROW(
+    node->get_parameter("no_such_param"),
+    rclcpp::exceptions::ParameterNotDeclaredException);
 
   EXPECT_NO_THROW(got_param = node->get_parameter("bar", bar));
   EXPECT_EQ(true, got_param);
@@ -422,14 +423,8 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_parameter_or_set)
   using rclcpp::Parameter;
 
   auto node = rclcpp::Node::make_shared("test_parameters_get_parameter_or_set_default");
-  auto set_parameters_results = node->set_parameters({
-    Parameter("foo", 2),
-  });
-
-  // Check to see if they were set.
-  for (auto & result : set_parameters_results) {
-    ASSERT_TRUE(result.successful);
-  }
+  node->declare_parameter("foo", 2);
+  node->declare_parameter("bar");
 
   {
     // try to get with default a parameter that is already set
