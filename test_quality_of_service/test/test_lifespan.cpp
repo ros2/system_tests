@@ -12,14 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "gtest/gtest.h"
-
 #include <chrono>
-#include <exception>
-#include <iostream>
 #include <memory>
 #include <string>
 #include <tuple>
+
+#include "gtest/gtest.h"
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp/executors/single_threaded_executor.hpp"
@@ -28,10 +26,10 @@
 
 #include "test_quality_of_service/qos_utilities.hpp"
 
+
 using namespace std::chrono_literals;
 
 TEST_F(TestSetup, test_deadline) {
-
   std::chrono::milliseconds lifespan_duration = 1000ms;
   std::tuple<size_t, size_t> message_lifespan = chrono_milliseconds_to_size_t(lifespan_duration);
   const int history = 2;

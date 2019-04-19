@@ -38,9 +38,9 @@ if(BUILD_TESTING)
     ament_add_gtest_executable(${target} ${ARGN} test/${target}.cpp test/qos_utilities.cpp)
     target_compile_definitions(${target}  PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
     ament_target_dependencies(${target}
-    "rclcpp",
-    "rcutils",
-    "std_msgs")
+      "rclcpp",
+      "rcutils",
+      "std_msgs")
     install(TARGETS ${target} DESTINATION lib/${PROJECT_NAME})
   endfunction()
 

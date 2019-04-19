@@ -15,7 +15,6 @@
 #ifndef TEST_QUALITY_OF_SERVICE__QOS_UTILITIES_HPP_
 #define TEST_QUALITY_OF_SERVICE__QOS_UTILITIES_HPP_
 
-#include "gtest/gtest.h"
 
 #include <chrono>
 #include <memory>
@@ -23,10 +22,11 @@
 #include <string>
 #include <tuple>
 
+#include "gtest/gtest.h"
+
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 
-using namespace std::chrono_literals;
 
 /// Helper time conversion method
 /**

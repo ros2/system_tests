@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "gtest/gtest.h"
-#include "test_quality_of_service/qos_utilities.hpp"
 
 #include <chrono>
 #include <exception>
@@ -23,11 +21,14 @@
 #include <string>
 #include <tuple>
 
+#include "gtest/gtest.h"
+
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp/executors/single_threaded_executor.hpp"
 
 #include "std_msgs/msg/string.hpp"
 
+#include "test_quality_of_service/qos_utilities.hpp"
 
 using namespace std::chrono_literals;
 
@@ -52,8 +53,8 @@ protected:
 
 /// Test Automatic Liveliness with a single publishing node and single subscriber node
 TEST_F(LivelinessSetup, test_automatic_liveliness_changed) {
-  const std::chrono::milliseconds  max_test_length = 8s;
-  const std::chrono::milliseconds  kill_publisher_after = 2s;
+  const std::chrono::milliseconds max_test_length = 8s;
+  const std::chrono::milliseconds kill_publisher_after = 2s;
   int number_of_published_messages = 0;
 
   // used for lambda capture

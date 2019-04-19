@@ -12,14 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "gtest/gtest.h"
-
 #include <chrono>
-#include <exception>
-#include <iostream>
 #include <memory>
 #include <string>
 #include <tuple>
+
+#include "gtest/gtest.h"
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp/executors/single_threaded_executor.hpp"
@@ -28,14 +26,15 @@
 
 #include "test_quality_of_service/qos_utilities.hpp"
 
+
 using namespace std::chrono_literals;
 
 /// Test Deadline with a single publishing node and single subscriber node
 TEST_F(TestSetup, test_deadline) {
-
   int expected_number_of_pub_events = 5;
   const std::chrono::milliseconds deadline_duration = 1s;
-  std::tuple<size_t, size_t> deadline_duration_tuple = chrono_milliseconds_to_size_t(deadline_duration);
+  std::tuple<size_t, size_t> deadline_duration_tuple = chrono_milliseconds_to_size_t(
+    deadline_duration);
   const std::chrono::milliseconds max_test_length = 10s;
   const std::chrono::milliseconds publish_rate = deadline_duration / 5;
 
@@ -64,7 +63,7 @@ TEST_F(TestSetup, test_deadline) {
       last_pub_count = event.total_count;
     };
 
-  //setup publishing options and callback
+  // setup publishing options and callback
   rclcpp::PublisherOptions<> publisher_options;
   publisher_options.qos_profile = qos_profile;
   publisher_options.event_callbacks.deadline_callback =

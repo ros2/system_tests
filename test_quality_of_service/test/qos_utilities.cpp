@@ -12,16 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "test_quality_of_service/qos_utilities.hpp"
-
-#include <chrono>
 #include <memory>
 #include <string>
 #include <tuple>
 
-#include "rclcpp/rclcpp.hpp"
-
-using namespace std::chrono_literals;
+#include "test_quality_of_service/qos_utilities.hpp"
 
 
 std::tuple<size_t, size_t> chrono_milliseconds_to_size_t(
@@ -111,7 +106,8 @@ Subscriber::Subscriber(
   RCLCPP_INFO(get_logger(), "created subscriber %s %s", name.c_str(), topic.c_str());
 }
 
-void Subscriber::start_listening() {
+void Subscriber::start_listening()
+{
   toggle_subscriber_mutex.lock();
   is_listening = true;
   subscription_ = create_subscription<std_msgs::msg::String>(
@@ -125,19 +121,20 @@ void Subscriber::start_listening() {
   toggle_subscriber_mutex.unlock();
 }
 
-void Subscriber::stop_listening() {
+void Subscriber::stop_listening()
+{
   toggle_subscriber_mutex.lock();
   is_listening = false;
   if (subscription_) {
     subscription_.reset();
-    subscription_ = nullptr;
   }
   toggle_subscriber_mutex.unlock();
 }
 
-void Subscriber::toggle_listening() {
+void Subscriber::toggle_listening()
+{
   toggle_subscriber_mutex.lock();
-  if(is_listening) {
+  if (is_listening) {
     stop_listening();
   } else {
     start_listening();
@@ -145,6 +142,7 @@ void Subscriber::toggle_listening() {
   toggle_subscriber_mutex.unlock();
 }
 
-Subscriber::~Subscriber() {
-
+Subscriber::~Subscriber()
+{
+  stop_listening();
 }
