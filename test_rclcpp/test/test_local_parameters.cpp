@@ -429,20 +429,38 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_parameter_or_set)
   {
     // try to get with default a parameter that is already set
     int64_t foo_value = -1;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#if !defined(_WIN32)
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#else  // !defined(_WIN32)
+# pragma warning(push)
+# pragma warning(disable: 4996)
+#endif
     node->get_parameter_or_set("foo", foo_value, static_cast<int64_t>(42));
-#pragma GCC diagnostic pop
+#if !defined(_WIN32)
+# pragma GCC diagnostic pop
+#else  // !defined(_WIN32)
+# pragma warning(pop)
+#endif
     ASSERT_EQ(foo_value, 2);
   }
 
   {
     // try to get with default a parameter that is not set
     int64_t bar_value = -1;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#if !defined(_WIN32)
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#else  // !defined(_WIN32)
+# pragma warning(push)
+# pragma warning(disable: 4996)
+#endif
     node->get_parameter_or_set("bar", bar_value, static_cast<int64_t>(42));
-#pragma GCC diagnostic pop
+#if !defined(_WIN32)
+# pragma GCC diagnostic pop
+#else  // !defined(_WIN32)
+# pragma warning(pop)
+#endif
     ASSERT_EQ(bar_value, 42);
     // ensure it is now set
     int64_t bar_value2 = -1;
@@ -471,10 +489,19 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), set_parameter_if_not_
 
   {
     // try to set_if_not_set a parameter that is already set
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#if !defined(_WIN32)
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#else  // !defined(_WIN32)
+# pragma warning(push)
+# pragma warning(disable: 4996)
+#endif
     node->set_parameter_if_not_set("foo", 42);
-#pragma GCC diagnostic pop
+#if !defined(_WIN32)
+# pragma GCC diagnostic pop
+#else  // !defined(_WIN32)
+# pragma warning(pop)
+#endif
     // make sure it did not change (it was already set)
     int64_t foo_value = -1;
     ASSERT_TRUE(node->get_parameter("foo", foo_value));
@@ -483,10 +510,19 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), set_parameter_if_not_
 
   {
     // try to get with default a parameter that is not set
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#if !defined(_WIN32)
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#else  // !defined(_WIN32)
+# pragma warning(push)
+# pragma warning(disable: 4996)
+#endif
     node->set_parameter_if_not_set("bar", 42);
-#pragma GCC diagnostic pop
+#if !defined(_WIN32)
+# pragma GCC diagnostic pop
+#else  // !defined(_WIN32)
+# pragma warning(pop)
+#endif
     // ensure it was set
     int64_t bar_value = -1;
     ASSERT_TRUE(node->get_parameter("bar", bar_value));
