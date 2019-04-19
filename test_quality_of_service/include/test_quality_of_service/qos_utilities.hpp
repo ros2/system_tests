@@ -12,12 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TEST_QUALITY_OF_SERVICE_QOS_UTILITIES_HPP
-#define TEST_QUALITY_OF_SERVICE_QOS_UTILITIES_HPP
+#ifndef TEST_QUALITY_OF_SERVICE__QOS_UTILITIES_HPP_
+#define TEST_QUALITY_OF_SERVICE__QOS_UTILITIES_HPP_
+
+#include "gtest/gtest.h"
 
 #include <chrono>
 #include <memory>
+#include <mutex>
 #include <string>
+#include <tuple>
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
@@ -29,42 +33,44 @@ using namespace std::chrono_literals;
  * @param milliseconds
  * @return tuple of milliseconds converted to <seconds, nanoseconds>
  */
-std::tuple<size_t, size_t> chrono_milliseconds_to_size_t(const std::chrono::milliseconds & milliseconds);
+std::tuple<size_t, size_t> chrono_milliseconds_to_size_t(
+  const std::chrono::milliseconds & milliseconds);
 
-/// Simple publisher class used system tests
+/// Simple publishing node used for system tests
 class Publisher : public rclcpp::Node
 {
 public:
-    Publisher(std::string name,
-      std::string topic,
-      rclcpp::PublisherOptions<> pub_options,
-      std::chrono::milliseconds publish_period,
-      unsigned int max_publish_count = 0);
+  Publisher(
+    std::string name,
+    std::string topic,
+    rclcpp::PublisherOptions<> pub_options,
+    std::chrono::milliseconds publish_period);
 
-    ~Publisher();
-    void start_publishing();
+  ~Publisher();
+  void start_publishing();
+  void stop_publishing();
+  void toggle_publishing();
 
-    /// name of this publisher
-    std::string name_;
-    /// topic name to publish
-    std::string topic_;
+  /// name of this publisher
+  std::string name_;
+  /// topic name to publish
+  std::string topic_;
 
-    /// the timer of this publisher
-    rclcpp::TimerBase::SharedPtr timer_ = nullptr;
-    /// actual publishing mechanism
-    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_ = nullptr;
+  /// the timer of this publisher
+  rclcpp::TimerBase::SharedPtr timer_ = nullptr;
+  /// actual publishing mechanism
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_ = nullptr;
 
-    rclcpp::PublisherOptions<> pub_options_;
+  rclcpp::PublisherOptions<> pub_options_;
 
-    std::chrono::milliseconds publish_period_;
+  std::chrono::milliseconds publish_period_;
 
-    /// number of messages published
-    int sent_message_count_;
-    /// max number of messages to publish
-    int max_publish_count_;
-
+  /// number of messages published
+  int sent_message_count_;
+  /// if true then currently has an active publishing timer
+  bool is_publishing = false;
+  std::recursive_mutex toggle_publish_mutex;
 };
-
 
 class Subscriber : public rclcpp::Node
 {
@@ -74,8 +80,14 @@ public:
     std::string topic,
     rclcpp::SubscriptionOptions<> sub_options);
 
+  ~Subscriber();
+  void start_listening();
+  void stop_listening();
+  void toggle_listening();
+
   int received_message_count_ = 0;
-  int qos_event_count_ = 0;
+  bool is_listening = false;
+  std::recursive_mutex toggle_subscriber_mutex;
 
 private:
   std::string name_;
@@ -84,5 +96,23 @@ private:
   rclcpp::SubscriptionOptions<> sub_options_;
 };
 
+/// Simple text fixture
+class TestSetup : public ::testing::Test
+{
+protected:
+  void SetUp() override
+  {
+    rclcpp::init(0, nullptr);
+    executor = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
+  }
+  void TearDown() override
+  {
+    executor->cancel();
+    executor.reset();
+    rclcpp::shutdown();
+  }
+  std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> executor;
+};
 
-#endif //TEST_QUALITY_OF_SERVICE_QOS_UTILITIES_HPP
+
+#endif  // TEST_QUALITY_OF_SERVICE__QOS_UTILITIES_HPP_

@@ -13,45 +13,51 @@
 // limitations under the License.
 
 #include "gtest/gtest.h"
+#include "test_quality_of_service/qos_utilities.hpp"
 
 #include <chrono>
 #include <exception>
 #include <iostream>
+#include <memory>
 #include <stack>
 #include <string>
-#include <stdlib.h>
+#include <tuple>
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp/executors/single_threaded_executor.hpp"
-#include "rclcpp/executors/multi_threaded_executor.hpp"
 
 #include "std_msgs/msg/string.hpp"
 
-#include "test_quality_of_service/qos_utilities.hpp"
 
 using namespace std::chrono_literals;
 
 /// Liveliness setup
-class LivelinessSetup : public ::testing::Test {
-
+class LivelinessSetup : public ::testing::Test
+{
 protected:
-  void SetUp() override {
+  void SetUp() override
+  {
     rclcpp::init(0, nullptr);
+    executor = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
   }
-  void TearDown() override {
+  void TearDown() override
+  {
+    executor->cancel();
+    executor.reset();
     rclcpp::shutdown();
   }
+
+  std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> executor;
 };
 
 /// Test Automatic Liveliness with a single publishing node and single subscriber node
 TEST_F(LivelinessSetup, test_automatic_liveliness_changed) {
-
-  const auto max_test_length = 8s;
-  const auto kill_publisher_after = 2s;
+  const std::chrono::milliseconds  max_test_length = 8s;
+  const std::chrono::milliseconds  kill_publisher_after = 2s;
   int number_of_published_messages = 0;
 
   // used for lambda capture
-  rclcpp::executors::SingleThreadedExecutor exec;
+  std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> exec = executor;
   int total_number_of_liveliness_events = 0;
 
   rmw_qos_profile_t qos_profile = rmw_qos_profile_default;
@@ -65,49 +71,56 @@ TEST_F(LivelinessSetup, test_automatic_liveliness_changed) {
   qos_profile.liveliness_lease_duration.nsec = std::get<1>(liveliness_lease_tuple);
 
   // subscription options
-  rclcpp::SubscriptionOptions<> sub_options;
-  sub_options.qos_profile = qos_profile;
+  rclcpp::SubscriptionOptions<> subscriber_options;
+  subscriber_options.qos_profile = qos_profile;
 
   // subscriber Liveliness callback event
-  sub_options.event_callbacks.liveliness_callback =
-    [&total_number_of_liveliness_events] (rclcpp::QOSLivelinessChangedInfo & event) -> void
-  {
-    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "QOSLivelinessChangedInfo callback fired");
-    total_number_of_liveliness_events++;
+  subscriber_options.event_callbacks.liveliness_callback =
+    [&total_number_of_liveliness_events](rclcpp::QOSLivelinessChangedInfo & event) -> void
+    {
+      RCLCPP_DEBUG(rclcpp::get_logger("rclcpp"), "QOSLivelinessChangedInfo callback");
+      total_number_of_liveliness_events++;
 
-    // strict checking for expected events
-    if(total_number_of_liveliness_events == 1) {
-      // publisher came alive
-      ASSERT_EQ(1, event.alive_count);
-      ASSERT_EQ(0, event.not_alive_count);
-      ASSERT_EQ(1, event.alive_count_change);
-      ASSERT_EQ(0, event.not_alive_count_change);
-    } else if(total_number_of_liveliness_events == 2) {
-      // publisher died
-      ASSERT_EQ(0, event.alive_count);
-      ASSERT_EQ(0, event.not_alive_count);
-      ASSERT_EQ(-1, event.alive_count_change);
-      ASSERT_EQ(0, event.not_alive_count_change);
-    }
-  };
+      // strict checking for expected events
+      if (total_number_of_liveliness_events == 1) {
+        // publisher came alive
+        ASSERT_EQ(1, event.alive_count);
+        ASSERT_EQ(0, event.not_alive_count);
+        ASSERT_EQ(1, event.alive_count_change);
+        ASSERT_EQ(0, event.not_alive_count_change);
+      } else if (total_number_of_liveliness_events == 2) {
+        // publisher died
+        ASSERT_EQ(0, event.alive_count);
+        ASSERT_EQ(0, event.not_alive_count);
+        ASSERT_EQ(-1, event.alive_count_change);
+        ASSERT_EQ(0, event.not_alive_count_change);
+      }
+    };
 
   // publisher options
-  rclcpp::PublisherOptions<> pub_options;
-  pub_options.qos_profile = qos_profile;
+  rclcpp::PublisherOptions<> publisher_options;
+  publisher_options.qos_profile = qos_profile;
 
-  std::string topic("TestPublisherAutomaticLiveliness");
+//  publisher_options.event_callbacks.liveliness_callback =
+//    [](rclcpp::QOSLivelinessLostInfo & event) -> void
+//    {
+//      RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "=====QOSLivelinessLostInfo callback fired");
+//    };
 
-  auto publisher = std::make_shared<Publisher>("publisher", topic, pub_options, 200ms);
-  auto subscriber = std::make_shared<Subscriber>("subscriber", topic, sub_options);
+  std::string topic("test_automatic_liveliness_changed");
+
+  auto publisher = std::make_shared<Publisher>("publisher", topic, publisher_options, 200ms);
+
+  auto subscriber = std::make_shared<Subscriber>("subscriber", topic, subscriber_options);
 
   // kill the test after a predetermined amount of time
   rclcpp::TimerBase::SharedPtr kill_publisher_timer = nullptr;
   kill_publisher_timer = subscriber->create_wall_timer(
     2s,
     [&exec, &publisher, &number_of_published_messages, &kill_publisher_timer]() -> void {
-      exec.remove_node(publisher);
+      exec->remove_node(publisher);
       number_of_published_messages = publisher->sent_message_count_;
-      publisher.reset(); // force liveliness lost for automatic
+      publisher.reset();  // force liveliness lost for automatic
       kill_publisher_timer->cancel();
     });
 
@@ -116,24 +129,25 @@ TEST_F(LivelinessSetup, test_automatic_liveliness_changed) {
   kill_experiment_timer = subscriber->create_wall_timer(
     max_test_length,
     [&exec, &kill_experiment_timer]() -> void {
-        //don't cancel timer one from here....
-        exec.cancel();
-        kill_experiment_timer->cancel();
+      // don't cancel timer one from here....
+      exec->cancel();
+      kill_experiment_timer->cancel();
     });
 
-  exec.add_node(subscriber);
-  exec.add_node(publisher);
+  exec->add_node(subscriber);
+  subscriber->start_listening();
 
+  exec->add_node(publisher);
   publisher->start_publishing();
 
-  exec.spin(); // blocking
+  exec->spin();  // blocking
 
-  EXPECT_EQ(2, total_number_of_liveliness_events); // check expected number of liveliness events
-  EXPECT_GT(number_of_published_messages, 0); // check if we published anything
-  EXPECT_GT(subscriber->received_message_count_, 0); // check if we received anything
+  EXPECT_EQ(2, total_number_of_liveliness_events);  // check expected number of liveliness events
+  EXPECT_GT(number_of_published_messages, 0);  // check if we published anything
+  EXPECT_GT(subscriber->received_message_count_, 0);  // check if we received anything
 }
 
-//todo multiple publisher test?
+// todo multiple publisher test?
 
 int main(int argc, char ** argv)
 {
