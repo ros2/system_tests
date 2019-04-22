@@ -45,6 +45,11 @@ Publisher::Publisher(
 void Publisher::start_publishing()
 {
   toggle_publish_mutex.lock();
+
+  if (is_publishing) {
+    return;
+  }
+
   is_publishing = true;
 
   auto timer_callback =
@@ -109,6 +114,11 @@ Subscriber::Subscriber(
 void Subscriber::start_listening()
 {
   toggle_subscriber_mutex.lock();
+
+  if (is_listening) {
+    return;
+  }
+
   is_listening = true;
   subscription_ = create_subscription<std_msgs::msg::String>(
     topic_,

@@ -32,27 +32,9 @@
 
 using namespace std::chrono_literals;
 
-/// Liveliness setup
-class LivelinessSetup : public ::testing::Test
-{
-protected:
-  void SetUp() override
-  {
-    rclcpp::init(0, nullptr);
-    executor = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
-  }
-  void TearDown() override
-  {
-    executor->cancel();
-    executor.reset();
-    rclcpp::shutdown();
-  }
-
-  std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> executor;
-};
 
 /// Test Automatic Liveliness with a single publishing node and single subscriber node
-TEST_F(LivelinessSetup, test_automatic_liveliness_changed) {
+TEST_F(TestSetup, test_automatic_liveliness_changed) {
   const std::chrono::milliseconds max_test_length = 8s;
   const std::chrono::milliseconds kill_publisher_after = 2s;
   int number_of_published_messages = 0;
@@ -147,8 +129,6 @@ TEST_F(LivelinessSetup, test_automatic_liveliness_changed) {
   EXPECT_GT(number_of_published_messages, 0);  // check if we published anything
   EXPECT_GT(subscriber->received_message_count_, 0);  // check if we received anything
 }
-
-// todo multiple publisher test?
 
 int main(int argc, char ** argv)
 {
