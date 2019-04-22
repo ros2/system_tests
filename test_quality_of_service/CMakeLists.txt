@@ -37,16 +37,13 @@ if(BUILD_TESTING)
   function(custom_gtest_executable target)
     ament_add_gtest_executable(${target} ${ARGN} test/${target}.cpp test/qos_utilities.cpp)
     target_compile_definitions(${target}  PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
-    ament_target_dependencies(${target}
-      "rclcpp",
-      "rcutils",
-      "std_msgs")
+    ament_target_dependencies(${target} "rclcpp" "rcutils" "std_msgs")
     install(TARGETS ${target} DESTINATION lib/${PROJECT_NAME})
   endfunction()
 
-  custom_gtest_executable(test_liveliness "test/test_liveliness.cpp")
   custom_gtest_executable(test_deadline "test/test_deadline.cpp")
   custom_gtest_executable(test_lifespan "test/test_lifespan.cpp")
+  custom_gtest_executable(test_liveliness "test/test_liveliness.cpp")
 
 endif()
 
