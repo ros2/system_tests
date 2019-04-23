@@ -27,6 +27,17 @@
 
 const double test_epsilon = 1e-6;
 
+void declare_test_parameters(std::shared_ptr<rclcpp::Node> node)
+{
+  node->declare_parameter("foo");
+  node->declare_parameter("bar");
+  node->declare_parameter("barstr");
+  node->declare_parameter("baz");
+  node->declare_parameter("foo.first");
+  node->declare_parameter("foo.second");
+  node->declare_parameter("foobar");
+}
+
 void set_test_parameters(
   std::shared_ptr<rclcpp::SyncParametersClient> parameters_client)
 {
@@ -167,7 +178,7 @@ void verify_test_parameters(
   parameters_and_prefixes = parameters_client->list_parameters({},
       rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE);
   std::vector<std::string> all_names = {
-    "foo", "bar", "barstr", "baz", "foo.first", "foo.second", "foobar"
+    "foo", "bar", "barstr", "baz", "foo.first", "foo.second", "foobar", "use_sim_time"
   };
   EXPECT_EQ(parameters_and_prefixes.names.size(), all_names.size());
   for (auto & name : all_names) {
@@ -190,9 +201,9 @@ void verify_test_parameters(
   }
   printf("Listing parameters with depth 1\n");
   // List most of the parameters, using an empty prefix list and depth=1
-  parameters_and_prefixes = parameters_client->list_parameters({}, 1);
+  parameters_and_prefixes = parameters_client->list_parameters({}, 1u);
   std::vector<std::string> depth_one_names = {
-    "foo", "bar", "barstr", "baz", "foobar"
+    "foo", "bar", "barstr", "baz", "foobar", "use_sim_time"
   };
   EXPECT_EQ(parameters_and_prefixes.names.size(), depth_one_names.size());
   for (auto & name : depth_one_names) {
@@ -290,7 +301,7 @@ void verify_get_parameters_async(
   rclcpp::spin_until_future_complete(node, result5);
   parameters_and_prefixes = result5.get();
   std::vector<std::string> all_names = {
-    "foo", "bar", "barstr", "baz", "foo.first", "foo.second", "foobar"
+    "foo", "bar", "barstr", "baz", "foo.first", "foo.second", "foobar", "use_sim_time"
   };
   EXPECT_EQ(parameters_and_prefixes.names.size(), all_names.size());
   for (auto & name : all_names) {

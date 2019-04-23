@@ -22,7 +22,9 @@ int main(int argc, char ** argv)
 
   std::string node_name = "initial_params_node";
   std::string namespace_ = "/";
-  auto node = rclcpp::Node::make_shared(node_name, namespace_);
+  rclcpp::NodeOptions options;
+  options.automatically_declare_initial_parameters(true);
+  auto node = rclcpp::Node::make_shared(node_name, namespace_, options);
 
   rclcpp::spin(node);
 

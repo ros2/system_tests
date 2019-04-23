@@ -68,6 +68,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), to_string) {
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous) {
   if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared("test_parameters_local_synchronous");
+  declare_test_parameters(node);
   auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(node);
   if (!parameters_client->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
@@ -79,6 +80,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous) {
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous_repeated) {
   if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared("test_parameters_local_synchronous_repeated");
+  declare_test_parameters(node);
   auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(node);
   if (!parameters_client->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
@@ -93,6 +95,7 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous_rep
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_asynchronous) {
   if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared(std::string("test_parameters_local_asynchronous"));
+  declare_test_parameters(node);
   auto parameters_client = std::make_shared<rclcpp::AsyncParametersClient>(node);
   if (!parameters_client->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
@@ -107,6 +110,13 @@ public:
   ParametersAsyncNode()
   : Node("test_local_parameters_async_with_callback")
   {
+    this->declare_parameter("foo");
+    this->declare_parameter("bar");
+    this->declare_parameter("barstr");
+    this->declare_parameter("baz");
+    this->declare_parameter("foobar");
+    this->declare_parameter("barfoo");
+
     parameters_client_ =
       std::make_shared<rclcpp::AsyncParametersClient>(this);
   }
@@ -157,6 +167,13 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_async_with_call
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
   if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared("test_parameters_local_helpers");
+  node->declare_parameter("foo");
+  node->declare_parameter("bar");
+  node->declare_parameter("barstr");
+  node->declare_parameter("baz");
+  node->declare_parameter("foobar");
+  node->declare_parameter("barfoo");
+
   auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(node);
   if (!parameters_client->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
@@ -267,6 +284,13 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_primitive_type) {
   if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared("test_parameters_local_helpers");
+  node->declare_parameter("foo");
+  node->declare_parameter("bar");
+  node->declare_parameter("barstr");
+  node->declare_parameter("baz");
+  node->declare_parameter("foobar");
+  node->declare_parameter("barfoo");
+
   auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(node);
   if (!parameters_client->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
@@ -333,6 +357,13 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_variant
   using rclcpp::Parameter;
 
   auto node = rclcpp::Node::make_shared("test_parameters_local_helpers");
+  node->declare_parameter("foo");
+  node->declare_parameter("bar");
+  node->declare_parameter("barstr");
+  node->declare_parameter("baz");
+  node->declare_parameter("foobar");
+  node->declare_parameter("barfoo");
+
   auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(node);
   if (!parameters_client->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
@@ -370,8 +401,9 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_variant
   EXPECT_FALSE(got_param);
 
   // Throw on non-existent param for returning version
-  EXPECT_THROW(node->get_parameter("no_such_param"), std::out_of_range);
-
+  EXPECT_THROW(
+    node->get_parameter("no_such_param"),
+    rclcpp::exceptions::ParameterNotDeclaredException);
 
   EXPECT_NO_THROW(got_param = node->get_parameter("bar", bar));
   EXPECT_EQ(true, got_param);
@@ -386,68 +418,49 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_variant
   EXPECT_EQ(true, got_param);
 }
 
-TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_parameter_or) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
-  using rclcpp::Parameter;
-
-  auto node = rclcpp::Node::make_shared("test_parameters_get_parameter_or");
-  auto set_parameters_results = node->set_parameters({
-    Parameter("foo", 2),
-  });
-  printf("Got set_parameters result\n");
-
-  // Check to see if they were set.
-  for (auto & result : set_parameters_results) {
-    ASSERT_TRUE(result.successful);
-  }
-
-  {
-    // try to get with default a parameter that is already set
-    int64_t foo_value = -1;
-    node->get_parameter_or("foo", foo_value, static_cast<int64_t>(42));
-    ASSERT_EQ(foo_value, 2);
-    int64_t foo_value2 = -1;
-    ASSERT_TRUE(node->get_parameter("foo", foo_value2));
-    ASSERT_EQ(foo_value2, 2);
-  }
-
-  {
-    // try to get with default a parameter that is not set
-    int64_t bar_value = -1;
-    node->get_parameter_or("bar", bar_value, static_cast<int64_t>(42));
-    ASSERT_EQ(bar_value, 42);
-    // ensure it is still unset
-    int64_t bar_value2 = -1;
-    ASSERT_FALSE(node->get_parameter("bar", bar_value2));
-    ASSERT_EQ(bar_value2, -1);
-  }
-}
-
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_parameter_or_set) {
   if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   using rclcpp::Parameter;
 
   auto node = rclcpp::Node::make_shared("test_parameters_get_parameter_or_set_default");
-  auto set_parameters_results = node->set_parameters({
-    Parameter("foo", 2),
-  });
-
-  // Check to see if they were set.
-  for (auto & result : set_parameters_results) {
-    ASSERT_TRUE(result.successful);
-  }
+  node->declare_parameter("foo", 2);
+  node->declare_parameter("bar");
 
   {
     // try to get with default a parameter that is already set
     int64_t foo_value = -1;
+#if !defined(_WIN32)
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#else  // !defined(_WIN32)
+# pragma warning(push)
+# pragma warning(disable: 4996)
+#endif
     node->get_parameter_or_set("foo", foo_value, static_cast<int64_t>(42));
+#if !defined(_WIN32)
+# pragma GCC diagnostic pop
+#else  // !defined(_WIN32)
+# pragma warning(pop)
+#endif
     ASSERT_EQ(foo_value, 2);
   }
 
   {
     // try to get with default a parameter that is not set
     int64_t bar_value = -1;
+#if !defined(_WIN32)
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#else  // !defined(_WIN32)
+# pragma warning(push)
+# pragma warning(disable: 4996)
+#endif
     node->get_parameter_or_set("bar", bar_value, static_cast<int64_t>(42));
+#if !defined(_WIN32)
+# pragma GCC diagnostic pop
+#else  // !defined(_WIN32)
+# pragma warning(pop)
+#endif
     ASSERT_EQ(bar_value, 42);
     // ensure it is now set
     int64_t bar_value2 = -1;
@@ -461,6 +474,9 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), set_parameter_if_not_
   using rclcpp::Parameter;
 
   auto node = rclcpp::Node::make_shared("test_parameters_set_parameter_if_not_set");
+  node->declare_parameter("foo");
+  node->declare_parameter("bar");
+
   auto set_parameters_results = node->set_parameters({
     Parameter("foo", 2),
   });
@@ -473,7 +489,19 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), set_parameter_if_not_
 
   {
     // try to set_if_not_set a parameter that is already set
+#if !defined(_WIN32)
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#else  // !defined(_WIN32)
+# pragma warning(push)
+# pragma warning(disable: 4996)
+#endif
     node->set_parameter_if_not_set("foo", 42);
+#if !defined(_WIN32)
+# pragma GCC diagnostic pop
+#else  // !defined(_WIN32)
+# pragma warning(pop)
+#endif
     // make sure it did not change (it was already set)
     int64_t foo_value = -1;
     ASSERT_TRUE(node->get_parameter("foo", foo_value));
@@ -482,7 +510,19 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), set_parameter_if_not_
 
   {
     // try to get with default a parameter that is not set
+#if !defined(_WIN32)
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#else  // !defined(_WIN32)
+# pragma warning(push)
+# pragma warning(disable: 4996)
+#endif
     node->set_parameter_if_not_set("bar", 42);
+#if !defined(_WIN32)
+# pragma GCC diagnostic pop
+#else  // !defined(_WIN32)
+# pragma warning(pop)
+#endif
     // ensure it was set
     int64_t bar_value = -1;
     ASSERT_TRUE(node->get_parameter("bar", bar_value));
