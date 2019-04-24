@@ -43,24 +43,14 @@ int main(int argc, char ** argv)
   const std::chrono::steady_clock::time_point max_runtime =
     std::chrono::steady_clock::now() + 10s;
   while (rc && rclcpp::ok()) {
-    printf("\n");
-    auto names_namespaces = node->get_node_graph_interface()->get_node_names_and_namespaces();
-    std::vector<std::string> names;
-    std::transform(names_namespaces.begin(),
-      names_namespaces.end(),
-      std::back_inserter(names),
-      [](std::pair<std::string, std::string> nns) {return nns.first;}
-    );
-    printf("BEGIN DISCOVERED NODES\n");
+    auto names = node->get_node_graph_interface()->get_node_names();
     for (auto it : names) {
       printf("- %s\n", it.c_str());
-      printf("- |%s|\n- |%s|\n", it.c_str(), argv[1]);
       if (argc >= 2 && it.compare(argv[1]) == 0) {
         printf("  found expected node name\n");
         rc = 0;
       }
     }
-    printf("END DISCOVERED NODES\n");
     std::cout.flush();
     if (std::chrono::steady_clock::now() >= max_runtime) {
       break;

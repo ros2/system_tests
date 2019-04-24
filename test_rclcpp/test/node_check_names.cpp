@@ -30,7 +30,7 @@ int main(int argc, char ** argv)
   }
 
   int num_nodes = ::strtol(argv[1], nullptr, 10);
-  std::string node_to_look_for("node_with_name");
+  std::string node_to_look_for("/node_with_name");
   printf("Waiting for %d nodes with name: node_with_name_N\n", num_nodes);
   std::cout.flush();
 
