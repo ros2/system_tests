@@ -89,7 +89,7 @@ send_goals(
     }
 
     // wait for the result (feedback may be received in the meantime)
-    auto result_future = goal_handle_future.get()->async_result();
+    auto result_future = action_client->async_get_result(goal_handle_future.get());
     status = rclcpp::spin_until_future_complete(node, result_future, 1000s);
     if (status != FutureReturnCode::SUCCESS) {
       RCLCPP_ERROR(logger, "failed to receive a goal result in time");
