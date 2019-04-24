@@ -28,15 +28,17 @@
 
 #include "std_msgs/msg/string.hpp"
 
+#include "test_quality_of_service/publisher.hpp"
 #include "test_quality_of_service/qos_utilities.hpp"
+#include "test_quality_of_service/subscriber.hpp"
 
 using namespace std::chrono_literals;
 
-
 /// Test Automatic Liveliness with a single publishing node and single subscriber node
-TEST_F(TestSetup, test_automatic_liveliness_changed) {
+TEST_F(QosRclcppTestFixture, test_automatic_liveliness_changed) {
   const std::chrono::milliseconds max_test_length = 8s;
   const std::chrono::milliseconds kill_publisher_after = 2s;
+  const std::chrono::milliseconds publish_period = 200ms;
   int number_of_published_messages = 0;
 
   // used for lambda capture
@@ -47,7 +49,7 @@ TEST_F(TestSetup, test_automatic_liveliness_changed) {
   // define liveliness policy
   qos_profile.liveliness = RMW_QOS_POLICY_LIVELINESS_AUTOMATIC;
 
-  std::tuple<size_t, size_t> liveliness_lease_tuple = chrono_milliseconds_to_size_t(1000ms);
+  std::tuple<size_t, size_t> liveliness_lease_tuple = convert_chrono_milliseconds_to_size_t(1s);
 
   // setup liveliness lease
   qos_profile.liveliness_lease_duration.sec = std::get<0>(liveliness_lease_tuple);
@@ -61,7 +63,7 @@ TEST_F(TestSetup, test_automatic_liveliness_changed) {
   subscriber_options.event_callbacks.liveliness_callback =
     [&total_number_of_liveliness_events](rclcpp::QOSLivelinessChangedInfo & event) -> void
     {
-      RCLCPP_DEBUG(rclcpp::get_logger("rclcpp"), "QOSLivelinessChangedInfo callback");
+      RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "QOSLivelinessChangedInfo callback");
       total_number_of_liveliness_events++;
 
       // strict checking for expected events
@@ -92,42 +94,39 @@ TEST_F(TestSetup, test_automatic_liveliness_changed) {
 
   std::string topic("test_automatic_liveliness_changed");
 
-  auto publisher = std::make_shared<Publisher>("publisher", topic, publisher_options, 200ms);
+  auto publisher = std::make_shared<Publisher>("publisher", topic, publisher_options,
+      publish_period);
 
   auto subscriber = std::make_shared<Subscriber>("subscriber", topic, subscriber_options);
 
   // kill the test after a predetermined amount of time
-  rclcpp::TimerBase::SharedPtr kill_publisher_timer = nullptr;
-  kill_publisher_timer = subscriber->create_wall_timer(
+  rclcpp::TimerBase::SharedPtr kill_publisher_timer = subscriber->create_wall_timer(
     2s,
     [&exec, &publisher, &number_of_published_messages, &kill_publisher_timer]() -> void {
       exec->remove_node(publisher);
-      number_of_published_messages = publisher->sent_message_count_;
+      number_of_published_messages = publisher->get_count();
+
+      publisher->teardown();
       publisher.reset();  // force liveliness lost for automatic
+
       kill_publisher_timer->cancel();
     });
 
-  // stop the experiment after a predetermined amount of time
-  rclcpp::TimerBase::SharedPtr kill_experiment_timer = nullptr;
-  kill_experiment_timer = subscriber->create_wall_timer(
-    max_test_length,
-    [&exec, &kill_experiment_timer]() -> void {
-      // don't cancel timer one from here....
-      exec->cancel();
-      kill_experiment_timer->cancel();
-    });
-
   exec->add_node(subscriber);
-  subscriber->start_listening();
+  subscriber->start();
 
   exec->add_node(publisher);
-  publisher->start_publishing();
+  publisher->start();
 
-  exec->spin();  // blocking
+  // the future will never be resolved, so simply time out to force the experiment to stop
+  exec->spin_until_future_complete(dummy_future, max_test_length);  subscriber->teardown();
+
+  kill_publisher_timer->cancel();
+  subscriber->teardown();
 
   EXPECT_EQ(2, total_number_of_liveliness_events);  // check expected number of liveliness events
   EXPECT_GT(number_of_published_messages, 0);  // check if we published anything
-  EXPECT_GT(subscriber->received_message_count_, 0);  // check if we received anything
+  EXPECT_GT(subscriber->get_count(), 0);  // check if we received anything
 }
 
 int main(int argc, char ** argv)

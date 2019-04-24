@@ -24,17 +24,20 @@
 
 #include "std_msgs/msg/string.hpp"
 
+#include "test_quality_of_service/publisher.hpp"
 #include "test_quality_of_service/qos_utilities.hpp"
-
+#include "test_quality_of_service/subscriber.hpp"
 
 using namespace std::chrono_literals;
 
-TEST_F(TestSetup, test_deadline) {
-  std::chrono::milliseconds lifespan_duration = 1000ms;
-  std::tuple<size_t, size_t> message_lifespan = chrono_milliseconds_to_size_t(lifespan_duration);
+TEST_F(QosRclcppTestFixture, test_deadline) {
+  const std::chrono::milliseconds lifespan_duration = 1s;
+  const std::tuple<size_t, size_t> message_lifespan = convert_chrono_milliseconds_to_size_t(
+    lifespan_duration);
   const int history = 2;
-  const std::chrono::milliseconds max_test_length = 10500ms;
+  const std::chrono::milliseconds max_test_length = 11s;
   const int expected_published = max_test_length / lifespan_duration * 2;
+  const std::chrono::milliseconds publish_period = 500ms;
 
   // used for lambda capture
   std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> exec = executor;
@@ -59,39 +62,34 @@ TEST_F(TestSetup, test_deadline) {
   std::string topic = "test_lifespan";
 
   auto publisher = std::make_shared<Publisher>("publisher", topic, publisher_options,
-      lifespan_duration / 2);
+      publish_period);
   auto subscriber = std::make_shared<Subscriber>("subscriber", topic, subscriber_options);
 
   // toggle publishing on and off to force deadline events
-  rclcpp::TimerBase::SharedPtr kill_publisher_timer = nullptr;
-  kill_publisher_timer = subscriber->create_wall_timer(
+  rclcpp::TimerBase::SharedPtr toggle_subscriber_timer = subscriber->create_wall_timer(
     lifespan_duration * 2,
     [&subscriber]() -> void {
       // start / stop publishing publish at a rate slower than lifespan
-      subscriber->toggle_listening();
-    });
-
-  // stop the experiment after a predetermined amount of time
-  rclcpp::TimerBase::SharedPtr kill_experiment_timer = nullptr;
-  kill_experiment_timer = subscriber->create_wall_timer(
-    max_test_length,
-    [&exec, &kill_experiment_timer]() -> void {
-      exec->cancel();
-      kill_experiment_timer->cancel();
+      subscriber->toggle();
     });
 
   exec->add_node(subscriber);
-  subscriber->start_listening();
+  subscriber->start();
 
   exec->add_node(publisher);
-  publisher->start_publishing();
+  publisher->start();
 
-  exec->spin();  // blocking
+  // the future will never be resolved, so simply time out to force the experiment to stop
+  exec->spin_until_future_complete(dummy_future, max_test_length);
 
-  EXPECT_EQ(publisher->sent_message_count_, expected_published);  // check if we published anything
-  EXPECT_GT(subscriber->received_message_count_, 0);  // check if we received anything
+  toggle_subscriber_timer->cancel();
+  subscriber->teardown();
+  publisher->teardown();
+
+  EXPECT_EQ(publisher->get_count(), expected_published);  // check if we published anything
+  EXPECT_GT(subscriber->get_count(), 0);  // check if we received anything
 
   // check if lifespan simply worked
-  EXPECT_LT(subscriber->received_message_count_, publisher->sent_message_count_);
-  EXPECT_LT(subscriber->received_message_count_ / 2, publisher->sent_message_count_);
+  EXPECT_LT(subscriber->get_count(), publisher->get_count());
+  EXPECT_LT(subscriber->get_count() / 2, publisher->get_count());
 }
