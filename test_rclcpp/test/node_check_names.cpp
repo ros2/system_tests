@@ -45,21 +45,12 @@ int main(int argc, char ** argv)
     std::chrono::steady_clock::now() + std::chrono::seconds(10);
 
   while (rclcpp::ok()) {
-    auto names_namespaces = node->get_node_graph_interface()->get_node_names_and_namespaces();
-    std::vector<std::string> names;
-    std::transform(names_namespaces.begin(),
-      names_namespaces.end(),
-      std::back_inserter(names),
-      [](std::pair<std::string, std::string> nns) {return nns.first;}
-    );
-    printf("BEGIN DISCOVERED NODES\n");
+    auto names = node->get_node_graph_interface()->get_node_names();
     for (auto it : names) {
-      printf("- \"%s\"\n", it.c_str());
       if (it.compare(0, node_to_look_for.length(), node_to_look_for) == 0) {
         counter++;
       }
     }
-    printf("END DISCOVERED NODES\n");
     if (counter >= num_nodes) {
       break;
     }
