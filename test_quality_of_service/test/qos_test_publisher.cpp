@@ -14,10 +14,10 @@
 
 #include <string>
 
-#include "test_quality_of_service/publisher.hpp"
+#include "test_quality_of_service/qos_test_publisher.hpp"
 #include "test_quality_of_service/qos_test_node.hpp"
 
-Publisher::Publisher(
+QosTestPublisher::QosTestPublisher(
   const std::string & name,
   const std::string & topic,
   const rclcpp::PublisherOptions<> & publisher_options,
@@ -32,10 +32,10 @@ Publisher::Publisher(
   publisher_ = this->create_publisher<std_msgs::msg::String>(topic_, publisher_options_);
 }
 
-Publisher::~Publisher()
+QosTestPublisher::~QosTestPublisher()
 {}
 
-void Publisher::publish_message()
+void QosTestPublisher::publish_message()
 {
   auto message = std_msgs::msg::String();
   std::ostringstream message_buffer;
@@ -48,19 +48,20 @@ void Publisher::publish_message()
   this->publisher_->publish(message);
 }
 
-void Publisher::setup_start()
+void QosTestPublisher::setup_start()
 {
-  timer_ = this->create_wall_timer(publish_period_, std::bind(&Publisher::publish_message, this));
+  timer_ =
+    this->create_wall_timer(publish_period_, std::bind(&QosTestPublisher::publish_message, this));
 }
 
-void Publisher::setup_stop()
+void QosTestPublisher::setup_stop()
 {
   if (timer_) {
     timer_->cancel();
   }
 }
 
-void Publisher::teardown()
+void QosTestPublisher::teardown()
 {
   setup_stop();
 

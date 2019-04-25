@@ -20,11 +20,11 @@
 #include "std_msgs/msg/string.hpp"
 
 #include "test_quality_of_service/qos_test_node.hpp"
-#include "test_quality_of_service/subscriber.hpp"
+#include "test_quality_of_service/qos_test_subscriber.hpp"
 
 using std::placeholders::_1;
 
-Subscriber::Subscriber(
+QosTestSubscriber::QosTestSubscriber(
   const std::string & name,
   const std::string & topic,
   const rclcpp::SubscriptionOptions<> & sub_options)
@@ -36,10 +36,10 @@ Subscriber::Subscriber(
   RCLCPP_INFO(get_logger(), "created subscriber %s %s", name.c_str(), topic.c_str());
 }
 
-Subscriber::~Subscriber()
+QosTestSubscriber::~QosTestSubscriber()
 {}
 
-void Subscriber::listen_to_message(const std_msgs::msg::String::SharedPtr received_message)
+void QosTestSubscriber::listen_to_message(const std_msgs::msg::String::SharedPtr received_message)
 {
   RCLCPP_INFO(get_logger(), "%s: subscriber heard [%s]",
     this->name_.c_str(),
@@ -47,22 +47,22 @@ void Subscriber::listen_to_message(const std_msgs::msg::String::SharedPtr receiv
   this->increment_count();
 }
 
-void Subscriber::setup_start()
+void QosTestSubscriber::setup_start()
 {
   subscription_ = create_subscription<std_msgs::msg::String>(
     topic_,
-    std::bind(&Subscriber::listen_to_message, this, _1),
+    std::bind(&QosTestSubscriber::listen_to_message, this, _1),
     sub_options_);
 }
 
-void Subscriber::setup_stop()
+void QosTestSubscriber::setup_stop()
 {
   if (subscription_) {
     subscription_.reset();
   }
 }
 
-void Subscriber::teardown()
+void QosTestSubscriber::teardown()
 {
   stop();
 }

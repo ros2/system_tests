@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TEST_QUALITY_OF_SERVICE__SUBSCRIBER_HPP_
-#define TEST_QUALITY_OF_SERVICE__SUBSCRIBER_HPP_
+#ifndef TEST_QUALITY_OF_SERVICE__QOS_TEST_PUBLISHER_HPP_
+#define TEST_QUALITY_OF_SERVICE__QOS_TEST_PUBLISHER_HPP_
 
+#include <chrono>
 #include <memory>
 #include <string>
 
@@ -23,31 +24,38 @@
 
 #include "test_quality_of_service/qos_test_node.hpp"
 
-/// Simple subscriber node used for system tests
-class Subscriber : public QosTestNode
+/// Simple publishing node used for system tests
+class QosTestPublisher : public QosTestNode
 {
 public:
-  Subscriber(
+  QosTestPublisher(
     const std::string & name,
     const std::string & topic,
-    const rclcpp::SubscriptionOptions<> & sub_options);
+    const rclcpp::PublisherOptions<> & publisher_options,
+    const std::chrono::milliseconds & publish_period);
 
-  virtual ~Subscriber();
+  virtual ~QosTestPublisher();
+
   void teardown() override;
 
-protected:
-  void listen_to_message(const std_msgs::msg::String::SharedPtr);
+private:
+  void publish_message();
   void setup_start() override;
   void setup_stop() override;
 
-private:
-  /// subscription options needed for QoS settings
-  const rclcpp::SubscriptionOptions<> & sub_options_;
+  /// publisher options needed for QoS settings
+  const rclcpp::PublisherOptions<> & publisher_options_;
 
-  /// if true then actively listening for subscribed messages
-  bool is_listening_;
+  /// publishing period
+  const std::chrono::milliseconds & publish_period_;
 
-  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
+  /// the timer of this publisher
+  rclcpp::TimerBase::SharedPtr timer_;
+
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
+
+  /// if true then currently has an active publishing timer
+  bool is_publishing;
 };
 
-#endif  // TEST_QUALITY_OF_SERVICE__SUBSCRIBER_HPP_
+#endif  // TEST_QUALITY_OF_SERVICE__QOS_TEST_PUBLISHER_HPP_

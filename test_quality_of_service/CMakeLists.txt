@@ -36,10 +36,10 @@ if(BUILD_TESTING)
   # build a gtest executable with an implemented main
   function(custom_gtest_executable target)
     ament_add_gtest_executable(${target} ${ARGN} test/${target}.cpp
-      test/publisher.cpp
       test/qos_test_node.cpp
-      test/qos_utilities.cpp
-      test/subscriber.cpp)
+      test/qos_test_publisher.cpp
+      test/qos_test_subscriber.cpp
+      test/qos_utilities.cpp)
     target_compile_definitions(${target}  PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
     ament_target_dependencies(${target} rclcpp rcutils std_msgs)
     install(TARGETS ${target} DESTINATION lib/${PROJECT_NAME})

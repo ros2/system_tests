@@ -24,9 +24,9 @@
 
 #include "std_msgs/msg/string.hpp"
 
-#include "test_quality_of_service/publisher.hpp"
+#include "test_quality_of_service/qos_test_publisher.hpp"
+#include "test_quality_of_service/qos_test_subscriber.hpp"
 #include "test_quality_of_service/qos_utilities.hpp"
-#include "test_quality_of_service/subscriber.hpp"
 
 using namespace std::chrono_literals;
 
@@ -38,9 +38,6 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
   const std::chrono::milliseconds max_test_length = 11s;
   const int expected_published = max_test_length / lifespan_duration * 2;
   const std::chrono::milliseconds publish_period = 500ms;
-
-  // used for lambda capture
-  std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> exec = executor;
 
   // define qos profile
   rmw_qos_profile_t qos_profile = rmw_qos_profile_default;
@@ -61,9 +58,9 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
 
   std::string topic = "test_lifespan";
 
-  auto publisher = std::make_shared<Publisher>("publisher", topic, publisher_options,
+  auto publisher = std::make_shared<QosTestPublisher>("publisher", topic, publisher_options,
       publish_period);
-  auto subscriber = std::make_shared<Subscriber>("subscriber", topic, subscriber_options);
+  auto subscriber = std::make_shared<QosTestSubscriber>("subscriber", topic, subscriber_options);
 
   // toggle publishing on and off to force deadline events
   rclcpp::TimerBase::SharedPtr toggle_subscriber_timer = subscriber->create_wall_timer(
@@ -73,14 +70,14 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
       subscriber->toggle();
     });
 
-  exec->add_node(subscriber);
+  executor->add_node(subscriber);
   subscriber->start();
 
-  exec->add_node(publisher);
+  executor->add_node(publisher);
   publisher->start();
 
   // the future will never be resolved, so simply time out to force the experiment to stop
-  exec->spin_until_future_complete(dummy_future, max_test_length);
+  executor->spin_until_future_complete(dummy_future, max_test_length);
 
   toggle_subscriber_timer->cancel();
   subscriber->teardown();

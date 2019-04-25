@@ -28,9 +28,9 @@
 
 #include "std_msgs/msg/string.hpp"
 
-#include "test_quality_of_service/publisher.hpp"
+#include "test_quality_of_service/qos_test_publisher.hpp"
+#include "test_quality_of_service/qos_test_subscriber.hpp"
 #include "test_quality_of_service/qos_utilities.hpp"
-#include "test_quality_of_service/subscriber.hpp"
 
 using namespace std::chrono_literals;
 
@@ -94,10 +94,10 @@ TEST_F(QosRclcppTestFixture, test_automatic_liveliness_changed) {
 
   std::string topic("test_automatic_liveliness_changed");
 
-  auto publisher = std::make_shared<Publisher>("publisher", topic, publisher_options,
+  auto publisher = std::make_shared<QosTestPublisher>("publisher", topic, publisher_options,
       publish_period);
 
-  auto subscriber = std::make_shared<Subscriber>("subscriber", topic, subscriber_options);
+  auto subscriber = std::make_shared<QosTestSubscriber>("subscriber", topic, subscriber_options);
 
   // kill the test after a predetermined amount of time
   rclcpp::TimerBase::SharedPtr kill_publisher_timer = subscriber->create_wall_timer(
