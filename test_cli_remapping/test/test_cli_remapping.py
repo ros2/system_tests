@@ -119,8 +119,10 @@ class TestCLIRemapping(unittest.TestCase):
 
     def test_namespace_replacement(self, namespace_replacement):
         for attempt in range(self.ATTEMPTS):
-            if (namespace_replacement in self.get_topics() and
-                namespace_replacement in self.get_services()):
+            if (
+                namespace_replacement in self.get_topics() and
+                namespace_replacement in self.get_services()
+            ):
                 break
             time.sleep(self.TIME_BETWEEN_ATTEMPTS)
             rclpy.spin_once(self.node, timeout_sec=0)
@@ -137,8 +139,10 @@ class TestCLIRemapping(unittest.TestCase):
 
     def test_topic_and_service_replacement(self, topic_and_service_replacement):
         for attempt in range(self.ATTEMPTS):
-            if (topic_and_service_replacement in self.get_topics() and
-                topic_and_service_replacement in self.get_services()):
+            if (
+                topic_and_service_replacement in self.get_topics() and
+                topic_and_service_replacement in self.get_services()
+            ):
                 break
             time.sleep(self.TIME_BETWEEN_ATTEMPTS)
             rclpy.spin_once(self.node, timeout_sec=0)
