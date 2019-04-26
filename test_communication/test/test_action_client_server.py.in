@@ -40,7 +40,7 @@ def generate_test_description(action_type, ready_fn):
 
     launch_description.add_action(ExecuteProcess(
         cmd=action_server_cmd,
-        name='test_publisher',
+        name='test_action_server',
         env=action_server_env,
     ))
 
