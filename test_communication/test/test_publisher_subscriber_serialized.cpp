@@ -75,7 +75,7 @@ TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), serialized_callb
   rclcpp::Rate loop_rate(10);
   for (auto i = 0u; i < 10; ++i) {
     msg->uint8_value = i;
-    publisher->publish(msg);
+    publisher->publish(*msg);
     rclcpp::spin_some(node);
     loop_rate.sleep();
   }

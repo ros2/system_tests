@@ -54,7 +54,7 @@ int main(int argc, char ** argv)
       printf("publishing message #%u\n", index);
       auto msg = std::make_shared<test_communication::msg::UInt32>();
       msg->data = index;
-      publisher->publish(msg);
+      publisher->publish(*msg);
       ++index;
       message_rate.sleep();
       rclcpp::spin_some(node);

@@ -89,7 +89,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   EXPECT_EQ(0, counter.load());
 
   ++msg->data;
-  pub->publish(msg);
+  pub->publish(*msg);
 
   // test spin_some
   // Expectation: The message was published and all subscriptions fired the callback.
@@ -131,7 +131,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
         executor.cancel();
         return;
       }
-      pub->publish(msg);
+      pub->publish(*msg);
     };
   auto timer = node->create_wall_timer(std::chrono::milliseconds(1), publish_callback);
 
@@ -316,7 +316,7 @@ static inline void multi_access_publisher(bool intra_process)
       }
       msg->data = ++timer_counter;
       printf("Publishing message %u\n", timer_counter.load());
-      pub->publish(msg);
+      pub->publish(*msg);
     };
   std::vector<rclcpp::TimerBase::SharedPtr> timers;
   // timers will fire simultaneously in each thread

@@ -57,7 +57,7 @@ TEST(CLASSNAME(test_repeated_publisher_subscriber, RMW_IMPLEMENTATION), subscrip
     executor.spin_node_some(node);
 
     msg->data = 1;
-    publisher->publish(msg);
+    publisher->publish(*msg);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
     printf("spin_node_some()\n");
@@ -84,7 +84,7 @@ TEST(CLASSNAME(test_repeated_publisher_subscriber, RMW_IMPLEMENTATION), subscrip
     executor.spin_node_some(node);
 
     msg->data = 2;
-    publisher->publish(msg);
+    publisher->publish(*msg);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
     printf("spin_node_some()\n");

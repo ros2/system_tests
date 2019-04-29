@@ -213,7 +213,7 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), cancel) {
     {
       executor.cancel();
       // Try to publish after canceling. The callback should never trigger.
-      pub->publish(msg);
+      pub->publish(*msg);
     };
   auto timer = node->create_wall_timer(std::chrono::milliseconds(5), cancel_callback);
   executor.add_node(node);
