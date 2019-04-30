@@ -170,11 +170,11 @@ int main(int argc, char ** argv)
       node, message, messages_dynamic_array_static_array_primitives_nested, received_messages);
     publish<test_msgs::msg::DynamicArrayStaticArrayPrimitivesNested>(
       node, message, get_messages_dynamic_array_static_array_primitives_nested());
-  } else if (message == "BoundedArrayPrimitives") {
-    subscriber = subscribe<test_msgs::msg::BoundedArrayPrimitives>(
-      node, message, messages_bounded_array_primitives, received_messages);
-    publish<test_msgs::msg::BoundedArrayPrimitives>(node, message,
-      messages_bounded_array_primitives);
+  } else if (message == "BoundedSequences") {
+    subscriber = subscribe<test_msgs::msg::BoundedSequences>(
+      node, message, messages_bounded_sequences, received_messages);
+    publish<test_msgs::msg::BoundedSequences>(node, message,
+      messages_bounded_sequences);
   } else if (message == "BoundedArrayPrimitivesNested") {
     subscriber = subscribe<test_msgs::msg::BoundedArrayPrimitivesNested>(
       node, message, messages_bounded_array_primitives_nested, received_messages);

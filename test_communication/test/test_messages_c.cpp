@@ -30,9 +30,9 @@
 
 #include "test_msgs/msg/arrays.h"
 #include "test_msgs/msg/basic_types.h"
+#include "test_msgs/msg/bounded_sequences.h"
 
 #include "test_msgs/msg/bounded_array_nested.h"
-#include "test_msgs/msg/bounded_array_primitives.h"
 #include "test_msgs/msg/dynamic_array_nested.h"
 #include "test_msgs/msg/dynamic_array_primitives.h"
 #include "test_msgs/msg/dynamic_array_primitives_nested.h"
@@ -916,22 +916,22 @@ TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_dynamicarraynest
 
 
 template<>
-size_t get_message_num(test_msgs__msg__BoundedArrayPrimitives * msg)
+size_t get_message_num(test_msgs__msg__BoundedSequences * msg)
 {
   (void)msg;
   return 5;
 }
 
 template<>
-void init_message(test_msgs__msg__BoundedArrayPrimitives * msg)
+void init_message(test_msgs__msg__BoundedSequences * msg)
 {
-  test_msgs__msg__BoundedArrayPrimitives__init(msg);
+  test_msgs__msg__BoundedSequences__init(msg);
 }
 
 template<>
-void get_message(test_msgs__msg__BoundedArrayPrimitives * msg, size_t msg_num)
+void get_message(test_msgs__msg__BoundedSequences * msg, size_t msg_num)
 {
-  test_msgs__msg__BoundedArrayPrimitives__init(msg);
+  test_msgs__msg__BoundedSequences__init(msg);
   switch (msg_num) {
     case 0:
       rosidl_generator_c__bool__Sequence__init(&msg->bool_values, 3);
@@ -1014,9 +1014,9 @@ void get_message(test_msgs__msg__BoundedArrayPrimitives * msg, size_t msg_num)
 }
 
 template<>
-void verify_message(test_msgs__msg__BoundedArrayPrimitives & message, size_t msg_num)
+void verify_message(test_msgs__msg__BoundedSequences & message, size_t msg_num)
 {
-  test_msgs__msg__BoundedArrayPrimitives expected_msg;
+  test_msgs__msg__BoundedSequences expected_msg;
   get_message(&expected_msg, msg_num);
   for (size_t i = 0; i < expected_msg.bool_values.size; ++i) {
     EXPECT_EQ(expected_msg.bool_values.data[i],
@@ -1076,12 +1076,12 @@ void verify_message(test_msgs__msg__BoundedArrayPrimitives & message, size_t msg
   }
 }
 
-DEFINE_FINI_MESSAGE(test_msgs__msg__BoundedArrayPrimitives)
-TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_boundedarrayprimitives) {
+DEFINE_FINI_MESSAGE(test_msgs__msg__BoundedSequences)
+TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_bounded_sequences) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
-    test_msgs, msg, BoundedArrayPrimitives);
-  test_message_type<test_msgs__msg__BoundedArrayPrimitives>(
-    "test_boundedarrayprimitives", ts, this->context_ptr);
+    test_msgs, msg, BoundedSequences);
+  test_message_type<test_msgs__msg__BoundedSequences>(
+    "test_bounded_sequences", ts, this->context_ptr);
 }
 
 template<>
