@@ -83,29 +83,13 @@ int main(int argc, char ** argv)
   } else if (message == "UnboundedSequences") {
     publish<test_msgs::msg::UnboundedSequences>(
       node, message, get_messages_unbounded_sequences());
-  } else if (message == "DynamicArrayPrimitivesNested") {
-    publish<test_msgs::msg::DynamicArrayPrimitivesNested>(
-      node, message, get_messages_dynamic_array_primitives_nested());
-  } else if (message == "DynamicArrayStaticArrayPrimitivesNested") {
-    publish<test_msgs::msg::DynamicArrayStaticArrayPrimitivesNested>(
-      node, message, get_messages_dynamic_array_static_array_primitives_nested());
   } else if (message == "BoundedSequences") {
     publish<test_msgs::msg::BoundedSequences>(
       node, message, get_messages_bounded_sequences());
-  } else if (message == "BoundedArrayPrimitivesNested") {
-    publish<test_msgs::msg::BoundedArrayPrimitivesNested>(
-      node, message, get_messages_bounded_array_primitives_nested());
+  } else if (message == "MultiNested") {
+    publish<test_msgs::msg::MultiNested>(node, message, get_messages_multi_nested());
   } else if (message == "Nested") {
     publish<test_msgs::msg::Nested>(node, message, get_messages_nested());
-  } else if (message == "DynamicArrayNested") {
-    publish<test_msgs::msg::DynamicArrayNested>(
-      node, message, get_messages_dynamic_array_nested());
-  } else if (message == "BoundedArrayNested") {
-    publish<test_msgs::msg::BoundedArrayNested>(
-      node, message, get_messages_bounded_array_nested());
-  } else if (message == "StaticArrayNested") {
-    publish<test_msgs::msg::StaticArrayNested>(
-      node, message, get_messages_static_array_nested());
   } else if (message == "Builtins") {
     publish<test_msgs::msg::Builtins>(node, message, get_messages_builtins());
   } else {
