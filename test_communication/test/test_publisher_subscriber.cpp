@@ -125,6 +125,9 @@ int main(int argc, char ** argv)
   auto messages_multi_nested = get_messages_multi_nested();
   auto messages_nested = get_messages_nested();
   auto messages_builtins = get_messages_builtins();
+  auto messages_constants = get_messages_constants();
+  auto messages_defaults = get_messages_defaults();
+  auto messages_strings = get_messages_strings();
 
   std::thread spin_thread([node]() {
       rclcpp::spin(node);
@@ -165,6 +168,18 @@ int main(int argc, char ** argv)
     subscriber = subscribe<test_msgs::msg::Builtins>(
       node, message, messages_builtins, received_messages);
     publish<test_msgs::msg::Builtins>(node, message, messages_builtins);
+  } else if (message == "Constants") {
+    subscriber = subscribe<test_msgs::msg::Constants>(
+      node, message, messages_constants, received_messages);
+    publish<test_msgs::msg::Constants>(node, message, messages_constants);
+  } else if (message == "Defaults") {
+    subscriber = subscribe<test_msgs::msg::Defaults>(
+      node, message, messages_defaults, received_messages);
+    publish<test_msgs::msg::Defaults>(node, message, messages_defaults);
+  } else if (message == "Strings") {
+    subscriber = subscribe<test_msgs::msg::Strings>(
+      node, message, messages_strings, received_messages);
+    publish<test_msgs::msg::Strings>(node, message, messages_strings);
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
     return 1;

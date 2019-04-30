@@ -89,6 +89,12 @@ int main(int argc, char ** argv)
     publish<test_msgs::msg::Nested>(node, message, get_messages_nested());
   } else if (message == "Builtins") {
     publish<test_msgs::msg::Builtins>(node, message, get_messages_builtins());
+  } else if (message == "Constants") {
+    publish<test_msgs::msg::Constants>(node, message, get_messages_constants());
+  } else if (message == "Defaults") {
+    publish<test_msgs::msg::Defaults>(node, message, get_messages_defaults());
+  } else if (message == "Strings") {
+    publish<test_msgs::msg::Strings>(node, message, get_messages_strings());
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
     rclcpp::shutdown();
