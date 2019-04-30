@@ -31,12 +31,12 @@
 #include "test_msgs/msg/arrays.h"
 #include "test_msgs/msg/basic_types.h"
 #include "test_msgs/msg/bounded_sequences.h"
-#include "test_msgs/msg/unbounded_sequences.h"
-#include "test_msgs/msg/multi_nested.h"
-#include "test_msgs/msg/empty.h"
-#include "test_msgs/msg/nested.h"
 #include "test_msgs/msg/builtins.h"
+#include "test_msgs/msg/empty.h"
+#include "test_msgs/msg/multi_nested.h"
+#include "test_msgs/msg/nested.h"
 #include "test_msgs/msg/strings.h"
+#include "test_msgs/msg/unbounded_sequences.h"
 
 #include "rosidl_generator_c/string_functions.h"
 #include "rosidl_generator_c/primitives_sequence_functions.h"
@@ -1077,19 +1077,19 @@ void verify_message(test_msgs__msg__MultiNested & message, size_t msg_num)
   size_t num_unbounded_sequences = get_message_num(&unbounded_sequences);
   const size_t size = 3u;
   for (size_t i = 0; i < size; ++i) {
-     verify_message(message.array_of_arrays[i], i % num_arrays);
-     verify_message(message.array_of_bounded_sequences[i], i % num_bounded_sequences);
-     verify_message(message.array_of_unbounded_sequences[i], i % num_unbounded_sequences);
-     verify_message(message.bounded_sequence_of_arrays.data[i], i % num_arrays);
-     verify_message(
-       message.bounded_sequence_of_bounded_sequences.data[i], i % num_bounded_sequences);
-     verify_message(
-       message.bounded_sequence_of_unbounded_sequences.data[i], i % num_unbounded_sequences);
-     verify_message(message.unbounded_sequence_of_arrays.data[i], i % num_arrays);
-     verify_message(
-       message.unbounded_sequence_of_bounded_sequences.data[i], i % num_bounded_sequences);
-     verify_message(
-       message.unbounded_sequence_of_unbounded_sequences.data[i], i % num_unbounded_sequences);
+    verify_message(message.array_of_arrays[i], i % num_arrays);
+    verify_message(message.array_of_bounded_sequences[i], i % num_bounded_sequences);
+    verify_message(message.array_of_unbounded_sequences[i], i % num_unbounded_sequences);
+    verify_message(message.bounded_sequence_of_arrays.data[i], i % num_arrays);
+    verify_message(
+      message.bounded_sequence_of_bounded_sequences.data[i], i % num_bounded_sequences);
+    verify_message(
+      message.bounded_sequence_of_unbounded_sequences.data[i], i % num_unbounded_sequences);
+    verify_message(message.unbounded_sequence_of_arrays.data[i], i % num_arrays);
+    verify_message(
+      message.unbounded_sequence_of_bounded_sequences.data[i], i % num_bounded_sequences);
+    verify_message(
+      message.unbounded_sequence_of_unbounded_sequences.data[i], i % num_unbounded_sequences);
   }
 }
 

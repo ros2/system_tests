@@ -18,10 +18,10 @@
 #include "rmw/serialized_message.h"
 #include "rmw/rmw.h"
 
-#include "test_msgs/msg/bounded_sequences.h"
-#include "test_msgs/msg/bounded_sequences.hpp"
 #include "test_msgs/msg/basic_types.h"
 #include "test_msgs/msg/basic_types.hpp"
+#include "test_msgs/msg/bounded_sequences.h"
+#include "test_msgs/msg/bounded_sequences.hpp"
 
 #include "rcutils/allocator.h"
 
