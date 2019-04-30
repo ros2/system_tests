@@ -72,8 +72,8 @@ int main(int argc, char ** argv)
 
   if (message == "Empty") {
     publish<test_msgs::msg::Empty>(node, message, get_messages_empty());
-  } else if (message == "Primitives") {
-    publish<test_msgs::msg::Primitives>(node, message, get_messages_primitives());
+  } else if (message == "BasicTypes") {
+    publish<test_msgs::msg::BasicTypes>(node, message, get_messages_basic_types());
   } else if (message == "StaticArrayPrimitives") {
     publish<test_msgs::msg::StaticArrayPrimitives>(
       node, message, get_messages_static_array_primitives());

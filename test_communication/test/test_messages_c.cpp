@@ -28,6 +28,8 @@
 
 #include "rcl/rcl.h"
 
+#include "test_msgs/msg/basic_types.h"
+
 #include "test_msgs/msg/bounded_array_nested.h"
 #include "test_msgs/msg/bounded_array_primitives.h"
 #include "test_msgs/msg/dynamic_array_nested.h"
@@ -255,22 +257,22 @@ void fini_message(MessageT * msg);
 
 // Define functions and test cases for each message type
 template<>
-size_t get_message_num(test_msgs__msg__Primitives * msg)
+size_t get_message_num(test_msgs__msg__BasicTypes * msg)
 {
   (void)msg;
   return 4;
 }
 
 template<>
-void init_message(test_msgs__msg__Primitives * msg)
+void init_message(test_msgs__msg__BasicTypes * msg)
 {
-  test_msgs__msg__Primitives__init(msg);
+  test_msgs__msg__BasicTypes__init(msg);
 }
 
 template<>
-void get_message(test_msgs__msg__Primitives * msg, size_t msg_num)
+void get_message(test_msgs__msg__BasicTypes * msg, size_t msg_num)
 {
-  test_msgs__msg__Primitives__init(msg);
+  test_msgs__msg__BasicTypes__init(msg);
   switch (msg_num) {
     case 0:
       msg->bool_value = false;
@@ -286,7 +288,7 @@ void get_message(test_msgs__msg__Primitives * msg, size_t msg_num)
       msg->uint32_value = 0;
       msg->int64_value = 0;
       msg->uint64_value = 0;
-      rosidl_generator_c__String__assign(&msg->string_value, "");
+      // rosidl_generator_c__String__assign(&msg->string_value, "");
       break;
     case 1:
       msg->bool_value = true;
@@ -302,7 +304,7 @@ void get_message(test_msgs__msg__Primitives * msg, size_t msg_num)
       msg->uint32_value = (std::numeric_limits<uint32_t>::max)();
       msg->int64_value = (std::numeric_limits<int64_t>::max)();
       msg->uint64_value = (std::numeric_limits<uint64_t>::max)();
-      rosidl_generator_c__String__assign(&msg->string_value, "max value");
+      // rosidl_generator_c__String__assign(&msg->string_value, "max value");
       break;
     case 2:
       msg->bool_value = false;
@@ -318,7 +320,7 @@ void get_message(test_msgs__msg__Primitives * msg, size_t msg_num)
       msg->uint32_value = 0;
       msg->int64_value = (std::numeric_limits<int64_t>::min)();
       msg->uint64_value = 0;
-      rosidl_generator_c__String__assign(&msg->string_value, "min value");
+      // rosidl_generator_c__String__assign(&msg->string_value, "min value");
       break;
     case 3:
       msg->bool_value = true;
@@ -334,19 +336,19 @@ void get_message(test_msgs__msg__Primitives * msg, size_t msg_num)
       msg->uint32_value = 1;
       msg->int64_value = 1;
       msg->uint64_value = 1;
-      char string_value[20000] = {};
-      for (uint32_t i = 0; i < 20000; i++) {
-        string_value[i] = '0' + (i % 10);
-      }
-      rosidl_generator_c__String__assignn(&msg->string_value, string_value, sizeof(string_value));
+      // char string_value[20000] = {};
+      // for (uint32_t i = 0; i < 20000; i++) {
+      //   string_value[i] = '0' + (i % 10);
+      // }
+      // rosidl_generator_c__String__assignn(&msg->string_value, string_value, sizeof(string_value));
       break;
   }
 }
 
 template<>
-void verify_message(test_msgs__msg__Primitives & message, size_t msg_num)
+void verify_message(test_msgs__msg__BasicTypes & message, size_t msg_num)
 {
-  test_msgs__msg__Primitives expected_msg;
+  test_msgs__msg__BasicTypes expected_msg;
   get_message(&expected_msg, msg_num);
   EXPECT_EQ(expected_msg.bool_value, message.bool_value);
   EXPECT_EQ(expected_msg.byte_value, message.byte_value);
@@ -361,14 +363,14 @@ void verify_message(test_msgs__msg__Primitives & message, size_t msg_num)
   EXPECT_EQ(expected_msg.uint32_value, message.uint32_value);
   EXPECT_EQ(expected_msg.int64_value, message.int64_value);
   EXPECT_EQ(expected_msg.uint64_value, message.uint64_value);
-  EXPECT_EQ(0, strcmp(expected_msg.string_value.data, message.string_value.data));
+  // EXPECT_EQ(0, strcmp(expected_msg.string_value.data, message.string_value.data));
 }
 
-DEFINE_FINI_MESSAGE(test_msgs__msg__Primitives)
-TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_primitives) {
+DEFINE_FINI_MESSAGE(test_msgs__msg__BasicTypes)
+TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_basic_types) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
-    test_msgs, msg, Primitives);
-  test_message_type<test_msgs__msg__Primitives>("test_primitives", ts, this->context_ptr);
+    test_msgs, msg, BasicTypes);
+  test_message_type<test_msgs__msg__BasicTypes>("test_basic_types", ts, this->context_ptr);
 }
 
 template<>

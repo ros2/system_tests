@@ -76,15 +76,15 @@ int main(int argc, char ** argv)
     namespace_);
 
   auto services_empty = get_services_empty();
-  auto services_primitives = get_services_primitives();
+  auto services_basic_types = get_services_basic_types();
   rclcpp::ServiceBase::SharedPtr server;
 
   if (service == "Empty") {
     server = reply<test_msgs::srv::Empty>(
       node, service, services_empty);
-  } else if (service == "Primitives") {
-    server = reply<test_msgs::srv::Primitives>(
-      node, service, services_primitives);
+  } else if (service == "BasicTypes") {
+    server = reply<test_msgs::srv::BasicTypes>(
+      node, service, services_basic_types);
   } else {
     fprintf(stderr, "Unknown service argument '%s'\n", service.c_str());
     rclcpp::shutdown();

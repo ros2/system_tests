@@ -118,7 +118,7 @@ int main(int argc, char ** argv)
   std::vector<bool> received_messages;  // collect flags about received messages
 
   auto messages_empty = get_messages_empty();
-  auto messages_primitives = get_messages_primitives();
+  auto messages_basic_types = get_messages_basic_types();
   auto messages_static_array_primitives = get_messages_static_array_primitives();
   auto messages_static_array_primitives_nested = get_messages_static_array_primitives_nested();
   auto messages_dynamic_array_primitives = get_messages_dynamic_array_primitives();
@@ -141,10 +141,10 @@ int main(int argc, char ** argv)
     subscriber = subscribe<test_msgs::msg::Empty>(
       node, message, messages_empty, received_messages);
     publish<test_msgs::msg::Empty>(node, message, messages_empty);
-  } else if (message == "Primitives") {
-    subscriber = subscribe<test_msgs::msg::Primitives>(
-      node, message, messages_primitives, received_messages);
-    publish<test_msgs::msg::Primitives>(node, message, messages_primitives);
+  } else if (message == "BasicTypes") {
+    subscriber = subscribe<test_msgs::msg::BasicTypes>(
+      node, message, messages_basic_types, received_messages);
+    publish<test_msgs::msg::BasicTypes>(node, message, messages_basic_types);
   } else if (message == "StaticArrayPrimitives") {
     subscriber = subscribe<test_msgs::msg::StaticArrayPrimitives>(
       node, message, messages_static_array_primitives, received_messages);
