@@ -88,7 +88,7 @@ int main(int argc, char ** argv)
 
   auto messages_empty = get_messages_empty();
   auto messages_basic_types = get_messages_basic_types();
-  auto messages_static_array_primitives = get_messages_static_array_primitives();
+  auto messages_arrays = get_messages_arrays();
   auto messages_static_array_primitives_nested = get_messages_static_array_primitives_nested();
   auto messages_dynamic_array_primitives = get_messages_dynamic_array_primitives();
   auto messages_dynamic_array_primitives_nested = get_messages_dynamic_array_primitives_nested();
@@ -110,9 +110,9 @@ int main(int argc, char ** argv)
   } else if (message == "BasicTypes") {
     subscriber = subscribe<test_msgs::msg::BasicTypes>(
       node, message, messages_basic_types, received_messages);
-  } else if (message == "StaticArrayPrimitives") {
-    subscriber = subscribe<test_msgs::msg::StaticArrayPrimitives>(
-      node, message, messages_static_array_primitives, received_messages);
+  } else if (message == "Arrays") {
+    subscriber = subscribe<test_msgs::msg::Arrays>(
+      node, message, messages_arrays, received_messages);
   } else if (message == "StaticArrayPrimitivesNested") {
     subscriber = subscribe<test_msgs::msg::StaticArrayPrimitivesNested>(
       node, message, messages_static_array_primitives_nested, received_messages);

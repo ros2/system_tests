@@ -28,6 +28,7 @@
 
 #include "rcl/rcl.h"
 
+#include "test_msgs/msg/arrays.h"
 #include "test_msgs/msg/basic_types.h"
 
 #include "test_msgs/msg/bounded_array_nested.h"
@@ -39,7 +40,6 @@
 #include "test_msgs/msg/nested.h"
 #include "test_msgs/msg/primitives.h"
 #include "test_msgs/msg/static_array_nested.h"
-#include "test_msgs/msg/static_array_primitives.h"
 #include "test_msgs/msg/builtins.h"
 
 #include "rosidl_generator_c/string_functions.h"
@@ -452,22 +452,22 @@ TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_builtins) {
 
 
 template<>
-size_t get_message_num(test_msgs__msg__StaticArrayPrimitives * msg)
+size_t get_message_num(test_msgs__msg__Arrays * msg)
 {
   (void)msg;
   return 1;
 }
 
 template<>
-void init_message(test_msgs__msg__StaticArrayPrimitives * msg)
+void init_message(test_msgs__msg__Arrays * msg)
 {
-  test_msgs__msg__StaticArrayPrimitives__init(msg);
+  test_msgs__msg__Arrays__init(msg);
 }
 
 template<>
-void get_message(test_msgs__msg__StaticArrayPrimitives * msg, size_t msg_num)
+void get_message(test_msgs__msg__Arrays * msg, size_t msg_num)
 {
-  test_msgs__msg__StaticArrayPrimitives__init(msg);
+  test_msgs__msg__Arrays__init(msg);
   if (msg_num == 0) {
     msg->bool_values[0] = false;
     msg->bool_values[1] = true;
@@ -515,9 +515,9 @@ void get_message(test_msgs__msg__StaticArrayPrimitives * msg, size_t msg_num)
 }
 
 template<>
-void verify_message(test_msgs__msg__StaticArrayPrimitives & message, size_t msg_num)
+void verify_message(test_msgs__msg__Arrays & message, size_t msg_num)
 {
-  test_msgs__msg__StaticArrayPrimitives expected_msg;
+  test_msgs__msg__Arrays expected_msg;
   get_message(&expected_msg, msg_num);
   for (size_t i = 0; i < 3; ++i) {
     EXPECT_EQ(expected_msg.bool_values[i], message.bool_values[i]);
@@ -538,11 +538,11 @@ void verify_message(test_msgs__msg__StaticArrayPrimitives & message, size_t msg_
   }
 }
 
-DEFINE_FINI_MESSAGE(test_msgs__msg__StaticArrayPrimitives)
+DEFINE_FINI_MESSAGE(test_msgs__msg__Arrays)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_staticarrayprimitives) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
-    test_msgs, msg, StaticArrayPrimitives);
-  test_message_type<test_msgs__msg__StaticArrayPrimitives>(
+    test_msgs, msg, Arrays);
+  test_message_type<test_msgs__msg__Arrays>(
     "test_staticarrayprimitives", ts, this->context_ptr);
 }
 
