@@ -87,7 +87,7 @@ void fill_cpp_message(test_msgs::msg::BoundedSequences * bounded_sequences_msg_c
   basic_types_msg_cpp.uint32_value = 8;
   basic_types_msg_cpp.int64_value = 9;
   basic_types_msg_cpp.uint64_value = 10;
-  bounded_sequences_msg_cpp->basic_basic_types_values.push_back(basic_types_msg_cpp);
+  bounded_sequences_msg_cpp->basic_types_values.push_back(basic_types_msg_cpp);
 }
 
 TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), de_serialize_c) {

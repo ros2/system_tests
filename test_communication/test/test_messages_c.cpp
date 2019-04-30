@@ -385,13 +385,13 @@ template<>
 void get_message(test_msgs__msg__Nested * msg, size_t msg_num)
 {
   test_msgs__msg__Nested__init(msg);
-  get_message(&msg->primitive_values, msg_num);
+  get_message(&msg->basic_types_value, msg_num);
 }
 
 template<>
 void verify_message(test_msgs__msg__Nested & message, size_t msg_num)
 {
-  verify_message(message.primitive_values, msg_num);
+  verify_message(message.basic_types_value, msg_num);
 }
 
 DEFINE_FINI_MESSAGE(test_msgs__msg__Nested)
@@ -575,7 +575,7 @@ void get_message(test_msgs__msg__UnboundedSequences * msg, size_t msg_num)
       rosidl_generator_c__int64__Sequence__init(&msg->int64_values, 0);
       rosidl_generator_c__uint64__Sequence__init(&msg->uint64_values, 0);
       rosidl_generator_c__String__Sequence__init(&msg->string_values, 0);
-      msg->check = 0;
+      msg->alignment_check = 0;
       break;
     case 1:
       rosidl_generator_c__bool__Sequence__init(&msg->bool_values, 1);
@@ -607,7 +607,7 @@ void get_message(test_msgs__msg__UnboundedSequences * msg, size_t msg_num)
       msg->int64_values.data[0] = (std::numeric_limits<int64_t>::max)();
       msg->uint64_values.data[0] = (std::numeric_limits<uint64_t>::max)();
       rosidl_generator_c__String__assign(&msg->string_values.data[0], "max value");
-      msg->check = 1;
+      msg->alignment_check = 1;
       break;
     case 2:
       rosidl_generator_c__bool__Sequence__init(&msg->bool_values, 2);
@@ -660,7 +660,7 @@ void get_message(test_msgs__msg__UnboundedSequences * msg, size_t msg_num)
       rosidl_generator_c__String__assign(&msg->string_values.data[0], "");
       rosidl_generator_c__String__assign(&msg->string_values.data[1], "max value");
       rosidl_generator_c__String__assign(&msg->string_values.data[2], "optional min value");
-      msg->check = 2;
+      msg->alignment_check = 2;
       break;
     case 3:
       rosidl_generator_c__bool__Sequence__init(&msg->bool_values, size);
@@ -699,7 +699,7 @@ void get_message(test_msgs__msg__UnboundedSequences * msg, size_t msg_num)
         snprintf(tmpstr, sizeof(tmpstr), "%zu", i);
         rosidl_generator_c__String__assign(&msg->string_values.data[i], tmpstr);
       }
-      msg->check = 3;
+      msg->alignment_check = 3;
       break;
     case 4:
       rosidl_generator_c__bool__Sequence__init(&msg->bool_values, 0);
@@ -716,7 +716,7 @@ void get_message(test_msgs__msg__UnboundedSequences * msg, size_t msg_num)
       rosidl_generator_c__int64__Sequence__init(&msg->int64_values, 0);
       rosidl_generator_c__uint64__Sequence__init(&msg->uint64_values, 0);
       rosidl_generator_c__String__Sequence__init(&msg->string_values, 0);
-      msg->check = 4;
+      msg->alignment_check = 4;
       break;
   }
 }
@@ -868,7 +868,7 @@ void get_message(test_msgs__msg__BoundedSequences * msg, size_t msg_num)
       rosidl_generator_c__String__assign(&msg->string_values.data[0], "");
       rosidl_generator_c__String__assign(&msg->string_values.data[1], "max value");
       rosidl_generator_c__String__assign(&msg->string_values.data[2], "optional min value");
-      msg->check = 2;
+      msg->alignment_check = 2;
       break;
     case 1:
       rosidl_generator_c__bool__Sequence__init(&msg->bool_values, 0);
@@ -885,7 +885,7 @@ void get_message(test_msgs__msg__BoundedSequences * msg, size_t msg_num)
       rosidl_generator_c__int64__Sequence__init(&msg->int64_values, 0);
       rosidl_generator_c__uint64__Sequence__init(&msg->uint64_values, 0);
       rosidl_generator_c__String__Sequence__init(&msg->string_values, 0);
-      msg->check = 4;
+      msg->alignment_check = 4;
       break;
   }
 }
@@ -979,7 +979,7 @@ void get_message(test_msgs__msg__MultiNested * msg, size_t msg_num)
 {
   size_t i;
   test_msgs__msg__MultiNested__init(msg);
-  test_msgs__msg__Array arrays;
+  test_msgs__msg__Arrays arrays;
   test_msgs__msg__BoundedSequences bounded_sequences;
   test_msgs__msg__UnboundedSequences unbounded_sequences;
   size_t num_arrays = get_message_num(&arrays);
@@ -1002,12 +1002,15 @@ void get_message(test_msgs__msg__MultiNested * msg, size_t msg_num)
       get_message(&msg->array_of_arrays[i], i % num_arrays);
       get_message(&msg->array_of_bounded_sequences[i], i % num_bounded_sequences);
       get_message(&msg->array_of_unbounded_sequences[i], i % num_unbounded_sequences);
-      get_message(&msg->bounded_sequence_of_arrays[i], i % num_arrays);
-      get_message(&msg->bounded_sequence_of_bounded_sequences[i], i % num_bounded_sequences);
-      get_message(&msg->bounded_sequence_of_unbounded_sequences[i], i % num_unbounded_sequences);
-      get_message(&msg->unbounded_sequence_of_arrays[i], i % num_arrays);
-      get_message(&msg->unbounded_sequence_of_bounded_sequences[i], i % num_bounded_sequences);
-      get_message(&msg->unbounded_sequence_of_unbounded_sequences[i], i % num_unbounded_sequences);
+      get_message(&msg->bounded_sequence_of_arrays.data[i], i % num_arrays);
+      get_message(&msg->bounded_sequence_of_bounded_sequences.data[i], i % num_bounded_sequences);
+      get_message(
+        &msg->bounded_sequence_of_unbounded_sequences.data[i], i % num_unbounded_sequences);
+      get_message(&msg->unbounded_sequence_of_arrays.data[i], i % num_arrays);
+      get_message(
+        &msg->unbounded_sequence_of_bounded_sequences.data[i], i % num_bounded_sequences);
+      get_message(
+        &msg->unbounded_sequence_of_unbounded_sequences.data[i], i % num_unbounded_sequences);
     }
   }
 }
@@ -1016,7 +1019,7 @@ template<>
 void verify_message(test_msgs__msg__MultiNested & message, size_t msg_num)
 {
   (void)msg_num;
-  test_msgs__msg__Array arrays;
+  test_msgs__msg__Arrays arrays;
   test_msgs__msg__BoundedSequences bounded_sequences;
   test_msgs__msg__UnboundedSequences unbounded_sequences;
   size_t num_arrays = get_message_num(&arrays);
@@ -1027,12 +1030,16 @@ void verify_message(test_msgs__msg__MultiNested & message, size_t msg_num)
      verify_message(message.array_of_arrays[i], i % num_arrays);
      verify_message(message.array_of_bounded_sequences[i], i % num_bounded_sequences);
      verify_message(message.array_of_unbounded_sequences[i], i % num_unbounded_sequences);
-     verify_message(message.bounded_sequence_of_arrays[i], i % num_arrays);
-     verify_message(message.bounded_sequence_of_bounded_sequences[i], i % num_bounded_sequences);
-     verify_message(message.bounded_sequence_of_unbounded_sequences[i], i % num_unbounded_sequences);
-     verify_message(message.unbounded_sequence_of_arrays[i], i % num_arrays);
-     verify_message(message.unbounded_sequence_of_bounded_sequences[i], i % num_bounded_sequences);
-     verify_message(message.unbounded_sequence_of_unbounded_sequences[i], i % num_unbounded_sequences);
+     verify_message(message.bounded_sequence_of_arrays.data[i], i % num_arrays);
+     verify_message(
+       message.bounded_sequence_of_bounded_sequences.data[i], i % num_bounded_sequences);
+     verify_message(
+       message.bounded_sequence_of_unbounded_sequences.data[i], i % num_unbounded_sequences);
+     verify_message(message.unbounded_sequence_of_arrays.data[i], i % num_arrays);
+     verify_message(
+       message.unbounded_sequence_of_bounded_sequences.data[i], i % num_bounded_sequences);
+     verify_message(
+       message.unbounded_sequence_of_unbounded_sequences.data[i], i % num_unbounded_sequences);
   }
 }
 

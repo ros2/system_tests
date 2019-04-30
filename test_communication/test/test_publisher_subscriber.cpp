@@ -120,8 +120,8 @@ int main(int argc, char ** argv)
   auto messages_empty = get_messages_empty();
   auto messages_basic_types = get_messages_basic_types();
   auto messages_arrays = get_messages_arrays();
-  auto message_bounded_sequences = get_messages_bounded_sequences();
-  auto message_unbounded_sequences = get_messages_unbounded_sequences();
+  auto messages_bounded_sequences = get_messages_bounded_sequences();
+  auto messages_unbounded_sequences = get_messages_unbounded_sequences();
   auto messages_multi_nested = get_messages_multi_nested();
   auto messages_nested = get_messages_nested();
   auto messages_builtins = get_messages_builtins();

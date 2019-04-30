@@ -77,9 +77,6 @@ int main(int argc, char ** argv)
   } else if (message == "Arrays") {
     publish<test_msgs::msg::Arrays>(
       node, message, get_messages_arrays());
-  } else if (message == "StaticArrayPrimitivesNested") {
-    publish<test_msgs::msg::StaticArrayPrimitivesNested>(
-      node, message, get_messages_static_array_primitives_nested());
   } else if (message == "UnboundedSequences") {
     publish<test_msgs::msg::UnboundedSequences>(
       node, message, get_messages_unbounded_sequences());
