@@ -90,7 +90,7 @@ int main(int argc, char ** argv)
   auto messages_basic_types = get_messages_basic_types();
   auto messages_arrays = get_messages_arrays();
   auto messages_static_array_primitives_nested = get_messages_static_array_primitives_nested();
-  auto messages_dynamic_array_primitives = get_messages_dynamic_array_primitives();
+  auto messages_unbounded_sequences = get_messages_unbounded_sequences();
   auto messages_dynamic_array_primitives_nested = get_messages_dynamic_array_primitives_nested();
   auto messages_dynamic_array_static_array_primitives_nested =
     get_messages_dynamic_array_static_array_primitives_nested();
@@ -119,9 +119,9 @@ int main(int argc, char ** argv)
   } else if (message == "DynamicArrayPrimitivesNested") {
     subscriber = subscribe<test_msgs::msg::DynamicArrayPrimitivesNested>(
       node, message, messages_dynamic_array_primitives_nested, received_messages);
-  } else if (message == "DynamicArrayPrimitives") {
-    subscriber = subscribe<test_msgs::msg::DynamicArrayPrimitives>(
-      node, message, messages_dynamic_array_primitives, received_messages);
+  } else if (message == "UnboundedSequences") {
+    subscriber = subscribe<test_msgs::msg::UnboundedSequences>(
+      node, message, messages_unbounded_sequences, received_messages);
   } else if (message == "DynamicArrayStaticArrayPrimitivesNested") {
     subscriber = subscribe<test_msgs::msg::DynamicArrayStaticArrayPrimitivesNested>(
       node, message, messages_dynamic_array_static_array_primitives_nested, received_messages);

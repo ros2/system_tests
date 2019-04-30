@@ -31,10 +31,10 @@
 #include "test_msgs/msg/arrays.h"
 #include "test_msgs/msg/basic_types.h"
 #include "test_msgs/msg/bounded_sequences.h"
+#include "test_msgs/msg/unbounded_sequences.h"
 
 #include "test_msgs/msg/bounded_array_nested.h"
 #include "test_msgs/msg/dynamic_array_nested.h"
-#include "test_msgs/msg/dynamic_array_primitives.h"
 #include "test_msgs/msg/dynamic_array_primitives_nested.h"
 #include "test_msgs/msg/empty.h"
 #include "test_msgs/msg/nested.h"
@@ -589,22 +589,22 @@ TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_staticarrayneste
 }
 
 template<>
-size_t get_message_num(test_msgs__msg__DynamicArrayPrimitives * msg)
+size_t get_message_num(test_msgs__msg__UnboundedSequences * msg)
 {
   (void)msg;
   return 5;
 }
 
 template<>
-void init_message(test_msgs__msg__DynamicArrayPrimitives * msg)
+void init_message(test_msgs__msg__UnboundedSequences * msg)
 {
-  test_msgs__msg__DynamicArrayPrimitives__init(msg);
+  test_msgs__msg__UnboundedSequences__init(msg);
 }
 
 template<>
-void get_message(test_msgs__msg__DynamicArrayPrimitives * msg, size_t msg_num)
+void get_message(test_msgs__msg__UnboundedSequences * msg, size_t msg_num)
 {
-  test_msgs__msg__DynamicArrayPrimitives__init(msg);
+  test_msgs__msg__UnboundedSequences__init(msg);
   const size_t size = 2000;
   switch (msg_num) {
     case 0:
@@ -769,9 +769,9 @@ void get_message(test_msgs__msg__DynamicArrayPrimitives * msg, size_t msg_num)
 }
 
 template<>
-void verify_message(test_msgs__msg__DynamicArrayPrimitives & message, size_t msg_num)
+void verify_message(test_msgs__msg__UnboundedSequences & message, size_t msg_num)
 {
-  test_msgs__msg__DynamicArrayPrimitives expected_msg;
+  test_msgs__msg__UnboundedSequences expected_msg;
   get_message(&expected_msg, msg_num);
   for (size_t i = 0; i < expected_msg.bool_values.size; ++i) {
     EXPECT_EQ(expected_msg.bool_values.data[i],
@@ -831,12 +831,12 @@ void verify_message(test_msgs__msg__DynamicArrayPrimitives & message, size_t msg
   }
 }
 
-DEFINE_FINI_MESSAGE(test_msgs__msg__DynamicArrayPrimitives)
-TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_dynamicarrayprimitives) {
+DEFINE_FINI_MESSAGE(test_msgs__msg__UnboundedSequences)
+TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_unbounded_sequences) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
-    test_msgs, msg, DynamicArrayPrimitives);
-  test_message_type<test_msgs__msg__DynamicArrayPrimitives>(
-    "test_dynamicarrayprimitives", ts, this->context_ptr);
+    test_msgs, msg, UnboundedSequences);
+  test_message_type<test_msgs__msg__UnboundedSequences>(
+    "test_unbounded_sequences", ts, this->context_ptr);
 }
 
 template<>
