@@ -2,21 +2,23 @@
 
 import os
 # import sys
-import time
+# import time
 
 from launch import LaunchDescription
-from launch import LaunchService
 from launch.actions import ExecuteProcess
-from launch_testing import LaunchTestService
+from launch.actions import OpaqueFunction
+
+import launch_testing
+
+import unittest
 
 
-def test_secure_publisher_subscriber():
+def generate_test_description(ready_fn):
     # TODO Timestamping tests via the node's namespace is no longer appropriate,
     # given the FQN is used to lookup security artifacts from secure root directory.
     # namespace = '/test_time_%s' % time.strftime('%H_%M_%S', time.gmtime())
     namespace = '/'
 
-    launch_test = LaunchTestService()
     launch_description = LaunchDescription()
 
     publisher_cmd = [
@@ -44,13 +46,11 @@ def test_secure_publisher_subscriber():
     publisher_env['ROS_SECURITY_STRATEGY'] = '@PUBLISHER_ROS_SECURITY_STRATEGY@'
     publisher_env['ROS_SECURITY_ROOT_DIRECTORY'] = '@PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY@'
 
-    launch_test.add_fixture_action(
-        launch_description, ExecuteProcess(
-            cmd=publisher_cmd,
-            name='test_publisher',
-            env=publisher_env,
-        )
-    )
+    launch_description.add_action(ExecuteProcess(
+        cmd=publisher_cmd,
+        name='test_publisher',
+        env=publisher_env,
+    ))
 
     subscriber_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@SUBSCRIBER_RMW@'
     subscriber_env['RMW_IMPLEMENTATION'] = '@SUBSCRIBER_RMW@'
@@ -58,22 +58,29 @@ def test_secure_publisher_subscriber():
     subscriber_env['ROS_SECURITY_STRATEGY'] = '@SUBSCRIBER_ROS_SECURITY_STRATEGY@'
     subscriber_env['ROS_SECURITY_ROOT_DIRECTORY'] = '@SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY@'
 
-    launch_test.add_test_action(
-        launch_description, ExecuteProcess(
-            cmd=subscriber_cmd,
-            name='test_subscriber',
-            env=subscriber_env,
-        )
+    subscriber_process = ExecuteProcess(
+        cmd=subscriber_cmd,
+        name='test_subscriber',
+        env=subscriber_env,
     )
+    launch_description.add_action(subscriber_process)
 
-    launch_service = LaunchService()
-    launch_service.include_launch_description(launch_description)
-    rc = launch_test.run(launch_service)
-
-    assert rc == 0, \
-        "The launch file failed with exit code '" + str(rc) + "'. " \
-        'May be the subscriber did not receive any messages?'
+    launch_description.add_action(
+        OpaqueFunction(function=lambda context: ready_fn())
+    )
+    return launch_description, locals()
 
 
-if __name__ == '__main__':
-    test_secure_publisher_subscriber()
+class TestSecurePublisherSubscriber(unittest.TestCase):
+
+    def test_subscriber_terminates_in_a_finite_amount_of_time(self, proc_info, subscriber_process):
+        """Test that the subscriber terminates after a finite amount of time."""
+        proc_info.assertWaitForShutdown(process=subscriber_process, timeout=30)
+
+
+@launch_testing.post_shutdown_test()
+class TestSecurePublisherSubscriberAfterShutdown(unittest.TestCase):
+
+    def test_processes_finished_gracefully(self, proc_info):
+        """Test that both executables finished gracefully."""
+        launch_testing.asserts.assertExitCodes(proc_info)

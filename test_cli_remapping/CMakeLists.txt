@@ -22,7 +22,7 @@ if(BUILD_TESTING)
 
   find_package(ament_cmake REQUIRED)
   find_package(ament_lint_auto REQUIRED)
-  find_package(ament_cmake_pytest REQUIRED)
+  find_package(launch_testing_ament_cmake REQUIRED)
   find_package(rclcpp REQUIRED)
   find_package(test_msgs REQUIRED)
 
@@ -34,8 +34,9 @@ if(BUILD_TESTING)
     "rclcpp"
     "test_msgs")
 
-  ament_add_pytest_test(test_cli_remapping
+  add_launch_test(
     test/test_cli_remapping.py
+    TARGET test_cli_remapping
     PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
     ENV
       NAME_MAKER_RCLCPP=$<TARGET_FILE:name_maker_rclcpp>

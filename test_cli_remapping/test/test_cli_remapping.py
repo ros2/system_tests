@@ -12,20 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import asyncio
-import functools
 import os
 import random
 import sys
 import time
 
-from launch import LaunchDescription
-from launch import LaunchService
-from launch.actions import ExecuteProcess
-from launch.actions import OpaqueCoroutine
-from launch_testing import LaunchTestService
+import unittest
 
-import pytest
+from launch import LaunchDescription
+from launch.actions import ExecuteProcess
+from launch.actions import OpaqueFunction
+import launch_testing
+
 import rclpy
 
 
@@ -42,127 +40,137 @@ CLIENT_LIBRARY_EXECUTABLES = (
     get_environment_variable('NAME_MAKER_RCLPY')
 )
 
+TEST_CASES = {
+    'namespace_replacement': (
+        '/ns/s{random_string}/relative/name',
+        '__ns:=/ns/s{random_string}'
+    ),
+    'node_name_replacement': (
+        'node_{random_string}',
+        '__node:=node_{random_string}'
+    ),
+    'topic_and_service_replacement': (
+        '/remapped/s{random_string}',
+        '/fully/qualified/name:=/remapped/s{random_string}'
+    ),
+    'topic_replacement': (
+        '/remapped/s{random_string}',
+        'rostopic://~/private/name:=/remapped/s{random_string}'
+    ),
+    'service_replacement': (
+        '/remapped/s{random_string}',
+        'rosservice://~/private/name:=/remapped/s{random_string}'
+    )
+}
 
-@pytest.fixture(params=CLIENT_LIBRARY_EXECUTABLES)
-def node_fixture(request):
-    """Create a fixture with a node, name_maker executable, and random string."""
-    rclpy.init()
-    node = rclpy.create_node('test_cli_remapping')
-    try:
-        yield {
-            'node': node,
-            'executable': request.param,
-            'random_string': '%d_%s' % (
-                random.randint(0, 9999), time.strftime('%H_%M_%S', time.gmtime()))
-        }
-    finally:
-        node.destroy_node()
+
+@launch_testing.parametrize('executable', CLIENT_LIBRARY_EXECUTABLES)
+def generate_test_description(executable, ready_fn):
+    command = [executable]
+    # Execute python files using same python used to start this test
+    env = dict(os.environ)
+    if command[0][-3:] == '.py':
+        command.insert(0, sys.executable)
+    env['PYTHONUNBUFFERED'] = '1'
+
+    launch_description = LaunchDescription()
+
+    test_context = {}
+    for replacement_name, (replacement_value, cli_argument) in TEST_CASES.items():
+        random_string = '%d_%s' % (
+            random.randint(0, 9999), time.strftime('%H_%M_%S', time.gmtime()))
+        launch_description.add_action(
+            ExecuteProcess(
+                cmd=command + [cli_argument.format(**locals())],
+                name='name_maker_' + replacement_name, env=env
+            )
+        )
+        test_context[replacement_name] = replacement_value.format(**locals())
+
+    launch_description.add_action(
+        OpaqueFunction(function=lambda context: ready_fn())
+    )
+
+    return launch_description, test_context
+
+
+class TestCLIRemapping(unittest.TestCase):
+
+    ATTEMPTS = 10
+    TIME_BETWEEN_ATTEMPTS = 1
+
+    @classmethod
+    def setUpClass(cls):
+        rclpy.init()
+        cls.node = rclpy.create_node('test_cli_remapping')
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.node.destroy_node()
         rclpy.shutdown()
 
+    def get_topics(self):
+        topic_names_and_types = self.node.get_topic_names_and_types()
+        return [name for name, _ in topic_names_and_types]
 
-def remapping_test(*, cli_args):
-    """Return a decorator that returns a test function."""
-    def real_decorator(coroutine_test):
-        """Return a test function that runs a coroutine test in a loop with a launched process."""
-        @functools.wraps(coroutine_test)
-        def test_func(node_fixture):
-            """Run an executable with cli_args and coroutine test in the same asyncio loop."""
-            # Create a command launching a name_maker executable specified by the pytest fixture
-            command = [node_fixture['executable']]
-            # format command line arguments with random string from test fixture
-            for arg in cli_args:
-                command.append(arg.format(random_string=node_fixture['random_string']))
+    def get_services(self):
+        service_names_and_types = self.node.get_service_names_and_types()
+        return [name for name, _ in service_names_and_types]
 
-            # Execute python files using same python used to start this test
-            env = dict(os.environ)
-            if command[0][-3:] == '.py':
-                command.insert(0, sys.executable)
-                env['PYTHONUNBUFFERED'] = '1'
-            ld = LaunchDescription()
-            launch_test = LaunchTestService()
-            launch_test.add_fixture_action(ld, ExecuteProcess(
-                cmd=command, name='name_maker_' + coroutine_test.__name__, env=env
-            ))
-            launch_test.add_test_action(ld, OpaqueCoroutine(
-                coroutine=coroutine_test, args=[node_fixture], ignore_context=True
-            ))
-            launch_service = LaunchService()
-            launch_service.include_launch_description(ld)
-            return_code = launch_test.run(launch_service)
-            assert return_code == 0, 'Launch failed with exit code %r' % (return_code,)
-        return test_func
-    return real_decorator
+    def test_namespace_replacement(self, namespace_replacement):
+        for attempt in range(self.ATTEMPTS):
+            if (
+                namespace_replacement in self.get_topics() and
+                namespace_replacement in self.get_services()
+            ):
+                break
+            time.sleep(self.TIME_BETWEEN_ATTEMPTS)
+            rclpy.spin_once(self.node, timeout_sec=0)
+        self.assertIn(namespace_replacement, self.get_topics())
+        self.assertIn(namespace_replacement, self.get_services())
 
+    def test_node_name_replacement(self, node_name_replacement):
+        for attempt in range(self.ATTEMPTS):
+            if node_name_replacement in self.node.get_node_names():
+                break
+            time.sleep(self.TIME_BETWEEN_ATTEMPTS)
+            rclpy.spin_once(self.node, timeout_sec=0)
+        self.assertIn(node_name_replacement, self.node.get_node_names())
 
-def get_topics(node_fixture):
-    topic_names_and_types = node_fixture['node'].get_topic_names_and_types()
-    return [name for name, _ in topic_names_and_types]
+    def test_topic_and_service_replacement(self, topic_and_service_replacement):
+        for attempt in range(self.ATTEMPTS):
+            if (
+                topic_and_service_replacement in self.get_topics() and
+                topic_and_service_replacement in self.get_services()
+            ):
+                break
+            time.sleep(self.TIME_BETWEEN_ATTEMPTS)
+            rclpy.spin_once(self.node, timeout_sec=0)
+        self.assertIn(topic_and_service_replacement, self.get_topics())
+        self.assertIn(topic_and_service_replacement, self.get_services())
 
+    def test_topic_replacement(self, topic_replacement):
+        for attempt in range(self.ATTEMPTS):
+            if topic_replacement in self.get_topics():
+                break
+            time.sleep(self.TIME_BETWEEN_ATTEMPTS)
+            rclpy.spin_once(self.node, timeout_sec=0)
+        self.assertIn(topic_replacement, self.get_topics())
+        self.assertNotIn(topic_replacement, self.get_services())
 
-def get_services(node_fixture):
-    service_names_and_types = node_fixture['node'].get_service_names_and_types()
-    return [name for name, _ in service_names_and_types]
-
-
-ATTEMPTS = 10
-TIME_BETWEEN_ATTEMPTS = 1
-
-
-@remapping_test(cli_args=('__node:=node_{random_string}',))
-async def test_node_name_replacement_new(node_fixture):
-    node_name = 'node_{random_string}'.format(**node_fixture)
-
-    for attempt in range(ATTEMPTS):
-        if node_name in node_fixture['node'].get_node_names():
-            break
-        await asyncio.sleep(TIME_BETWEEN_ATTEMPTS)
-        rclpy.spin_once(node_fixture['node'], timeout_sec=0)
-    assert node_name in node_fixture['node'].get_node_names()
+    def test_service_replacement(self, service_replacement):
+        for attempt in range(self.ATTEMPTS):
+            if service_replacement in self.get_services():
+                break
+            time.sleep(self.TIME_BETWEEN_ATTEMPTS)
+            rclpy.spin_once(self.node, timeout_sec=0)
+        self.assertNotIn(service_replacement, self.get_topics())
+        self.assertIn(service_replacement, self.get_services())
 
 
-@remapping_test(cli_args=('__ns:=/ns/s{random_string}',))
-async def test_namespace_replacement(node_fixture):
-    name = '/ns/s{random_string}/relative/name'.format(**node_fixture)
+@launch_testing.post_shutdown_test()
+class TestCLIRemappingAfterShutdown(unittest.TestCase):
 
-    for attempt in range(ATTEMPTS):
-        if name in get_topics(node_fixture) and name in get_services(node_fixture):
-            break
-        await asyncio.sleep(TIME_BETWEEN_ATTEMPTS)
-        rclpy.spin_once(node_fixture['node'], timeout_sec=0)
-    assert name in get_topics(node_fixture) and name in get_services(node_fixture)
-
-
-@remapping_test(cli_args=('/fully/qualified/name:=/remapped/s{random_string}',))
-async def test_topic_and_service_replacement(node_fixture):
-    name = '/remapped/s{random_string}'.format(**node_fixture)
-
-    for attempt in range(ATTEMPTS):
-        if name in get_topics(node_fixture) and name in get_services(node_fixture):
-            break
-        await asyncio.sleep(TIME_BETWEEN_ATTEMPTS)
-        rclpy.spin_once(node_fixture['node'], timeout_sec=0)
-    assert name in get_topics(node_fixture) and name in get_services(node_fixture)
-
-
-@remapping_test(cli_args=('rostopic://~/private/name:=/remapped/s{random_string}',))
-async def test_topic_replacement(node_fixture):
-    name = '/remapped/s{random_string}'.format(**node_fixture)
-
-    for attempt in range(ATTEMPTS):
-        if name in get_topics(node_fixture):
-            break
-        await asyncio.sleep(TIME_BETWEEN_ATTEMPTS)
-        rclpy.spin_once(node_fixture['node'], timeout_sec=0)
-    assert name in get_topics(node_fixture) and name not in get_services(node_fixture)
-
-
-@remapping_test(cli_args=('rosservice://~/private/name:=/remapped/s{random_string}',))
-async def test_service_replacement(node_fixture):
-    name = '/remapped/s{random_string}'.format(**node_fixture)
-
-    for attempt in range(ATTEMPTS):
-        if name in get_services(node_fixture):
-            break
-        await asyncio.sleep(TIME_BETWEEN_ATTEMPTS)
-        rclpy.spin_once(node_fixture['node'], timeout_sec=0)
-    assert name not in get_topics(node_fixture) and name in get_services(node_fixture)
+    def test_processes_finished_gracefully(self, proc_info):
+        """Test that both executables finished gracefully."""
+        launch_testing.asserts.assertExitCodes(proc_info)

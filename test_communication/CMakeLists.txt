@@ -62,7 +62,7 @@ if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 
-  find_package(ament_cmake_pytest REQUIRED)
+  find_package(launch_testing_ament_cmake REQUIRED)
 
   # Provides PYTHON_EXECUTABLE_DEBUG
   find_package(python_cmake_module REQUIRED)
@@ -187,8 +187,9 @@ if(BUILD_TESTING)
 
     list(LENGTH TEST_MESSAGE_TYPES length)
     math(EXPR timeout "${length} * 15")
-    ament_add_pytest_test(test_publisher_subscriber${suffix}
+    add_launch_test(
       "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${suffix}_$<CONFIG>.py"
+      TARGET test_publisher_subscriber${suffix}
       PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       TIMEOUT ${timeout}
@@ -237,8 +238,9 @@ if(BUILD_TESTING)
 
     list(LENGTH TEST_SERVICE_TYPES length)
     math(EXPR timeout "${length} * 30")
-    ament_add_pytest_test(test_requester_replier${suffix}
+    add_launch_test(
       "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier${suffix}_$<CONFIG>.py"
+      TARGET test_requester_replier${suffix}
       PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       TIMEOUT ${timeout}
@@ -274,8 +276,9 @@ if(BUILD_TESTING)
 
     list(LENGTH TEST_ACTION_TYPES length)
     math(EXPR timeout "${length} * 30")
-    ament_add_pytest_test(test_action_client_server${suffix}
+    add_launch_test(
       "${CMAKE_CURRENT_BINARY_DIR}/test_action_client_server${suffix}_$<CONFIG>.py"
+      TARGET test_action_client_server${suffix}
       PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       TIMEOUT ${timeout}
