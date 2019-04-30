@@ -103,7 +103,7 @@ TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), de_serialize_c) 
 
   ret = rmw_serialize(&bounded_sequences_msg_c, message_c_typesupport, &serialized_message_c);
   EXPECT_EQ(RMW_RET_OK, ret);
-  EXPECT_EQ(76u, serialized_message_c.buffer_length);  // measured from wireshark
+  EXPECT_EQ(196u, serialized_message_c.buffer_length);  // measured from wireshark
 
   printf("serialized data length: %zu\n", serialized_message_c.buffer_length);
   print_serialized_buffer(serialized_message_c, "serialized message c");
@@ -149,7 +149,7 @@ TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), de_serialize_cpp
   ret =
     rmw_serialize(&bounded_sequences_msg_cpp, message_cpp_typesupport, &serialized_message_cpp);
   EXPECT_EQ(RMW_RET_OK, ret);
-  EXPECT_EQ(76u, serialized_message_cpp.buffer_length);
+  EXPECT_EQ(196u, serialized_message_cpp.buffer_length);
   print_serialized_buffer(serialized_message_cpp, "serialized message cpp");
 
   test_msgs::msg::BoundedSequences bounded_sequences_cpp_reverse;
