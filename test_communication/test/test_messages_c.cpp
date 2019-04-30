@@ -186,7 +186,7 @@ public:
           [&message]() {
             fini_message(&message);
           });
-        ret = rcl_publish(&publisher, &message);
+        ret = rcl_publish(&publisher, &message, nullptr);
         ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
       }
     }
@@ -220,7 +220,7 @@ public:
         EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
         ret = rcl_wait(&wait_set, -1);
         ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
-        ret = rcl_take(&subscription, &message, nullptr);
+        ret = rcl_take(&subscription, &message, nullptr, nullptr);
         ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
         verify_message(message, msg_cnt);
       }
