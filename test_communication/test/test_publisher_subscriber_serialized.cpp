@@ -70,12 +70,12 @@ TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), serialized_callb
   auto publisher = node->create_publisher<test_msgs::msg::BasicTypes>(
     "test_publisher_subscriber_serialized_topic");
 
-  auto msg = std::make_shared<test_msgs::msg::BasicTypes>();
+  test_msgs::msg::BasicTypes msg;
 
   rclcpp::Rate loop_rate(10);
   for (auto i = 0u; i < 10; ++i) {
-    msg->uint8_value = i;
-    publisher->publish(*msg);
+    msg.uint8_value = i;
+    publisher->publish(msg);
     rclcpp::spin_some(node);
     loop_rate.sleep();
   }

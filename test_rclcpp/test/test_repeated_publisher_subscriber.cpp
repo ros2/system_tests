@@ -39,8 +39,8 @@ TEST(CLASSNAME(test_repeated_publisher_subscriber, RMW_IMPLEMENTATION), subscrip
     {
     };
 
-  auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
-  msg->data = 0;
+  test_rclcpp::msg::UInt32 msg;
+  msg.data = 0;
   rclcpp::executors::SingleThreadedExecutor executor;
 
   {
@@ -56,8 +56,8 @@ TEST(CLASSNAME(test_repeated_publisher_subscriber, RMW_IMPLEMENTATION), subscrip
     fflush(stdout);
     executor.spin_node_some(node);
 
-    msg->data = 1;
-    publisher->publish(*msg);
+    msg.data = 1;
+    publisher->publish(msg);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
     printf("spin_node_some()\n");
@@ -83,8 +83,8 @@ TEST(CLASSNAME(test_repeated_publisher_subscriber, RMW_IMPLEMENTATION), subscrip
     fflush(stdout);
     executor.spin_node_some(node);
 
-    msg->data = 2;
-    publisher->publish(*msg);
+    msg.data = 2;
+    publisher->publish(msg);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
     printf("spin_node_some()\n");

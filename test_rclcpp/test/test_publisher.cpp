@@ -60,9 +60,9 @@ TEST(CLASSNAME(test_publisher, RMW_IMPLEMENTATION), publish_with_const_reference
   auto publish_func =
     [](
     rclcpp::Publisher<test_rclcpp::msg::UInt32>::SharedPtr publisher,
-    test_rclcpp::msg::UInt32::SharedPtr msg)
+    test_rclcpp::msg::UInt32 msg)
     {
-      publisher->publish(*msg);
+      publisher->publish(msg);
     };
   // call the test template
   single_message_pub_sub_fixture<test_rclcpp::msg::UInt32>(

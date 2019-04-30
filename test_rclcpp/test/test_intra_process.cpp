@@ -60,8 +60,8 @@ TEST(CLASSNAME(test_intra_process_within_one_node, RMW_IMPLEMENTATION), nominal_
       ASSERT_TRUE(message_info.from_intra_process);
     };
 
-  auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
-  msg->data = 0;
+  test_rclcpp::msg::UInt32 msg;
+  msg.data = 0;
   rclcpp::executors::SingleThreadedExecutor executor;
 
   {
@@ -83,8 +83,8 @@ TEST(CLASSNAME(test_intra_process_within_one_node, RMW_IMPLEMENTATION), nominal_
     // TODO(gerkey): fix nondeterministic startup behavior
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
-    msg->data = 1;
-    publisher->publish(*msg);
+    msg.data = 1;
+    publisher->publish(msg);
     ASSERT_EQ(0, counter);
 
     // wait for the first callback
@@ -107,14 +107,14 @@ TEST(CLASSNAME(test_intra_process_within_one_node, RMW_IMPLEMENTATION), nominal_
     executor.spin_node_some(node);
     ASSERT_EQ(1, counter);
 
-    msg->data = 2;
-    publisher->publish(*msg);
-    msg->data = 3;
-    publisher->publish(*msg);
-    msg->data = 4;
-    publisher->publish(*msg);
-    msg->data = 5;
-    publisher->publish(*msg);
+    msg.data = 2;
+    publisher->publish(msg);
+    msg.data = 3;
+    publisher->publish(msg);
+    msg.data = 4;
+    publisher->publish(msg);
+    msg.data = 5;
+    publisher->publish(msg);
     ASSERT_EQ(1, counter);
 
     // while four messages have been published one callback should be triggered here
@@ -157,8 +157,8 @@ TEST(CLASSNAME(test_intra_process_within_one_node, RMW_IMPLEMENTATION), nominal_
   }
   // the subscriber goes out of scope and should be not receive any callbacks anymore
 
-  msg->data = 6;
-  publisher->publish(*msg);
+  msg.data = 6;
+  publisher->publish(msg);
 
   std::this_thread::sleep_for(std::chrono::milliseconds(25));
 

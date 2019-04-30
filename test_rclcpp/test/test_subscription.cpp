@@ -80,8 +80,8 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
       sub_called.set_value();
     };
 
-  auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
-  msg->data = 0;
+  test_rclcpp::msg::UInt32 msg;
+  msg.data = 0;
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(node);
 
@@ -103,8 +103,8 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
     executor.spin_some();
     ASSERT_EQ(0, counter);
 
-    msg->data = 1;
-    publisher->publish(*msg);
+    msg.data = 1;
+    publisher->publish(msg);
     ASSERT_EQ(0, counter);
 
     // spin until the subscription is called or a timeout occurs
@@ -120,14 +120,14 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
     executor.spin_some();
     ASSERT_EQ(1, counter);
 
-    msg->data = 2;
-    publisher->publish(*msg);
-    msg->data = 3;
-    publisher->publish(*msg);
-    msg->data = 4;
-    publisher->publish(*msg);
-    msg->data = 5;
-    publisher->publish(*msg);
+    msg.data = 2;
+    publisher->publish(msg);
+    msg.data = 3;
+    publisher->publish(msg);
+    msg.data = 4;
+    publisher->publish(msg);
+    msg.data = 5;
+    publisher->publish(msg);
     ASSERT_EQ(1, counter);
 
     // while four messages have been published one callback should be triggered here
@@ -160,8 +160,8 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
   }
   // the subscriber goes out of scope and should be not receive any callbacks anymore
 
-  msg->data = 6;
-  publisher->publish(*msg);
+  msg.data = 6;
+  publisher->publish(msg);
 
   // check that no further callbacks have been invoked
   printf("spin_until_future_complete(short timeout) - no callbacks expected\n");
@@ -198,11 +198,9 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
   auto publish_func =
     [](
     rclcpp::Publisher<test_rclcpp::msg::UInt32>::SharedPtr publisher,
-    test_rclcpp::msg::UInt32::SharedPtr msg)
+    test_rclcpp::msg::UInt32 msg)
     {
-      // Create a ConstSharedPtr message to publish
-      test_rclcpp::msg::UInt32::ConstSharedPtr const_msg(msg);
-      publisher->publish(*const_msg);
+      publisher->publish(msg);
     };
   // call the test template
   single_message_pub_sub_fixture<test_rclcpp::msg::UInt32>(
@@ -246,11 +244,9 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
   auto publish_func =
     [](
     rclcpp::Publisher<test_rclcpp::msg::UInt32>::SharedPtr publisher,
-    test_rclcpp::msg::UInt32::SharedPtr msg)
+    test_rclcpp::msg::UInt32 msg)
     {
-      // Create a ConstSharedPtr message to publish
-      test_rclcpp::msg::UInt32::ConstSharedPtr const_msg(msg);
-      publisher->publish(*const_msg);
+      publisher->publish(msg);
     };
   // call the test template
   single_message_pub_sub_fixture<test_rclcpp::msg::UInt32>(
@@ -280,11 +276,9 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
   auto publish_func =
     [](
     rclcpp::Publisher<test_rclcpp::msg::UInt32>::SharedPtr publisher,
-    test_rclcpp::msg::UInt32::SharedPtr msg)
+    test_rclcpp::msg::UInt32 msg)
     {
-      // Create a ConstSharedPtr message to publish
-      test_rclcpp::msg::UInt32::ConstSharedPtr const_msg(msg);
-      publisher->publish(*const_msg);
+      publisher->publish(msg);
     };
   // call the test template
   single_message_pub_sub_fixture<test_rclcpp::msg::UInt32>(
@@ -318,9 +312,9 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
   auto publish_func =
     [](
     rclcpp::Publisher<test_rclcpp::msg::UInt32>::SharedPtr publisher,
-    test_rclcpp::msg::UInt32::SharedPtr msg)
+    test_rclcpp::msg::UInt32 msg)
     {
-      publisher->publish(*msg);
+      publisher->publish(msg);
     };
   // call the test template
   single_message_pub_sub_fixture<test_rclcpp::msg::UInt32>(
@@ -352,11 +346,9 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), spin_before_subscription)
   auto publish_func =
     [](
     rclcpp::Publisher<test_rclcpp::msg::UInt32>::SharedPtr publisher,
-    test_rclcpp::msg::UInt32::SharedPtr msg)
+    test_rclcpp::msg::UInt32 msg)
     {
-      // Create a ConstSharedPtr message to publish
-      test_rclcpp::msg::UInt32::ConstSharedPtr const_msg(msg);
-      publisher->publish(*const_msg);
+      publisher->publish(msg);
     };
   // code for custom "pre subscription" hook
   auto pre_subscription_hook =

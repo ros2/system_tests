@@ -36,7 +36,7 @@ single_message_pub_sub_fixture(
     )
   > create_subscription_func,
   std::function<
-    void(typename rclcpp::Publisher<MessageT>::SharedPtr, typename MessageT::SharedPtr)
+    void(typename rclcpp::Publisher<MessageT>::SharedPtr, MessageT)
   > publish_func,
   rmw_qos_profile_t custom_qos = rmw_qos_profile_default,
   std::function<void(rclcpp::executors::SingleThreadedExecutor &)> pre_subscription_hook = nullptr,
@@ -49,8 +49,8 @@ single_message_pub_sub_fixture(
   auto publisher = node->create_publisher<MessageT>(
     topic_name, custom_qos);
 
-  auto msg = std::make_shared<MessageT>();
-  msg->data = 0;
+  MessageT msg;
+  msg.data = 0;
   rclcpp::executors::SingleThreadedExecutor executor;
 
   // optionally call the pre subscription hook
@@ -78,9 +78,9 @@ single_message_pub_sub_fixture(
   // this is necessary because sometimes the first message does not go through
   // this is very common with Connext due to a race condition
   size_t retry = 0;
-  msg->data = 0;
+  msg.data = 0;
   while (retry < max_retries && counter == 0) {
-    msg->data++;
+    msg.data++;
     // call custom publish function
     publish_func(publisher, msg);
 
