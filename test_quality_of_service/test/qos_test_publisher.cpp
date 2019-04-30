@@ -25,15 +25,11 @@ QosTestPublisher::QosTestPublisher(
 : QosTestNode(name, topic),
   publisher_options_(publisher_options),
   publish_period_(publish_period),
-  timer_(nullptr),
-  is_publishing(false)
+  timer_(nullptr)
 {
   RCLCPP_INFO(this->get_logger(), "created publisher %s %s\n", name.c_str(), topic.c_str());
   publisher_ = this->create_publisher<std_msgs::msg::String>(topic_, publisher_options_);
 }
-
-QosTestPublisher::~QosTestPublisher()
-{}
 
 void QosTestPublisher::publish_message()
 {
@@ -50,14 +46,17 @@ void QosTestPublisher::publish_message()
 
 void QosTestPublisher::setup_start()
 {
-  timer_ =
-    this->create_wall_timer(publish_period_, std::bind(&QosTestPublisher::publish_message, this));
+  if (!timer_) {
+    timer_ =
+      this->create_wall_timer(publish_period_, std::bind(&QosTestPublisher::publish_message, this));
+  }
 }
 
 void QosTestPublisher::setup_stop()
 {
   if (timer_) {
     timer_->cancel();
+    timer_ = nullptr;
   }
 }
 

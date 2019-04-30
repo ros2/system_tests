@@ -24,34 +24,35 @@ QosTestNode::QosTestNode(
   const std::string & name,
   const std::string & topic)
 : Node(name),
-  name_(topic),
+  name_(name),
   topic_(topic),
-  count_(0)
+  count_(0),
+  started_(false)
 {}
 
 QosTestNode::~QosTestNode()
 {}
 
-int QosTestNode::get_count()
+int QosTestNode::get_count() const
 {
   return count_.load();
 }
 
 int QosTestNode::increment_count()
 {
-  count_++;
-  return count_.load();
+  return ++count_;
 }
 
-bool QosTestNode::get_started()
+bool QosTestNode::get_started() const
 {
+  std::unique_lock<std::recursive_mutex> ulock(toggle_mutex_);
   return started_;
 }
 
 void QosTestNode::toggle()
 {
-  std::unique_lock<std::recursive_mutex> ulock {toggle_mutex_};
-  if (started_) {
+  std::unique_lock<std::recursive_mutex> ulock(toggle_mutex_);
+  if (get_started()) {
     stop();
   } else {
     start();
@@ -60,7 +61,7 @@ void QosTestNode::toggle()
 
 void QosTestNode::start()
 {
-  std::unique_lock<std::recursive_mutex> ulock {toggle_mutex_};
+  std::unique_lock<std::recursive_mutex> ulock(toggle_mutex_);
   if (started_) {
     return;
   }
@@ -70,7 +71,7 @@ void QosTestNode::start()
 
 void QosTestNode::stop()
 {
-  std::unique_lock<std::recursive_mutex> ulock {toggle_mutex_};
+  std::unique_lock<std::recursive_mutex> ulock(toggle_mutex_);
   if (!started_) {
     return;
   }

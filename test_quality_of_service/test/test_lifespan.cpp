@@ -44,9 +44,7 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
 
   qos_profile.depth = history;
   qos_profile.durability = RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL;
-
-  qos_profile.lifespan.sec = std::get<0>(message_lifespan);
-  qos_profile.lifespan.nsec = std::get<1>(message_lifespan);
+  std::tie(qos_profile.deadline.sec, qos_profile.deadline.nsec) = message_lifespan;
 
   // subscription options
   rclcpp::SubscriptionOptions<> subscriber_options;
@@ -58,16 +56,18 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
 
   std::string topic = "test_lifespan";
 
-  auto publisher = std::make_shared<QosTestPublisher>("publisher", topic, publisher_options,
+  publisher = std::make_shared<QosTestPublisher>("publisher", topic, publisher_options,
       publish_period);
-  auto subscriber = std::make_shared<QosTestSubscriber>("subscriber", topic, subscriber_options);
+  subscriber = std::make_shared<QosTestSubscriber>("subscriber", topic, subscriber_options);
 
+  int timer_fired_count = 0;
   // toggle publishing on and off to force deadline events
   rclcpp::TimerBase::SharedPtr toggle_subscriber_timer = subscriber->create_wall_timer(
     lifespan_duration * 2,
-    [&subscriber]() -> void {
+    [this, &timer_fired_count]() -> void {
       // start / stop publishing publish at a rate slower than lifespan
       subscriber->toggle();
+      timer_fired_count++;
     });
 
   executor->add_node(subscriber);
@@ -78,15 +78,20 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
 
   // the future will never be resolved, so simply time out to force the experiment to stop
   executor->spin_until_future_complete(dummy_future, max_test_length);
-
   toggle_subscriber_timer->cancel();
-  subscriber->teardown();
-  publisher->teardown();
 
+  EXPECT_GT(timer_fired_count, 0);
   EXPECT_EQ(publisher->get_count(), expected_published);  // check if we published anything
   EXPECT_GT(subscriber->get_count(), 0);  // check if we received anything
 
   // check if lifespan simply worked
   EXPECT_LT(subscriber->get_count(), publisher->get_count());
   EXPECT_LT(subscriber->get_count() / 2, publisher->get_count());
+}
+
+int main(int argc, char ** argv)
+{
+  ::testing::InitGoogleTest(&argc, argv);
+  int ret = RUN_ALL_TESTS();
+  return ret;
 }

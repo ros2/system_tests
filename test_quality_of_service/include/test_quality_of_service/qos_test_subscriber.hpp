@@ -32,21 +32,21 @@ public:
     const std::string & topic,
     const rclcpp::SubscriptionOptions<> & sub_options);
 
-  virtual ~QosTestSubscriber();
+  virtual ~QosTestSubscriber() = default;
+  QosTestSubscriber() = default;
+  QosTestSubscriber(QosTestSubscriber const &) = delete;
+  QosTestSubscriber & operator=(QosTestSubscriber const &) = delete;
+
   void teardown() override;
 
 protected:
-  void listen_to_message(const std_msgs::msg::String::SharedPtr);
+  void listen_to_message(std_msgs::msg::String::SharedPtr);
   void setup_start() override;
   void setup_stop() override;
 
 private:
   /// subscription options needed for QoS settings
-  const rclcpp::SubscriptionOptions<> & sub_options_;
-
-  /// if true then actively listening for subscribed messages
-  bool is_listening_;
-
+  const rclcpp::SubscriptionOptions<> sub_options_;
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
 };
 

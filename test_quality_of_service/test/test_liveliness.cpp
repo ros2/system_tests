@@ -40,20 +40,16 @@ TEST_F(QosRclcppTestFixture, test_automatic_liveliness_changed) {
   const std::chrono::milliseconds kill_publisher_after = 2s;
   const std::chrono::milliseconds publish_period = 200ms;
   int number_of_published_messages = 0;
+  const std::tuple<size_t, size_t> liveliness_lease_tuple =
+    convert_chrono_milliseconds_to_size_t(1s);
 
-  // used for lambda capture
-  std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> exec = executor;
   int total_number_of_liveliness_events = 0;
 
   rmw_qos_profile_t qos_profile = rmw_qos_profile_default;
   // define liveliness policy
   qos_profile.liveliness = RMW_QOS_POLICY_LIVELINESS_AUTOMATIC;
 
-  std::tuple<size_t, size_t> liveliness_lease_tuple = convert_chrono_milliseconds_to_size_t(1s);
-
-  // setup liveliness lease
-  qos_profile.liveliness_lease_duration.sec = std::get<0>(liveliness_lease_tuple);
-  qos_profile.liveliness_lease_duration.nsec = std::get<1>(liveliness_lease_tuple);
+  std::tie(qos_profile.deadline.sec, qos_profile.deadline.nsec) = liveliness_lease_tuple;
 
   // subscription options
   rclcpp::SubscriptionOptions<> subscriber_options;
@@ -94,36 +90,38 @@ TEST_F(QosRclcppTestFixture, test_automatic_liveliness_changed) {
 
   std::string topic("test_automatic_liveliness_changed");
 
-  auto publisher = std::make_shared<QosTestPublisher>("publisher", topic, publisher_options,
+  publisher = std::make_shared<QosTestPublisher>("publisher", topic, publisher_options,
       publish_period);
 
-  auto subscriber = std::make_shared<QosTestSubscriber>("subscriber", topic, subscriber_options);
+  subscriber = std::make_shared<QosTestSubscriber>("subscriber", topic, subscriber_options);
 
-  // kill the test after a predetermined amount of time
-  rclcpp::TimerBase::SharedPtr kill_publisher_timer = subscriber->create_wall_timer(
-    2s,
-    [&exec, &publisher, &number_of_published_messages, &kill_publisher_timer]() -> void {
-      exec->remove_node(publisher);
+  int timer_fired_count = 0;
+  // kill the publisher after a predetermined amount of time
+  rclcpp::TimerBase::SharedPtr kill_publisher_timer = nullptr;
+  kill_publisher_timer = subscriber->create_wall_timer(
+    kill_publisher_after,
+    [this, &number_of_published_messages, &kill_publisher_timer, &timer_fired_count]() -> void {
+      executor->remove_node(publisher);
       number_of_published_messages = publisher->get_count();
 
       publisher->teardown();
       publisher.reset();  // force liveliness lost for automatic
 
       kill_publisher_timer->cancel();
+      timer_fired_count++;
     });
 
-  exec->add_node(subscriber);
+  executor->add_node(subscriber);
   subscriber->start();
 
-  exec->add_node(publisher);
+  executor->add_node(publisher);
   publisher->start();
 
   // the future will never be resolved, so simply time out to force the experiment to stop
-  exec->spin_until_future_complete(dummy_future, max_test_length);  subscriber->teardown();
-
+  executor->spin_until_future_complete(dummy_future, max_test_length);
   kill_publisher_timer->cancel();
-  subscriber->teardown();
 
+  EXPECT_EQ(1, timer_fired_count);
   EXPECT_EQ(2, total_number_of_liveliness_events);  // check expected number of liveliness events
   EXPECT_GT(number_of_published_messages, 0);  // check if we published anything
   EXPECT_GT(subscriber->get_count(), 0);  // check if we received anything

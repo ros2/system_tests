@@ -39,12 +39,16 @@ class QosRclcppTestFixture : public ::testing::Test
 protected:
   void SetUp() override;
   void TearDown() override;
-  /// executor used to submit work
+  // executor used to submit work
   std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> executor;
-  // empty promise
+  // empty promise used with dummy_future
   std::promise<bool> empty_promise;
-  // no future
+  // a dummy to make executor timeout
   std::shared_future<bool> dummy_future;
+  // test fixture publisher node
+  std::shared_ptr<QosTestPublisher> publisher;
+  // test fixture subscriber node
+  std::shared_ptr<QosTestSubscriber> subscriber;
 };
 
 #endif  // TEST_QUALITY_OF_SERVICE__QOS_UTILITIES_HPP_

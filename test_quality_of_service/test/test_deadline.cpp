@@ -30,7 +30,7 @@
 
 using namespace std::chrono_literals;
 
-/// Test Deadline with a single subscriber node
+///// Test Deadline with a single subscriber node
 TEST_F(QosRclcppTestFixture, test_deadline_no_publisher) {
   const std::chrono::milliseconds deadline_duration = 1s;
   const std::chrono::milliseconds test_duration = 10500ms;
@@ -42,8 +42,7 @@ TEST_F(QosRclcppTestFixture, test_deadline_no_publisher) {
   int last_sub_count = 0;
 
   rmw_qos_profile_t qos_profile = rmw_qos_profile_default;
-  qos_profile.deadline.sec = std::get<0>(deadline_duration_tuple);
-  qos_profile.deadline.nsec = std::get<1>(deadline_duration_tuple);
+  std::tie(qos_profile.deadline.sec, qos_profile.deadline.nsec) = deadline_duration_tuple;
 
   // setup subscription options and callback
   rclcpp::SubscriptionOptions<> subscriber_options;
@@ -63,17 +62,16 @@ TEST_F(QosRclcppTestFixture, test_deadline_no_publisher) {
 
   const std::string topic("test_deadline_no_publisher");
 
-  // register a publisher for the topic but don't publish anything
-  auto publisher = std::make_shared<QosTestPublisher>("publisher", topic, publisher_options,
+  // register a publisher for the topic but don't publish anything or use QoS options
+  publisher = std::make_shared<QosTestPublisher>("publisher", topic, publisher_options,
       test_duration);
-  auto subscriber = std::make_shared<QosTestSubscriber>("subscriber", topic, subscriber_options);
+  subscriber = std::make_shared<QosTestSubscriber>("subscriber", topic, subscriber_options);
 
   executor->add_node(subscriber);
   subscriber->start();
 
   // the future will never be resolved, so simply time out to force the experiment to stop
   executor->spin_until_future_complete(dummy_future, test_duration);
-  subscriber->teardown();
 
   EXPECT_EQ(subscriber->get_count(), 0);
   EXPECT_EQ(publisher->get_count(), 0);
@@ -83,12 +81,12 @@ TEST_F(QosRclcppTestFixture, test_deadline_no_publisher) {
 
 /// Test Deadline with a single publishing node and single subscriber node
 TEST_F(QosRclcppTestFixture, test_deadline) {
-  int expected_number_of_pub_events = 5;
+  int expected_number_of_events = 5;
   const std::chrono::milliseconds deadline_duration = 1s;
   const std::tuple<size_t, size_t> deadline_duration_tuple = convert_chrono_milliseconds_to_size_t(
     deadline_duration);
   const std::chrono::milliseconds max_test_length = 10s;
-  const std::chrono::milliseconds publish_rate = deadline_duration / expected_number_of_pub_events;
+  const std::chrono::milliseconds publish_rate = deadline_duration / expected_number_of_events;
 
   // used for lambda capture
   int total_number_of_publisher_deadline_events = 0;
@@ -97,8 +95,7 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
   int last_sub_count = 0;
 
   rmw_qos_profile_t qos_profile = rmw_qos_profile_default;
-  qos_profile.deadline.sec = std::get<0>(deadline_duration_tuple);
-  qos_profile.deadline.nsec = std::get<1>(deadline_duration_tuple);
+  std::tie(qos_profile.deadline.sec, qos_profile.deadline.nsec) = deadline_duration_tuple;
 
   // setup subscription options and callback
   rclcpp::SubscriptionOptions<> subscriber_options;
@@ -130,14 +127,14 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
 
   const std::string topic("test_deadline");
 
-  auto publisher = std::make_shared<QosTestPublisher>("publisher", topic, publisher_options,
+  publisher = std::make_shared<QosTestPublisher>("publisher", topic, publisher_options,
       publish_rate);
-  auto subscriber = std::make_shared<QosTestSubscriber>("subscriber", topic, subscriber_options);
+  subscriber = std::make_shared<QosTestSubscriber>("subscriber", topic, subscriber_options);
 
   // toggle publishing on and off to force deadline events
   rclcpp::TimerBase::SharedPtr toggle_publisher_timer = subscriber->create_wall_timer(
-    max_test_length / expected_number_of_pub_events,
-    [&publisher]() -> void {
+    deadline_duration * 2,
+    [this]() -> void {
       // start / stop publishing to trigger deadline
       publisher->toggle();
     });
@@ -151,17 +148,22 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
   // the future will never be resolved, so simply time out to force the experiment to stop
   executor->spin_until_future_complete(dummy_future, max_test_length);
   toggle_publisher_timer->cancel();
-  subscriber->teardown();
-  publisher->teardown();
 
   EXPECT_GT(publisher->get_count(), 0);  // check if we published anything
   EXPECT_GT(subscriber->get_count(), 0);  // check if we received anything
 
   // check to see if callbacks fired as expected
-  EXPECT_EQ(expected_number_of_pub_events, total_number_of_subscriber_deadline_events);
-  EXPECT_EQ((expected_number_of_pub_events - 1), total_number_of_publisher_deadline_events);
+  EXPECT_EQ(expected_number_of_events, total_number_of_subscriber_deadline_events);
+  EXPECT_EQ((expected_number_of_events - 1), total_number_of_publisher_deadline_events);
 
   // check values reported by the callback
-  EXPECT_EQ(expected_number_of_pub_events - 1, last_pub_count);
-  EXPECT_EQ((expected_number_of_pub_events), last_sub_count);
+  EXPECT_EQ(expected_number_of_events - 1, last_pub_count);
+  EXPECT_EQ((expected_number_of_events), last_sub_count);
+}
+
+int main(int argc, char ** argv)
+{
+  ::testing::InitGoogleTest(&argc, argv);
+  int ret = RUN_ALL_TESTS();
+  return ret;
 }

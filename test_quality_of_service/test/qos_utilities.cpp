@@ -18,6 +18,8 @@
 #include <string>
 #include <tuple>
 
+#include "test_quality_of_service/qos_test_publisher.hpp"
+#include "test_quality_of_service/qos_test_subscriber.hpp"
 #include "test_quality_of_service/qos_utilities.hpp"
 
 std::tuple<size_t, size_t> convert_chrono_milliseconds_to_size_t(
@@ -32,12 +34,25 @@ void QosRclcppTestFixture::SetUp()
 {
   rclcpp::init(0, nullptr);
   executor = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
+  empty_promise = std::promise<bool>();
   dummy_future = empty_promise.get_future();
+  publisher = nullptr;
+  subscriber = nullptr;
 }
 
 void QosRclcppTestFixture::TearDown()
 {
-  executor->cancel();
-  executor.reset();
+  if (publisher) {
+    publisher->teardown();
+    publisher.reset();
+  }
+  if (subscriber) {
+    subscriber->teardown();
+    subscriber.reset();
+  }
+  if (executor) {
+    executor->cancel();
+    executor.reset();
+  }
   rclcpp::shutdown();
 }

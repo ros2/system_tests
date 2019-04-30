@@ -30,14 +30,10 @@ QosTestSubscriber::QosTestSubscriber(
   const rclcpp::SubscriptionOptions<> & sub_options)
 : QosTestNode(name, topic),
   sub_options_(sub_options),
-  is_listening_(false),
   subscription_(nullptr)
 {
   RCLCPP_INFO(get_logger(), "created subscriber %s %s", name.c_str(), topic.c_str());
 }
-
-QosTestSubscriber::~QosTestSubscriber()
-{}
 
 void QosTestSubscriber::listen_to_message(const std_msgs::msg::String::SharedPtr received_message)
 {
@@ -49,16 +45,19 @@ void QosTestSubscriber::listen_to_message(const std_msgs::msg::String::SharedPtr
 
 void QosTestSubscriber::setup_start()
 {
-  subscription_ = create_subscription<std_msgs::msg::String>(
-    topic_,
-    std::bind(&QosTestSubscriber::listen_to_message, this, _1),
-    sub_options_);
+  if (!subscription_) {
+    subscription_ = create_subscription<std_msgs::msg::String>(
+      topic_,
+      std::bind(&QosTestSubscriber::listen_to_message, this, _1),
+      sub_options_);
+  }
 }
 
 void QosTestSubscriber::setup_stop()
 {
   if (subscription_) {
     subscription_.reset();
+    subscription_ = nullptr;
   }
 }
 

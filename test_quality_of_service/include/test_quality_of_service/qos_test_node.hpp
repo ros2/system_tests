@@ -43,10 +43,10 @@ public:
   /**
    * \return the current count
    */
-  int get_count();
+  int get_count() const;
 
 protected:
-  bool get_started();
+  bool get_started() const;
 
   virtual void setup_start() = 0;
 
@@ -57,19 +57,18 @@ protected:
    * \return the incremented count
    */
   int increment_count();
-
   /// name of this publisher (Node)
-  const std::string & name_;
+  const std::string name_;
   /// topic name to publish
-  const std::string & topic_;
-  std::recursive_mutex toggle_mutex_;
+  const std::string topic_;
 
 private:
   /// simple counter used for this node's measurements
   std::atomic<int> count_;
-  /// mutex used for starting, stopping, and toggling
   /// true if started, false if otherwise
   bool started_;
+  /// mutex used for starting, stopping, and toggling
+  mutable std::recursive_mutex toggle_mutex_;
 };
 
 #endif  // TEST_QUALITY_OF_SERVICE__QOS_TEST_NODE_HPP_
