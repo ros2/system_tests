@@ -52,42 +52,53 @@ void print_serialized_buffer(
   printf("\n");
 }
 
+void fill_c_message(test_msgs__msg__BasicTypes * basic_types_msg_c)
+{
+  test_msgs__msg__BasicTypes__init(basic_types_msg_c);
+  basic_types_msg_c->bool_value = true;
+  basic_types_msg_c->byte_value = 255;
+  basic_types_msg_c->char_value = 'k';
+  basic_types_msg_c->float32_value = 1;
+  basic_types_msg_c->float64_value = 2;
+  basic_types_msg_c->int8_value = 3;
+  basic_types_msg_c->uint8_value = 4;
+  basic_types_msg_c->int16_value = 5;
+  basic_types_msg_c->uint16_value = 6;
+  basic_types_msg_c->int32_value = 7;
+  basic_types_msg_c->uint32_value = 8;
+  basic_types_msg_c->int64_value = 9;
+  basic_types_msg_c->uint64_value = 10;
+}
+
 void fill_c_message(test_msgs__msg__BoundedSequences * bounded_sequences_msg_c)
 {
   test_msgs__msg__BoundedSequences__init(bounded_sequences_msg_c);
   test_msgs__msg__BasicTypes__Sequence__init(&bounded_sequences_msg_c->basic_types_values, 1);
-  bounded_sequences_msg_c->basic_types_values.data[0].bool_value = true;
-  bounded_sequences_msg_c->basic_types_values.data[0].byte_value = 255;
-  bounded_sequences_msg_c->basic_types_values.data[0].char_value = 'k';
-  bounded_sequences_msg_c->basic_types_values.data[0].float32_value = 1;
-  bounded_sequences_msg_c->basic_types_values.data[0].float64_value = 2;
-  bounded_sequences_msg_c->basic_types_values.data[0].int8_value = 3;
-  bounded_sequences_msg_c->basic_types_values.data[0].uint8_value = 4;
-  bounded_sequences_msg_c->basic_types_values.data[0].int16_value = 5;
-  bounded_sequences_msg_c->basic_types_values.data[0].uint16_value = 6;
-  bounded_sequences_msg_c->basic_types_values.data[0].int32_value = 7;
-  bounded_sequences_msg_c->basic_types_values.data[0].uint32_value = 8;
-  bounded_sequences_msg_c->basic_types_values.data[0].int64_value = 9;
-  bounded_sequences_msg_c->basic_types_values.data[0].uint64_value = 10;
+  fill_c_message(&bounded_sequences_msg_c->basic_types_values.data[0]);
+}
+
+void fill_cpp_message(test_msgs::msg::BasicTypes * basic_types_msg_cpp)
+{
+  basic_types_msg_cpp->bool_value = true;
+  basic_types_msg_cpp->byte_value = 255;
+  basic_types_msg_cpp->char_value = 'k';
+  basic_types_msg_cpp->float32_value = 1;
+  basic_types_msg_cpp->float64_value = 2;
+  basic_types_msg_cpp->int8_value = 3;
+  basic_types_msg_cpp->uint8_value = 4;
+  basic_types_msg_cpp->int16_value = 5;
+  basic_types_msg_cpp->uint16_value = 6;
+  basic_types_msg_cpp->int32_value = 7;
+  basic_types_msg_cpp->uint32_value = 8;
+  basic_types_msg_cpp->int64_value = 9;
+  basic_types_msg_cpp->uint64_value = 10;
 }
 
 void fill_cpp_message(test_msgs::msg::BoundedSequences * bounded_sequences_msg_cpp)
 {
-  test_msgs::msg::BasicTypes basic_types_msg_cpp;
-  basic_types_msg_cpp.bool_value = true;
-  basic_types_msg_cpp.byte_value = 255;
-  basic_types_msg_cpp.char_value = 'k';
-  basic_types_msg_cpp.float32_value = 1;
-  basic_types_msg_cpp.float64_value = 2;
-  basic_types_msg_cpp.int8_value = 3;
-  basic_types_msg_cpp.uint8_value = 4;
-  basic_types_msg_cpp.int16_value = 5;
-  basic_types_msg_cpp.uint16_value = 6;
-  basic_types_msg_cpp.int32_value = 7;
-  basic_types_msg_cpp.uint32_value = 8;
-  basic_types_msg_cpp.int64_value = 9;
-  basic_types_msg_cpp.uint64_value = 10;
-  bounded_sequences_msg_cpp->basic_types_values.push_back(basic_types_msg_cpp);
+  test_msgs::msg::BasicTypes basic_types;
+  fill_cpp_message(&basic_types);
+  bounded_sequences_msg_cpp->basic_types_values.push_back(basic_types);
 }
 
 TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), de_serialize_c) {
@@ -97,38 +108,38 @@ TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), de_serialize_c) 
   auto ret = rmw_serialized_message_init(&serialized_message_c, 0, &allocator);
   ASSERT_EQ(RMW_RET_OK, ret);
 
-  auto message_c_typesupport = ROSIDL_GET_MSG_TYPE_SUPPORT(test_msgs, msg, BoundedSequences);
-  test_msgs__msg__BoundedSequences bounded_sequences_msg_c;
-  fill_c_message(&bounded_sequences_msg_c);
+  auto message_c_typesupport = ROSIDL_GET_MSG_TYPE_SUPPORT(test_msgs, msg, BasicTypes);
+  test_msgs__msg__BasicTypes basic_types_msg_c;
+  fill_c_message(&basic_types_msg_c);
 
-  ret = rmw_serialize(&bounded_sequences_msg_c, message_c_typesupport, &serialized_message_c);
+  ret = rmw_serialize(&basic_types_msg_c, message_c_typesupport, &serialized_message_c);
   EXPECT_EQ(RMW_RET_OK, ret);
-  EXPECT_EQ(196u, serialized_message_c.buffer_length);  // measured from wireshark
+  EXPECT_EQ(52u, serialized_message_c.buffer_length);  // measured from wireshark
 
   printf("serialized data length: %zu\n", serialized_message_c.buffer_length);
   print_serialized_buffer(serialized_message_c, "serialized message c");
 
-  test_msgs__msg__BoundedSequences bounded_sequences_c_reverse;
-  test_msgs__msg__BoundedSequences__init(&bounded_sequences_c_reverse);
+  test_msgs__msg__BasicTypes basic_types_c_reverse;
+  test_msgs__msg__BasicTypes__init(&basic_types_c_reverse);
   ret =
-    rmw_deserialize(&serialized_message_c, message_c_typesupport, &bounded_sequences_c_reverse);
+    rmw_deserialize(&serialized_message_c, message_c_typesupport, &basic_types_c_reverse);
   EXPECT_EQ(RMW_RET_OK, ret);
-  EXPECT_EQ(true, bounded_sequences_c_reverse.basic_types_values.data[0].bool_value);
-  EXPECT_EQ(255, bounded_sequences_c_reverse.basic_types_values.data[0].byte_value);
-  EXPECT_EQ('k', bounded_sequences_c_reverse.basic_types_values.data[0].char_value);
-  EXPECT_EQ(1, bounded_sequences_c_reverse.basic_types_values.data[0].float32_value);
-  EXPECT_EQ(2, bounded_sequences_c_reverse.basic_types_values.data[0].float64_value);
-  EXPECT_EQ(3, bounded_sequences_c_reverse.basic_types_values.data[0].int8_value);
-  EXPECT_EQ(4u, bounded_sequences_c_reverse.basic_types_values.data[0].uint8_value);
-  EXPECT_EQ(5, bounded_sequences_c_reverse.basic_types_values.data[0].int16_value);
-  EXPECT_EQ(6u, bounded_sequences_c_reverse.basic_types_values.data[0].uint16_value);
-  EXPECT_EQ(7, bounded_sequences_c_reverse.basic_types_values.data[0].int32_value);
-  EXPECT_EQ(8u, bounded_sequences_c_reverse.basic_types_values.data[0].uint32_value);
-  EXPECT_EQ(9, bounded_sequences_c_reverse.basic_types_values.data[0].int64_value);
-  EXPECT_EQ(10u, bounded_sequences_c_reverse.basic_types_values.data[0].uint64_value);
+  EXPECT_EQ(true, basic_types_c_reverse.bool_value);
+  EXPECT_EQ(255, basic_types_c_reverse.byte_value);
+  EXPECT_EQ('k', basic_types_c_reverse.char_value);
+  EXPECT_EQ(1, basic_types_c_reverse.float32_value);
+  EXPECT_EQ(2, basic_types_c_reverse.float64_value);
+  EXPECT_EQ(3, basic_types_c_reverse.int8_value);
+  EXPECT_EQ(4u, basic_types_c_reverse.uint8_value);
+  EXPECT_EQ(5, basic_types_c_reverse.int16_value);
+  EXPECT_EQ(6u, basic_types_c_reverse.uint16_value);
+  EXPECT_EQ(7, basic_types_c_reverse.int32_value);
+  EXPECT_EQ(8u, basic_types_c_reverse.uint32_value);
+  EXPECT_EQ(9, basic_types_c_reverse.int64_value);
+  EXPECT_EQ(10u, basic_types_c_reverse.uint64_value);
 
-  test_msgs__msg__BoundedSequences__fini(&bounded_sequences_c_reverse);
-  test_msgs__msg__BoundedSequences__fini(&bounded_sequences_msg_c);
+  test_msgs__msg__BasicTypes__fini(&basic_types_c_reverse);
+  test_msgs__msg__BasicTypes__fini(&basic_types_msg_c);
   ret = rmw_serialized_message_fini(&serialized_message_c);
   ASSERT_EQ(RMW_RET_OK, ret);
 }
@@ -141,34 +152,34 @@ TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), de_serialize_cpp
   ASSERT_EQ(RMW_RET_OK, ret);
 
   auto message_cpp_typesupport =
-    rosidl_typesupport_cpp::get_message_type_support_handle<test_msgs::msg::BoundedSequences>();
+    rosidl_typesupport_cpp::get_message_type_support_handle<test_msgs::msg::BasicTypes>();
 
-  test_msgs::msg::BoundedSequences bounded_sequences_msg_cpp;
-  fill_cpp_message(&bounded_sequences_msg_cpp);
+  test_msgs::msg::BasicTypes basic_types_msg_cpp;
+  fill_cpp_message(&basic_types_msg_cpp);
 
   ret =
-    rmw_serialize(&bounded_sequences_msg_cpp, message_cpp_typesupport, &serialized_message_cpp);
+    rmw_serialize(&basic_types_msg_cpp, message_cpp_typesupport, &serialized_message_cpp);
   EXPECT_EQ(RMW_RET_OK, ret);
-  EXPECT_EQ(196u, serialized_message_cpp.buffer_length);
+  EXPECT_EQ(52u, serialized_message_cpp.buffer_length);
   print_serialized_buffer(serialized_message_cpp, "serialized message cpp");
 
-  test_msgs::msg::BoundedSequences bounded_sequences_cpp_reverse;
+  test_msgs::msg::BasicTypes basic_types_cpp_reverse;
   ret = rmw_deserialize(
-    &serialized_message_cpp, message_cpp_typesupport, &bounded_sequences_cpp_reverse);
+    &serialized_message_cpp, message_cpp_typesupport, &basic_types_cpp_reverse);
   EXPECT_EQ(RMW_RET_OK, ret);
-  EXPECT_EQ(true, bounded_sequences_cpp_reverse.basic_types_values[0].bool_value);
-  EXPECT_EQ(255, bounded_sequences_cpp_reverse.basic_types_values[0].byte_value);
-  EXPECT_EQ('k', bounded_sequences_cpp_reverse.basic_types_values[0].char_value);
-  EXPECT_EQ(1, bounded_sequences_cpp_reverse.basic_types_values[0].float32_value);
-  EXPECT_EQ(2, bounded_sequences_cpp_reverse.basic_types_values[0].float64_value);
-  EXPECT_EQ(3, bounded_sequences_cpp_reverse.basic_types_values[0].int8_value);
-  EXPECT_EQ(4u, bounded_sequences_cpp_reverse.basic_types_values[0].uint8_value);
-  EXPECT_EQ(5, bounded_sequences_cpp_reverse.basic_types_values[0].int16_value);
-  EXPECT_EQ(6u, bounded_sequences_cpp_reverse.basic_types_values[0].uint16_value);
-  EXPECT_EQ(7, bounded_sequences_cpp_reverse.basic_types_values[0].int32_value);
-  EXPECT_EQ(8u, bounded_sequences_cpp_reverse.basic_types_values[0].uint32_value);
-  EXPECT_EQ(9, bounded_sequences_cpp_reverse.basic_types_values[0].int64_value);
-  EXPECT_EQ(10u, bounded_sequences_cpp_reverse.basic_types_values[0].uint64_value);
+  EXPECT_EQ(true, basic_types_cpp_reverse.bool_value);
+  EXPECT_EQ(255, basic_types_cpp_reverse.byte_value);
+  EXPECT_EQ('k', basic_types_cpp_reverse.char_value);
+  EXPECT_EQ(1, basic_types_cpp_reverse.float32_value);
+  EXPECT_EQ(2, basic_types_cpp_reverse.float64_value);
+  EXPECT_EQ(3, basic_types_cpp_reverse.int8_value);
+  EXPECT_EQ(4u, basic_types_cpp_reverse.uint8_value);
+  EXPECT_EQ(5, basic_types_cpp_reverse.int16_value);
+  EXPECT_EQ(6u, basic_types_cpp_reverse.uint16_value);
+  EXPECT_EQ(7, basic_types_cpp_reverse.int32_value);
+  EXPECT_EQ(8u, basic_types_cpp_reverse.uint32_value);
+  EXPECT_EQ(9, basic_types_cpp_reverse.int64_value);
+  EXPECT_EQ(10u, basic_types_cpp_reverse.uint64_value);
 
   ret = rmw_serialized_message_fini(&serialized_message_cpp);
   ASSERT_EQ(RMW_RET_OK, ret);
