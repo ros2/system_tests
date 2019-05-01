@@ -268,7 +268,6 @@ static inline void multi_access_publisher(bool intra_process)
     .use_intra_process_comms(intra_process);
 
   auto node = rclcpp::Node::make_shared(node_topic_name, options);
-  printf("Node initialized");
   auto timer_callback_group = node->create_callback_group(
     rclcpp::callback_group::CallbackGroupType::Reentrant);
   auto sub_callback_group = node->create_callback_group(
@@ -278,7 +277,6 @@ static inline void multi_access_publisher(bool intra_process)
 
   const size_t num_messages = 5 * std::min<size_t>(executor.get_number_of_threads(), 16);
   auto pub = node->create_publisher<test_rclcpp::msg::UInt32>(node_topic_name, num_messages);
-  printf("Publisher initialized");
   // callback groups?
   auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
 
