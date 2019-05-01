@@ -118,20 +118,16 @@ int main(int argc, char ** argv)
   std::vector<bool> received_messages;  // collect flags about received messages
 
   auto messages_empty = get_messages_empty();
-  auto messages_primitives = get_messages_primitives();
-  auto messages_static_array_primitives = get_messages_static_array_primitives();
-  auto messages_static_array_primitives_nested = get_messages_static_array_primitives_nested();
-  auto messages_dynamic_array_primitives = get_messages_dynamic_array_primitives();
-  auto messages_dynamic_array_primitives_nested = get_messages_dynamic_array_primitives_nested();
-  auto messages_dynamic_array_static_array_primitives_nested =
-    get_messages_dynamic_array_static_array_primitives_nested();
-  auto messages_bounded_array_primitives = get_messages_bounded_array_primitives();
-  auto messages_bounded_array_primitives_nested = get_messages_bounded_array_primitives_nested();
+  auto messages_basic_types = get_messages_basic_types();
+  auto messages_arrays = get_messages_arrays();
+  auto messages_bounded_sequences = get_messages_bounded_sequences();
+  auto messages_unbounded_sequences = get_messages_unbounded_sequences();
+  auto messages_multi_nested = get_messages_multi_nested();
   auto messages_nested = get_messages_nested();
-  auto messages_dynamic_array_nested = get_messages_dynamic_array_nested();
-  auto messages_bounded_array_nested = get_messages_bounded_array_nested();
-  auto messages_static_array_nested = get_messages_static_array_nested();
   auto messages_builtins = get_messages_builtins();
+  auto messages_constants = get_messages_constants();
+  auto messages_defaults = get_messages_defaults();
+  auto messages_strings = get_messages_strings();
 
   std::thread spin_thread([node]() {
       rclcpp::spin(node);
@@ -141,68 +137,49 @@ int main(int argc, char ** argv)
     subscriber = subscribe<test_msgs::msg::Empty>(
       node, message, messages_empty, received_messages);
     publish<test_msgs::msg::Empty>(node, message, messages_empty);
-  } else if (message == "Primitives") {
-    subscriber = subscribe<test_msgs::msg::Primitives>(
-      node, message, messages_primitives, received_messages);
-    publish<test_msgs::msg::Primitives>(node, message, messages_primitives);
-  } else if (message == "StaticArrayPrimitives") {
-    subscriber = subscribe<test_msgs::msg::StaticArrayPrimitives>(
-      node, message, messages_static_array_primitives, received_messages);
-    publish<test_msgs::msg::StaticArrayPrimitives>(node, message,
-      messages_static_array_primitives);
-  } else if (message == "StaticArrayPrimitivesNested") {
-    subscriber = subscribe<test_msgs::msg::StaticArrayPrimitivesNested>(
-      node, message, messages_static_array_primitives_nested, received_messages);
-    publish<test_msgs::msg::StaticArrayPrimitivesNested>(node, message,
-      messages_static_array_primitives_nested);
-  } else if (message == "DynamicArrayPrimitives") {
-    subscriber = subscribe<test_msgs::msg::DynamicArrayPrimitives>(
-      node, message, messages_dynamic_array_primitives, received_messages);
-    publish<test_msgs::msg::DynamicArrayPrimitives>(node, message,
-      messages_dynamic_array_primitives);
-  } else if (message == "DynamicArrayPrimitivesNested") {
-    subscriber = subscribe<test_msgs::msg::DynamicArrayPrimitivesNested>(
-      node, message, messages_dynamic_array_primitives_nested, received_messages);
-    publish<test_msgs::msg::DynamicArrayPrimitivesNested>(node, message,
-      messages_dynamic_array_primitives_nested);
-  } else if (message == "DynamicArrayStaticArrayPrimitivesNested") {
-    subscriber = subscribe<test_msgs::msg::DynamicArrayStaticArrayPrimitivesNested>(
-      node, message, messages_dynamic_array_static_array_primitives_nested, received_messages);
-    publish<test_msgs::msg::DynamicArrayStaticArrayPrimitivesNested>(
-      node, message, get_messages_dynamic_array_static_array_primitives_nested());
-  } else if (message == "BoundedArrayPrimitives") {
-    subscriber = subscribe<test_msgs::msg::BoundedArrayPrimitives>(
-      node, message, messages_bounded_array_primitives, received_messages);
-    publish<test_msgs::msg::BoundedArrayPrimitives>(node, message,
-      messages_bounded_array_primitives);
-  } else if (message == "BoundedArrayPrimitivesNested") {
-    subscriber = subscribe<test_msgs::msg::BoundedArrayPrimitivesNested>(
-      node, message, messages_bounded_array_primitives_nested, received_messages);
-    publish<test_msgs::msg::BoundedArrayPrimitivesNested>(node, message,
-      messages_bounded_array_primitives_nested);
+  } else if (message == "BasicTypes") {
+    subscriber = subscribe<test_msgs::msg::BasicTypes>(
+      node, message, messages_basic_types, received_messages);
+    publish<test_msgs::msg::BasicTypes>(node, message, messages_basic_types);
+  } else if (message == "Arrays") {
+    subscriber = subscribe<test_msgs::msg::Arrays>(
+      node, message, messages_arrays, received_messages);
+    publish<test_msgs::msg::Arrays>(node, message,
+      messages_arrays);
+  } else if (message == "UnboundedSequences") {
+    subscriber = subscribe<test_msgs::msg::UnboundedSequences>(
+      node, message, messages_unbounded_sequences, received_messages);
+    publish<test_msgs::msg::UnboundedSequences>(node, message,
+      messages_unbounded_sequences);
+  } else if (message == "BoundedSequences") {
+    subscriber = subscribe<test_msgs::msg::BoundedSequences>(
+      node, message, messages_bounded_sequences, received_messages);
+    publish<test_msgs::msg::BoundedSequences>(node, message,
+      messages_bounded_sequences);
+  } else if (message == "MultiNested") {
+    subscriber = subscribe<test_msgs::msg::MultiNested>(
+      node, message, messages_multi_nested, received_messages);
+    publish<test_msgs::msg::MultiNested>(node, message, messages_multi_nested);
   } else if (message == "Nested") {
     subscriber = subscribe<test_msgs::msg::Nested>(
       node, message, messages_nested, received_messages);
     publish<test_msgs::msg::Nested>(node, message, messages_nested);
-  } else if (message == "DynamicArrayNested") {
-    subscriber = subscribe<test_msgs::msg::DynamicArrayNested>(
-      node, message, messages_dynamic_array_nested, received_messages);
-    publish<test_msgs::msg::DynamicArrayNested>(node, message,
-      messages_dynamic_array_nested);
-  } else if (message == "BoundedArrayNested") {
-    subscriber = subscribe<test_msgs::msg::BoundedArrayNested>(
-      node, message, messages_bounded_array_nested, received_messages);
-    publish<test_msgs::msg::BoundedArrayNested>(node, message,
-      messages_bounded_array_nested);
-  } else if (message == "StaticArrayNested") {
-    subscriber = subscribe<test_msgs::msg::StaticArrayNested>(
-      node, message, messages_static_array_nested, received_messages);
-    publish<test_msgs::msg::StaticArrayNested>(node, message,
-      messages_static_array_nested);
   } else if (message == "Builtins") {
     subscriber = subscribe<test_msgs::msg::Builtins>(
       node, message, messages_builtins, received_messages);
     publish<test_msgs::msg::Builtins>(node, message, messages_builtins);
+  } else if (message == "Constants") {
+    subscriber = subscribe<test_msgs::msg::Constants>(
+      node, message, messages_constants, received_messages);
+    publish<test_msgs::msg::Constants>(node, message, messages_constants);
+  } else if (message == "Defaults") {
+    subscriber = subscribe<test_msgs::msg::Defaults>(
+      node, message, messages_defaults, received_messages);
+    publish<test_msgs::msg::Defaults>(node, message, messages_defaults);
+  } else if (message == "Strings") {
+    subscriber = subscribe<test_msgs::msg::Strings>(
+      node, message, messages_strings, received_messages);
+    publish<test_msgs::msg::Strings>(node, message, messages_strings);
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
     return 1;

@@ -72,42 +72,29 @@ int main(int argc, char ** argv)
 
   if (message == "Empty") {
     publish<test_msgs::msg::Empty>(node, message, get_messages_empty());
-  } else if (message == "Primitives") {
-    publish<test_msgs::msg::Primitives>(node, message, get_messages_primitives());
-  } else if (message == "StaticArrayPrimitives") {
-    publish<test_msgs::msg::StaticArrayPrimitives>(
-      node, message, get_messages_static_array_primitives());
-  } else if (message == "StaticArrayPrimitivesNested") {
-    publish<test_msgs::msg::StaticArrayPrimitivesNested>(
-      node, message, get_messages_static_array_primitives_nested());
-  } else if (message == "DynamicArrayPrimitives") {
-    publish<test_msgs::msg::DynamicArrayPrimitives>(
-      node, message, get_messages_dynamic_array_primitives());
-  } else if (message == "DynamicArrayPrimitivesNested") {
-    publish<test_msgs::msg::DynamicArrayPrimitivesNested>(
-      node, message, get_messages_dynamic_array_primitives_nested());
-  } else if (message == "DynamicArrayStaticArrayPrimitivesNested") {
-    publish<test_msgs::msg::DynamicArrayStaticArrayPrimitivesNested>(
-      node, message, get_messages_dynamic_array_static_array_primitives_nested());
-  } else if (message == "BoundedArrayPrimitives") {
-    publish<test_msgs::msg::BoundedArrayPrimitives>(
-      node, message, get_messages_bounded_array_primitives());
-  } else if (message == "BoundedArrayPrimitivesNested") {
-    publish<test_msgs::msg::BoundedArrayPrimitivesNested>(
-      node, message, get_messages_bounded_array_primitives_nested());
+  } else if (message == "BasicTypes") {
+    publish<test_msgs::msg::BasicTypes>(node, message, get_messages_basic_types());
+  } else if (message == "Arrays") {
+    publish<test_msgs::msg::Arrays>(
+      node, message, get_messages_arrays());
+  } else if (message == "UnboundedSequences") {
+    publish<test_msgs::msg::UnboundedSequences>(
+      node, message, get_messages_unbounded_sequences());
+  } else if (message == "BoundedSequences") {
+    publish<test_msgs::msg::BoundedSequences>(
+      node, message, get_messages_bounded_sequences());
+  } else if (message == "MultiNested") {
+    publish<test_msgs::msg::MultiNested>(node, message, get_messages_multi_nested());
   } else if (message == "Nested") {
     publish<test_msgs::msg::Nested>(node, message, get_messages_nested());
-  } else if (message == "DynamicArrayNested") {
-    publish<test_msgs::msg::DynamicArrayNested>(
-      node, message, get_messages_dynamic_array_nested());
-  } else if (message == "BoundedArrayNested") {
-    publish<test_msgs::msg::BoundedArrayNested>(
-      node, message, get_messages_bounded_array_nested());
-  } else if (message == "StaticArrayNested") {
-    publish<test_msgs::msg::StaticArrayNested>(
-      node, message, get_messages_static_array_nested());
   } else if (message == "Builtins") {
     publish<test_msgs::msg::Builtins>(node, message, get_messages_builtins());
+  } else if (message == "Constants") {
+    publish<test_msgs::msg::Constants>(node, message, get_messages_constants());
+  } else if (message == "Defaults") {
+    publish<test_msgs::msg::Defaults>(node, message, get_messages_defaults());
+  } else if (message == "Strings") {
+    publish<test_msgs::msg::Strings>(node, message, get_messages_strings());
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
     rclcpp::shutdown();

@@ -55,22 +55,22 @@ TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), serialized_callb
       printf("\n");
 
       auto message_cpp_typesupport =
-        rosidl_typesupport_cpp::get_message_type_support_handle<test_msgs::msg::Primitives>();
-      auto primitive_msg = std::make_shared<test_msgs::msg::Primitives>();
+        rosidl_typesupport_cpp::get_message_type_support_handle<test_msgs::msg::BasicTypes>();
+      auto basic_types_msg = std::make_shared<test_msgs::msg::BasicTypes>();
       auto ret =
-        rmw_deserialize(serialized_msg.get(), message_cpp_typesupport, primitive_msg.get());
+        rmw_deserialize(serialized_msg.get(), message_cpp_typesupport, basic_types_msg.get());
       ASSERT_EQ(RMW_RET_OK, ret);
-      EXPECT_EQ(counter, primitive_msg->uint8_value);
+      EXPECT_EQ(counter, basic_types_msg->uint8_value);
       counter++;
     };
 
   auto node = rclcpp::Node::make_shared("test_publisher_subscriber_serialized");
-  auto subscriber = node->create_subscription<test_msgs::msg::Primitives>(
+  auto subscriber = node->create_subscription<test_msgs::msg::BasicTypes>(
     "test_publisher_subscriber_serialized_topic", serialized_callback);
-  auto publisher = node->create_publisher<test_msgs::msg::Primitives>(
+  auto publisher = node->create_publisher<test_msgs::msg::BasicTypes>(
     "test_publisher_subscriber_serialized_topic");
 
-  auto msg = std::make_shared<test_msgs::msg::Primitives>();
+  auto msg = std::make_shared<test_msgs::msg::BasicTypes>();
 
   rclcpp::Rate loop_rate(10);
   for (auto i = 0u; i < 10; ++i) {

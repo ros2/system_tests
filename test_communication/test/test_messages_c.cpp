@@ -28,17 +28,15 @@
 
 #include "rcl/rcl.h"
 
-#include "test_msgs/msg/bounded_array_nested.h"
-#include "test_msgs/msg/bounded_array_primitives.h"
-#include "test_msgs/msg/dynamic_array_nested.h"
-#include "test_msgs/msg/dynamic_array_primitives.h"
-#include "test_msgs/msg/dynamic_array_primitives_nested.h"
-#include "test_msgs/msg/empty.h"
-#include "test_msgs/msg/nested.h"
-#include "test_msgs/msg/primitives.h"
-#include "test_msgs/msg/static_array_nested.h"
-#include "test_msgs/msg/static_array_primitives.h"
+#include "test_msgs/msg/arrays.h"
+#include "test_msgs/msg/basic_types.h"
+#include "test_msgs/msg/bounded_sequences.h"
 #include "test_msgs/msg/builtins.h"
+#include "test_msgs/msg/empty.h"
+#include "test_msgs/msg/multi_nested.h"
+#include "test_msgs/msg/nested.h"
+#include "test_msgs/msg/strings.h"
+#include "test_msgs/msg/unbounded_sequences.h"
 
 #include "rosidl_generator_c/string_functions.h"
 #include "rosidl_generator_c/primitives_sequence_functions.h"
@@ -255,22 +253,22 @@ void fini_message(MessageT * msg);
 
 // Define functions and test cases for each message type
 template<>
-size_t get_message_num(test_msgs__msg__Primitives * msg)
+size_t get_message_num(test_msgs__msg__BasicTypes * msg)
 {
   (void)msg;
   return 4;
 }
 
 template<>
-void init_message(test_msgs__msg__Primitives * msg)
+void init_message(test_msgs__msg__BasicTypes * msg)
 {
-  test_msgs__msg__Primitives__init(msg);
+  test_msgs__msg__BasicTypes__init(msg);
 }
 
 template<>
-void get_message(test_msgs__msg__Primitives * msg, size_t msg_num)
+void get_message(test_msgs__msg__BasicTypes * msg, size_t msg_num)
 {
-  test_msgs__msg__Primitives__init(msg);
+  test_msgs__msg__BasicTypes__init(msg);
   switch (msg_num) {
     case 0:
       msg->bool_value = false;
@@ -286,7 +284,6 @@ void get_message(test_msgs__msg__Primitives * msg, size_t msg_num)
       msg->uint32_value = 0;
       msg->int64_value = 0;
       msg->uint64_value = 0;
-      rosidl_generator_c__String__assign(&msg->string_value, "");
       break;
     case 1:
       msg->bool_value = true;
@@ -302,7 +299,6 @@ void get_message(test_msgs__msg__Primitives * msg, size_t msg_num)
       msg->uint32_value = (std::numeric_limits<uint32_t>::max)();
       msg->int64_value = (std::numeric_limits<int64_t>::max)();
       msg->uint64_value = (std::numeric_limits<uint64_t>::max)();
-      rosidl_generator_c__String__assign(&msg->string_value, "max value");
       break;
     case 2:
       msg->bool_value = false;
@@ -318,7 +314,6 @@ void get_message(test_msgs__msg__Primitives * msg, size_t msg_num)
       msg->uint32_value = 0;
       msg->int64_value = (std::numeric_limits<int64_t>::min)();
       msg->uint64_value = 0;
-      rosidl_generator_c__String__assign(&msg->string_value, "min value");
       break;
     case 3:
       msg->bool_value = true;
@@ -334,19 +329,14 @@ void get_message(test_msgs__msg__Primitives * msg, size_t msg_num)
       msg->uint32_value = 1;
       msg->int64_value = 1;
       msg->uint64_value = 1;
-      char string_value[20000] = {};
-      for (uint32_t i = 0; i < 20000; i++) {
-        string_value[i] = '0' + (i % 10);
-      }
-      rosidl_generator_c__String__assignn(&msg->string_value, string_value, sizeof(string_value));
       break;
   }
 }
 
 template<>
-void verify_message(test_msgs__msg__Primitives & message, size_t msg_num)
+void verify_message(test_msgs__msg__BasicTypes & message, size_t msg_num)
 {
-  test_msgs__msg__Primitives expected_msg;
+  test_msgs__msg__BasicTypes expected_msg;
   get_message(&expected_msg, msg_num);
   EXPECT_EQ(expected_msg.bool_value, message.bool_value);
   EXPECT_EQ(expected_msg.byte_value, message.byte_value);
@@ -361,14 +351,71 @@ void verify_message(test_msgs__msg__Primitives & message, size_t msg_num)
   EXPECT_EQ(expected_msg.uint32_value, message.uint32_value);
   EXPECT_EQ(expected_msg.int64_value, message.int64_value);
   EXPECT_EQ(expected_msg.uint64_value, message.uint64_value);
-  EXPECT_EQ(0, strcmp(expected_msg.string_value.data, message.string_value.data));
 }
 
-DEFINE_FINI_MESSAGE(test_msgs__msg__Primitives)
-TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_primitives) {
+DEFINE_FINI_MESSAGE(test_msgs__msg__BasicTypes)
+TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_basic_types) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
-    test_msgs, msg, Primitives);
-  test_message_type<test_msgs__msg__Primitives>("test_primitives", ts, this->context_ptr);
+    test_msgs, msg, BasicTypes);
+  test_message_type<test_msgs__msg__BasicTypes>("test_basic_types", ts, this->context_ptr);
+}
+
+template<>
+size_t get_message_num(test_msgs__msg__Strings * msg)
+{
+  (void)msg;
+  return 3;
+}
+
+template<>
+void init_message(test_msgs__msg__Strings * msg)
+{
+  test_msgs__msg__Strings__init(msg);
+}
+
+template<>
+void get_message(test_msgs__msg__Strings * msg, size_t msg_num)
+{
+  test_msgs__msg__Strings__init(msg);
+  switch (msg_num) {
+    case 0:
+      rosidl_generator_c__String__assign(&msg->string_value, "");
+      rosidl_generator_c__String__assign(&msg->bounded_string_value, "");
+      break;
+    case 1:
+      rosidl_generator_c__String__assign(&msg->string_value, "Hello world!");
+      rosidl_generator_c__String__assign(&msg->bounded_string_value, "Hello world!");
+      break;
+    case 2:
+      char string_value[20000] = {};
+      for (uint32_t i = 0; i < 20000; i++) {
+        string_value[i] = '0' + (i % 10);
+      }
+      char bounded_string_value[22] = {};
+      for (uint32_t i = 0; i < 22; i++) {
+        bounded_string_value[i] = '0' + (i % 10);
+      }
+      rosidl_generator_c__String__assignn(&msg->string_value, string_value, sizeof(string_value));
+      rosidl_generator_c__String__assignn(
+        &msg->bounded_string_value, bounded_string_value, sizeof(bounded_string_value));
+      break;
+  }
+}
+
+template<>
+void verify_message(test_msgs__msg__Strings & message, size_t msg_num)
+{
+  test_msgs__msg__Strings expected_msg;
+  get_message(&expected_msg, msg_num);
+  EXPECT_EQ(0, strcmp(expected_msg.string_value.data, message.string_value.data));
+  EXPECT_EQ(0, strcmp(expected_msg.bounded_string_value.data, message.bounded_string_value.data));
+}
+
+DEFINE_FINI_MESSAGE(test_msgs__msg__Strings)
+TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_strings) {
+  const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
+    test_msgs, msg, Strings);
+  test_message_type<test_msgs__msg__Strings>("test_strings", ts, this->context_ptr);
 }
 
 template<>
@@ -388,13 +435,13 @@ template<>
 void get_message(test_msgs__msg__Nested * msg, size_t msg_num)
 {
   test_msgs__msg__Nested__init(msg);
-  get_message(&msg->primitive_values, msg_num);
+  get_message(&msg->basic_types_value, msg_num);
 }
 
 template<>
 void verify_message(test_msgs__msg__Nested & message, size_t msg_num)
 {
-  verify_message(message.primitive_values, msg_num);
+  verify_message(message.basic_types_value, msg_num);
 }
 
 DEFINE_FINI_MESSAGE(test_msgs__msg__Nested)
@@ -450,22 +497,22 @@ TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_builtins) {
 
 
 template<>
-size_t get_message_num(test_msgs__msg__StaticArrayPrimitives * msg)
+size_t get_message_num(test_msgs__msg__Arrays * msg)
 {
   (void)msg;
   return 1;
 }
 
 template<>
-void init_message(test_msgs__msg__StaticArrayPrimitives * msg)
+void init_message(test_msgs__msg__Arrays * msg)
 {
-  test_msgs__msg__StaticArrayPrimitives__init(msg);
+  test_msgs__msg__Arrays__init(msg);
 }
 
 template<>
-void get_message(test_msgs__msg__StaticArrayPrimitives * msg, size_t msg_num)
+void get_message(test_msgs__msg__Arrays * msg, size_t msg_num)
 {
-  test_msgs__msg__StaticArrayPrimitives__init(msg);
+  test_msgs__msg__Arrays__init(msg);
   if (msg_num == 0) {
     msg->bool_values[0] = false;
     msg->bool_values[1] = true;
@@ -513,9 +560,9 @@ void get_message(test_msgs__msg__StaticArrayPrimitives * msg, size_t msg_num)
 }
 
 template<>
-void verify_message(test_msgs__msg__StaticArrayPrimitives & message, size_t msg_num)
+void verify_message(test_msgs__msg__Arrays & message, size_t msg_num)
 {
-  test_msgs__msg__StaticArrayPrimitives expected_msg;
+  test_msgs__msg__Arrays expected_msg;
   get_message(&expected_msg, msg_num);
   for (size_t i = 0; i < 3; ++i) {
     EXPECT_EQ(expected_msg.bool_values[i], message.bool_values[i]);
@@ -536,73 +583,31 @@ void verify_message(test_msgs__msg__StaticArrayPrimitives & message, size_t msg_
   }
 }
 
-DEFINE_FINI_MESSAGE(test_msgs__msg__StaticArrayPrimitives)
-TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_staticarrayprimitives) {
+DEFINE_FINI_MESSAGE(test_msgs__msg__Arrays)
+TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_arrays) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
-    test_msgs, msg, StaticArrayPrimitives);
-  test_message_type<test_msgs__msg__StaticArrayPrimitives>(
-    "test_staticarrayprimitives", ts, this->context_ptr);
+    test_msgs, msg, Arrays);
+  test_message_type<test_msgs__msg__Arrays>(
+    "test_arrays", ts, this->context_ptr);
 }
 
 template<>
-size_t get_message_num(test_msgs__msg__StaticArrayNested * msg)
-{
-  (void)msg;
-  return 1;
-}
-
-template<>
-void init_message(test_msgs__msg__StaticArrayNested * msg)
-{
-  test_msgs__msg__StaticArrayNested__init(msg);
-}
-
-template<>
-void get_message(test_msgs__msg__StaticArrayNested * msg, size_t msg_num)
-{
-  test_msgs__msg__StaticArrayNested__init(msg);
-  test_msgs__msg__Primitives submsg;
-  if (msg_num == 0) {
-    for (size_t i = 0; i < get_message_num(&submsg); ++i) {
-      get_message(&msg->primitive_values[i], i);
-    }
-  }
-}
-
-template<>
-void verify_message(test_msgs__msg__StaticArrayNested & message, size_t msg_num)
-{
-  (void)msg_num;
-  for (size_t i = 0; i < 4; ++i) {
-    verify_message(message.primitive_values[i], i);
-  }
-}
-
-DEFINE_FINI_MESSAGE(test_msgs__msg__StaticArrayNested)
-TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_staticarraynested) {
-  const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
-    test_msgs, msg, StaticArrayNested);
-  test_message_type<test_msgs__msg__StaticArrayNested>(
-    "test_staticarraynested", ts, this->context_ptr);
-}
-
-template<>
-size_t get_message_num(test_msgs__msg__DynamicArrayPrimitives * msg)
+size_t get_message_num(test_msgs__msg__UnboundedSequences * msg)
 {
   (void)msg;
   return 5;
 }
 
 template<>
-void init_message(test_msgs__msg__DynamicArrayPrimitives * msg)
+void init_message(test_msgs__msg__UnboundedSequences * msg)
 {
-  test_msgs__msg__DynamicArrayPrimitives__init(msg);
+  test_msgs__msg__UnboundedSequences__init(msg);
 }
 
 template<>
-void get_message(test_msgs__msg__DynamicArrayPrimitives * msg, size_t msg_num)
+void get_message(test_msgs__msg__UnboundedSequences * msg, size_t msg_num)
 {
-  test_msgs__msg__DynamicArrayPrimitives__init(msg);
+  test_msgs__msg__UnboundedSequences__init(msg);
   const size_t size = 2000;
   switch (msg_num) {
     case 0:
@@ -620,7 +625,7 @@ void get_message(test_msgs__msg__DynamicArrayPrimitives * msg, size_t msg_num)
       rosidl_generator_c__int64__Sequence__init(&msg->int64_values, 0);
       rosidl_generator_c__uint64__Sequence__init(&msg->uint64_values, 0);
       rosidl_generator_c__String__Sequence__init(&msg->string_values, 0);
-      msg->check = 0;
+      msg->alignment_check = 0;
       break;
     case 1:
       rosidl_generator_c__bool__Sequence__init(&msg->bool_values, 1);
@@ -652,7 +657,7 @@ void get_message(test_msgs__msg__DynamicArrayPrimitives * msg, size_t msg_num)
       msg->int64_values.data[0] = (std::numeric_limits<int64_t>::max)();
       msg->uint64_values.data[0] = (std::numeric_limits<uint64_t>::max)();
       rosidl_generator_c__String__assign(&msg->string_values.data[0], "max value");
-      msg->check = 1;
+      msg->alignment_check = 1;
       break;
     case 2:
       rosidl_generator_c__bool__Sequence__init(&msg->bool_values, 2);
@@ -705,7 +710,7 @@ void get_message(test_msgs__msg__DynamicArrayPrimitives * msg, size_t msg_num)
       rosidl_generator_c__String__assign(&msg->string_values.data[0], "");
       rosidl_generator_c__String__assign(&msg->string_values.data[1], "max value");
       rosidl_generator_c__String__assign(&msg->string_values.data[2], "optional min value");
-      msg->check = 2;
+      msg->alignment_check = 2;
       break;
     case 3:
       rosidl_generator_c__bool__Sequence__init(&msg->bool_values, size);
@@ -744,7 +749,7 @@ void get_message(test_msgs__msg__DynamicArrayPrimitives * msg, size_t msg_num)
         snprintf(tmpstr, sizeof(tmpstr), "%zu", i);
         rosidl_generator_c__String__assign(&msg->string_values.data[i], tmpstr);
       }
-      msg->check = 3;
+      msg->alignment_check = 3;
       break;
     case 4:
       rosidl_generator_c__bool__Sequence__init(&msg->bool_values, 0);
@@ -761,15 +766,15 @@ void get_message(test_msgs__msg__DynamicArrayPrimitives * msg, size_t msg_num)
       rosidl_generator_c__int64__Sequence__init(&msg->int64_values, 0);
       rosidl_generator_c__uint64__Sequence__init(&msg->uint64_values, 0);
       rosidl_generator_c__String__Sequence__init(&msg->string_values, 0);
-      msg->check = 4;
+      msg->alignment_check = 4;
       break;
   }
 }
 
 template<>
-void verify_message(test_msgs__msg__DynamicArrayPrimitives & message, size_t msg_num)
+void verify_message(test_msgs__msg__UnboundedSequences & message, size_t msg_num)
 {
-  test_msgs__msg__DynamicArrayPrimitives expected_msg;
+  test_msgs__msg__UnboundedSequences expected_msg;
   get_message(&expected_msg, msg_num);
   for (size_t i = 0; i < expected_msg.bool_values.size; ++i) {
     EXPECT_EQ(expected_msg.bool_values.data[i],
@@ -829,107 +834,31 @@ void verify_message(test_msgs__msg__DynamicArrayPrimitives & message, size_t msg
   }
 }
 
-DEFINE_FINI_MESSAGE(test_msgs__msg__DynamicArrayPrimitives)
-TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_dynamicarrayprimitives) {
+DEFINE_FINI_MESSAGE(test_msgs__msg__UnboundedSequences)
+TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_unbounded_sequences) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
-    test_msgs, msg, DynamicArrayPrimitives);
-  test_message_type<test_msgs__msg__DynamicArrayPrimitives>(
-    "test_dynamicarrayprimitives", ts, this->context_ptr);
+    test_msgs, msg, UnboundedSequences);
+  test_message_type<test_msgs__msg__UnboundedSequences>(
+    "test_unbounded_sequences", ts, this->context_ptr);
 }
 
 template<>
-size_t get_message_num(test_msgs__msg__DynamicArrayNested * msg)
-{
-  (void)msg;
-  return 1;
-}
-
-template<>
-void init_message(test_msgs__msg__DynamicArrayNested * msg)
-{
-  test_msgs__msg__DynamicArrayNested__init(msg);
-}
-
-template<>
-void get_message(test_msgs__msg__DynamicArrayNested * msg, size_t msg_num)
-{
-  test_msgs__msg__Primitives submsg;
-  const size_t size = get_message_num(&submsg);
-  test_msgs__msg__DynamicArrayNested__init(msg);
-  test_msgs__msg__Primitives__Sequence__init(&msg->primitive_values, size);
-  switch (msg_num) {
-    case 0:
-      for (size_t i = 0; i < size; ++i) {
-        get_message(&msg->primitive_values.data[i], i);
-      }
-      break;
-  }
-}
-
-template<>
-void verify_message(test_msgs__msg__DynamicArrayNested & message, size_t msg_num)
-{
-  test_msgs__msg__DynamicArrayNested expected_msg;
-  get_message(&expected_msg, msg_num);
-
-  for (size_t i = 0; i < expected_msg.primitive_values.size; ++i) {
-    EXPECT_EQ(expected_msg.primitive_values.data[i].bool_value,
-      message.primitive_values.data[i].bool_value);
-    EXPECT_EQ(expected_msg.primitive_values.data[i].byte_value,
-      message.primitive_values.data[i].byte_value);
-    EXPECT_EQ(expected_msg.primitive_values.data[i].char_value,
-      message.primitive_values.data[i].char_value);
-    EXPECT_FLOAT_EQ(expected_msg.primitive_values.data[i].float32_value,
-      message.primitive_values.data[i].float32_value);
-    EXPECT_DOUBLE_EQ(expected_msg.primitive_values.data[i].float64_value,
-      message.primitive_values.data[i].float64_value);
-    EXPECT_EQ(expected_msg.primitive_values.data[i].int8_value,
-      message.primitive_values.data[i].int8_value);
-    EXPECT_EQ(expected_msg.primitive_values.data[i].uint8_value,
-      message.primitive_values.data[i].uint8_value);
-    EXPECT_EQ(expected_msg.primitive_values.data[i].int16_value,
-      message.primitive_values.data[i].int16_value);
-    EXPECT_EQ(expected_msg.primitive_values.data[i].uint16_value,
-      message.primitive_values.data[i].uint16_value);
-    EXPECT_EQ(expected_msg.primitive_values.data[i].int32_value,
-      message.primitive_values.data[i].int32_value);
-    EXPECT_EQ(expected_msg.primitive_values.data[i].uint32_value,
-      message.primitive_values.data[i].uint32_value);
-    EXPECT_EQ(expected_msg.primitive_values.data[i].int64_value,
-      message.primitive_values.data[i].int64_value);
-    EXPECT_EQ(expected_msg.primitive_values.data[i].uint64_value,
-      message.primitive_values.data[i].uint64_value);
-    EXPECT_EQ(0, strcmp(message.primitive_values.data[i].string_value.data,
-      expected_msg.primitive_values.data[i].string_value.data));
-  }
-}
-
-DEFINE_FINI_MESSAGE(test_msgs__msg__DynamicArrayNested)
-TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_dynamicarraynested) {
-  const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
-    test_msgs, msg, DynamicArrayNested);
-  test_message_type<test_msgs__msg__DynamicArrayNested>(
-    "test_dynamicarraynested", ts, this->context_ptr);
-}
-
-
-template<>
-size_t get_message_num(test_msgs__msg__BoundedArrayPrimitives * msg)
+size_t get_message_num(test_msgs__msg__BoundedSequences * msg)
 {
   (void)msg;
   return 5;
 }
 
 template<>
-void init_message(test_msgs__msg__BoundedArrayPrimitives * msg)
+void init_message(test_msgs__msg__BoundedSequences * msg)
 {
-  test_msgs__msg__BoundedArrayPrimitives__init(msg);
+  test_msgs__msg__BoundedSequences__init(msg);
 }
 
 template<>
-void get_message(test_msgs__msg__BoundedArrayPrimitives * msg, size_t msg_num)
+void get_message(test_msgs__msg__BoundedSequences * msg, size_t msg_num)
 {
-  test_msgs__msg__BoundedArrayPrimitives__init(msg);
+  test_msgs__msg__BoundedSequences__init(msg);
   switch (msg_num) {
     case 0:
       rosidl_generator_c__bool__Sequence__init(&msg->bool_values, 3);
@@ -989,7 +918,7 @@ void get_message(test_msgs__msg__BoundedArrayPrimitives * msg, size_t msg_num)
       rosidl_generator_c__String__assign(&msg->string_values.data[0], "");
       rosidl_generator_c__String__assign(&msg->string_values.data[1], "max value");
       rosidl_generator_c__String__assign(&msg->string_values.data[2], "optional min value");
-      msg->check = 2;
+      msg->alignment_check = 2;
       break;
     case 1:
       rosidl_generator_c__bool__Sequence__init(&msg->bool_values, 0);
@@ -1006,15 +935,15 @@ void get_message(test_msgs__msg__BoundedArrayPrimitives * msg, size_t msg_num)
       rosidl_generator_c__int64__Sequence__init(&msg->int64_values, 0);
       rosidl_generator_c__uint64__Sequence__init(&msg->uint64_values, 0);
       rosidl_generator_c__String__Sequence__init(&msg->string_values, 0);
-      msg->check = 4;
+      msg->alignment_check = 4;
       break;
   }
 }
 
 template<>
-void verify_message(test_msgs__msg__BoundedArrayPrimitives & message, size_t msg_num)
+void verify_message(test_msgs__msg__BoundedSequences & message, size_t msg_num)
 {
-  test_msgs__msg__BoundedArrayPrimitives expected_msg;
+  test_msgs__msg__BoundedSequences expected_msg;
   get_message(&expected_msg, msg_num);
   for (size_t i = 0; i < expected_msg.bool_values.size; ++i) {
     EXPECT_EQ(expected_msg.bool_values.data[i],
@@ -1074,135 +1003,100 @@ void verify_message(test_msgs__msg__BoundedArrayPrimitives & message, size_t msg
   }
 }
 
-DEFINE_FINI_MESSAGE(test_msgs__msg__BoundedArrayPrimitives)
-TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_boundedarrayprimitives) {
+DEFINE_FINI_MESSAGE(test_msgs__msg__BoundedSequences)
+TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_bounded_sequences) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
-    test_msgs, msg, BoundedArrayPrimitives);
-  test_message_type<test_msgs__msg__BoundedArrayPrimitives>(
-    "test_boundedarrayprimitives", ts, this->context_ptr);
+    test_msgs, msg, BoundedSequences);
+  test_message_type<test_msgs__msg__BoundedSequences>(
+    "test_bounded_sequences", ts, this->context_ptr);
 }
 
 template<>
-size_t get_message_num(test_msgs__msg__BoundedArrayNested * msg)
+size_t get_message_num(test_msgs__msg__MultiNested * msg)
 {
   (void)msg;
   return 1;
 }
 
-
 template<>
-void init_message(test_msgs__msg__BoundedArrayNested * msg)
+void init_message(test_msgs__msg__MultiNested * msg)
 {
-  test_msgs__msg__BoundedArrayNested__init(msg);
+  test_msgs__msg__MultiNested__init(msg);
 }
 
 template<>
-void get_message(test_msgs__msg__BoundedArrayNested * msg, size_t msg_num)
+void get_message(test_msgs__msg__MultiNested * msg, size_t msg_num)
 {
-  test_msgs__msg__Primitives submsg;
-  const size_t size = get_message_num(&submsg);
-  test_msgs__msg__BoundedArrayNested__init(msg);
-  test_msgs__msg__Primitives__Sequence__init(&msg->primitive_values, size);
-  switch (msg_num) {
-    case 0:
-      for (size_t i = 0; i < size; ++i) {
-        get_message(&msg->primitive_values.data[i], i);
-      }
-      break;
+  size_t i;
+  test_msgs__msg__MultiNested__init(msg);
+  test_msgs__msg__Arrays arrays;
+  test_msgs__msg__BoundedSequences bounded_sequences;
+  test_msgs__msg__UnboundedSequences unbounded_sequences;
+  size_t num_arrays = get_message_num(&arrays);
+  size_t num_bounded_sequences = get_message_num(&bounded_sequences);
+  size_t num_unbounded_sequences = get_message_num(&unbounded_sequences);
+  if (msg_num == 0u) {
+    // Size of all arrays and sequences in the message
+    const size_t size = 3u;
+    test_msgs__msg__Arrays__Sequence__init(&msg->bounded_sequence_of_arrays, size);
+    test_msgs__msg__BoundedSequences__Sequence__init(
+      &msg->bounded_sequence_of_bounded_sequences, size);
+    test_msgs__msg__UnboundedSequences__Sequence__init(
+      &msg->bounded_sequence_of_unbounded_sequences, size);
+    test_msgs__msg__Arrays__Sequence__init(&msg->unbounded_sequence_of_arrays, size);
+    test_msgs__msg__BoundedSequences__Sequence__init(
+      &msg->unbounded_sequence_of_bounded_sequences, size);
+    test_msgs__msg__UnboundedSequences__Sequence__init(
+      &msg->unbounded_sequence_of_unbounded_sequences, size);
+    for (i = 0u; i < size; ++i) {
+      get_message(&msg->array_of_arrays[i], i % num_arrays);
+      get_message(&msg->array_of_bounded_sequences[i], i % num_bounded_sequences);
+      get_message(&msg->array_of_unbounded_sequences[i], i % num_unbounded_sequences);
+      get_message(&msg->bounded_sequence_of_arrays.data[i], i % num_arrays);
+      get_message(&msg->bounded_sequence_of_bounded_sequences.data[i], i % num_bounded_sequences);
+      get_message(
+        &msg->bounded_sequence_of_unbounded_sequences.data[i], i % num_unbounded_sequences);
+      get_message(&msg->unbounded_sequence_of_arrays.data[i], i % num_arrays);
+      get_message(
+        &msg->unbounded_sequence_of_bounded_sequences.data[i], i % num_bounded_sequences);
+      get_message(
+        &msg->unbounded_sequence_of_unbounded_sequences.data[i], i % num_unbounded_sequences);
+    }
   }
 }
 
 template<>
-void verify_message(test_msgs__msg__BoundedArrayNested & message, size_t msg_num)
+void verify_message(test_msgs__msg__MultiNested & message, size_t msg_num)
 {
-  test_msgs__msg__BoundedArrayNested expected_msg;
-  get_message(&expected_msg, msg_num);
-
-  for (size_t i = 0; i < expected_msg.primitive_values.size; ++i) {
-    EXPECT_EQ(expected_msg.primitive_values.data[i].bool_value,
-      message.primitive_values.data[i].bool_value);
-    EXPECT_EQ(expected_msg.primitive_values.data[i].byte_value,
-      message.primitive_values.data[i].byte_value);
-    EXPECT_EQ(expected_msg.primitive_values.data[i].char_value,
-      message.primitive_values.data[i].char_value);
-    EXPECT_FLOAT_EQ(expected_msg.primitive_values.data[i].float32_value,
-      message.primitive_values.data[i].float32_value);
-    EXPECT_DOUBLE_EQ(expected_msg.primitive_values.data[i].float64_value,
-      message.primitive_values.data[i].float64_value);
-    EXPECT_EQ(expected_msg.primitive_values.data[i].int8_value,
-      message.primitive_values.data[i].int8_value);
-    EXPECT_EQ(expected_msg.primitive_values.data[i].uint8_value,
-      message.primitive_values.data[i].uint8_value);
-    EXPECT_EQ(expected_msg.primitive_values.data[i].int16_value,
-      message.primitive_values.data[i].int16_value);
-    EXPECT_EQ(expected_msg.primitive_values.data[i].uint16_value,
-      message.primitive_values.data[i].uint16_value);
-    EXPECT_EQ(expected_msg.primitive_values.data[i].int32_value,
-      message.primitive_values.data[i].int32_value);
-    EXPECT_EQ(expected_msg.primitive_values.data[i].uint32_value,
-      message.primitive_values.data[i].uint32_value);
-    EXPECT_EQ(expected_msg.primitive_values.data[i].int64_value,
-      message.primitive_values.data[i].int64_value);
-    EXPECT_EQ(expected_msg.primitive_values.data[i].uint64_value,
-      message.primitive_values.data[i].uint64_value);
-    EXPECT_EQ(0, strcmp(message.primitive_values.data[i].string_value.data,
-      expected_msg.primitive_values.data[i].string_value.data));
+  (void)msg_num;
+  test_msgs__msg__Arrays arrays;
+  test_msgs__msg__BoundedSequences bounded_sequences;
+  test_msgs__msg__UnboundedSequences unbounded_sequences;
+  size_t num_arrays = get_message_num(&arrays);
+  size_t num_bounded_sequences = get_message_num(&bounded_sequences);
+  size_t num_unbounded_sequences = get_message_num(&unbounded_sequences);
+  const size_t size = 3u;
+  for (size_t i = 0; i < size; ++i) {
+    verify_message(message.array_of_arrays[i], i % num_arrays);
+    verify_message(message.array_of_bounded_sequences[i], i % num_bounded_sequences);
+    verify_message(message.array_of_unbounded_sequences[i], i % num_unbounded_sequences);
+    verify_message(message.bounded_sequence_of_arrays.data[i], i % num_arrays);
+    verify_message(
+      message.bounded_sequence_of_bounded_sequences.data[i], i % num_bounded_sequences);
+    verify_message(
+      message.bounded_sequence_of_unbounded_sequences.data[i], i % num_unbounded_sequences);
+    verify_message(message.unbounded_sequence_of_arrays.data[i], i % num_arrays);
+    verify_message(
+      message.unbounded_sequence_of_bounded_sequences.data[i], i % num_bounded_sequences);
+    verify_message(
+      message.unbounded_sequence_of_unbounded_sequences.data[i], i % num_unbounded_sequences);
   }
 }
 
-DEFINE_FINI_MESSAGE(test_msgs__msg__BoundedArrayNested)
-TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_boundedarraynested) {
+DEFINE_FINI_MESSAGE(test_msgs__msg__MultiNested)
+TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_multi_nested) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
-    test_msgs, msg, BoundedArrayNested);
-  test_message_type<test_msgs__msg__BoundedArrayNested>(
-    "test_boundedarraynested", ts, this->context_ptr);
-}
-
-template<>
-size_t get_message_num(test_msgs__msg__DynamicArrayPrimitivesNested * msg)
-{
-  (void)msg;
-  return 1;
-}
-
-
-template<>
-void init_message(test_msgs__msg__DynamicArrayPrimitivesNested * msg)
-{
-  test_msgs__msg__DynamicArrayPrimitivesNested__init(msg);
-}
-
-template<>
-void get_message(test_msgs__msg__DynamicArrayPrimitivesNested * msg, size_t msg_num)
-{
-  test_msgs__msg__DynamicArrayPrimitives submsg;
-  const size_t size = get_message_num(&submsg);
-  test_msgs__msg__DynamicArrayPrimitivesNested__init(msg);
-  test_msgs__msg__DynamicArrayPrimitives__Sequence__init(
-    &msg->dynamic_array_primitive_values, size);
-  switch (msg_num) {
-    case 0:
-      for (size_t i = 0; i < size; ++i) {
-        get_message(&msg->dynamic_array_primitive_values.data[i], i);
-      }
-      break;
-  }
-}
-
-template<>
-void verify_message(test_msgs__msg__DynamicArrayPrimitivesNested & message, size_t msg_num)
-{
-  test_msgs__msg__DynamicArrayPrimitivesNested expected_msg;
-  get_message(&expected_msg, msg_num);
-  for (size_t i = 0; i < expected_msg.dynamic_array_primitive_values.size; ++i) {
-    verify_message(message.dynamic_array_primitive_values.data[i], i);
-  }
-}
-
-DEFINE_FINI_MESSAGE(test_msgs__msg__DynamicArrayPrimitivesNested)
-TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_dynamicarraynestedprimitives) {
-  const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
-    test_msgs, msg, DynamicArrayPrimitivesNested);
-  test_message_type<test_msgs__msg__DynamicArrayPrimitivesNested>(
-    "test_dynamicarraynestedprimitives", ts, this->context_ptr);
+    test_msgs, msg, MultiNested);
+  test_message_type<test_msgs__msg__MultiNested>(
+    "test_multi_nested", ts, this->context_ptr);
 }

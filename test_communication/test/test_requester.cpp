@@ -116,9 +116,9 @@ int main(int argc, char ** argv)
   if (service == "Empty") {
     rc = request<test_msgs::srv::Empty>(
       node, service, get_services_empty());
-  } else if (service == "Primitives") {
-    rc = request<test_msgs::srv::Primitives>(
-      node, service, get_services_primitives());
+  } else if (service == "BasicTypes") {
+    rc = request<test_msgs::srv::BasicTypes>(
+      node, service, get_services_basic_types());
   } else {
     fprintf(stderr, "Unknown service argument '%s'\n", service.c_str());
     rclcpp::shutdown();
