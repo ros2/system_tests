@@ -555,6 +555,9 @@ void get_message(test_msgs__msg__Arrays * msg, size_t msg_num)
     msg->uint64_values[0] = 0;
     msg->uint64_values[1] = (std::numeric_limits<uint64_t>::max)();
     msg->uint64_values[2] = 0;
+    get_message(&msg->basic_types_values[0], 0);
+    get_message(&msg->basic_types_values[1], 0);
+    get_message(&msg->basic_types_values[2], 0);
     rosidl_generator_c__String__assign(&msg->string_values[0], "");
     rosidl_generator_c__String__assign(&msg->string_values[1], "max value");
     rosidl_generator_c__String__assign(&msg->string_values[2], "min value");
