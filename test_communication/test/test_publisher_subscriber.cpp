@@ -128,6 +128,7 @@ int main(int argc, char ** argv)
   auto messages_constants = get_messages_constants();
   auto messages_defaults = get_messages_defaults();
   auto messages_strings = get_messages_strings();
+  auto messages_wstrings = get_messages_wstrings();
 
   std::thread spin_thread([node]() {
       rclcpp::spin(node);
@@ -180,6 +181,10 @@ int main(int argc, char ** argv)
     subscriber = subscribe<test_msgs::msg::Strings>(
       node, message, messages_strings, received_messages);
     publish<test_msgs::msg::Strings>(node, message, messages_strings);
+  } else if (message == "WStrings") {
+    subscriber = subscribe<test_msgs::msg::WStrings>(
+      node, message, messages_wstrings, received_messages);
+    publish<test_msgs::msg::WStrings>(node, message, messages_wstrings);
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
     return 1;
