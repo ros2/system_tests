@@ -97,6 +97,7 @@ int main(int argc, char ** argv)
   auto messages_constants = get_messages_constants();
   auto messages_defaults = get_messages_defaults();
   auto messages_strings = get_messages_strings();
+  auto messages_wstrings = get_messages_wstrings();
 
   rclcpp::SubscriptionBase::SharedPtr subscriber;
   std::vector<bool> received_messages;  // collect flags about received messages
@@ -133,6 +134,9 @@ int main(int argc, char ** argv)
   } else if (message == "Strings") {
     subscriber = subscribe<test_msgs::msg::Strings>(
       node, message, messages_strings, received_messages);
+  } else if (message == "WStrings") {
+    subscriber = subscribe<test_msgs::msg::WStrings>(
+      node, message, messages_wstrings, received_messages);
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
     rclcpp::shutdown();
