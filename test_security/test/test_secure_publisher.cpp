@@ -88,30 +88,33 @@ int main(int argc, char ** argv)
   if (message == "Empty") {
     ret = attempt_publish<test_msgs::msg::Empty>(
       node, topic_name, get_messages_empty());
-  } else if (message == "Primitives") {
-    ret = attempt_publish<test_msgs::msg::Primitives>(
-      node, topic_name, get_messages_primitives());
-  } else if (message == "StaticArrayPrimitives") {
-    ret = attempt_publish<test_msgs::msg::StaticArrayPrimitives>(
-      node, topic_name, get_messages_static_array_primitives());
-  } else if (message == "DynamicArrayPrimitives") {
-    ret = attempt_publish<test_msgs::msg::DynamicArrayPrimitives>(
-      node, topic_name, get_messages_dynamic_array_primitives());
-  } else if (message == "BoundedArrayPrimitives") {
-    ret = attempt_publish<test_msgs::msg::BoundedArrayPrimitives>(
-      node, topic_name, get_messages_bounded_array_primitives());
+  } else if (message == "BasicTypes") {
+    ret = attempt_publish<test_msgs::msg::BasicTypes>(
+      node, topic_name, get_messages_basic_types());
+  } else if (message == "Arrays") {
+    ret = attempt_publish<test_msgs::msg::Arrays>(
+      node, topic_name, get_messages_arrays());
+  } else if (message == "UnboundedSequences") {
+    ret = attempt_publish<test_msgs::msg::UnboundedSequences>(
+      node, topic_name, get_messages_unbounded_sequences());
+  } else if (message == "BoundedSequences") {
+    ret = attempt_publish<test_msgs::msg::BoundedSequences>(
+      node, topic_name, get_messages_bounded_sequences());
   } else if (message == "Nested") {
     ret = attempt_publish<test_msgs::msg::Nested>(
       node, topic_name, get_messages_nested());
-  } else if (message == "DynamicArrayNested") {
-    ret = attempt_publish<test_msgs::msg::DynamicArrayNested>(
-      node, topic_name, get_messages_dynamic_array_nested());
-  } else if (message == "BoundedArrayNested") {
-    ret = attempt_publish<test_msgs::msg::BoundedArrayNested>(
-      node, topic_name, get_messages_bounded_array_nested());
-  } else if (message == "StaticArrayNested") {
-    ret = attempt_publish<test_msgs::msg::StaticArrayNested>(
-      node, topic_name, get_messages_static_array_nested());
+  } else if (message == "MultiNested") {
+    ret = attempt_publish<test_msgs::msg::MultiNested>(
+      node, topic_name, get_messages_multi_nested());
+  } else if (message == "Strings") {
+    ret = attempt_publish<test_msgs::msg::Strings>(
+      node, topic_name, get_messages_strings());
+  } else if (message == "Constants") {
+    ret = attempt_publish<test_msgs::msg::Constants>(
+      node, topic_name, get_messages_constants());
+  } else if (message == "Defaults") {
+    ret = attempt_publish<test_msgs::msg::Defaults>(
+      node, topic_name, get_messages_defaults());
   } else if (message == "Builtins") {
     ret = attempt_publish<test_msgs::msg::Builtins>(
       node, topic_name, get_messages_builtins());

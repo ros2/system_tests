@@ -27,7 +27,7 @@ int main(int argc, char ** argv)
   }
 
   int num_nodes = ::strtol(argv[1], nullptr, 10);
-
+  std::string node_to_look_for("/node_with_name");
   printf("Waiting for %d nodes with name: node_with_name_N\n", num_nodes);
   std::cout.flush();
 
@@ -40,12 +40,10 @@ int main(int argc, char ** argv)
   int counter = 0;
   const std::chrono::steady_clock::time_point max_runtime =
     std::chrono::steady_clock::now() + std::chrono::seconds(10);
-  std::string node_to_look_for("node_with_name");
+
   while (rclcpp::ok()) {
-    printf("\n");
     auto names = node->get_node_graph_interface()->get_node_names();
     for (auto it : names) {
-      printf("- %s\n", it.c_str());
       if (it.compare(0, node_to_look_for.length(), node_to_look_for) == 0) {
         counter++;
       }
@@ -64,6 +62,7 @@ int main(int argc, char ** argv)
   rclcpp::shutdown();
   if (counter < num_nodes) {
     fprintf(stderr, "Did not find all %d nodes\n", num_nodes);
+    fprintf(stderr, "Found %d nodes\n", counter);
     return 1;
   }
   return 0;

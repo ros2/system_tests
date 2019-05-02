@@ -27,7 +27,9 @@ int main(int argc, char ** argv)
       stderr, "Must pass at least one argument with the expected node name\n");
     return 1;
   }
-  printf("Waiting for node with name: %s\n", argv[1]);
+  std::string name_to_find(argv[1]);
+  name_to_find = "/" + name_to_find;
+  printf("Waiting for node with name: %s\n", name_to_find.c_str());
   std::cout.flush();
 
   auto node_name = std::string("node_name_list");
@@ -40,11 +42,10 @@ int main(int argc, char ** argv)
   const std::chrono::steady_clock::time_point max_runtime =
     std::chrono::steady_clock::now() + 10s;
   while (rc && rclcpp::ok()) {
-    printf("\n");
     auto names = node->get_node_graph_interface()->get_node_names();
     for (auto it : names) {
       printf("- %s\n", it.c_str());
-      if (argc >= 2 && it == argv[1]) {
+      if (argc >= 2 && it.compare(name_to_find) == 0) {
         printf("  found expected node name\n");
         rc = 0;
       }
