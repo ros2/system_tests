@@ -851,7 +851,7 @@ template<>
 size_t get_message_num(test_msgs__msg__BoundedSequences * msg)
 {
   (void)msg;
-  return 5;
+  return 2;
 }
 
 template<>
