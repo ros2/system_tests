@@ -20,7 +20,8 @@ import rclpy
 def main(argv=sys.argv):
     rclpy.init(args=argv)
 
-    node = rclpy.create_node('initial_params_node', namespace='/')
+    node = rclpy.create_node(
+        'initial_params_node', namespace='/', allow_undeclared_parameters=True)
     rclpy.spin(node)
 
     rclpy.shutdown()
