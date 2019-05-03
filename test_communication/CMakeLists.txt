@@ -168,11 +168,29 @@ if(BUILD_TESTING)
       set(SKIP_TEST "SKIP_TEST")
     endif()
 
+    set(rmw_implementation1_is_opensplice FALSE)
+    set(rmw_implementation2_is_opensplice FALSE)
+    if(rmw_implementation1 MATCHES "(.*)opensplice(.*)")
+      set(rmw_implementation1_is_opensplice TRUE)
+    endif()
+    if(rmw_implementation2 MATCHES "(.*)opensplice(.*)")
+      set(rmw_implementation2_is_opensplice TRUE)
+    endif()
+
     set(PUBLISHER_RMW ${rmw_implementation1})
     set(SUBSCRIBER_RMW ${rmw_implementation2})
     set(TEST_MESSAGE_TYPES "")
     foreach(message_file ${message_files})
       get_filename_component(message_type "${message_file}" NAME_WE)
+      # TODO(dirk-thomas) OpenSplice doesn't support WString and the rmw impl.
+      # maps it to string which has a different wire representation
+      if(
+        "${message_type}" STREQUAL "WStrings" AND
+        (rmw_implementation1_is_opensplice OR rmw_implementation2_is_opensplice) AND
+        NOT "${rmw_implementation1_is_opensplice}" STREQUAL "${rmw_implementation2_is_opensplice}"
+      )
+        continue()
+      endif()
       list(APPEND TEST_MESSAGE_TYPES "${message_type}")
     endforeach()
     configure_file(
