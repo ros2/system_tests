@@ -32,6 +32,8 @@
 #include "test_msgs/msg/basic_types.h"
 #include "test_msgs/msg/bounded_sequences.h"
 #include "test_msgs/msg/builtins.h"
+#include "test_msgs/msg/constants.h"
+#include "test_msgs/msg/defaults.h"
 #include "test_msgs/msg/empty.h"
 #include "test_msgs/msg/multi_nested.h"
 #include "test_msgs/msg/nested.h"
@@ -363,6 +365,135 @@ TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_basic_types) {
 }
 
 template<>
+size_t get_message_num(test_msgs__msg__Constants * msg)
+{
+  (void)msg;
+  return 1;
+}
+
+template<>
+void init_message(test_msgs__msg__Constants * msg)
+{
+  test_msgs__msg__Constants__init(msg);
+}
+
+template<>
+void get_message(test_msgs__msg__Constants * msg, size_t msg_num)
+{
+  test_msgs__msg__Constants__init(msg);
+  (void)msg_num;
+}
+
+template<>
+void verify_message(test_msgs__msg__Constants & message, size_t msg_num)
+{
+  (void)message;
+  (void)msg_num;
+  EXPECT_EQ(test_msgs__msg__Constants__BOOL_CONST, true);
+  EXPECT_EQ(test_msgs__msg__Constants__BYTE_CONST, 50);
+  EXPECT_EQ(test_msgs__msg__Constants__CHAR_CONST, 100);
+  EXPECT_FLOAT_EQ(test_msgs__msg__Constants__FLOAT32_CONST, 1.125);
+  EXPECT_DOUBLE_EQ(test_msgs__msg__Constants__FLOAT64_CONST, 1.125);
+  EXPECT_EQ(test_msgs__msg__Constants__INT8_CONST, -50);
+  EXPECT_EQ(test_msgs__msg__Constants__UINT8_CONST, 200u);
+  EXPECT_EQ(test_msgs__msg__Constants__INT16_CONST, -1000);
+  EXPECT_EQ(test_msgs__msg__Constants__UINT16_CONST, 2000u);
+  EXPECT_EQ(test_msgs__msg__Constants__INT32_CONST, -30000);
+  EXPECT_EQ(test_msgs__msg__Constants__UINT32_CONST, 60000u);
+  EXPECT_EQ(test_msgs__msg__Constants__INT64_CONST, -40000000);
+  EXPECT_EQ(test_msgs__msg__Constants__UINT64_CONST, 50000000u);
+}
+
+DEFINE_FINI_MESSAGE(test_msgs__msg__Constants)
+TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_constants) {
+  const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
+    test_msgs, msg, Constants);
+  test_message_type<test_msgs__msg__Constants>("test_constants", ts, this->context_ptr);
+}
+
+template<>
+size_t get_message_num(test_msgs__msg__Defaults * msg)
+{
+  (void)msg;
+  return 1;
+}
+
+template<>
+void init_message(test_msgs__msg__Defaults * msg)
+{
+  test_msgs__msg__Defaults__init(msg);
+}
+
+template<>
+void get_message(test_msgs__msg__Defaults * msg, size_t msg_num)
+{
+  test_msgs__msg__Defaults__init(msg);
+  (void)msg_num;
+}
+
+template<>
+void verify_message(test_msgs__msg__Defaults & message, size_t msg_num)
+{
+  (void)message;
+  test_msgs__msg__Defaults expected_msg;
+  get_message(&expected_msg, msg_num);
+  EXPECT_EQ(expected_msg.bool_value, true);
+  EXPECT_EQ(expected_msg.byte_value, 50);
+  EXPECT_EQ(expected_msg.char_value, 100);
+  EXPECT_FLOAT_EQ(expected_msg.float32_value, 1.125);
+  EXPECT_DOUBLE_EQ(expected_msg.float64_value, 1.125);
+  EXPECT_EQ(expected_msg.int8_value, -50);
+  EXPECT_EQ(expected_msg.uint8_value, 200u);
+  EXPECT_EQ(expected_msg.int16_value, -1000);
+  EXPECT_EQ(expected_msg.uint16_value, 2000u);
+  EXPECT_EQ(expected_msg.int32_value, -30000);
+  EXPECT_EQ(expected_msg.uint32_value, 60000u);
+  EXPECT_EQ(expected_msg.int64_value, -40000000);
+  EXPECT_EQ(expected_msg.uint64_value, 50000000u);
+}
+
+DEFINE_FINI_MESSAGE(test_msgs__msg__Defaults)
+TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_defaults) {
+  const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
+    test_msgs, msg, Defaults);
+  test_message_type<test_msgs__msg__Defaults>("test_defaults", ts, this->context_ptr);
+}
+
+template<>
+size_t get_message_num(test_msgs__msg__Empty * msg)
+{
+  (void)msg;
+  return 1;
+}
+
+template<>
+void init_message(test_msgs__msg__Empty * msg)
+{
+  test_msgs__msg__Empty__init(msg);
+}
+
+template<>
+void get_message(test_msgs__msg__Empty * msg, size_t msg_num)
+{
+  test_msgs__msg__Empty__init(msg);
+  (void)msg_num;
+}
+
+template<>
+void verify_message(test_msgs__msg__Empty & message, size_t msg_num)
+{
+  (void)message;
+  (void)msg_num;
+}
+
+DEFINE_FINI_MESSAGE(test_msgs__msg__Empty)
+TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_empty) {
+  const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
+    test_msgs, msg, Empty);
+  test_message_type<test_msgs__msg__Empty>("test_empty", ts, this->context_ptr);
+}
+
+template<>
 size_t get_message_num(test_msgs__msg__Strings * msg)
 {
   (void)msg;
@@ -555,6 +686,15 @@ void get_message(test_msgs__msg__Arrays * msg, size_t msg_num)
     msg->uint64_values[0] = 0;
     msg->uint64_values[1] = (std::numeric_limits<uint64_t>::max)();
     msg->uint64_values[2] = 0;
+    get_message(&msg->basic_types_values[0], 0);
+    get_message(&msg->basic_types_values[1], 0);
+    get_message(&msg->basic_types_values[2], 0);
+    get_message(&msg->constants_values[0], 0);
+    get_message(&msg->constants_values[1], 0);
+    get_message(&msg->constants_values[2], 0);
+    get_message(&msg->defaults_values[0], 0);
+    get_message(&msg->defaults_values[1], 0);
+    get_message(&msg->defaults_values[2], 0);
     rosidl_generator_c__String__assign(&msg->string_values[0], "");
     rosidl_generator_c__String__assign(&msg->string_values[1], "max value");
     rosidl_generator_c__String__assign(&msg->string_values[2], "min value");
@@ -848,7 +988,7 @@ template<>
 size_t get_message_num(test_msgs__msg__BoundedSequences * msg)
 {
   (void)msg;
-  return 5;
+  return 2;
 }
 
 template<>
