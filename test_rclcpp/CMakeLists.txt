@@ -319,32 +319,16 @@ if(BUILD_TESTING)
   # Parameter tests single implementation
   custom_executable(test_parameters_server_cpp "test/test_parameters_server.cpp")
   custom_gtest_executable(test_remote_parameters_cpp "test/test_remote_parameters.cpp")
-  target_include_directories(test_remote_parameters_cpp
-    PUBLIC ${GTEST_INCLUDE_DIRS})
-  target_link_libraries(test_remote_parameters_cpp
-    ${GTEST_LIBRARIES})
 
   # Service tests single implementation
   custom_executable(test_services_server_cpp "test/test_services_server.cpp")
   custom_gtest_executable(test_services_client_cpp "test/test_services_client.cpp")
-  target_include_directories(test_services_client_cpp
-    PUBLIC ${GTEST_INCLUDE_DIRS})
-  target_link_libraries(test_services_client_cpp
-    ${GTEST_LIBRARIES})
 
   custom_executable(test_client_scope_server_cpp "test/test_client_scope_server.cpp")
   custom_gtest_executable(test_client_scope_client_cpp "test/test_client_scope_client.cpp")
-  target_include_directories(test_client_scope_client_cpp
-    PUBLIC ${GTEST_INCLUDE_DIRS})
-  target_link_libraries(test_client_scope_client_cpp
-    ${GTEST_LIBRARIES})
 
   custom_executable(test_client_scope_consistency_server_cpp "test/test_client_scope_consistency_server.cpp")
   custom_gtest_executable(test_client_scope_consistency_client_cpp "test/test_client_scope_consistency_client.cpp")
-  target_include_directories(test_client_scope_consistency_client_cpp
-    PUBLIC ${GTEST_INCLUDE_DIRS})
-  target_link_libraries(test_client_scope_consistency_client_cpp
-    ${GTEST_LIBRARIES})
 endif()  # BUILD_TESTING
 
 # TODO should not install anything
