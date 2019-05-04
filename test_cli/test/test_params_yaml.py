@@ -33,7 +33,7 @@ CLIENT_LIBRARY_EXECUTABLES = (
 def node_fixture(request):
     """Create a fixture with a node and helper executable."""
     rclpy.init()
-    node = rclpy.create_node('tests_yaml')
+    node = rclpy.create_node('tests_yaml', allow_undeclared_parameters=True)
     try:
         yield {
             'node': node,
