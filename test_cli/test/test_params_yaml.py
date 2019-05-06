@@ -22,7 +22,6 @@ from .utils import HelperCommand
 from .utils import require_environment_variable
 from .utils import TemporaryFileWithContent
 
-
 CLIENT_LIBRARY_EXECUTABLES = (
     require_environment_variable('INITIAL_PARAMS_RCLCPP'),
     require_environment_variable('INITIAL_PARAMS_RCLPY'),
@@ -33,7 +32,10 @@ CLIENT_LIBRARY_EXECUTABLES = (
 def node_fixture(request):
     """Create a fixture with a node and helper executable."""
     rclpy.init()
-    node = rclpy.create_node('tests_yaml', allow_undeclared_parameters=True)
+    node = rclpy.create_node(
+        'tests_yaml',
+        allow_undeclared_parameters=True,
+        automatically_declare_initial_parameters=True)
     try:
         yield {
             'node': node,
