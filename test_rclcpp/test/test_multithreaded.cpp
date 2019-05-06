@@ -79,8 +79,8 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   int subscriptions_size = static_cast<int>(subscriptions.size());
 
   executor.add_node(node);
-  auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
-  msg->data = 0;
+  test_rclcpp::msg::UInt32 msg;
+  msg.data = 0;
 
   // wait a moment for everything to initialize
   test_rclcpp::wait_for_subscriber(node, node_topic_name);
@@ -88,7 +88,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   // sanity check that no callbacks have fired
   EXPECT_EQ(0, counter.load());
 
-  ++msg->data;
+  ++msg.data;
   pub->publish(msg);
 
   // test spin_some
@@ -110,19 +110,19 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
 
   // reset counter
   counter.store(0);
-  msg->data = 0;
+  msg.data = 0;
 
   ASSERT_TRUE(std::numeric_limits<int>::max() > (5 * subscriptions.size()));
   const int expected_count = static_cast<int>(5 * subscriptions.size());
 
   std::mutex publish_mutex;
   auto publish_callback = [
-    msg, &pub, &executor, &counter, &expected_count, &sleep_per_loop, &publish_mutex](
+    &msg, &pub, &executor, &counter, &expected_count, &sleep_per_loop, &publish_mutex](
     rclcpp::TimerBase & timer) -> void
     {
       std::lock_guard<std::mutex> lock(publish_mutex);
-      ++msg->data;
-      if (msg->data > 5) {
+      ++msg.data;
+      if (msg.data > 5) {
         timer.cancel();
         // wait for the last callback to fire before cancelling
         while (counter.load() != expected_count) {
@@ -278,7 +278,6 @@ static inline void multi_access_publisher(bool intra_process)
   const size_t num_messages = 5 * std::min<size_t>(executor.get_number_of_threads(), 16);
   auto pub = node->create_publisher<test_rclcpp::msg::UInt32>(node_topic_name, num_messages);
   // callback groups?
-  auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
 
   std::atomic_uint subscription_counter(0);
   auto sub_callback = [&subscription_counter](const test_rclcpp::msg::UInt32::SharedPtr msg)
@@ -302,9 +301,10 @@ static inline void multi_access_publisher(bool intra_process)
   std::atomic_uint timer_counter(0);
 
   auto timer_callback =
-    [&executor, &pub, &msg, &timer_counter, &subscription_counter, &num_messages](
+    [&executor, &pub, &timer_counter, &subscription_counter, &num_messages](
     rclcpp::TimerBase & timer)
     {
+      auto msg = std::make_unique<test_rclcpp::msg::UInt32>();
       if (timer_counter.load() >= num_messages) {
         timer.cancel();
         // Wait for pending subscription callbacks to trigger.
@@ -316,7 +316,7 @@ static inline void multi_access_publisher(bool intra_process)
       }
       msg->data = ++timer_counter;
       printf("Publishing message %u\n", timer_counter.load());
-      pub->publish(msg);
+      pub->publish(std::move(msg));
     };
   std::vector<rclcpp::TimerBase::SharedPtr> timers;
   // timers will fire simultaneously in each thread

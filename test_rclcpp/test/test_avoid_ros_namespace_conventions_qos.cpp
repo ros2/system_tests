@@ -65,7 +65,7 @@ TEST(
   auto publish_func =
     [](
     rclcpp::Publisher<test_rclcpp::msg::UInt32>::SharedPtr publisher,
-    test_rclcpp::msg::UInt32::SharedPtr msg)
+    test_rclcpp::msg::UInt32 msg)
     {
       publisher->publish(msg);
     };

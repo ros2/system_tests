@@ -45,7 +45,7 @@ int8_t attempt_publish(
     // publish all messages one by one, shorter sleep between each message
     while (rclcpp::ok() && message_index < messages.size()) {
       printf("publishing message #%zu\n", message_index + 1);
-      publisher->publish(messages[message_index]);
+      publisher->publish(*messages[message_index]);
       ++message_index;
       message_rate.sleep();
     }

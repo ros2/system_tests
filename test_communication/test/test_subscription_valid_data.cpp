@@ -15,6 +15,7 @@
 #include <chrono>
 #include <memory>
 #include <string>
+#include <utility>
 
 #include "rclcpp/rclcpp.hpp"
 
@@ -52,9 +53,9 @@ int main(int argc, char ** argv)
     // publish a few messages, all with data > 0
     while (rclcpp::ok() && index <= 5) {
       printf("publishing message #%u\n", index);
-      auto msg = std::make_shared<test_communication::msg::UInt32>();
+      auto msg = std::make_unique<test_communication::msg::UInt32>();
       msg->data = index;
-      publisher->publish(msg);
+      publisher->publish(std::move(msg));
       ++index;
       message_rate.sleep();
       rclcpp::spin_some(node);

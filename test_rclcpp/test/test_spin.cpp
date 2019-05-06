@@ -199,7 +199,6 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), cancel) {
   auto node = rclcpp::Node::make_shared("cancel");
   rclcpp::executors::SingleThreadedExecutor executor;
   auto pub = node->create_publisher<test_rclcpp::msg::UInt32>("cancel", 10);
-  auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
 
   auto subscription_callback = [](test_rclcpp::msg::UInt32::ConstSharedPtr)
     {
@@ -209,11 +208,11 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), cancel) {
   auto subscription = node->create_subscription<test_rclcpp::msg::UInt32>(
     "cancel", subscription_callback, 10);
 
-  auto cancel_callback = [&executor, &pub, &msg]()
+  auto cancel_callback = [&executor, &pub]()
     {
       executor.cancel();
       // Try to publish after canceling. The callback should never trigger.
-      pub->publish(msg);
+      pub->publish(test_rclcpp::msg::UInt32());
     };
   auto timer = node->create_wall_timer(std::chrono::milliseconds(5), cancel_callback);
   executor.add_node(node);
