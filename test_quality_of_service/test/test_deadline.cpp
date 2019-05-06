@@ -45,7 +45,7 @@ TEST_F(QosRclcppTestFixture, test_deadline_no_publisher) {
   std::tie(qos_profile.deadline.sec, qos_profile.deadline.nsec) = deadline_duration_tuple;
 
   // setup subscription options and callback
-  rclcpp::SubscriptionOptions<> subscriber_options;
+  rclcpp::SubscriptionOptions subscriber_options;
   subscriber_options.qos_profile = qos_profile;
   subscriber_options.event_callbacks.deadline_callback =
     [&last_sub_count,
@@ -58,7 +58,7 @@ TEST_F(QosRclcppTestFixture, test_deadline_no_publisher) {
       last_sub_count = event.total_count;
     };
 
-  rclcpp::PublisherOptions<> publisher_options;
+  rclcpp::PublisherOptions publisher_options;
 
   const std::string topic("test_deadline_no_publisher");
 
@@ -98,7 +98,7 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
   std::tie(qos_profile.deadline.sec, qos_profile.deadline.nsec) = deadline_duration_tuple;
 
   // setup subscription options and callback
-  rclcpp::SubscriptionOptions<> subscriber_options;
+  rclcpp::SubscriptionOptions subscriber_options;
   subscriber_options.qos_profile = qos_profile;
   subscriber_options.event_callbacks.deadline_callback =
     [&last_sub_count,
@@ -112,7 +112,7 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
     };
 
   // setup publishing options and callback
-  rclcpp::PublisherOptions<> publisher_options;
+  rclcpp::PublisherOptions publisher_options;
   publisher_options.qos_profile = qos_profile;
   publisher_options.event_callbacks.deadline_callback =
     [&last_pub_count,

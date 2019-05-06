@@ -52,7 +52,7 @@ TEST_F(QosRclcppTestFixture, test_automatic_liveliness_changed) {
   std::tie(qos_profile.deadline.sec, qos_profile.deadline.nsec) = liveliness_lease_tuple;
 
   // subscription options
-  rclcpp::SubscriptionOptions<> subscriber_options;
+  rclcpp::SubscriptionOptions subscriber_options;
   subscriber_options.qos_profile = qos_profile;
 
   // subscriber Liveliness callback event
@@ -79,7 +79,7 @@ TEST_F(QosRclcppTestFixture, test_automatic_liveliness_changed) {
     };
 
   // publisher options
-  rclcpp::PublisherOptions<> publisher_options;
+  rclcpp::PublisherOptions publisher_options;
   publisher_options.qos_profile = qos_profile;
 
 //  publisher_options.event_callbacks.liveliness_callback =

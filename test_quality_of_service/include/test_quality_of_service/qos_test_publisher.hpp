@@ -31,7 +31,7 @@ public:
   QosTestPublisher(
     const std::string & name,
     const std::string & topic,
-    const rclcpp::PublisherOptions<> & publisher_options,
+    const rclcpp::PublisherOptions & publisher_options,
     const std::chrono::milliseconds & publish_period);
 
   virtual ~QosTestPublisher() = default;
@@ -47,7 +47,7 @@ private:
   void setup_stop() override;
 
   /// publisher options needed for QoS settings
-  const rclcpp::PublisherOptions<> publisher_options_;
+  const rclcpp::PublisherOptions publisher_options_;
   /// publishing period
   const std::chrono::milliseconds publish_period_;
   /// the timer of this publisher

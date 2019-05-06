@@ -30,7 +30,7 @@ public:
   QosTestSubscriber(
     const std::string & name,
     const std::string & topic,
-    const rclcpp::SubscriptionOptions<> & sub_options);
+    const rclcpp::SubscriptionOptions & sub_options);
 
   virtual ~QosTestSubscriber() = default;
   QosTestSubscriber() = default;
@@ -46,7 +46,7 @@ protected:
 
 private:
   /// subscription options needed for QoS settings
-  const rclcpp::SubscriptionOptions<> sub_options_;
+  const rclcpp::SubscriptionOptions sub_options_;
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
 };
 

@@ -47,11 +47,11 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
   std::tie(qos_profile.deadline.sec, qos_profile.deadline.nsec) = message_lifespan;
 
   // subscription options
-  rclcpp::SubscriptionOptions<> subscriber_options;
+  rclcpp::SubscriptionOptions subscriber_options;
   subscriber_options.qos_profile = qos_profile;
 
   // publisher options
-  rclcpp::PublisherOptions<> publisher_options;
+  rclcpp::PublisherOptions publisher_options;
   publisher_options.qos_profile = qos_profile;
 
   std::string topic = "test_lifespan";

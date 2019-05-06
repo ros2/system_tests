@@ -27,7 +27,7 @@ using std::placeholders::_1;
 QosTestSubscriber::QosTestSubscriber(
   const std::string & name,
   const std::string & topic,
-  const rclcpp::SubscriptionOptions<> & sub_options)
+  const rclcpp::SubscriptionOptions & sub_options)
 : QosTestNode(name, topic),
   sub_options_(sub_options),
   subscription_(nullptr)
@@ -49,6 +49,7 @@ void QosTestSubscriber::setup_start()
     subscription_ = create_subscription<std_msgs::msg::String>(
       topic_,
       std::bind(&QosTestSubscriber::listen_to_message, this, _1),
+      10,
       sub_options_);
   }
 }
