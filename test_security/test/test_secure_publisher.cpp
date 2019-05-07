@@ -30,11 +30,8 @@ int8_t attempt_publish(
 {
   auto start = std::chrono::steady_clock::now();
 
-  rmw_qos_profile_t custom_qos_profile = rmw_qos_profile_default;
-  custom_qos_profile.depth = messages.size();
-
   auto publisher = node->create_publisher<T>(
-    topic_name, custom_qos_profile);
+    topic_name, rclcpp::QoS(rclcpp::KeepLast(messages.size())));
 
   rclcpp::WallRate cycle_rate(10);
   rclcpp::WallRate message_rate(100);

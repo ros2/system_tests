@@ -65,11 +65,9 @@ rclcpp::SubscriptionBase::SharedPtr attempt_subscribe(
       rclcpp::shutdown();
     };
 
-  rmw_qos_profile_t custom_qos_profile = rmw_qos_profile_default;
-  custom_qos_profile.depth = expected_messages.size();
+  auto qos = rclcpp::QoS(rclcpp::KeepLast(expected_messages.size()));
 
-  auto subscriber = node->create_subscription<T>(
-    topic_name, callback, custom_qos_profile);
+  auto subscriber = node->create_subscription<T>(topic_name, qos, callback);
   return subscriber;
 }
 
@@ -88,8 +86,7 @@ rclcpp::SubscriptionBase::SharedPtr attempt_subscribe(
       exec.cancel();
     };
 
-  auto subscriber = node->create_subscription<T>(
-    topic_name, subscription_callback, rmw_qos_profile_default);
+  auto subscriber = node->create_subscription<T>(topic_name, 10, subscription_callback);
   return subscriber;
 }
 

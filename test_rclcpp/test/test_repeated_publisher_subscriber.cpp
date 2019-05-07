@@ -47,9 +47,9 @@ TEST(CLASSNAME(test_repeated_publisher_subscriber, RMW_IMPLEMENTATION), subscrip
     printf("Creating publisher and subscriber...\n");
     fflush(stdout);
     auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(
-      "test_repeated_publisher_subscriber", rmw_qos_profile_default);
+      "test_repeated_publisher_subscriber", 10);
     auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
-      "test_repeated_publisher_subscriber", callback, rmw_qos_profile_default);
+      "test_repeated_publisher_subscriber", 10, callback);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
     printf("spin_node_some()\n");
@@ -74,9 +74,9 @@ TEST(CLASSNAME(test_repeated_publisher_subscriber, RMW_IMPLEMENTATION), subscrip
     printf("Recreating publisher and subscriber...\n");
     fflush(stdout);
     auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(
-      "test_repeated_publisher_subscriber", rmw_qos_profile_default);
+      "test_repeated_publisher_subscriber", 10);
     auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
-      "test_repeated_publisher_subscriber", callback, rmw_qos_profile_default);
+      "test_repeated_publisher_subscriber", 10, callback);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
     printf("spin_node_some()\n");

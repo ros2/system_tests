@@ -29,11 +29,9 @@ void publish(
 {
   auto start = std::chrono::steady_clock::now();
 
-  rmw_qos_profile_t custom_qos_profile = rmw_qos_profile_default;
-  custom_qos_profile.depth = messages.size();
+  auto qos = rclcpp::QoS(rclcpp::KeepLast(messages.size()));
 
-  auto publisher = node->create_publisher<T>(
-    std::string("test/message/") + message_type, custom_qos_profile);
+  auto publisher = node->create_publisher<T>(std::string("test/message/") + message_type, qos);
 
   rclcpp::WallRate cycle_rate(10);
   rclcpp::WallRate message_rate(100);

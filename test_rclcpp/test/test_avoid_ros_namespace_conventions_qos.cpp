@@ -50,15 +50,14 @@ TEST(
       printf("  callback() %d with message data %u\n", counter, msg->data);
       ASSERT_FALSE(info.from_intra_process);
     };
-  rmw_qos_profile_t custom_qos = rmw_qos_profile_default;
-  custom_qos.avoid_ros_namespace_conventions = true;
+  auto qos = rclcpp::QoS(rclcpp::KeepLast(10)).avoid_ros_namespace_conventions(true);
   auto create_subscription_func =
-    [&callback, &custom_qos](
+    [&callback, &qos](
     rclcpp::Node::SharedPtr node,
     const std::string & topic_name) -> rclcpp::Subscription<test_rclcpp::msg::UInt32>::SharedPtr
     {
       auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
-        topic_name, callback, custom_qos);
+        topic_name, qos, callback);
       return subscriber;
     };
   // code to do the publish function
@@ -71,5 +70,5 @@ TEST(
     };
   // call the test template
   single_message_pub_sub_fixture<test_rclcpp::msg::UInt32>(
-    topic_name, counter, create_subscription_func, publish_func, custom_qos);
+    topic_name, counter, create_subscription_func, publish_func, qos);
 }

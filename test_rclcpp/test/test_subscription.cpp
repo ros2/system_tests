@@ -59,12 +59,9 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
   if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared("test_subscription");
 
-  rmw_qos_profile_t custom_qos_profile = rmw_qos_profile_default;
-  custom_qos_profile.depth = 10;
   std::string topic = "test_subscription";
 
-  auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(
-    topic, custom_qos_profile);
+  auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(topic, 10);
 
   int counter = 0;
   std::promise<void> sub_called;
@@ -86,8 +83,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
   executor.add_node(node);
 
   {
-    auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
-      topic, callback, custom_qos_profile);
+    auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(topic, 10, callback);
 
     // wait for discovery and the subscriber to connect
     test_rclcpp::wait_for_subscriber(node, topic);
@@ -191,7 +187,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
     const std::string & topic_name) -> rclcpp::Subscription<test_rclcpp::msg::UInt32>::SharedPtr
     {
       auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
-        topic_name, callback, rmw_qos_profile_default);
+        topic_name, 10, callback);
       return subscriber;
     };
   // do the publish function
@@ -237,7 +233,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
     const std::string & topic_name) -> rclcpp::Subscription<test_rclcpp::msg::UInt32>::SharedPtr
     {
       auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
-        topic_name, cb_std_function, rmw_qos_profile_default);
+        topic_name, 10, cb_std_function);
       return subscriber;
     };
   // do the publish function
@@ -268,8 +264,8 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
     {
       auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
         topic_name,
-        std::bind(&CallbackHolder::callback, &cb_holder, std::placeholders::_1),
-        rmw_qos_profile_default);
+        10,
+        std::bind(&CallbackHolder::callback, &cb_holder, std::placeholders::_1));
       return subscriber;
     };
   // do the publish function
@@ -305,7 +301,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
     const std::string & topic_name) -> rclcpp::Subscription<test_rclcpp::msg::UInt32>::SharedPtr
     {
       auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
-        topic_name, callback, rmw_qos_profile_default);
+        topic_name, 10, callback);
       return subscriber;
     };
   // do the publish function
@@ -339,7 +335,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), spin_before_subscription)
     const std::string & topic_name) -> rclcpp::Subscription<test_rclcpp::msg::UInt32>::SharedPtr
     {
       auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
-        topic_name, callback, rmw_qos_profile_default);
+        topic_name, 10, callback);
       return subscriber;
     };
   // do the publish function
@@ -361,7 +357,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), spin_before_subscription)
   // call the test template
   single_message_pub_sub_fixture<test_rclcpp::msg::UInt32>(
     topic_name, counter, create_subscription_func, publish_func,
-    rmw_qos_profile_default, pre_subscription_hook);
+    10, pre_subscription_hook);
 }
 
 // Test of the queue size create_subscription signature.
@@ -372,5 +368,5 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), create_subscription_with_
   auto callback = [](test_rclcpp::msg::UInt32::ConstSharedPtr) -> void {};
 
   auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
-    "test_subscription", callback, 10);
+    "test_subscription", 10, callback);
 }

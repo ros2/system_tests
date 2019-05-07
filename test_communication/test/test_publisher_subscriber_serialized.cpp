@@ -66,9 +66,9 @@ TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), serialized_callb
 
   auto node = rclcpp::Node::make_shared("test_publisher_subscriber_serialized");
   auto subscriber = node->create_subscription<test_msgs::msg::BasicTypes>(
-    "test_publisher_subscriber_serialized_topic", serialized_callback);
+    "test_publisher_subscriber_serialized_topic", 10, serialized_callback);
   auto publisher = node->create_publisher<test_msgs::msg::BasicTypes>(
-    "test_publisher_subscriber_serialized_topic");
+    "test_publisher_subscriber_serialized_topic", 10);
 
   test_msgs::msg::BasicTypes msg;
 

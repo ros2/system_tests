@@ -37,14 +37,11 @@ TEST(CLASSNAME(test_intra_process_within_one_node, RMW_IMPLEMENTATION), nominal_
   rclcpp::init(0, nullptr);
 
   // use intra process = true
-  auto node = rclcpp::Node::make_shared("test_intra_process",
-      rclcpp::NodeOptions().use_intra_process_comms(true));
+  auto node = rclcpp::Node::make_shared(
+    "test_intra_process",
+    rclcpp::NodeOptions().use_intra_process_comms(true));
 
-  rmw_qos_profile_t custom_qos_profile = rmw_qos_profile_default;
-  custom_qos_profile.depth = 10;
-
-  auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(
-    "test_intra_process", custom_qos_profile);
+  auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>("test_intra_process", 10);
 
   int counter = 0;
   auto callback =
@@ -65,8 +62,10 @@ TEST(CLASSNAME(test_intra_process_within_one_node, RMW_IMPLEMENTATION), nominal_
   rclcpp::executors::SingleThreadedExecutor executor;
 
   {
+    rclcpp::SubscriptionOptions options;
+    options.ignore_local_publications = true;
     auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
-      "test_intra_process", callback, custom_qos_profile, nullptr, true);
+      "test_intra_process", 10, callback, options);
 
     // start condition
     ASSERT_EQ(0, counter);

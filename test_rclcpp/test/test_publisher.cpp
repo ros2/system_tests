@@ -53,7 +53,7 @@ TEST(CLASSNAME(test_publisher, RMW_IMPLEMENTATION), publish_with_const_reference
     const std::string & topic_name) -> rclcpp::Subscription<test_rclcpp::msg::UInt32>::SharedPtr
     {
       auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
-        topic_name, callback, rmw_qos_profile_default);
+        topic_name, 10, callback);
       return subscriber;
     };
   // code to do the publish function
