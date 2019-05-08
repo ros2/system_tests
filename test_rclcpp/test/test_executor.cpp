@@ -207,13 +207,13 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), notify) {
 
     auto subscription = node->create_subscription<test_rclcpp::msg::UInt32>(
       "test_executor_notify_subscription",
-      sub_callback,
-      rmw_qos_profile_default);
+      10,
+      sub_callback);
     test_rclcpp::wait_for_subscriber(node, "test_executor_notify_subscription");
 
 
     auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(
-      "test_executor_notify_subscription", rmw_qos_profile_default);
+      "test_executor_notify_subscription", 10);
     auto timer = node->create_wall_timer(
       1ms,
       [&publisher]()

@@ -40,12 +40,12 @@ int main(int argc, char ** argv)
     };
 
   auto subscriber = node->create_subscription<test_communication::msg::UInt32>(
-    "test_subscription_valid_data", callback, rmw_qos_profile_default);
+    "test_subscription_valid_data", 10, callback);
 
   rclcpp::WallRate message_rate(5);
   {
     auto publisher = node->create_publisher<test_communication::msg::UInt32>(
-      "test_subscription_valid_data", rmw_qos_profile_default);
+      "test_subscription_valid_data", 10);
 
     message_rate.sleep();
 

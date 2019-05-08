@@ -28,9 +28,9 @@ int main(int argc, char ** argv)
   std::string namespace_ = "/original/namespace";
   auto node = rclcpp::Node::make_shared(node_name, namespace_);
 
-  auto pub1 = node->create_publisher<test_msgs::msg::Empty>("~/private/name");
-  auto pub2 = node->create_publisher<test_msgs::msg::Empty>("relative/name");
-  auto pub3 = node->create_publisher<test_msgs::msg::Empty>("/fully/qualified/name");
+  auto pub1 = node->create_publisher<test_msgs::msg::Empty>("~/private/name", 10);
+  auto pub2 = node->create_publisher<test_msgs::msg::Empty>("relative/name", 10);
+  auto pub3 = node->create_publisher<test_msgs::msg::Empty>("/fully/qualified/name", 10);
 
   auto do_nothing = [](
     const test_msgs::srv::Empty::Request::SharedPtr request,
