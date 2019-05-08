@@ -65,9 +65,7 @@ rclcpp::SubscriptionBase::SharedPtr attempt_subscribe(
       rclcpp::shutdown();
     };
 
-  auto qos = rclcpp::QoS(rclcpp::KeepLast(expected_messages.size()));
-
-  auto subscriber = node->create_subscription<T>(topic_name, qos, callback);
+  auto subscriber = node->create_subscription<T>(topic_name, expected_messages.size(), callback);
   return subscriber;
 }
 

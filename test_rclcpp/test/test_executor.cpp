@@ -205,16 +205,15 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), notify) {
         executor.cancel();
       };
 
-    auto qos = rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
     auto subscription = node->create_subscription<test_rclcpp::msg::UInt32>(
       "test_executor_notify_subscription",
-      qos,
+      10,
       sub_callback);
     test_rclcpp::wait_for_subscriber(node, "test_executor_notify_subscription");
 
 
     auto publisher = node->create_publisher<test_rclcpp::msg::UInt32>(
-      "test_executor_notify_subscription", qos);
+      "test_executor_notify_subscription", 10);
     auto timer = node->create_wall_timer(
       1ms,
       [&publisher]()

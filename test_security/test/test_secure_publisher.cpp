@@ -30,8 +30,7 @@ int8_t attempt_publish(
 {
   auto start = std::chrono::steady_clock::now();
 
-  auto publisher = node->create_publisher<T>(
-    topic_name, rclcpp::QoS(rclcpp::KeepLast(messages.size())));
+  auto publisher = node->create_publisher<T>(topic_name, messages.size());
 
   rclcpp::WallRate cycle_rate(10);
   rclcpp::WallRate message_rate(100);

@@ -38,9 +38,7 @@ single_message_pub_sub_fixture(
   std::function<
     void(typename rclcpp::Publisher<MessageT>::SharedPtr, MessageT)
   > publish_func,
-  const rclcpp::QoS & custom_qos = (
-    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default))
-  ),
+  const rclcpp::QoS & custom_qos = rclcpp::QoS(rclcpp::KeepLast(10)),
   std::function<void(rclcpp::executors::SingleThreadedExecutor &)> pre_subscription_hook = nullptr,
   size_t max_retries = 3,  // number of times it will try to publish
   size_t max_loops = 200,  // number of times it will check for data
