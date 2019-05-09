@@ -49,8 +49,6 @@ rclcpp::SubscriptionBase::SharedPtr subscribe(
         ++index;
       }
       if (!known_message) {
-        fprintf(stderr, "received message does not match any expected message\n");
-        rclcpp::shutdown();
         throw std::runtime_error("received message does not match any expected message");
       }
 
@@ -141,7 +139,14 @@ int main(int argc, char ** argv)
     rclcpp::shutdown();
     return 1;
   }
-  rclcpp::spin(node);
+
+  try {
+    rclcpp::spin(node);
+  } catch (const std::exception & e) {
+    fprintf(stderr, "%s\n", e.what());
+    rclcpp::shutdown();
+    return 1;
+  }
 
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);
