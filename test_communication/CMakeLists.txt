@@ -115,6 +115,11 @@ if(BUILD_TESTING)
     add_executable(${target} ${ARGN})
     rosidl_target_interfaces(${target}
       ${PROJECT_NAME} "rosidl_typesupport_cpp")
+    if(WIN32)
+      target_compile_options(${target}
+        PRIVATE /source-charset:utf-8 /execution-charset:utf-8
+      )
+    endif()
     ament_target_dependencies(${target}
       "rclcpp"
       "rclcpp_action"
