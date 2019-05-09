@@ -34,19 +34,17 @@ using namespace std::chrono_literals;
 TEST_F(QosRclcppTestFixture, test_deadline_no_publisher) {
   const std::chrono::milliseconds deadline_duration = 1s;
   const std::chrono::milliseconds test_duration = 10500ms;
-  const std::tuple<size_t, size_t> deadline_duration_tuple = convert_chrono_milliseconds_to_size_t(
-    deadline_duration);
   const int expected_number_of_deadline_callbacks = test_duration / deadline_duration;
 
   int total_number_of_subscriber_deadline_events = 0;
   int last_sub_count = 0;
 
-  rmw_qos_profile_t qos_profile = rmw_qos_profile_default;
-  std::tie(qos_profile.deadline.sec, qos_profile.deadline.nsec) = deadline_duration_tuple;
+  // define qos profile
+  rclcpp::QoS qos_profile(10);
+  qos_profile.deadline(deadline_duration);
 
   // setup subscription options and callback
   rclcpp::SubscriptionOptions subscriber_options;
-  subscriber_options.qos_profile = qos_profile;
   subscriber_options.event_callbacks.deadline_callback =
     [&last_sub_count,
     &total_number_of_subscriber_deadline_events](rclcpp::QOSDeadlineRequestedInfo & event) -> void
@@ -63,9 +61,10 @@ TEST_F(QosRclcppTestFixture, test_deadline_no_publisher) {
   const std::string topic("test_deadline_no_publisher");
 
   // register a publisher for the topic but don't publish anything or use QoS options
-  publisher = std::make_shared<QosTestPublisher>("publisher", topic, publisher_options,
-      test_duration);
-  subscriber = std::make_shared<QosTestSubscriber>("subscriber", topic, subscriber_options);
+  publisher = std::make_shared<QosTestPublisher>(
+    "publisher", topic, qos_profile, publisher_options, test_duration);
+  subscriber = std::make_shared<QosTestSubscriber>(
+    "subscriber", topic, qos_profile, subscriber_options);
 
   executor->add_node(subscriber);
   subscriber->start();
@@ -83,8 +82,6 @@ TEST_F(QosRclcppTestFixture, test_deadline_no_publisher) {
 TEST_F(QosRclcppTestFixture, test_deadline) {
   int expected_number_of_events = 5;
   const std::chrono::milliseconds deadline_duration = 1s;
-  const std::tuple<size_t, size_t> deadline_duration_tuple = convert_chrono_milliseconds_to_size_t(
-    deadline_duration);
   const std::chrono::milliseconds max_test_length = 10s;
   const std::chrono::milliseconds publish_rate = deadline_duration / expected_number_of_events;
 
@@ -94,12 +91,11 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
   int last_pub_count = 0;
   int last_sub_count = 0;
 
-  rmw_qos_profile_t qos_profile = rmw_qos_profile_default;
-  std::tie(qos_profile.deadline.sec, qos_profile.deadline.nsec) = deadline_duration_tuple;
+  rclcpp::QoS qos_profile(10);
+  qos_profile.deadline(deadline_duration);
 
   // setup subscription options and callback
   rclcpp::SubscriptionOptions subscriber_options;
-  subscriber_options.qos_profile = qos_profile;
   subscriber_options.event_callbacks.deadline_callback =
     [&last_sub_count,
     &total_number_of_subscriber_deadline_events](rclcpp::QOSDeadlineRequestedInfo & event) -> void
@@ -113,7 +109,6 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
 
   // setup publishing options and callback
   rclcpp::PublisherOptions publisher_options;
-  publisher_options.qos_profile = qos_profile;
   publisher_options.event_callbacks.deadline_callback =
     [&last_pub_count,
     &total_number_of_publisher_deadline_events](rclcpp::QOSDeadlineOfferedInfo & event) -> void
@@ -127,9 +122,10 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
 
   const std::string topic("test_deadline");
 
-  publisher = std::make_shared<QosTestPublisher>("publisher", topic, publisher_options,
-      publish_rate);
-  subscriber = std::make_shared<QosTestSubscriber>("subscriber", topic, subscriber_options);
+  publisher = std::make_shared<QosTestPublisher>(
+    "publisher", topic, qos_profile, publisher_options, publish_rate);
+  subscriber = std::make_shared<QosTestSubscriber>(
+    "subscriber", topic, qos_profile, subscriber_options);
 
   // toggle publishing on and off to force deadline events
   rclcpp::TimerBase::SharedPtr toggle_publisher_timer = subscriber->create_wall_timer(

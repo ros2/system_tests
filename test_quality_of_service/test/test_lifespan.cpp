@@ -32,33 +32,28 @@ using namespace std::chrono_literals;
 
 TEST_F(QosRclcppTestFixture, test_deadline) {
   const std::chrono::milliseconds lifespan_duration = 1s;
-  const std::tuple<size_t, size_t> message_lifespan = convert_chrono_milliseconds_to_size_t(
-    lifespan_duration);
   const int history = 2;
   const std::chrono::milliseconds max_test_length = 11s;
   const int expected_published = max_test_length / lifespan_duration * 2;
   const std::chrono::milliseconds publish_period = 500ms;
 
   // define qos profile
-  rmw_qos_profile_t qos_profile = rmw_qos_profile_default;
-
-  qos_profile.depth = history;
-  qos_profile.durability = RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL;
-  std::tie(qos_profile.deadline.sec, qos_profile.deadline.nsec) = message_lifespan;
+  rclcpp::QoS qos_profile(history);
+  qos_profile.durability(RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL);
+  qos_profile.lifespan(lifespan_duration);
 
   // subscription options
   rclcpp::SubscriptionOptions subscriber_options;
-  subscriber_options.qos_profile = qos_profile;
 
   // publisher options
   rclcpp::PublisherOptions publisher_options;
-  publisher_options.qos_profile = qos_profile;
 
   std::string topic = "test_lifespan";
 
-  publisher = std::make_shared<QosTestPublisher>("publisher", topic, publisher_options,
-      publish_period);
-  subscriber = std::make_shared<QosTestSubscriber>("subscriber", topic, subscriber_options);
+  publisher = std::make_shared<QosTestPublisher>(
+    "publisher", topic, qos_profile, publisher_options, publish_period);
+  subscriber = std::make_shared<QosTestSubscriber>(
+    "subscriber", topic, qos_profile, subscriber_options);
 
   int timer_fired_count = 0;
   // toggle publishing on and off to force deadline events

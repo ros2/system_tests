@@ -31,6 +31,7 @@ public:
   QosTestPublisher(
     const std::string & name,
     const std::string & topic,
+    const rclcpp::QoS & qos_options,
     const rclcpp::PublisherOptions & publisher_options,
     const std::chrono::milliseconds & publish_period);
 
@@ -46,12 +47,13 @@ private:
   void setup_start() override;
   void setup_stop() override;
 
-  /// publisher options needed for QoS settings
+  /// publisher options needed for QoS callbacks
   const rclcpp::PublisherOptions publisher_options_;
   /// publishing period
   const std::chrono::milliseconds publish_period_;
   /// the timer of this publisher
   rclcpp::TimerBase::SharedPtr timer_;
+
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
 };
 

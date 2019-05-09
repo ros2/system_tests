@@ -27,7 +27,8 @@ class QosTestNode : public rclcpp::Node
 public:
   QosTestNode(
     const std::string & name,
-    const std::string & topic);
+    const std::string & topic,
+    const rclcpp::QoS & qos_options);
 
   virtual ~QosTestNode();
 
@@ -57,10 +58,13 @@ protected:
    * \return the incremented count
    */
   int increment_count();
+
   /// name of this publisher (Node)
   const std::string name_;
   /// topic name to publish
   const std::string topic_;
+  /// qos options needed for QoS settings
+  const rclcpp::QoS qos_options_;
 
 private:
   /// simple counter used for this node's measurements

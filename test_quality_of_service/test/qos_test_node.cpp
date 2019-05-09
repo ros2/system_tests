@@ -22,10 +22,12 @@
 
 QosTestNode::QosTestNode(
   const std::string & name,
-  const std::string & topic)
+  const std::string & topic,
+  const rclcpp::QoS & qos_options)
 : Node(name),
   name_(name),
   topic_(topic),
+  qos_options_(qos_options),
   count_(0),
   started_(false)
 {}

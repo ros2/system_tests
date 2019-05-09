@@ -40,21 +40,17 @@ TEST_F(QosRclcppTestFixture, test_automatic_liveliness_changed) {
   const std::chrono::milliseconds kill_publisher_after = 2s;
   const std::chrono::milliseconds publish_period = 200ms;
   int number_of_published_messages = 0;
-  const std::tuple<size_t, size_t> liveliness_lease_tuple =
-    convert_chrono_milliseconds_to_size_t(1s);
+  const std::chrono::milliseconds lease_duration = 1s;
 
   int total_number_of_liveliness_events = 0;
 
-  rmw_qos_profile_t qos_profile = rmw_qos_profile_default;
-  // define liveliness policy
-  qos_profile.liveliness = RMW_QOS_POLICY_LIVELINESS_AUTOMATIC;
-
-  std::tie(qos_profile.deadline.sec, qos_profile.deadline.nsec) = liveliness_lease_tuple;
+  // define qos profile
+  rclcpp::QoS qos_profile(10);
+  qos_profile.liveliness(RMW_QOS_POLICY_LIVELINESS_AUTOMATIC);
+  qos_profile.liveliness_lease_duration(lease_duration);
 
   // subscription options
   rclcpp::SubscriptionOptions subscriber_options;
-  subscriber_options.qos_profile = qos_profile;
-
   // subscriber Liveliness callback event
   subscriber_options.event_callbacks.liveliness_callback =
     [&total_number_of_liveliness_events](rclcpp::QOSLivelinessChangedInfo & event) -> void
@@ -80,20 +76,18 @@ TEST_F(QosRclcppTestFixture, test_automatic_liveliness_changed) {
 
   // publisher options
   rclcpp::PublisherOptions publisher_options;
-  publisher_options.qos_profile = qos_profile;
-
-//  publisher_options.event_callbacks.liveliness_callback =
-//    [](rclcpp::QOSLivelinessLostInfo & event) -> void
-//    {
-//      RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "=====QOSLivelinessLostInfo callback fired");
-//    };
+  publisher_options.event_callbacks.liveliness_callback =
+    [](rclcpp::QOSLivelinessLostInfo & /*event*/) -> void
+    {
+      RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "=====QOSLivelinessLostInfo callback fired");
+    };
 
   std::string topic("test_automatic_liveliness_changed");
 
-  publisher = std::make_shared<QosTestPublisher>("publisher", topic, publisher_options,
-      publish_period);
-
-  subscriber = std::make_shared<QosTestSubscriber>("subscriber", topic, subscriber_options);
+  publisher = std::make_shared<QosTestPublisher>(
+    "publisher", topic, qos_profile, publisher_options, publish_period);
+  subscriber = std::make_shared<QosTestSubscriber>(
+    "subscriber", topic, qos_profile, subscriber_options);
 
   int timer_fired_count = 0;
   // kill the publisher after a predetermined amount of time
