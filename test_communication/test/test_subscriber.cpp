@@ -143,7 +143,7 @@ int main(int argc, char ** argv)
   try {
     rclcpp::spin(node);
   } catch (const std::exception & e) {
-    std::cerr << e.what() << std::endl;
+    fprintf(stderr, "%s\n", e.what());
     rclcpp::shutdown();
     return 1;
   }
