@@ -18,12 +18,20 @@ int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
 
-  auto node = rclcpp::Node::make_shared(
-    "test_parameters_server",
+  auto node_allow_undeclared = rclcpp::Node::make_shared(
+    "test_parameters_server_allow_undeclared",
     "/",
     rclcpp::NodeOptions().allow_undeclared_parameters(true));
 
-  rclcpp::spin(node);
+  auto node_must_declare = rclcpp::Node::make_shared(
+    "test_parameters_server_must_declare",
+    "/",
+    rclcpp::NodeOptions().allow_undeclared_parameters(false));
+
+  rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(node_allow_undeclared);
+  executor.add_node(node_must_declare);
+  executor.spin();
 
   return 0;
 }

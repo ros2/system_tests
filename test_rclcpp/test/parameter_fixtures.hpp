@@ -27,23 +27,10 @@
 
 const double test_epsilon = 1e-6;
 
-void declare_test_parameters(std::shared_ptr<rclcpp::Node> node)
+std::vector<rclcpp::Parameter>
+get_test_parameters()
 {
-  node->declare_parameter("foo");
-  node->declare_parameter("bar");
-  node->declare_parameter("barstr");
-  node->declare_parameter("baz");
-  node->declare_parameter("foo.first");
-  node->declare_parameter("foo.second");
-  node->declare_parameter("foobar");
-}
-
-void set_test_parameters(
-  std::shared_ptr<rclcpp::SyncParametersClient> parameters_client)
-{
-  printf("Setting parameters\n");
-  // Set several differnet types of parameters.
-  auto set_parameters_results = parameters_client->set_parameters({
+  return {
     rclcpp::Parameter("foo", 2),
     rclcpp::Parameter("bar", "hello"),
     rclcpp::Parameter("barstr", std::string("hello_str")),
@@ -51,61 +38,89 @@ void set_test_parameters(
     rclcpp::Parameter("foo.first", 8),
     rclcpp::Parameter("foo.second", 42),
     rclcpp::Parameter("foobar", true),
-  });
-  printf("Got set_parameters result\n");
+  };
+}
 
+void declare_test_parameters(std::shared_ptr<rclcpp::Node> node, int declare_up_to = -1)
+{
+  auto parameters = get_test_parameters();
 
-  // Check to see if they were set.
-  for (auto & result : set_parameters_results) {
-    ASSERT_TRUE(result.successful);
+  if (declare_up_to < 0 || declare_up_to > static_cast<int>(parameters.size())) {
+    declare_up_to = static_cast<int>(parameters.size());
+  }
+
+  for (int i = 0u; i < declare_up_to; ++i) {
+    node->declare_parameter(parameters[i].get_name());
   }
 }
 
-void set_test_parameters_atomically(
-  std::shared_ptr<rclcpp::SyncParametersClient> parameters_client)
+void test_set_parameters_sync(
+  std::shared_ptr<rclcpp::SyncParametersClient> parameters_client,
+  int successful_up_to = -1)
+{
+  printf("Setting parameters\n");
+  std::vector<rclcpp::Parameter> parameters = get_test_parameters();
+  auto set_parameters_results = parameters_client->set_parameters(parameters);
+  printf("Got set_parameters result\n");
+
+  ASSERT_EQ(set_parameters_results.size(), parameters.size());
+
+  if (successful_up_to < 0 || successful_up_to > static_cast<int>(parameters.size())) {
+    successful_up_to = static_cast<int>(parameters.size());
+  }
+
+  // Check success values
+  for (int i = 0u; i < successful_up_to; ++i) {
+    const auto & result = set_parameters_results[i];
+    ASSERT_TRUE(result.successful);
+  }
+  for (int i = successful_up_to; i < static_cast<int>(parameters.size()); ++i) {
+    const auto & result = set_parameters_results[i];
+    ASSERT_FALSE(result.successful);
+  }
+}
+
+void test_set_parameters_atomically_sync(
+  std::shared_ptr<rclcpp::SyncParametersClient> parameters_client,
+  bool expect_result_successful = true)
 {
   printf("Setting parameters atomically\n");
-  // Set several differnet types of parameters.
-  auto set_parameters_result = parameters_client->set_parameters_atomically({
-    rclcpp::Parameter("foo", 2),
-    rclcpp::Parameter("bar", "hello"),
-    rclcpp::Parameter("barstr", std::string("hello_str")),
-    rclcpp::Parameter("baz", 1.45),
-    rclcpp::Parameter("foo.first", 8),
-    rclcpp::Parameter("foo.second", 42),
-    rclcpp::Parameter("foobar", true),
-  });
+  std::vector<rclcpp::Parameter> parameters = get_test_parameters();
+  auto set_parameters_result = parameters_client->set_parameters_atomically(parameters);
   printf("Got set_parameters_atomically result\n");
 
   // Check to see if they were set.
-  ASSERT_TRUE(set_parameters_result.successful);
+  ASSERT_EQ(set_parameters_result.successful, expect_result_successful);
 }
 
-void verify_set_parameters_async(
+void test_set_parameters_async(
   std::shared_ptr<rclcpp::Node> node,
-  std::shared_ptr<rclcpp::AsyncParametersClient> parameters_client)
+  std::shared_ptr<rclcpp::AsyncParametersClient> parameters_client,
+  int successful_up_to = -1)
 {
   printf("Setting parameters\n");
-  // Set several differnet types of parameters.
-  auto set_parameters_results = parameters_client->set_parameters({
-    rclcpp::Parameter("foo", 2),
-    rclcpp::Parameter("bar", "hello"),
-    rclcpp::Parameter("barstr", std::string("hello_str")),
-    rclcpp::Parameter("baz", 1.45),
-    rclcpp::Parameter("foo.first", 8),
-    rclcpp::Parameter("foo.second", 42),
-    rclcpp::Parameter("foobar", true),
-  });
+  std::vector<rclcpp::Parameter> parameters = get_test_parameters();
+  auto set_parameters_results = parameters_client->set_parameters(parameters);
   rclcpp::spin_until_future_complete(node, set_parameters_results);  // Wait for the results.
   printf("Got set_parameters result\n");
 
-  // Check to see if they were set.
-  for (auto & result : set_parameters_results.get()) {
-    ASSERT_TRUE(result.successful);
+  if (successful_up_to < 0 || successful_up_to > static_cast<int>(parameters.size())) {
+    successful_up_to = static_cast<int>(parameters.size());
+  }
+
+  const auto results = set_parameters_results.get();
+  ASSERT_EQ(results.size(), parameters.size());
+
+  // Check success values
+  for (int i = 0u; i < successful_up_to; ++i) {
+    ASSERT_TRUE(results[i].successful);
+  }
+  for (int i = successful_up_to; i < static_cast<int>(parameters.size()); ++i) {
+    ASSERT_FALSE(results[i].successful);
   }
 }
 
-void verify_test_parameters(
+void test_get_parameters_sync(
   std::shared_ptr<rclcpp::SyncParametersClient> parameters_client)
 {
   printf("Listing parameters with recursive depth\n");
@@ -215,7 +230,7 @@ void verify_test_parameters(
   }
 }
 
-void verify_get_parameters_async(
+void test_get_parameters_async(
   std::shared_ptr<rclcpp::Node> node,
   std::shared_ptr<rclcpp::AsyncParametersClient> parameters_client)
 {

@@ -33,7 +33,7 @@ using namespace std::chrono_literals;
 
 TEST(CLASSNAME(parameters, rmw_implementation), test_remote_parameters_async) {
   if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
-  std::string test_server_name = "test_parameters_server";
+  std::string test_server_name = "test_parameters_server_allow_undeclared";
   // TODO(tfoote) make test_server name parameterizable
   // if (argc >= 2) {
   //   test_server_name = argv[1];
@@ -47,14 +47,14 @@ TEST(CLASSNAME(parameters, rmw_implementation), test_remote_parameters_async) {
     ASSERT_TRUE(false) << "service not available after waiting";
   }
 
-  verify_set_parameters_async(node, parameters_client);
+  test_set_parameters_async(node, parameters_client);
 
-  verify_get_parameters_async(node, parameters_client);
+  test_get_parameters_async(node, parameters_client);
 }
 
 TEST(CLASSNAME(parameters, rmw_implementation), test_remote_parameters_sync) {
   if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
-  std::string test_server_name = "test_parameters_server";
+  std::string test_server_name = "test_parameters_server_allow_undeclared";
 
   auto node = rclcpp::Node::make_shared(std::string("test_remote_parameters_sync"));
 
@@ -64,14 +64,14 @@ TEST(CLASSNAME(parameters, rmw_implementation), test_remote_parameters_sync) {
     ASSERT_TRUE(false) << "service not available after waiting";
   }
 
-  set_test_parameters(parameters_client);
+  test_set_parameters_sync(parameters_client);
 
-  verify_test_parameters(parameters_client);
+  test_get_parameters_sync(parameters_client);
 }
 
 TEST(CLASSNAME(parameters, rmw_implementation), test_set_remote_parameters_atomically_sync) {
   if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
-  std::string test_server_name = "test_parameters_server";
+  std::string test_server_name = "test_parameters_server_allow_undeclared";
 
   auto node = rclcpp::Node::make_shared(std::string("test_set_remote_parameters_atomically_sync"));
 
@@ -81,7 +81,58 @@ TEST(CLASSNAME(parameters, rmw_implementation), test_set_remote_parameters_atomi
     ASSERT_TRUE(false) << "service not available after waiting";
   }
 
-  set_test_parameters_atomically(parameters_client);
+  test_set_parameters_atomically_sync(parameters_client);
 
-  verify_test_parameters(parameters_client);
+  test_get_parameters_sync(parameters_client);
+}
+
+TEST(CLASSNAME(parameters_must_declare, rmw_implementation), test_remote_parameters_async) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+  std::string test_server_name = "test_parameters_server_must_declare";
+
+  auto node = rclcpp::Node::make_shared(std::string("test_remote_parameters_async"));
+
+  auto parameters_client = std::make_shared<rclcpp::AsyncParametersClient>(
+    node,
+    test_server_name);
+  if (!parameters_client->wait_for_service(20s)) {
+    ASSERT_TRUE(false) << "service not available after waiting";
+  }
+
+  test_set_parameters_async(node, parameters_client, 0);
+}
+
+TEST(CLASSNAME(parameters_must_declare, rmw_implementation), test_remote_parameters_sync) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+  std::string test_server_name = "test_parameters_server_must_declare";
+
+  auto node = rclcpp::Node::make_shared(std::string("test_remote_parameters_sync"));
+
+  auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(
+    node,
+    test_server_name);
+  if (!parameters_client->wait_for_service(20s)) {
+    ASSERT_TRUE(false) << "service not available after waiting";
+  }
+
+  test_set_parameters_sync(parameters_client, 0);
+}
+
+TEST(
+  CLASSNAME(parameters_must_declare, rmw_implementation),
+  test_set_remote_parameters_atomically_sync)
+{
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+  std::string test_server_name = "test_parameters_server_must_declare";
+
+  auto node = rclcpp::Node::make_shared(std::string("test_set_remote_parameters_atomically_sync"));
+
+  auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(
+    node,
+    test_server_name);
+  if (!parameters_client->wait_for_service(20s)) {
+    ASSERT_TRUE(false) << "service not available after waiting";
+  }
+
+  test_set_parameters_atomically_sync(parameters_client, false);
 }
