@@ -24,9 +24,9 @@ class NameMaker(rclpy.node.Node):
         super().__init__('original_node_name', namespace='/original/namespace')
 
         self._pubs = []
-        self._pubs.append(self.create_publisher(EmptyMsg, '~/private/name'))
-        self._pubs.append(self.create_publisher(EmptyMsg, 'relative/name'))
-        self._pubs.append(self.create_publisher(EmptyMsg, '/fully/qualified/name'))
+        self._pubs.append(self.create_publisher(EmptyMsg, '~/private/name', 10))
+        self._pubs.append(self.create_publisher(EmptyMsg, 'relative/name', 10))
+        self._pubs.append(self.create_publisher(EmptyMsg, '/fully/qualified/name', 10))
 
         self._srvs = []
         self._srvs.append(self.create_service(EmptySrv, '~/private/name', lambda x: None))

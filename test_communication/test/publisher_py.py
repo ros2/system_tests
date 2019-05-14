@@ -31,7 +31,7 @@ def talker(message_name, number_of_cycles, namespace):
     node = rclpy.create_node('talker', namespace=namespace)
 
     chatter_pub = node.create_publisher(
-        msg_mod, 'test/message/' + message_name)
+        msg_mod, 'test/message/' + message_name, 10)
 
     cycle_count = 0
     print('talker: beginning loop')

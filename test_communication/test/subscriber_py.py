@@ -57,7 +57,7 @@ def listener(message_name, namespace):
         listener_cb, received_messages=received_messages, expected_msgs=expected_msgs)
 
     node.create_subscription(
-        msg_mod, 'test/message/' + message_name, chatter_callback)
+        msg_mod, 'test/message/' + message_name, chatter_callback, 10)
 
     spin_count = 1
     print('subscriber: beginning loop')
