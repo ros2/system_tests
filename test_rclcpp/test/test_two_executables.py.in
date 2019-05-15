@@ -5,6 +5,7 @@ import os
 from launch import LaunchDescription
 from launch.actions import ExecuteProcess
 from launch.actions import OpaqueFunction
+from launch.substitutions import LaunchConfiguration
 
 import launch_testing
 import launch_testing.asserts
@@ -26,6 +27,7 @@ def generate_test_description(ready_fn):
         cmd=cmd,
         name='@TEST_EXECUTABLE1_NAME@',
         env=env,
+        sigterm_timeout=LaunchConfiguration('sigterm_timeout', default=30)
     )
     launch_description.add_action(executable_1)
 
@@ -40,6 +42,7 @@ def generate_test_description(ready_fn):
         cmd=cmd,
         name='@TEST_EXECUTABLE2_NAME@',
         env=env,
+        sigterm_timeout=LaunchConfiguration('sigterm_timeout', default=30)
     )
 
     launch_description.add_action(executable_2)
