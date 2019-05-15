@@ -60,7 +60,5 @@ class TestNNodesAfterShutdown(unittest.TestCase):
         for i in range(@TEST_NUM_NODES@):
             launch_testing.asserts.assertExitCodes(
                 proc_info,
-                [launch_testing.asserts.EXIT_OK] if os.name != 'nt' \
-                    else [launch_testing.asserts.EXIT_OK, launch_testing.asserts.EXIT_FORCED],
-                'node_with_name_' + str(i),
+                process='node_with_name_' + str(i),
             )

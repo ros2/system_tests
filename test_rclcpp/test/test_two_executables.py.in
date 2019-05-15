@@ -69,7 +69,5 @@ class TestTwoExecutablesAfterShutdown(unittest.TestCase):
         )
         launch_testing.asserts.assertExitCodes(
             proc_info,
-            [launch_testing.asserts.EXIT_OK] if os.name != 'nt' \
-                else [launch_testing.asserts.EXIT_OK, launch_testing.asserts.EXIT_FORCED],
-            '@TEST_EXECUTABLE1_NAME@'
+            process='@TEST_EXECUTABLE1_NAME@'
         )
