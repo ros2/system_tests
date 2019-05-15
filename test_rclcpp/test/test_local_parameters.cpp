@@ -73,8 +73,8 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous) {
   if (!parameters_client->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
   }
-  set_test_parameters(parameters_client);
-  verify_test_parameters(parameters_client);
+  test_set_parameters_sync(parameters_client);
+  test_get_parameters_sync(parameters_client);
 }
 
 TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous_repeated) {
@@ -85,10 +85,10 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous_rep
   if (!parameters_client->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
   }
-  set_test_parameters(parameters_client);
+  test_set_parameters_sync(parameters_client);
   for (int i = 0; i < 10; ++i) {
     printf("iteration: %d\n", i);
-    verify_test_parameters(parameters_client);
+    test_get_parameters_sync(parameters_client);
   }
 }
 
@@ -100,8 +100,8 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_asynchronous) {
   if (!parameters_client->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
   }
-  verify_set_parameters_async(node, parameters_client);
-  verify_get_parameters_async(node, parameters_client);
+  test_set_parameters_async(node, parameters_client);
+  test_get_parameters_async(node, parameters_client);
 }
 
 class ParametersAsyncNode : public rclcpp::Node
