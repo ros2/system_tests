@@ -71,4 +71,12 @@ class TestPublisherSubscriberAfterShutdown(unittest.TestCase):
 
     def test_processes_finished_gracefully(self, proc_info):
         """Test that both executables finished gracefully."""
-        launch_testing.asserts.assertExitCodes(proc_info)
+        launch_testing.asserts.assertExitCodes(
+            proc_info,
+            [launch_testing.asserts.EXIT_OK],
+            'test_subscriber'
+        )
+        launch_testing.asserts.assertExitCodes(
+            proc_info,
+            process='test_publisher'
+        )
