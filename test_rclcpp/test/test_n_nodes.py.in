@@ -52,4 +52,15 @@ class TestNNodes(unittest.TestCase):
 class TestNNodesAfterShutdown(unittest.TestCase):
 
     def test_@TEST_NUM_NODES@_nodes(self, proc_info):
-        launch_testing.asserts.assertExitCodes(proc_info)
+        launch_testing.asserts.assertExitCodes(
+            proc_info,
+            [launch_testing.asserts.EXIT_OK],
+            'node_check_names'
+        )
+        for i in range(@TEST_NUM_NODES@):
+            launch_testing.asserts.assertExitCodes(
+                proc_info,
+                [launch_testing.asserts.EXIT_OK] if os.name != 'nt' \
+                    else [launch_testing.asserts.EXIT_OK, launch_testing.asserts.EXIT_FORCED],
+                'node_with_name_' + str(i),
+            )
