@@ -38,6 +38,8 @@ if(BUILD_TESTING)
     ENV
       INITIAL_PARAMS_RCLCPP=$<TARGET_FILE:initial_params_rclcpp>
       INITIAL_PARAMS_RCLPY=${CMAKE_CURRENT_LIST_DIR}/test/initial_params.py
+    # https://github.com/ros2/system_tests/issues/365
+    SKIP_TEST
   )
   set_tests_properties(test_params_yaml
     PROPERTIES DEPENDS
