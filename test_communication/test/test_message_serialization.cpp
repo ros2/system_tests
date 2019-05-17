@@ -201,7 +201,6 @@ TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), cdr_integrity) {
     rosidl_typesupport_cpp::get_message_type_support_handle<test_msgs::msg::BoundedSequences>();
 
   test_msgs__msg__BoundedSequences msg_c;
-  test_msgs__msg__BoundedSequences__init(&msg_c);
   fill_c_message(&msg_c);
 
   test_msgs::msg::BoundedSequences msg_cpp;

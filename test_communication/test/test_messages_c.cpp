@@ -175,6 +175,8 @@ public:
       EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
       ret = rcl_wait(&wait_set, -1);
       ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
+      ret = rcl_wait_set_fini(&wait_set);
+      EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
     }
 
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
@@ -225,6 +227,8 @@ public:
         ret = rcl_take(&subscription, &message, nullptr, nullptr);
         ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
         verify_message(message, msg_cnt);
+        ret = rcl_wait_set_fini(&wait_set);
+        EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
       }
     }
   }
@@ -535,6 +539,7 @@ void get_message(test_msgs__msg__Strings * msg, size_t msg_num)
   }
 }
 
+DEFINE_FINI_MESSAGE(test_msgs__msg__Strings)
 template<>
 void verify_message(test_msgs__msg__Strings & message, size_t msg_num)
 {
@@ -542,9 +547,13 @@ void verify_message(test_msgs__msg__Strings & message, size_t msg_num)
   get_message(&expected_msg, msg_num);
   EXPECT_EQ(0, strcmp(expected_msg.string_value.data, message.string_value.data));
   EXPECT_EQ(0, strcmp(expected_msg.bounded_string_value.data, message.bounded_string_value.data));
+
+  auto msg_exit = make_scope_exit(
+    [&expected_msg]() {
+      fini_message(&expected_msg);
+    });
 }
 
-DEFINE_FINI_MESSAGE(test_msgs__msg__Strings)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_strings) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_msgs, msg, Strings);
@@ -701,6 +710,7 @@ void get_message(test_msgs__msg__Arrays * msg, size_t msg_num)
   }
 }
 
+DEFINE_FINI_MESSAGE(test_msgs__msg__Arrays)
 template<>
 void verify_message(test_msgs__msg__Arrays & message, size_t msg_num)
 {
@@ -723,9 +733,13 @@ void verify_message(test_msgs__msg__Arrays & message, size_t msg_num)
     EXPECT_EQ(0, strcmp(expected_msg.string_values[i].data,
       message.string_values[i].data));
   }
+
+  auto msg_exit = make_scope_exit(
+    [&expected_msg]() {
+      fini_message(&expected_msg);
+    });
 }
 
-DEFINE_FINI_MESSAGE(test_msgs__msg__Arrays)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_arrays) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_msgs, msg, Arrays);
@@ -913,6 +927,7 @@ void get_message(test_msgs__msg__UnboundedSequences * msg, size_t msg_num)
   }
 }
 
+DEFINE_FINI_MESSAGE(test_msgs__msg__UnboundedSequences)
 template<>
 void verify_message(test_msgs__msg__UnboundedSequences & message, size_t msg_num)
 {
@@ -974,9 +989,13 @@ void verify_message(test_msgs__msg__UnboundedSequences & message, size_t msg_num
     EXPECT_EQ(0, strcmp(message.string_values.data[i].data,
       expected_msg.string_values.data[i].data));
   }
+
+  auto msg_exit = make_scope_exit(
+    [&expected_msg]() {
+      fini_message(&expected_msg);
+    });
 }
 
-DEFINE_FINI_MESSAGE(test_msgs__msg__UnboundedSequences)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_unbounded_sequences) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_msgs, msg, UnboundedSequences);
@@ -1082,6 +1101,7 @@ void get_message(test_msgs__msg__BoundedSequences * msg, size_t msg_num)
   }
 }
 
+DEFINE_FINI_MESSAGE(test_msgs__msg__BoundedSequences)
 template<>
 void verify_message(test_msgs__msg__BoundedSequences & message, size_t msg_num)
 {
@@ -1143,9 +1163,13 @@ void verify_message(test_msgs__msg__BoundedSequences & message, size_t msg_num)
     EXPECT_EQ(0, strcmp(message.string_values.data[i].data,
       expected_msg.string_values.data[i].data));
   }
+
+  auto msg_exit = make_scope_exit(
+    [&expected_msg]() {
+      fini_message(&expected_msg);
+    });
 }
 
-DEFINE_FINI_MESSAGE(test_msgs__msg__BoundedSequences)
 TEST_F(CLASSNAME(TestMessagesFixture, RMW_IMPLEMENTATION), test_bounded_sequences) {
   const rosidl_message_type_support_t * ts = ROSIDL_GET_MSG_TYPE_SUPPORT(
     test_msgs, msg, BoundedSequences);
