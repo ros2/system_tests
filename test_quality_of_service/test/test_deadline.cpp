@@ -34,7 +34,8 @@ using namespace std::chrono_literals;
 TEST_F(QosRclcppTestFixture, test_deadline_no_publisher) {
   const std::chrono::milliseconds deadline_duration = 1s;
   const std::chrono::milliseconds test_duration = 10500ms;
-  const int expected_number_of_deadline_callbacks = test_duration / deadline_duration;
+  const int expected_number_of_deadline_callbacks = static_cast<int>(
+    test_duration / deadline_duration);
 
   int total_number_of_subscriber_deadline_events = 0;
   int last_sub_count = 0;

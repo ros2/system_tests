@@ -34,7 +34,7 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
   const std::chrono::milliseconds lifespan_duration = 1s;
   const int history = 2;
   const std::chrono::milliseconds max_test_length = 11s;
-  const int expected_published = max_test_length / lifespan_duration * 2;
+  const int expected_published = 2 * static_cast<int>(max_test_length / lifespan_duration);
   const std::chrono::milliseconds publish_period = 500ms;
 
   // define qos profile
