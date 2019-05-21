@@ -27,18 +27,16 @@ using std::placeholders::_1;
 QosTestSubscriber::QosTestSubscriber(
   const std::string & name,
   const std::string & topic,
-  const rclcpp::QoS & qos_options,
-  const rclcpp::SubscriptionOptions & sub_options)
+  const rclcpp::QoS & qos_options)
 : QosTestNode(name, topic, qos_options),
-  sub_options_(sub_options),
   subscription_(nullptr)
 {
-  RCLCPP_INFO(get_logger(), "created subscriber %s %s", name.c_str(), topic.c_str());
+  RCLCPP_INFO(this->get_logger(), "created subscriber %s %s", name.c_str(), topic.c_str());
 }
 
 void QosTestSubscriber::listen_to_message(const std_msgs::msg::String::SharedPtr received_message)
 {
-  RCLCPP_INFO(get_logger(), "%s: subscriber heard [%s]",
+  RCLCPP_INFO(this->get_logger(), "%s: subscriber heard [%s]",
     this->name_.c_str(),
     received_message->data.c_str());
   this->increment_count();
@@ -59,7 +57,6 @@ void QosTestSubscriber::setup_stop()
 {
   if (subscription_) {
     subscription_.reset();
-    subscription_ = nullptr;
   }
 }
 

@@ -44,28 +44,25 @@ TEST_F(QosRclcppTestFixture, test_deadline_no_publisher) {
   rclcpp::QoS qos_profile(10);
   qos_profile.deadline(deadline_duration);
 
+  const std::string topic("test_deadline_no_publisher");
+
+  // register a publisher for the topic but don't publish anything or use QoS options
+  publisher = std::make_shared<QosTestPublisher>(
+    "publisher", topic, qos_profile, test_duration);
+  subscriber = std::make_shared<QosTestSubscriber>(
+    "subscriber", topic, qos_profile);
+
   // setup subscription options and callback
-  rclcpp::SubscriptionOptions subscriber_options;
-  subscriber_options.event_callbacks.deadline_callback =
-    [&last_sub_count,
-    &total_number_of_subscriber_deadline_events](rclcpp::QOSDeadlineRequestedInfo & event) -> void
+  subscriber->options().event_callbacks.deadline_callback =
+    [this, &last_sub_count, &total_number_of_subscriber_deadline_events](
+    rclcpp::QOSDeadlineRequestedInfo & event) -> void
     {
-      RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "QOSDeadlineRequestedInfo callback");
+      RCLCPP_INFO(subscriber->get_logger(), "QOSDeadlineRequestedInfo callback");
       total_number_of_subscriber_deadline_events++;
       // assert the correct value on a change
       ASSERT_EQ(1, event.total_count_change);
       last_sub_count = event.total_count;
     };
-
-  rclcpp::PublisherOptions publisher_options;
-
-  const std::string topic("test_deadline_no_publisher");
-
-  // register a publisher for the topic but don't publish anything or use QoS options
-  publisher = std::make_shared<QosTestPublisher>(
-    "publisher", topic, qos_profile, publisher_options, test_duration);
-  subscriber = std::make_shared<QosTestSubscriber>(
-    "subscriber", topic, qos_profile, subscriber_options);
 
   executor->add_node(subscriber);
   subscriber->start();
@@ -95,38 +92,36 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
   rclcpp::QoS qos_profile(10);
   qos_profile.deadline(deadline_duration);
 
-  // setup subscription options and callback
-  rclcpp::SubscriptionOptions subscriber_options;
-  subscriber_options.event_callbacks.deadline_callback =
-    [&last_sub_count,
-    &total_number_of_subscriber_deadline_events](rclcpp::QOSDeadlineRequestedInfo & event) -> void
-    {
-      RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "QOSDeadlineRequestedInfo callback");
-      total_number_of_subscriber_deadline_events++;
-      // assert the correct value on a change
-      ASSERT_EQ(1, event.total_count_change);
-      last_sub_count = event.total_count;
-    };
+  const std::string topic("test_deadline");
+
+  publisher = std::make_shared<QosTestPublisher>(
+    "publisher", topic, qos_profile, publish_rate);
+  subscriber = std::make_shared<QosTestSubscriber>(
+    "subscriber", topic, qos_profile);
 
   // setup publishing options and callback
-  rclcpp::PublisherOptions publisher_options;
-  publisher_options.event_callbacks.deadline_callback =
-    [&last_pub_count,
-    &total_number_of_publisher_deadline_events](rclcpp::QOSDeadlineOfferedInfo & event) -> void
+  publisher->options().event_callbacks.deadline_callback =
+    [this, &last_pub_count, &total_number_of_publisher_deadline_events](
+    rclcpp::QOSDeadlineOfferedInfo & event) -> void
     {
-      RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "QOSDeadlineOfferedInfo callback");
+      RCLCPP_INFO(publisher->get_logger(), "QOSDeadlineOfferedInfo callback");
       total_number_of_publisher_deadline_events++;
       // assert the correct value on a change
       ASSERT_EQ(1, event.total_count_change);
       last_pub_count = event.total_count;
     };
 
-  const std::string topic("test_deadline");
-
-  publisher = std::make_shared<QosTestPublisher>(
-    "publisher", topic, qos_profile, publisher_options, publish_rate);
-  subscriber = std::make_shared<QosTestSubscriber>(
-    "subscriber", topic, qos_profile, subscriber_options);
+  // setup subscription options and callback
+  subscriber->options().event_callbacks.deadline_callback =
+    [this, &last_sub_count, &total_number_of_subscriber_deadline_events](
+    rclcpp::QOSDeadlineRequestedInfo & event) -> void
+    {
+      RCLCPP_INFO(subscriber->get_logger(), "QOSDeadlineRequestedInfo callback");
+      total_number_of_subscriber_deadline_events++;
+      // assert the correct value on a change
+      ASSERT_EQ(1, event.total_count_change);
+      last_sub_count = event.total_count;
+    };
 
   // toggle publishing on and off to force deadline events
   rclcpp::TimerBase::SharedPtr toggle_publisher_timer = subscriber->create_wall_timer(

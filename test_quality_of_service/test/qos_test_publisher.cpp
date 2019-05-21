@@ -21,16 +21,13 @@ QosTestPublisher::QosTestPublisher(
   const std::string & name,
   const std::string & topic,
   const rclcpp::QoS & qos_options,
-  const rclcpp::PublisherOptions & publisher_options,
   const std::chrono::milliseconds & publish_period)
 : QosTestNode(name, topic, qos_options),
-  publisher_options_(publisher_options),
   publish_period_(publish_period),
-  timer_(nullptr)
+  timer_(nullptr),
+  publisher_(nullptr)
 {
   RCLCPP_INFO(this->get_logger(), "created publisher %s %s\n", name.c_str(), topic.c_str());
-  publisher_ = this->create_publisher<std_msgs::msg::String>(
-    topic_, qos_options_, publisher_options_);
 }
 
 void QosTestPublisher::publish_message()
@@ -48,9 +45,16 @@ void QosTestPublisher::publish_message()
 
 void QosTestPublisher::setup_start()
 {
+  if (!publisher_) {
+    publisher_ = this->create_publisher<std_msgs::msg::String>(
+      topic_,
+      qos_options_,
+      publisher_options_);
+  }
   if (!timer_) {
-    timer_ =
-      this->create_wall_timer(publish_period_, std::bind(&QosTestPublisher::publish_message, this));
+    timer_ = this->create_wall_timer(
+      publish_period_,
+      std::bind(&QosTestPublisher::publish_message, this));
   }
 }
 

@@ -30,24 +30,24 @@ public:
   QosTestSubscriber(
     const std::string & name,
     const std::string & topic,
-    const rclcpp::QoS & qos_options,
-    const rclcpp::SubscriptionOptions & sub_options);
+    const rclcpp::QoS & qos_options);
 
   virtual ~QosTestSubscriber() = default;
   QosTestSubscriber() = default;
   QosTestSubscriber(QosTestSubscriber const &) = delete;
   QosTestSubscriber & operator=(QosTestSubscriber const &) = delete;
 
+  rclcpp::SubscriptionOptions & options() {return sub_options_;}
+
   void teardown() override;
 
-protected:
+private:
   void listen_to_message(std_msgs::msg::String::SharedPtr);
   void setup_start() override;
   void setup_stop() override;
 
-private:
   /// subscription options needed for QoS callbacks
-  const rclcpp::SubscriptionOptions sub_options_;
+  rclcpp::SubscriptionOptions sub_options_;
 
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
 };

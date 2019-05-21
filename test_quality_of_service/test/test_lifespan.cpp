@@ -42,18 +42,12 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
   qos_profile.durability(RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL);
   qos_profile.lifespan(lifespan_duration);
 
-  // subscription options
-  rclcpp::SubscriptionOptions subscriber_options;
-
-  // publisher options
-  rclcpp::PublisherOptions publisher_options;
-
   std::string topic = "test_lifespan";
 
   publisher = std::make_shared<QosTestPublisher>(
-    "publisher", topic, qos_profile, publisher_options, publish_period);
+    "publisher", topic, qos_profile, publish_period);
   subscriber = std::make_shared<QosTestSubscriber>(
-    "subscriber", topic, qos_profile, subscriber_options);
+    "subscriber", topic, qos_profile);
 
   int timer_fired_count = 0;
   // toggle publishing on and off to force deadline events

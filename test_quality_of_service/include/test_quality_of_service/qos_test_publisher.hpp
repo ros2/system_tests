@@ -32,13 +32,14 @@ public:
     const std::string & name,
     const std::string & topic,
     const rclcpp::QoS & qos_options,
-    const rclcpp::PublisherOptions & publisher_options,
     const std::chrono::milliseconds & publish_period);
 
   virtual ~QosTestPublisher() = default;
   QosTestPublisher() = default;
   QosTestPublisher(QosTestPublisher const &) = delete;
   QosTestPublisher & operator=(QosTestPublisher const &) = delete;
+
+  rclcpp::PublisherOptions & options() {return publisher_options_;}
 
   void teardown() override;
 
@@ -48,7 +49,7 @@ private:
   void setup_stop() override;
 
   /// publisher options needed for QoS callbacks
-  const rclcpp::PublisherOptions publisher_options_;
+  rclcpp::PublisherOptions publisher_options_;
   /// publishing period
   const std::chrono::milliseconds publish_period_;
   /// the timer of this publisher
