@@ -35,7 +35,7 @@ def node_fixture(request):
     node = rclpy.create_node(
         'tests_yaml',
         allow_undeclared_parameters=True,
-        automatically_declare_initial_parameters=True)
+        automatically_declare_parameters_from_overrides=True)
     try:
         yield {
             'node': node,
