@@ -24,7 +24,7 @@ def main(argv=sys.argv):
         'initial_params_node',
         namespace='/',
         allow_undeclared_parameters=True,
-        automatically_declare_initial_parameters=True)
+        automatically_declare_parameters_from_overrides=True)
     rclpy.spin(node)
 
     rclpy.shutdown()
