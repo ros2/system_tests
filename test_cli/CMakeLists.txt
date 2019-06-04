@@ -41,9 +41,11 @@ if(BUILD_TESTING)
     # https://github.com/ros2/system_tests/issues/365
     SKIP_TEST
   )
-  set_tests_properties(test_params_yaml
-    PROPERTIES DEPENDS
-      initial_params_rclcpp)
+  if(TEST test_params_yaml)
+    set_tests_properties(test_params_yaml
+      PROPERTIES DEPENDS
+        initial_params_rclcpp)
+  endif()
 endif()
 
 ament_auto_package()
