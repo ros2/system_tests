@@ -23,6 +23,7 @@ if(BUILD_TESTING)
   macro(tests)
     set(test_names
       "test_ros2action"
+      "test_ros2msg"
     )
     foreach(test_name IN LISTS test_names)
       configure_file(
