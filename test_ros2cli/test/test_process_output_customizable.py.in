@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+import sys
+
 import unittest
 
 from launch import LaunchDescription
@@ -24,53 +27,21 @@ from launch_ros.substitutions import FindPackage
 import launch_testing
 import launch_testing.asserts
 
+sys.path.append(os.path.dirname(__file__))
 
-arguments_by_option = {
-    'list': ['list'],
-    'package': ['package', 'std_msgs'],
-    'packages': ['packages'],
-    'show': ['show', 'std_msgs/msg/String'],
-    'show_old_style': ['show', 'std_msgs/String'],
-}
-
-actions_by_option = {
-    'list': [],
-    'package': [],
-    'packages': [],
-    'show': [],
-    'show_old_style': [],
-}
-
-some_messages_from_std_msgs = [
-    'std_msgs/msg/Bool',
-    'std_msgs/msg/Float32',
-    'std_msgs/msg/Float64',
-]
-
-msgs_by_option = {
-    'list': some_messages_from_std_msgs,
-    'package': some_messages_from_std_msgs,
-    'packages': ['std_msgs'],
-    'show': ['string data'],
-    'show_old_style': ['string data'],
-}
+from @TEST_CONFIGURATION_FILE@ import actions_by_option, arguments_by_option  # noqa
+from @TEST_CONFIGURATION_FILE@ import msgs_by_option, options, verb  # noqa
 
 
-@launch_testing.parametrize('option', [
-    'list',
-    'package',
-    'packages',
-    'show',
-    'show_old_style',
-])
+@launch_testing.parametrize('option', options)
 def generate_test_description(option, ready_fn):
-    cmd = [[FindPackage('ros2cli'), '/bin/ros2'], 'msg']
+    cmd = [[FindPackage('ros2cli'), '/bin/ros2'], verb]
     cmd.extend(arguments_by_option[option])
     print('option: ', option)
     print(cmd)
     process_under_test = ExecuteProcess(
         cmd=cmd,
-        name='test_ros2msg',
+        name='@TEST_NAME@',
         output='screen',
         sigterm_timeout=LaunchConfiguration('sigterm_timeout', default=30)
     )
@@ -86,18 +57,17 @@ def generate_test_description(option, ready_fn):
     return launch_description, locals()
 
 
-class TestRos2Msg(unittest.TestCase):
+class TestCommandFinishesInAFiniteAmountOfTime(unittest.TestCase):
 
-    def test_ros2msg(self, process_under_test):
+    def @TEST_NAME@(self, process_under_test):
         """Test that ros2 command finished in a finite amount of time."""
-        print('waiting shutdown')
         self.proc_info.assertWaitForShutdown(process=process_under_test, timeout=60)
 
 
 @launch_testing.post_shutdown_test()
-class TestRos2MsgAfterShutdown(unittest.TestCase):
+class TestCommandOutput(unittest.TestCase):
 
-    def test_ros2msg(self, proc_info, proc_output, process_under_test, msgs):
+    def @TEST_NAME@(self, proc_info, proc_output, process_under_test, msgs):
         """Test that both executables finished cleanly."""
         launch_testing.asserts.assertExitCodes(
             proc_info,

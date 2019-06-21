@@ -19,34 +19,42 @@ if(BUILD_TESTING)
   find_package(ros_testing REQUIRED)
   find_package(rmw_implementation_cmake REQUIRED)
 
+  macro(custom_test_process_output test_name config_file_name)
+    set(TEST_NAME ${test_name})
+    set(TEST_CONFIGURATION_FILE ${config_file_name})
+    configure_file(
+      test/test_process_output_customizable.py.in
+      ${test_name}${target_suffix}.py.genexp
+      @ONLY
+    )
+    file(GENERATE
+      OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIG>.py"
+      INPUT "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}.py.genexp"
+    )
+    file(INSTALL test/${config_file_name}.py
+      DESTINATION "${CMAKE_CURRENT_BINARY_DIR}"
+    )
+    add_ros_test(
+      "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIG>.py"
+      TARGET ${test_name}${target_suffix}
+      ENV RMW_IMPLEMENTATION=${rmw_implementation}
+      APPEND_LIBRARY_DIRS "${append_library_dirs}"
+      TIMEOUT 60
+    )
+    list(
+      APPEND generated_python_files
+      "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIG>.py"
+    )
+  endmacro()
+
   set(generated_python_files)
   macro(tests)
     set(test_names
       "test_ros2action"
       "test_ros2msg"
     )
-    foreach(test_name IN LISTS test_names)
-      configure_file(
-        test/${test_name}.py.in
-        ${test_name}${target_suffix}.py.genexp
-        @ONLY
-      )
-      file(GENERATE
-        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIG>.py"
-        INPUT "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}.py.genexp"
-      )
-      add_ros_test(
-        "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIG>.py"
-        TARGET ${test_name}${target_suffix}
-        ENV RMW_IMPLEMENTATION=${rmw_implementation}
-        APPEND_LIBRARY_DIRS "${append_library_dirs}"
-        TIMEOUT 60
-      )
-      list(
-        APPEND generated_python_files
-        "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIG>.py"
-      )
-    endforeach()
+    custom_test_process_output(test_ros2action config_ros2action_test)
+    custom_test_process_output(test_ros2msg config_ros2msg_test)
   endmacro()
 
   set(append_library_dirs "${CMAKE_CURRENT_BINARY_DIR}")

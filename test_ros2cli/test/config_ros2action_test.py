@@ -12,18 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-
-from launch import LaunchDescription
-from launch.actions import ExecuteProcess
-from launch.actions import OpaqueFunction
 from launch.substitutions import LaunchConfiguration
 
 from launch_ros.actions import Node
-from launch_ros.substitutions import FindPackage
-
-import launch_testing
-import launch_testing.asserts
 
 
 def get_action_server_node_action():
@@ -101,8 +92,7 @@ msgs_by_option = {
     ],
 }
 
-
-@launch_testing.parametrize('option', [
+options = [
     'info',
     'info -t',
     'info -c',
@@ -112,51 +102,6 @@ msgs_by_option = {
     'send_goal',
     'send_goal -f',
     'show',
-])
-def generate_test_description(option, ready_fn):
-    cmd = [[FindPackage('ros2cli'), '/bin/ros2'], 'action']
-    cmd.extend(arguments_by_option[option])
-    print('option: ', option)
-    print(cmd)
-    process_under_test = ExecuteProcess(
-        cmd=cmd,
-        name='test_ros2action',
-        output='screen',
-        sigterm_timeout=LaunchConfiguration('sigterm_timeout', default=30)
-    )
-    actions = actions_by_option[option]
-    actions.append(process_under_test)
-    launch_description = LaunchDescription(
-        actions
-    )
-    launch_description.add_action(
-        OpaqueFunction(function=lambda context: ready_fn())
-    )
-    msgs = msgs_by_option[option]
-    return launch_description, locals()
+]
 
-
-class TestRos2Action(unittest.TestCase):
-
-    def test_ros2action(self, process_under_test):
-        """Test that ros2 command finished in a finite amount of time."""
-        print('waiting shutdown')
-        self.proc_info.assertWaitForShutdown(process=process_under_test, timeout=60)
-
-
-@launch_testing.post_shutdown_test()
-class TestRos2ActionAfterShutdown(unittest.TestCase):
-
-    def test_ros2action(self, proc_info, proc_output, process_under_test, msgs):
-        """Test that both executables finished cleanly."""
-        launch_testing.asserts.assertExitCodes(
-            proc_info,
-            [launch_testing.asserts.EXIT_OK],
-            process_under_test
-        )
-        for msg in msgs:
-            launch_testing.asserts.assertInStdout(
-                proc_output,
-                msg,
-                process_under_test,
-            )
+verb = 'action'
