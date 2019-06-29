@@ -48,7 +48,7 @@ int main(int argc, char ** argv)
 
       if (it.empty()) {
         printf("  found an empty named node, which is unexpected\n");
-        rc = 1;
+        rc = 2;
         break;
       }
 
@@ -67,8 +67,10 @@ int main(int argc, char ** argv)
   exec.remove_node(node);
   rclcpp::shutdown();
 
-  if (rc) {
+  if (rc == 1) {
     fprintf(stderr, "not found expected node name\n");
+  } else if (rc == 2) {
+    fprintf(stderr, "found a node with an empty name\n");
   }
   return rc;
 }
