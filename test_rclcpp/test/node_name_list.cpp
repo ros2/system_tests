@@ -45,6 +45,13 @@ int main(int argc, char ** argv)
     auto names = node->get_node_graph_interface()->get_node_names();
     for (auto it : names) {
       printf("- %s\n", it.c_str());
+
+      if (it.empty()) {
+        printf("  found an empty named node, which is unexpected\n");
+        rc = 1;
+        break;
+      }
+
       if (argc >= 2 && it.compare(name_to_find) == 0) {
         printf("  found expected node name\n");
         rc = 0;
@@ -59,6 +66,7 @@ int main(int argc, char ** argv)
 
   exec.remove_node(node);
   rclcpp::shutdown();
+
   if (rc) {
     fprintf(stderr, "not found expected node name\n");
   }
