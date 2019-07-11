@@ -17,7 +17,6 @@
   <test_depend>ament_cmake_pytest</test_depend>
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
-  <test_depend>launch</test_depend>
   <test_depend>rcl_interfaces</test_depend>
   <test_depend>rclcpp</test_depend>
   <test_depend>rclpy</test_depend>
