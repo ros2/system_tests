@@ -166,8 +166,7 @@ if(BUILD_TESTING)
     endif()
     if(
       WIN32 AND
-      (rmw_implementation1_is_fastrtps OR rmw_implementation2_is_fastrtps) AND
-      NOT rmw_implementation1_is_fastrtps EQUAL rmw_implementation2_is_fastrtps
+      NOT "${rmw_implementation1_is_fastrtps}" STREQUAL "${rmw_implementation2_is_fastrtps}"
     )
       set(SKIP_TEST "SKIP_TEST")
     endif()
