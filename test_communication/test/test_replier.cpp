@@ -77,6 +77,7 @@ int main(int argc, char ** argv)
 
   auto services_empty = get_services_empty();
   auto services_basic_types = get_services_basic_types();
+  auto services_arrays = get_services_arrays();
   rclcpp::ServiceBase::SharedPtr server;
 
   if (service == "Empty") {
@@ -85,6 +86,9 @@ int main(int argc, char ** argv)
   } else if (service == "BasicTypes") {
     server = reply<test_msgs::srv::BasicTypes>(
       node, service, services_basic_types);
+  } else if (service == "Arrays") {
+    server = reply<test_msgs::srv::Arrays>(
+      node, service, services_arrays);
   } else {
     fprintf(stderr, "Unknown service argument '%s'\n", service.c_str());
     rclcpp::shutdown();
