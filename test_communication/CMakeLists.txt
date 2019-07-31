@@ -164,8 +164,16 @@ if(BUILD_TESTING)
     if(rmw_implementation2 MATCHES "(.*)fastrtps(.*)")
       set(rmw_implementation2_is_fastrtps TRUE)
     endif()
-    if(WIN32 AND (rmw_implementation1_is_fastrtps OR rmw_implementation2_is_fastrtps))
+    if(
+      WIN32 AND
+      NOT "${rmw_implementation1_is_fastrtps}" STREQUAL "${rmw_implementation2_is_fastrtps}"
+    )
       set(SKIP_TEST "SKIP_TEST")
+    endif()
+
+    set(rmw_implementation2_is_connext FALSE)
+    if(rmw_implementation2 MATCHES "(.*)connext(.*)")
+      set(rmw_implementation2_is_connext TRUE)
     endif()
 
     set(rmw_implementation1_is_opensplice FALSE)
@@ -182,6 +190,16 @@ if(BUILD_TESTING)
     set(TEST_MESSAGE_TYPES "")
     foreach(message_file ${message_files})
       get_filename_component(message_type "${message_file}" NAME_WE)
+      # TODO(dirk-thomas) WStrings published by FastRTPS can't be received
+      # correctly by Connext on macOS
+      if(
+        "${message_type}" STREQUAL "WStrings" AND
+        rmw_implementation1_is_fastrtps AND
+        rmw_implementation2_is_connext AND
+        APPLE
+      )
+        continue()
+      endif()
       # TODO(dirk-thomas) OpenSplice doesn't support WString and the rmw impl.
       # maps it to string which has a different wire representation
       if(
