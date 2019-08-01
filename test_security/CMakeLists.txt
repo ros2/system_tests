@@ -264,8 +264,6 @@ if(BUILD_TESTING)
   endmacro()
 
   macro(targets)
-    set(VALID_ROS_SECURITY_ROOT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files")
-
     set(ENV_PATH "$ENV{PATH}")
     file(TO_CMAKE_PATH "${ENV_PATH}" ENV_PATH)
     set(TEST_PATH "${ENV_PATH}")
@@ -334,6 +332,26 @@ if(BUILD_TESTING)
     # finding gtest once in the highest scope
     # prevents finding it repeatedly in each local scope
     ament_find_gtest()
+
+    set(VALID_ROS_SECURITY_ROOT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test/test_security_files")
+    # copy keystore with invalid keys and certificates from source tree
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/
+      DESTINATION ${VALID_ROS_SECURITY_ROOT_DIRECTORY}
+    )
+
+    # generate security artifacts using sros2
+    find_program(PROGRAM ros2)
+
+    set(valid_node_names_list "/publisher;/subscriber")
+    set(generate_artifacts_command ${PROGRAM} security generate_artifacts -k ${VALID_ROS_SECURITY_ROOT_DIRECTORY} -n ${valid_node_names_list})
+    execute_process(
+      COMMAND ${generate_artifacts_command}
+      RESULT_VARIABLE GENERATE_ARTIFACTS_RESULT
+      ERROR_VARIABLE GENERATE_ARTIFACTS_ERROR
+    )
+    if(NOT ${POLICY_RESULT} EQUAL 0)
+      message(WARNING "Failed to generate security artifacts: ${GENERATE_ARTIFACTS_ERROR}")
+    endif()
 
     call_for_each_rmw_implementation(targets)
   endif()
