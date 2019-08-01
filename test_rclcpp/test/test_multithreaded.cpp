@@ -75,7 +75,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
       node_topic_name, 5 * num_messages, callback, subscription_options);
     subscriptions.push_back(sub);
   }
-  ASSERT_TRUE(std::numeric_limits<int>::max() > subscriptions.size());
+  ASSERT_TRUE(static_cast<size_t>(std::numeric_limits<int>::max()) > subscriptions.size());
   int subscriptions_size = static_cast<int>(subscriptions.size());
 
   executor.add_node(node);
@@ -112,7 +112,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   counter.store(0);
   msg.data = 0;
 
-  ASSERT_TRUE(std::numeric_limits<int>::max() > (5 * subscriptions.size()));
+  ASSERT_TRUE(static_cast<size_t>(std::numeric_limits<int>::max()) > (5 * subscriptions.size()));
   const int expected_count = static_cast<int>(5 * subscriptions.size());
 
   std::mutex publish_mutex;
@@ -188,7 +188,7 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     request->b = i + 1;
     client_request_pairs.push_back(ClientRequestPair(client, request));
   }
-  ASSERT_TRUE(std::numeric_limits<int>::max() > client_request_pairs.size());
+  ASSERT_TRUE(static_cast<size_t>(std::numeric_limits<int>::max()) > client_request_pairs.size());
   int client_request_pairs_size = static_cast<int>(client_request_pairs.size());
 
   executor.add_node(node);
