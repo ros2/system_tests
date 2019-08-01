@@ -78,7 +78,7 @@ int main(int argc, char ** argv)
     rclcpp::shutdown();
     return 1;
   }
-  fprintf(stderr, "node created, attempt to publish\n");
+  printf("node created, attempt to publish\n");
   int8_t ret;
 
   if (message == "Empty") {
