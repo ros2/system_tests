@@ -74,7 +74,7 @@ if(BUILD_TESTING)
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation}
-      ROS_SECURITY_ROOT_DIRECTORY="${VALID_ROS_SECURITY_ROOT_DIRECTORY}"
+      ROS_SECURITY_ROOT_DIRECTORY=${VALID_ROS_SECURITY_ROOT_DIRECTORY}
       # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
       # at runtime as the system version of OpenSSL is not supported
       PATH="${TEST_PATH}"

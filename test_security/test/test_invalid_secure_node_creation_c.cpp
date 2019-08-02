@@ -73,8 +73,10 @@ class CLASSNAME (TestInvalidSecureNode, RMW_IMPLEMENTATION) : public ::testing::
 public:
   rcl_context_t context;
   rcl_node_t * node_ptr;
+  const char * previous_root_dir;
   void SetUp()
   {
+    ASSERT_EQ(NULL, rcutils_get_env("ROS_SECURITY_ROOT_DIRECTORY", &previous_root_dir));
   }
 
   void TearDown()
@@ -83,6 +85,7 @@ public:
     delete this->node_ptr;
     ret = rcl_shutdown(&context);
     EXPECT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
+    custom_putenv("ROS_SECURITY_ROOT_DIRECTORY", previous_root_dir);
   }
 
   void test_node_creation(
