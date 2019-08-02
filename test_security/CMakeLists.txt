@@ -342,7 +342,7 @@ if(BUILD_TESTING)
     # generate security artifacts using sros2
     find_program(PROGRAM ros2)
 
-    set(valid_node_names_list "/publisher;/subscriber")
+    set(valid_node_names_list "/publisher;/subscriber;/publisher_missing_key")
     set(generate_artifacts_command ${PROGRAM} security generate_artifacts -k ${VALID_ROS_SECURITY_ROOT_DIRECTORY} -n ${valid_node_names_list})
     execute_process(
       COMMAND ${generate_artifacts_command}
@@ -352,6 +352,9 @@ if(BUILD_TESTING)
     if(NOT ${POLICY_RESULT} EQUAL 0)
       message(WARNING "Failed to generate security artifacts: ${GENERATE_ARTIFACTS_ERROR}")
     endif()
+
+    # deleting key of /publisher_missing_key
+    file(REMOVE "${VALID_ROS_SECURITY_ROOT_DIRECTORY}/publisher_missing_key/key.pem")
 
     call_for_each_rmw_implementation(targets)
   endif()
