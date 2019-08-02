@@ -133,7 +133,7 @@ if(BUILD_TESTING)
       # TODO(mikaelarguedas) test only few message types to avoid taking to much test time
       if(TEST_MESSAGE_NS STREQUAL "msg" AND (
         TEST_MESSAGE_TYPE STREQUAL "Empty" OR
-        TEST_MESSAGE_TYPE STREQUAL "DynamicArrayNested"))
+        TEST_MESSAGE_TYPE STREQUAL "UnboundedSequences"))
         set(index 0)
         # configure all non secure communication tests
         set(SUBSCRIBER_SHOULD_TIMEOUT "false")
