@@ -334,8 +334,8 @@ if(BUILD_TESTING)
     # generate security artifacts using sros2
     find_program(PROGRAM ros2)
 
-    set(valid_node_names_list "/publisher;/subscriber;/publisher_missing_key;/publisher_invalid_cert")
-    set(generate_artifacts_command ${PROGRAM} security generate_artifacts -k ${VALID_ROS_SECURITY_ROOT_DIRECTORY} -n ${valid_node_names_list})
+    set(node_names_list "/publisher;/subscriber;/publisher_missing_key;/publisher_invalid_cert")
+    set(generate_artifacts_command ${PROGRAM} security generate_artifacts -k ${VALID_ROS_SECURITY_ROOT_DIRECTORY} -n ${node_names_list})
     execute_process(
       COMMAND ${generate_artifacts_command}
       RESULT_VARIABLE GENERATE_ARTIFACTS_RESULT
