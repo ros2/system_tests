@@ -118,28 +118,28 @@ public:
   }
 };
 
-TEST_F(CLASSNAME(TestInvalidSecureNode, RMW_IMPLEMENTATION), test_1) {
+TEST_F(CLASSNAME(TestInvalidSecureNode, RMW_IMPLEMENTATION), test_invalid_keystore) {
   test_node_creation(
     "garbage",
     "true", "Enforce",
     "publisher", true);
 }
 
-TEST_F(CLASSNAME(TestInvalidSecureNode, RMW_IMPLEMENTATION), test_2) {
+TEST_F(CLASSNAME(TestInvalidSecureNode, RMW_IMPLEMENTATION), test_unknown_identity) {
   test_node_creation(
     NULL,
     "true", "Enforce",
     "publisher2", true);
 }
 
-TEST_F(CLASSNAME(TestInvalidSecureNode, RMW_IMPLEMENTATION), test_3) {
+TEST_F(CLASSNAME(TestInvalidSecureNode, RMW_IMPLEMENTATION), test_invalid_cert) {
   test_node_creation(
     NULL,
     "true", "Enforce",
     "publisher_invalid_cert", true);
 }
 
-TEST_F(CLASSNAME(TestInvalidSecureNode, RMW_IMPLEMENTATION), test_4) {
+TEST_F(CLASSNAME(TestInvalidSecureNode, RMW_IMPLEMENTATION), test_missing_key) {
   test_node_creation(
     NULL,
     "true", "Enforce",
