@@ -334,15 +334,11 @@ if(BUILD_TESTING)
     ament_find_gtest()
 
     set(VALID_ROS_SECURITY_ROOT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test/test_security_files")
-    # copy keystore with invalid keys and certificates from source tree
-    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/
-      DESTINATION ${VALID_ROS_SECURITY_ROOT_DIRECTORY}
-    )
 
     # generate security artifacts using sros2
     find_program(PROGRAM ros2)
 
-    set(valid_node_names_list "/publisher;/subscriber;/publisher_missing_key")
+    set(valid_node_names_list "/publisher;/subscriber;/publisher_missing_key;/publisher_invalid_cert")
     set(generate_artifacts_command ${PROGRAM} security generate_artifacts -k ${VALID_ROS_SECURITY_ROOT_DIRECTORY} -n ${valid_node_names_list})
     execute_process(
       COMMAND ${generate_artifacts_command}
@@ -356,6 +352,10 @@ if(BUILD_TESTING)
     # deleting key of /publisher_missing_key
     file(REMOVE "${VALID_ROS_SECURITY_ROOT_DIRECTORY}/publisher_missing_key/key.pem")
 
+    # copy invalid certificate from source tree
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/publisher_invalid_cert/cert.pem
+      DESTINATION ${VALID_ROS_SECURITY_ROOT_DIRECTORY}/publisher_invalid_cert/
+    )
     call_for_each_rmw_implementation(targets)
   endif()
 endif()  # BUILD_TESTING
