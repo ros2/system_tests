@@ -68,7 +68,12 @@ bool_params:
         b2: True
 """
     with TemporaryFileWithContent(param_file_content) as yaml_file:
-        command = (node_fixture['executable'], '__params:=' + yaml_file, '__node:=bool_params')
+        command = (
+            node_fixture['executable'],
+            '--ros-args',
+            '__params:=' + yaml_file,
+            '__node:=bool_params'
+        )
 
         with HelperCommand(command):
             resp = get_params(node_fixture['node'], 'bool_params', ['b1', 'b2'])
@@ -88,7 +93,12 @@ int_params:
         i2: -27
 """
     with TemporaryFileWithContent(param_file_content) as yaml_file:
-        command = (node_fixture['executable'], '__params:=' + yaml_file, '__node:=int_params')
+        command = (
+            node_fixture['executable'],
+            '--ros-args',
+            '__params:=' + yaml_file,
+            '__node:=int_params'
+        )
 
         with HelperCommand(command):
             resp = get_params(node_fixture['node'], 'int_params', ['i1', 'i2'])
@@ -108,7 +118,12 @@ double_params:
         d2: -2.718
 """
     with TemporaryFileWithContent(param_file_content) as yaml_file:
-        command = (node_fixture['executable'], '__params:=' + yaml_file, '__node:=double_params')
+        command = (
+            node_fixture['executable'],
+            '--ros-args',
+            '__params:=' + yaml_file,
+            '__node:=double_params'
+        )
 
         with HelperCommand(command):
             resp = get_params(node_fixture['node'], 'double_params', ['d1', 'd2'])
@@ -128,7 +143,12 @@ str_params:
         s2: world
 """
     with TemporaryFileWithContent(param_file_content) as yaml_file:
-        command = (node_fixture['executable'], '__params:=' + yaml_file, '__node:=str_params')
+        command = (
+            node_fixture['executable'],
+            '--ros-args',
+            '__params:=' + yaml_file,
+            '__node:=str_params'
+        )
 
         with HelperCommand(command):
             resp = get_params(node_fixture['node'], 'str_params', ['s1', 's2'])
@@ -151,7 +171,12 @@ ba_params:
         ba2: [false, true]
 """
     with TemporaryFileWithContent(param_file_content) as yaml_file:
-        command = (node_fixture['executable'], '__params:=' + yaml_file, '__node:=ba_params')
+        command = (
+            node_fixture['executable'],
+            '--ros-args',
+            '__params:=' + yaml_file,
+            '__node:=ba_params'
+        )
 
         with HelperCommand(command):
             resp = get_params(node_fixture['node'], 'ba_params', ['ba1', 'ba2'])
@@ -171,7 +196,12 @@ ia_params:
         ia2: [1234, 5678]
 """
     with TemporaryFileWithContent(param_file_content) as yaml_file:
-        command = (node_fixture['executable'], '__params:=' + yaml_file, '__node:=ia_params')
+        command = (
+            node_fixture['executable'],
+            '--ros-args',
+            '__params:=' + yaml_file,
+            '__node:=ia_params'
+        )
 
         with HelperCommand(command):
             resp = get_params(node_fixture['node'], 'ia_params', ['ia1', 'ia2'])
@@ -191,7 +221,12 @@ da_params:
         da2: [1234.5, -9999.0]
 """
     with TemporaryFileWithContent(param_file_content) as yaml_file:
-        command = (node_fixture['executable'], '__params:=' + yaml_file, '__node:=da_params')
+        command = (
+            node_fixture['executable'],
+            '--ros-args',
+            '__params:=' + yaml_file,
+            '__node:=da_params'
+        )
 
         with HelperCommand(command):
             resp = get_params(node_fixture['node'], 'da_params', ['da1', 'da2'])
@@ -211,7 +246,12 @@ sa_params:
         sa2: ['and', 'seven']
 """
     with TemporaryFileWithContent(param_file_content) as yaml_file:
-        command = (node_fixture['executable'], '__params:=' + yaml_file, '__node:=sa_params')
+        command = (
+            node_fixture['executable'],
+            '--ros-args',
+            '__params:=' + yaml_file,
+            '__node:=sa_params'
+        )
 
         with HelperCommand(command):
             resp = get_params(node_fixture['node'], 'sa_params', ['sa1', 'sa2'])
@@ -241,6 +281,7 @@ multi_params:
         with TemporaryFileWithContent(second_yaml_content) as second_yaml_file:
             command = (
                 node_fixture['executable'],
+                '--ros-args',
                 '__params:=' + first_yaml_file,
                 '__params:=' + second_yaml_file,
                 '__node:=multi_params'
