@@ -189,7 +189,7 @@ public:
           [&message]() {
             fini_message(&message);
           });
-        ret = rcl_publish(&publisher, &message, nullptr);
+        ret = rcl_publish(&publisher, &message, nullptr, false);
         ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
       }
     }
