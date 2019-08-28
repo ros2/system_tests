@@ -171,11 +171,7 @@ if(BUILD_TESTING)
       set(SKIP_TEST "SKIP_TEST")
     endif()
 
-    set(rmw_implementation1_is_connext FALSE)
     set(rmw_implementation2_is_connext FALSE)
-    if(rmw_implementation1 MATCHES "(.*)connext(.*)")
-      set(rmw_implementation1_is_connext TRUE)
-    endif()
     if(rmw_implementation2 MATCHES "(.*)connext(.*)")
       set(rmw_implementation2_is_connext TRUE)
     endif()
@@ -187,14 +183,6 @@ if(BUILD_TESTING)
     endif()
     if(rmw_implementation2 MATCHES "(.*)opensplice(.*)")
       set(rmw_implementation2_is_opensplice TRUE)
-    endif()
-
-    # TODO(cottsay) Recent builds of FastRTPS don't communicate correctly with connext
-    if(
-      rmw_implementation1_is_connext AND rmw_implementation2_is_fastrtps AND
-      client_library1 STREQUAL "rclcpp" AND client_library2 STREQUAL "rclpy"
-    )
-      set(SKIP_TEST "SKIP_TEST")
     endif()
 
     set(PUBLISHER_RMW ${rmw_implementation1})
