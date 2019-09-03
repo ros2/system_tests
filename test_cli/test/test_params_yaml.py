@@ -71,8 +71,9 @@ bool_params:
         command = (
             node_fixture['executable'],
             '--ros-args',
-            '__params:=' + yaml_file,
-            '__node:=bool_params'
+            '--remap',
+            '__node:=bool_params',
+            '__params:=' + yaml_file
         )
 
         with HelperCommand(command):
@@ -96,8 +97,9 @@ int_params:
         command = (
             node_fixture['executable'],
             '--ros-args',
-            '__params:=' + yaml_file,
-            '__node:=int_params'
+            '--remap',
+            '__node:=int_params',
+            '__params:=' + yaml_file
         )
 
         with HelperCommand(command):
@@ -121,8 +123,9 @@ double_params:
         command = (
             node_fixture['executable'],
             '--ros-args',
-            '__params:=' + yaml_file,
-            '__node:=double_params'
+            '--remap',
+            '__node:=double_params',
+            '__params:=' + yaml_file
         )
 
         with HelperCommand(command):
@@ -146,8 +149,9 @@ str_params:
         command = (
             node_fixture['executable'],
             '--ros-args',
-            '__params:=' + yaml_file,
-            '__node:=str_params'
+            '--remap',
+            '__node:=str_params',
+            '__params:=' + yaml_file
         )
 
         with HelperCommand(command):
@@ -174,8 +178,9 @@ ba_params:
         command = (
             node_fixture['executable'],
             '--ros-args',
-            '__params:=' + yaml_file,
-            '__node:=ba_params'
+            '--remap',
+            '__node:=ba_params',
+            '__params:=' + yaml_file
         )
 
         with HelperCommand(command):
@@ -199,8 +204,9 @@ ia_params:
         command = (
             node_fixture['executable'],
             '--ros-args',
-            '__params:=' + yaml_file,
-            '__node:=ia_params'
+            '--remap',
+            '__node:=ia_params',
+            '__params:=' + yaml_file
         )
 
         with HelperCommand(command):
@@ -224,8 +230,9 @@ da_params:
         command = (
             node_fixture['executable'],
             '--ros-args',
-            '__params:=' + yaml_file,
-            '__node:=da_params'
+            '--remap',
+            '__node:=da_params',
+            '__params:=' + yaml_file
         )
 
         with HelperCommand(command):
@@ -249,8 +256,9 @@ sa_params:
         command = (
             node_fixture['executable'],
             '--ros-args',
-            '__params:=' + yaml_file,
-            '__node:=sa_params'
+            '--remap',
+            '__node:=sa_params',
+            '__params:=' + yaml_file
         )
 
         with HelperCommand(command):
@@ -282,9 +290,10 @@ multi_params:
             command = (
                 node_fixture['executable'],
                 '--ros-args',
+                '--remap',
+                '__node:=multi_params'
                 '__params:=' + first_yaml_file,
                 '__params:=' + second_yaml_file,
-                '__node:=multi_params'
             )
             with HelperCommand(command):
                 resp = get_params(node_fixture['node'], 'multi_params', ['i1', 'i2', 'i3'])

@@ -81,7 +81,7 @@ def generate_test_description(executable, ready_fn):
             random.randint(0, 9999), time.strftime('%H_%M_%S', time.gmtime()))
         launch_description.add_action(
             ExecuteProcess(
-                cmd=command + ['--ros-args', cli_argument.format(**locals())],
+                cmd=command + ['--ros-args', '--remap', cli_argument.format(**locals())],
                 name='name_maker_' + replacement_name, env=env
             )
         )
