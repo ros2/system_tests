@@ -73,7 +73,7 @@ bool_params:
             '--ros-args',
             '--remap',
             '__node:=bool_params',
-            '__params:=' + yaml_file
+            '--params-file', yaml_file
         )
 
         with HelperCommand(command):
@@ -99,7 +99,7 @@ int_params:
             '--ros-args',
             '--remap',
             '__node:=int_params',
-            '__params:=' + yaml_file
+            '--params-file', yaml_file
         )
 
         with HelperCommand(command):
@@ -125,7 +125,7 @@ double_params:
             '--ros-args',
             '--remap',
             '__node:=double_params',
-            '__params:=' + yaml_file
+            '--params-file', yaml_file
         )
 
         with HelperCommand(command):
@@ -151,7 +151,7 @@ str_params:
             '--ros-args',
             '--remap',
             '__node:=str_params',
-            '__params:=' + yaml_file
+            '--params-file', yaml_file
         )
 
         with HelperCommand(command):
@@ -180,7 +180,7 @@ ba_params:
             '--ros-args',
             '--remap',
             '__node:=ba_params',
-            '__params:=' + yaml_file
+            '--params-file', yaml_file
         )
 
         with HelperCommand(command):
@@ -206,7 +206,7 @@ ia_params:
             '--ros-args',
             '--remap',
             '__node:=ia_params',
-            '__params:=' + yaml_file
+            '--params-file', yaml_file
         )
 
         with HelperCommand(command):
@@ -232,7 +232,7 @@ da_params:
             '--ros-args',
             '--remap',
             '__node:=da_params',
-            '__params:=' + yaml_file
+            '--params-file', yaml_file
         )
 
         with HelperCommand(command):
@@ -258,7 +258,7 @@ sa_params:
             '--ros-args',
             '--remap',
             '__node:=sa_params',
-            '__params:=' + yaml_file
+            '--params-file', yaml_file
         )
 
         with HelperCommand(command):
@@ -292,8 +292,8 @@ multi_params:
                 '--ros-args',
                 '--remap',
                 '__node:=multi_params'
-                '__params:=' + first_yaml_file,
-                '__params:=' + second_yaml_file,
+                '--params-file', first_yaml_file,
+                '--params-file', second_yaml_file
             )
             with HelperCommand(command):
                 resp = get_params(node_fixture['node'], 'multi_params', ['i1', 'i2', 'i3'])
