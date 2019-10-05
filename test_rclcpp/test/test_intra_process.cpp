@@ -62,10 +62,8 @@ TEST(CLASSNAME(test_intra_process_within_one_node, RMW_IMPLEMENTATION), nominal_
   rclcpp::executors::SingleThreadedExecutor executor;
 
   {
-    rclcpp::SubscriptionOptions options;
-    options.ignore_local_publications = true;
     auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
-      "test_intra_process", 10, callback, options);
+      "test_intra_process", 10, callback);
 
     // start condition
     ASSERT_EQ(0, counter);
