@@ -35,7 +35,6 @@ public:
     const std::chrono::milliseconds & publish_period);
 
   virtual ~QosTestPublisher() = default;
-  QosTestPublisher() = default;
   QosTestPublisher(QosTestPublisher const &) = delete;
   QosTestPublisher & operator=(QosTestPublisher const &) = delete;
 
