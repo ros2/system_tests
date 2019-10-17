@@ -63,7 +63,7 @@ TEST(CLASSNAME(test_intra_process_within_one_node, RMW_IMPLEMENTATION), nominal_
 
   {
     rclcpp::SubscriptionOptions options;
-    options.ignore_local_publications = true;
+    options.ignore_local_publications = false;
     auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
       "test_intra_process", 10, callback, options);
 
