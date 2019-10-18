@@ -33,7 +33,6 @@ public:
     const rclcpp::QoS & qos_options);
 
   virtual ~QosTestSubscriber() = default;
-  QosTestSubscriber() = default;
   QosTestSubscriber(QosTestSubscriber const &) = delete;
   QosTestSubscriber & operator=(QosTestSubscriber const &) = delete;
 
