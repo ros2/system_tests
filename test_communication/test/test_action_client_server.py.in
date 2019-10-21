@@ -6,9 +6,9 @@ import time
 
 from launch import LaunchDescription
 from launch.actions import ExecuteProcess
-from launch.actions import OpaqueFunction
 
 import launch_testing
+import launch_testing.actions
 
 import unittest
 
@@ -17,7 +17,7 @@ ACTION_TYPES = '@TEST_ACTION_TYPES@'.split(';')
 
 
 @launch_testing.parametrize('action_type', ACTION_TYPES)
-def generate_test_description(action_type, ready_fn):
+def generate_test_description(action_type):
     namespace = '/test_time_%s' % time.strftime('%H_%M_%S', time.gmtime())
 
     launch_description = LaunchDescription()
@@ -55,7 +55,7 @@ def generate_test_description(action_type, ready_fn):
     launch_description.add_action(action_client_process)
 
     launch_description.add_action(
-        OpaqueFunction(function=lambda context: ready_fn())
+        launch_testing.actions.ReadyToTest()
     )
     return launch_description, locals()
 

@@ -6,14 +6,14 @@ import os
 
 from launch import LaunchDescription
 from launch.actions import ExecuteProcess
-from launch.actions import OpaqueFunction
 
 import launch_testing
+import launch_testing.actions
 
 import unittest
 
 
-def generate_test_description(ready_fn):
+def generate_test_description():
     # TODO Timestamping tests via the node's namespace is no longer appropriate,
     # given the FQN is used to lookup security artifacts from secure root directory.
     # namespace = '/test_time_%s' % time.strftime('%H_%M_%S', time.gmtime())
@@ -66,7 +66,7 @@ def generate_test_description(ready_fn):
     launch_description.add_action(subscriber_process)
 
     launch_description.add_action(
-        OpaqueFunction(function=lambda context: ready_fn())
+        launch_testing.actions.ReadyToTest()
     )
     return launch_description, locals()
 
