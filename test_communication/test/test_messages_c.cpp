@@ -1101,67 +1101,41 @@ void get_message(test_msgs__msg__BoundedSequences * msg, size_t msg_num)
   }
 }
 
+#define EXPECT_SEQUENCES_EQ(pred, a, b) \
+  do { \
+    EXPECT_EQ(a.size, b.size) << "Sequences have different length"; \
+    for (size_t i = 0; i < std::min(a.size, b.size); ++i) { \
+      pred(a.data[i], b.data[i]) << "Sequences differ at element " << i; \
+    } \
+  } while (0)
+
 DEFINE_FINI_MESSAGE(test_msgs__msg__BoundedSequences)
 template<>
 void verify_message(test_msgs__msg__BoundedSequences & message, size_t msg_num)
 {
   test_msgs__msg__BoundedSequences expected_msg;
   get_message(&expected_msg, msg_num);
-  for (size_t i = 0; i < expected_msg.bool_values.size; ++i) {
-    EXPECT_EQ(expected_msg.bool_values.data[i],
-      message.bool_values.data[i]);
-  }
-  for (size_t i = 0; i < expected_msg.byte_values.size; ++i) {
-    EXPECT_EQ(expected_msg.byte_values.data[i],
-      message.byte_values.data[i]);
-  }
-  for (size_t i = 0; i < expected_msg.char_values.size; ++i) {
-    EXPECT_EQ(expected_msg.char_values.data[i],
-      message.char_values.data[i]);
-  }
-  for (size_t i = 0; i < expected_msg.float32_values.size; ++i) {
-    EXPECT_FLOAT_EQ(expected_msg.float32_values.data[i],
-      message.float32_values.data[i]);
-  }
-  for (size_t i = 0; i < expected_msg.float64_values.size; ++i) {
-    EXPECT_DOUBLE_EQ(expected_msg.float64_values.data[i],
-      message.float64_values.data[i]);
-  }
-  for (size_t i = 0; i < expected_msg.int8_values.size; ++i) {
-    EXPECT_EQ(expected_msg.int8_values.data[i],
-      message.int8_values.data[i]);
-  }
-  for (size_t i = 0; i < expected_msg.uint8_values.size; ++i) {
-    EXPECT_EQ(expected_msg.uint8_values.data[i],
-      message.uint8_values.data[i]);
-  }
-  for (size_t i = 0; i < expected_msg.int16_values.size; ++i) {
-    EXPECT_EQ(expected_msg.int16_values.data[i],
-      message.int16_values.data[i]);
-  }
-  for (size_t i = 0; i < expected_msg.uint16_values.size; ++i) {
-    EXPECT_EQ(expected_msg.uint16_values.data[i],
-      message.uint16_values.data[i]);
-  }
-  for (size_t i = 0; i < expected_msg.int32_values.size; ++i) {
-    EXPECT_EQ(expected_msg.int32_values.data[i],
-      message.int32_values.data[i]);
-  }
-  for (size_t i = 0; i < expected_msg.uint32_values.size; ++i) {
-    EXPECT_EQ(expected_msg.uint32_values.data[i],
-      message.uint32_values.data[i]);
-  }
-  for (size_t i = 0; i < expected_msg.int64_values.size; ++i) {
-    EXPECT_EQ(expected_msg.int64_values.data[i],
-      message.int64_values.data[i]);
-  }
-  for (size_t i = 0; i < expected_msg.uint64_values.size; ++i) {
-    EXPECT_EQ(expected_msg.uint64_values.data[i],
-      message.uint64_values.data[i]);
-  }
-  for (size_t i = 0; i < expected_msg.string_values.size; ++i) {
-    EXPECT_EQ(0, strcmp(message.string_values.data[i].data,
-      expected_msg.string_values.data[i].data));
+
+  EXPECT_SEQUENCES_EQ(EXPECT_EQ, expected_msg.bool_values, message.bool_values);
+  EXPECT_SEQUENCES_EQ(EXPECT_EQ, expected_msg.byte_values, message.byte_values);
+  EXPECT_SEQUENCES_EQ(EXPECT_EQ, expected_msg.char_values, message.char_values);
+  EXPECT_SEQUENCES_EQ(EXPECT_FLOAT_EQ, expected_msg.float32_values, message.float32_values);
+  EXPECT_SEQUENCES_EQ(EXPECT_DOUBLE_EQ, expected_msg.float64_values, message.float64_values);
+  EXPECT_SEQUENCES_EQ(EXPECT_EQ, expected_msg.int8_values, message.int8_values);
+  EXPECT_SEQUENCES_EQ(EXPECT_EQ, expected_msg.uint8_values, message.uint8_values);
+  EXPECT_SEQUENCES_EQ(EXPECT_EQ, expected_msg.int16_values, message.int16_values);
+  EXPECT_SEQUENCES_EQ(EXPECT_EQ, expected_msg.uint16_values, message.uint16_values);
+  EXPECT_SEQUENCES_EQ(EXPECT_EQ, expected_msg.int32_values, message.int32_values);
+  EXPECT_SEQUENCES_EQ(EXPECT_EQ, expected_msg.uint32_values, message.uint32_values);
+  EXPECT_SEQUENCES_EQ(EXPECT_EQ, expected_msg.int64_values, message.int64_values);
+  EXPECT_SEQUENCES_EQ(EXPECT_EQ, expected_msg.uint64_values, message.uint64_values);
+
+  EXPECT_EQ(expected_msg.string_values.size, message.string_values.size);
+  for (size_t i = 0; i < std::min(expected_msg.string_values.size, message.string_values.size);
+    ++i)
+  {
+    EXPECT_EQ(
+      0, strcmp(message.string_values.data[i].data, expected_msg.string_values.data[i].data));
   }
 
   auto msg_exit = make_scope_exit(
