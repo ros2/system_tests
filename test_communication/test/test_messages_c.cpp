@@ -1110,7 +1110,8 @@ void get_message(test_msgs__msg__BoundedSequences * msg, size_t msg_num)
     } \
   } while (0)
 
-#define EXPECT_RCSTR_EQ(a, b) EXPECT_EQ(std::string(a.data, a.size), std::string(b.data, b.size))
+#define EXPECT_ROSIDLC_STREQ(a, b) \
+  EXPECT_EQ(std::string(a.data, a.size), std::string(b.data, b.size))
 
 DEFINE_FINI_MESSAGE(test_msgs__msg__BoundedSequences)
 template<>
@@ -1132,7 +1133,7 @@ void verify_message(test_msgs__msg__BoundedSequences & message, size_t msg_num)
   EXPECT_SEQUENCE_EQ(EXPECT_EQ, expected_msg.uint32_values, message.uint32_values);
   EXPECT_SEQUENCE_EQ(EXPECT_EQ, expected_msg.int64_values, message.int64_values);
   EXPECT_SEQUENCE_EQ(EXPECT_EQ, expected_msg.uint64_values, message.uint64_values);
-  EXPECT_SEQUENCE_EQ(EXPECT_RCSTR_EQ, expected_msg.string_values, message.string_values);
+  EXPECT_SEQUENCE_EQ(EXPECT_ROSIDLC_STREQ, expected_msg.string_values, message.string_values);
 
   auto msg_exit = make_scope_exit(
     [&expected_msg]() {
