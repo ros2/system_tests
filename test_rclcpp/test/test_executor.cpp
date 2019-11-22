@@ -19,6 +19,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 #include "gtest/gtest.h"
 
@@ -59,11 +60,16 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), spin_some_max_duration) {
   if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   rclcpp::executors::SingleThreadedExecutor executor;
   auto node = rclcpp::Node::make_shared("spin_some_max_duration");
-  auto timer = node->create_wall_timer(
-    0s,
-    []() {
-      // Do nothing
-    });
+  auto lambda = []() {
+      std::this_thread::sleep_for(1ms);
+    };
+  std::vector<std::shared_ptr<rclcpp::WallTimer<decltype(lambda)>>> timers;
+  // creating 20 timers which will try to do 1 ms of work each
+  // only about 10ms worth of them should actually be performed
+  for (int i = 0; i < 20; i++) {
+    auto timer = node->create_wall_timer(0s, lambda);
+    timers.push_back(timer);
+  }
   executor.add_node(node);
 
   const auto max_duration = 10ms;
