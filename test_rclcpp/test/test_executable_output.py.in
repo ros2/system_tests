@@ -9,16 +9,20 @@ import launch_testing
 import launch_testing.asserts
 import launch_testing_ros
 
+import os
 import unittest
 
 
 def generate_test_description(ready_fn):
+    env = os.environ.copy()
+    env['RCUTILS_CONSOLE_OUTPUT_FORMAT'] = '[{severity}] [{name}]: {message}'
     launch_description = LaunchDescription()
     proc_under_test = ExecuteProcess(
         cmd=['@TEST_EXECUTABLE@'],
         name='@TEST_EXECUTABLE_NAME@',
         sigterm_timeout='15',
-        output='screen'
+        output='screen',
+        env=env,
     )
     launch_description.add_action(proc_under_test)
     launch_description.add_action(
