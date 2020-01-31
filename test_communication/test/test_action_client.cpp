@@ -55,7 +55,8 @@ send_goals(
   size_t test_index = 0;
   bool invalid_feedback = false;
   auto start = std::chrono::steady_clock::now();
-  RCLCPP_SCOPE_EXIT({
+  RCLCPP_SCOPE_EXIT(
+  {
     auto end = std::chrono::steady_clock::now();
     std::chrono::duration<float> diff = (end - start);
     RCLCPP_INFO(logger, "sent goals for %f seconds\n", diff.count());
@@ -191,7 +192,8 @@ generate_nested_message_goal_tests()
     test.result_is_valid =
       [initial_value, expected_result_value](auto result) -> bool {
         if (result->nested_field.int32_value != expected_result_value) {
-          fprintf(stderr, "expected result %d but got %d for initial value %d\n",
+          fprintf(
+            stderr, "expected result %d but got %d for initial value %d\n",
             expected_result_value, result->nested_field.int32_value, initial_value);
           return false;
         }
@@ -200,7 +202,8 @@ generate_nested_message_goal_tests()
     test.feedback_is_valid =
       [initial_value, expected_feedback_value](auto feedback) -> bool {
         if (feedback->nested_different_pkg.sec != expected_feedback_value) {
-          fprintf(stderr, "expected feedback %d but got %d for initial value %d\n",
+          fprintf(
+            stderr, "expected feedback %d but got %d for initial value %d\n",
             expected_feedback_value, feedback->nested_different_pkg.sec, initial_value);
           return false;
         }

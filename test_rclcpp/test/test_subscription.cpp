@@ -218,7 +218,8 @@ public:
 };
 
 // Shortened version of the test for the ConstSharedPtr callback signature in a method
-TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
+TEST(
+  CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
   subscription_shared_ptr_const_method_std_function
 ) {
   if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
@@ -250,7 +251,8 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
 }
 
 // Shortened version of the test for the ConstSharedPtr callback signature in a method
-TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
+TEST(
+  CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
   subscription_shared_ptr_const_method_direct
 ) {
   if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}

@@ -69,7 +69,8 @@ int request(
         printf("received reply #%zu of %zu\n", service_index + 1, services.size());
         ++service_index;
       } else {
-        fprintf(stderr, "received reply for request #%zu does not match the expected reply\n",
+        fprintf(
+          stderr, "received reply for request #%zu does not match the expected reply\n",
           service_index + 1);
         rc = 2;
         break;
