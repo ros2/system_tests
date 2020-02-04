@@ -142,18 +142,17 @@ int main(int argc, char ** argv)
   } else if (message == "Arrays") {
     subscriber = subscribe<test_msgs::msg::Arrays>(
       node, message, messages_arrays, received_messages);
-    publish<test_msgs::msg::Arrays>(node, message,
-      messages_arrays);
+    publish<test_msgs::msg::Arrays>(node, message, messages_arrays);
   } else if (message == "UnboundedSequences") {
     subscriber = subscribe<test_msgs::msg::UnboundedSequences>(
       node, message, messages_unbounded_sequences, received_messages);
-    publish<test_msgs::msg::UnboundedSequences>(node, message,
-      messages_unbounded_sequences);
+    publish<test_msgs::msg::UnboundedSequences>(
+      node, message, messages_unbounded_sequences);
   } else if (message == "BoundedSequences") {
     subscriber = subscribe<test_msgs::msg::BoundedSequences>(
       node, message, messages_bounded_sequences, received_messages);
-    publish<test_msgs::msg::BoundedSequences>(node, message,
-      messages_bounded_sequences);
+    publish<test_msgs::msg::BoundedSequences>(
+      node, message, messages_bounded_sequences);
   } else if (message == "MultiNested") {
     subscriber = subscribe<test_msgs::msg::MultiNested>(
       node, message, messages_multi_nested, received_messages);

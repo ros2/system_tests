@@ -48,8 +48,8 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
 
   rclcpp::executors::MultiThreadedExecutor executor;
 
-  auto node = rclcpp::Node::make_shared(node_topic_name,
-      rclcpp::NodeOptions().use_intra_process_comms(intra_process));
+  auto node = rclcpp::Node::make_shared(
+    node_topic_name, rclcpp::NodeOptions().use_intra_process_comms(intra_process));
   auto callback_group = node->create_callback_group(
     rclcpp::callback_group::CallbackGroupType::Reentrant);
   const size_t num_messages = std::min<size_t>(executor.get_number_of_threads(), 16);

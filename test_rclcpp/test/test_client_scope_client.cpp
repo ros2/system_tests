@@ -49,8 +49,9 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_regression_test
     printf("sending first request\n");
     std::cout.flush();
     auto result1 = client1->async_send_request(request1);
-    if (rclcpp::spin_until_future_complete(node,
-      result1) != rclcpp::executor::FutureReturnCode::SUCCESS)
+    if (
+      rclcpp::spin_until_future_complete(node, result1) !=
+      rclcpp::executor::FutureReturnCode::SUCCESS)
     {
       FAIL();
     }

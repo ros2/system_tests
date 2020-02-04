@@ -36,8 +36,8 @@ QosTestSubscriber::QosTestSubscriber(
 
 void QosTestSubscriber::listen_to_message(const std_msgs::msg::String::SharedPtr received_message)
 {
-  RCLCPP_INFO(this->get_logger(), "%s: subscriber heard [%s]",
-    this->name_.c_str(),
+  RCLCPP_INFO(
+    this->get_logger(), "%s: subscriber heard [%s]", this->name_.c_str(),
     received_message->data.c_str());
   this->increment_count();
 }

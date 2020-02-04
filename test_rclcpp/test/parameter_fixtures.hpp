@@ -125,8 +125,8 @@ void test_get_parameters_sync(
 {
   printf("Listing parameters with recursive depth\n");
   // Test recursive depth (=0)
-  auto parameters_and_prefixes = parameters_client->list_parameters({"foo", "bar"},
-      rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE);
+  auto parameters_and_prefixes = parameters_client->list_parameters(
+    {"foo", "bar"}, rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE);
   for (auto & name : parameters_and_prefixes.names) {
     EXPECT_TRUE(name == "foo" || name == "bar" || name == "foo.first" || name == "foo.second");
   }
@@ -190,14 +190,15 @@ void test_get_parameters_sync(
 
   printf("Listing parameters with recursive depth\n");
   // List all of the parameters, using an empty prefix list and depth=0
-  parameters_and_prefixes = parameters_client->list_parameters({},
-      rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE);
+  parameters_and_prefixes = parameters_client->list_parameters(
+    {}, rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE);
   std::vector<std::string> all_names = {
     "foo", "bar", "barstr", "baz", "foo.first", "foo.second", "foobar", "use_sim_time"
   };
   EXPECT_EQ(parameters_and_prefixes.names.size(), all_names.size());
   for (auto & name : all_names) {
-    EXPECT_NE(std::find(
+    EXPECT_NE(
+      std::find(
         parameters_and_prefixes.names.cbegin(),
         parameters_and_prefixes.names.cend(),
         name),
@@ -208,7 +209,8 @@ void test_get_parameters_sync(
   parameters_and_prefixes = parameters_client->list_parameters({}, 100);
   EXPECT_EQ(parameters_and_prefixes.names.size(), all_names.size());
   for (auto & name : all_names) {
-    EXPECT_NE(std::find(
+    EXPECT_NE(
+      std::find(
         parameters_and_prefixes.names.cbegin(),
         parameters_and_prefixes.names.cend(),
         name),
@@ -222,7 +224,8 @@ void test_get_parameters_sync(
   };
   EXPECT_EQ(parameters_and_prefixes.names.size(), depth_one_names.size());
   for (auto & name : depth_one_names) {
-    EXPECT_NE(std::find(
+    EXPECT_NE(
+      std::find(
         parameters_and_prefixes.names.cbegin(),
         parameters_and_prefixes.names.cend(),
         name),
@@ -236,8 +239,8 @@ void test_get_parameters_async(
 {
   printf("Listing parameters with recursive depth\n");
   // Test recursive depth (=0)
-  auto result = parameters_client->list_parameters({"foo", "bar"},
-      rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE);
+  auto result = parameters_client->list_parameters(
+    {"foo", "bar"}, rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE);
   rclcpp::spin_until_future_complete(node, result);
   auto parameters_and_prefixes = result.get();
   for (auto & name : parameters_and_prefixes.names) {
@@ -311,8 +314,8 @@ void test_get_parameters_async(
 
   printf("Listing parameters with recursive depth\n");
   // List all of the parameters, using an empty prefix list
-  auto result5 = parameters_client->list_parameters({},
-      rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE);
+  auto result5 = parameters_client->list_parameters(
+    {}, rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE);
   rclcpp::spin_until_future_complete(node, result5);
   parameters_and_prefixes = result5.get();
   std::vector<std::string> all_names = {
@@ -320,7 +323,8 @@ void test_get_parameters_async(
   };
   EXPECT_EQ(parameters_and_prefixes.names.size(), all_names.size());
   for (auto & name : all_names) {
-    EXPECT_NE(std::find(
+    EXPECT_NE(
+      std::find(
         parameters_and_prefixes.names.cbegin(),
         parameters_and_prefixes.names.cend(),
         name),

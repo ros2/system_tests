@@ -144,7 +144,8 @@ TEST(CLASSNAME(test_intra_process_within_one_node, RMW_IMPLEMENTATION), nominal_
       int i = 0;
       executor.spin_node_once(node, std::chrono::milliseconds(0));
       while ((counter == 3 || counter == 4) && i < max_loops) {
-        printf("spin_node_some() - callback (%s) expected - try %d/%d\n",
+        printf(
+          "spin_node_some() - callback (%s) expected - try %d/%d\n",
           counter == 3 ? "4 and 5" : "5", ++i, max_loops);
         std::this_thread::sleep_for(sleep_per_loop);
         executor.spin_node_once(node, std::chrono::milliseconds(0));

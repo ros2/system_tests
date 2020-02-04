@@ -126,23 +126,25 @@ public:
     using rclcpp::Parameter;
     using SetParametersResult =
       std::shared_future<std::vector<rcl_interfaces::msg::SetParametersResult>>;
-    auto set_parameters_results = parameters_client_->set_parameters({
+    auto parameters = {
       Parameter("foo", 2),
       Parameter("bar", "hello"),
       Parameter("barstr", std::string("hello_str")),
       Parameter("baz", 1.45),
       Parameter("foobar", true),
       Parameter("barfoo", std::vector<uint8_t>{3, 4, 5}),
-    },
-        [&executor](SetParametersResult future)
-        {
-          printf("Got set_parameters result\n");
-          // Check to see if they were set.
-          for (auto & result : future.get()) {
-            ASSERT_TRUE(result.successful);
-          }
-          executor.cancel();
+    };
+    auto set_parameters_results = parameters_client_->set_parameters(
+      parameters,
+      [&executor](SetParametersResult future)
+      {
+        printf("Got set_parameters result\n");
+        // Check to see if they were set.
+        for (auto & result : future.get()) {
+          ASSERT_TRUE(result.successful);
         }
+        executor.cancel();
+      }
     );
   }
 
@@ -178,7 +180,8 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
   if (!parameters_client->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
   }
-  auto set_parameters_results = parameters_client->set_parameters({
+  auto set_parameters_results = parameters_client->set_parameters(
+  {
     rclcpp::Parameter("foo", 2),
     rclcpp::Parameter("bar", "hello"),
     rclcpp::Parameter("barstr", std::string("hello_str")),
@@ -201,7 +204,8 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
 
   // Test variables that are set, verifying that types are obeyed, and defaults not used.
   EXPECT_TRUE(parameters_client->has_parameter("foo"));
-  EXPECT_THROW(baz = parameters_client->get_parameter<double>("foo"),
+  EXPECT_THROW(
+    baz = parameters_client->get_parameter<double>("foo"),
     rclcpp::ParameterTypeException);
   EXPECT_NO_THROW(foo = parameters_client->get_parameter<int>("foo"));
   EXPECT_EQ(foo, 2);
@@ -209,7 +213,8 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
   EXPECT_EQ(foo, 2);
 
   EXPECT_TRUE(parameters_client->has_parameter("bar"));
-  EXPECT_THROW(foo = parameters_client->get_parameter<int>("bar"),
+  EXPECT_THROW(
+    foo = parameters_client->get_parameter<int>("bar"),
     rclcpp::ParameterTypeException);
   EXPECT_NO_THROW(bar = parameters_client->get_parameter<std::string>("bar"));
   EXPECT_EQ(bar, "hello");
@@ -217,7 +222,8 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
   EXPECT_EQ(bar, "hello");
 
   EXPECT_TRUE(parameters_client->has_parameter("barstr"));
-  EXPECT_THROW(foobar = parameters_client->get_parameter<bool>("barstr"),
+  EXPECT_THROW(
+    foobar = parameters_client->get_parameter<bool>("barstr"),
     rclcpp::ParameterTypeException);
   EXPECT_NO_THROW(barstr = parameters_client->get_parameter<std::string>("barstr"));
   EXPECT_EQ(barstr, "hello_str");
@@ -225,7 +231,8 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
   EXPECT_EQ(barstr, "hello_str");
 
   EXPECT_TRUE(parameters_client->has_parameter("baz"));
-  EXPECT_THROW(foobar = parameters_client->get_parameter<bool>("baz"),
+  EXPECT_THROW(
+    foobar = parameters_client->get_parameter<bool>("baz"),
     rclcpp::ParameterTypeException);
   EXPECT_NO_THROW(baz = parameters_client->get_parameter<double>("baz"));
   EXPECT_DOUBLE_EQ(baz, 1.45);
@@ -233,7 +240,8 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
   EXPECT_DOUBLE_EQ(baz, 1.45);
 
   EXPECT_TRUE(parameters_client->has_parameter("foobar"));
-  EXPECT_THROW(baz = parameters_client->get_parameter<double>("foobar"),
+  EXPECT_THROW(
+    baz = parameters_client->get_parameter<double>("foobar"),
     rclcpp::ParameterTypeException);
   EXPECT_NO_THROW(foobar = parameters_client->get_parameter<bool>("foobar"));
   EXPECT_EQ(foobar, true);
@@ -241,14 +249,15 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
   EXPECT_EQ(foobar, true);
 
   EXPECT_TRUE(parameters_client->has_parameter("barfoo"));
-  EXPECT_THROW(bar = parameters_client->get_parameter<std::string>("barfoo"),
+  EXPECT_THROW(
+    bar = parameters_client->get_parameter<std::string>("barfoo"),
     rclcpp::ParameterTypeException);
   EXPECT_NO_THROW(barfoo = parameters_client->get_parameter<std::vector<uint8_t>>("barfoo"));
   EXPECT_EQ(barfoo[0], 0);
   EXPECT_EQ(barfoo[1], 1);
   EXPECT_EQ(barfoo[2], 2);
-  EXPECT_NO_THROW(barfoo =
-    parameters_client->get_parameter("barfoo", std::vector<uint8_t>{3, 4, 5}));
+  EXPECT_NO_THROW(
+    barfoo = parameters_client->get_parameter("barfoo", std::vector<uint8_t>{3, 4, 5}));
   EXPECT_EQ(barfoo[0], 0);
   EXPECT_EQ(barfoo[1], 1);
   EXPECT_EQ(barfoo[2], 2);
@@ -260,8 +269,8 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
   EXPECT_THROW(parameters_client->get_parameter<std::string>("not_there"), std::runtime_error);
   EXPECT_THROW(parameters_client->get_parameter<double>("not_there"), std::runtime_error);
   EXPECT_THROW(parameters_client->get_parameter<bool>("not_there"), std::runtime_error);
-  EXPECT_THROW(parameters_client->get_parameter<std::vector<uint8_t>>(
-      "not_there"), std::runtime_error);
+  EXPECT_THROW(
+    parameters_client->get_parameter<std::vector<uint8_t>>("not_there"), std::runtime_error);
 
   // Test a variable that's not set, checking that we correctly get the specified default.
   EXPECT_NO_THROW(foo = parameters_client->get_parameter("not_there", 42));
@@ -274,8 +283,8 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
   EXPECT_DOUBLE_EQ(baz, -4.2);
   EXPECT_NO_THROW(foobar = parameters_client->get_parameter("not_there", false));
   EXPECT_EQ(foobar, false);
-  EXPECT_NO_THROW(barfoo =
-    parameters_client->get_parameter("not_there", std::vector<uint8_t>{3, 4, 5}));
+  EXPECT_NO_THROW(
+    barfoo = parameters_client->get_parameter("not_there", std::vector<uint8_t>{3, 4, 5}));
   EXPECT_EQ(barfoo[0], 3);
   EXPECT_EQ(barfoo[1], 4);
   EXPECT_EQ(barfoo[2], 5);
@@ -295,7 +304,8 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_primiti
   if (!parameters_client->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
   }
-  auto set_parameters_results = parameters_client->set_parameters({
+  auto set_parameters_results = parameters_client->set_parameters(
+  {
     rclcpp::Parameter("foo", 2),
     rclcpp::Parameter("bar", "hello"),
     rclcpp::Parameter("barstr", std::string("hello_str")),
@@ -368,7 +378,8 @@ TEST(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_variant
   if (!parameters_client->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
   }
-  auto set_parameters_results = parameters_client->set_parameters({
+  auto set_parameters_results = parameters_client->set_parameters(
+  {
     Parameter("foo", 2),
     Parameter("bar", "hello"),
     Parameter("barstr", std::string("hello_str")),

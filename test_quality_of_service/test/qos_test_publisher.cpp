@@ -37,8 +37,8 @@ void QosTestPublisher::publish_message()
   message_buffer << this->name_ << ": testing " << std::to_string(this->increment_count());
   message.data = message_buffer.str();
 
-  RCLCPP_INFO(this->get_logger(), "%s: publishing '%s'",
-    this->name_.c_str(),
+  RCLCPP_INFO(
+    this->get_logger(), "%s: publishing '%s'", this->name_.c_str(),
     message.data.c_str());
   this->publisher_->publish(message);
 }

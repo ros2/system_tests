@@ -95,7 +95,8 @@ public:
       rcl_init_options_t init_options = rcl_get_zero_initialized_init_options();
       ret = rcl_init_options_init(&init_options, rcl_get_default_allocator());
       ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
-      OSRF_TESTING_TOOLS_CPP_SCOPE_EXIT({
+      OSRF_TESTING_TOOLS_CPP_SCOPE_EXIT(
+      {
         EXPECT_EQ(RCL_RET_OK, rcl_init_options_fini(&init_options)) << rcl_get_error_string().str;
       });
       this->context_ptr = new rcl_context_t;
@@ -731,8 +732,7 @@ void verify_message(test_msgs__msg__Arrays & message, size_t msg_num)
     EXPECT_EQ(expected_msg.uint32_values[i], message.uint32_values[i]);
     EXPECT_EQ(expected_msg.int64_values[i], message.int64_values[i]);
     EXPECT_EQ(expected_msg.uint64_values[i], message.uint64_values[i]);
-    EXPECT_EQ(0, strcmp(expected_msg.string_values[i].data,
-      message.string_values[i].data));
+    EXPECT_EQ(0, strcmp(expected_msg.string_values[i].data, message.string_values[i].data));
   }
 
   auto msg_exit = make_scope_exit(
@@ -935,60 +935,55 @@ void verify_message(test_msgs__msg__UnboundedSequences & message, size_t msg_num
   test_msgs__msg__UnboundedSequences expected_msg;
   get_message(&expected_msg, msg_num);
   for (size_t i = 0; i < expected_msg.bool_values.size; ++i) {
-    EXPECT_EQ(expected_msg.bool_values.data[i],
-      message.bool_values.data[i]);
+    EXPECT_EQ(expected_msg.bool_values.data[i], message.bool_values.data[i]);
   }
   for (size_t i = 0; i < expected_msg.byte_values.size; ++i) {
-    EXPECT_EQ(expected_msg.byte_values.data[i],
-      message.byte_values.data[i]);
+    EXPECT_EQ(expected_msg.byte_values.data[i], message.byte_values.data[i]);
   }
   for (size_t i = 0; i < expected_msg.char_values.size; ++i) {
-    EXPECT_EQ(expected_msg.char_values.data[i],
-      message.char_values.data[i]);
+    EXPECT_EQ(expected_msg.char_values.data[i], message.char_values.data[i]);
   }
   for (size_t i = 0; i < expected_msg.float32_values.size; ++i) {
-    EXPECT_FLOAT_EQ(expected_msg.float32_values.data[i],
-      message.float32_values.data[i]);
+    EXPECT_FLOAT_EQ(
+      expected_msg.float32_values.data[i], message.float32_values.data[i]);
   }
   for (size_t i = 0; i < expected_msg.float64_values.size; ++i) {
-    EXPECT_DOUBLE_EQ(expected_msg.float64_values.data[i],
-      message.float64_values.data[i]);
+    EXPECT_DOUBLE_EQ(
+      expected_msg.float64_values.data[i], message.float64_values.data[i]);
   }
   for (size_t i = 0; i < expected_msg.int8_values.size; ++i) {
-    EXPECT_EQ(expected_msg.int8_values.data[i],
-      message.int8_values.data[i]);
+    EXPECT_EQ(expected_msg.int8_values.data[i], message.int8_values.data[i]);
   }
   for (size_t i = 0; i < expected_msg.uint8_values.size; ++i) {
-    EXPECT_EQ(expected_msg.uint8_values.data[i],
-      message.uint8_values.data[i]);
+    EXPECT_EQ(expected_msg.uint8_values.data[i], message.uint8_values.data[i]);
   }
   for (size_t i = 0; i < expected_msg.int16_values.size; ++i) {
-    EXPECT_EQ(expected_msg.int16_values.data[i],
-      message.int16_values.data[i]);
+    EXPECT_EQ(expected_msg.int16_values.data[i], message.int16_values.data[i]);
   }
   for (size_t i = 0; i < expected_msg.uint16_values.size; ++i) {
-    EXPECT_EQ(expected_msg.uint16_values.data[i],
-      message.uint16_values.data[i]);
+    EXPECT_EQ(
+      expected_msg.uint16_values.data[i], message.uint16_values.data[i]);
   }
   for (size_t i = 0; i < expected_msg.int32_values.size; ++i) {
-    EXPECT_EQ(expected_msg.int32_values.data[i],
-      message.int32_values.data[i]);
+    EXPECT_EQ(expected_msg.int32_values.data[i], message.int32_values.data[i]);
   }
   for (size_t i = 0; i < expected_msg.uint32_values.size; ++i) {
-    EXPECT_EQ(expected_msg.uint32_values.data[i],
-      message.uint32_values.data[i]);
+    EXPECT_EQ(
+      expected_msg.uint32_values.data[i], message.uint32_values.data[i]);
   }
   for (size_t i = 0; i < expected_msg.int64_values.size; ++i) {
-    EXPECT_EQ(expected_msg.int64_values.data[i],
-      message.int64_values.data[i]);
+    EXPECT_EQ(expected_msg.int64_values.data[i], message.int64_values.data[i]);
   }
   for (size_t i = 0; i < expected_msg.uint64_values.size; ++i) {
-    EXPECT_EQ(expected_msg.uint64_values.data[i],
-      message.uint64_values.data[i]);
+    EXPECT_EQ(
+      expected_msg.uint64_values.data[i], message.uint64_values.data[i]);
   }
   for (size_t i = 0; i < expected_msg.string_values.size; ++i) {
-    EXPECT_EQ(0, strcmp(message.string_values.data[i].data,
-      expected_msg.string_values.data[i].data));
+    EXPECT_EQ(
+      0,
+      strcmp(
+        message.string_values.data[i].data,
+        expected_msg.string_values.data[i].data));
   }
 
   auto msg_exit = make_scope_exit(
