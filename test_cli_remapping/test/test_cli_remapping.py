@@ -21,8 +21,8 @@ import unittest
 
 from launch import LaunchDescription
 from launch.actions import ExecuteProcess
-from launch.actions import OpaqueFunction
 import launch_testing
+import launch_testing.actions
 
 import rclpy
 
@@ -65,7 +65,7 @@ TEST_CASES = {
 
 
 @launch_testing.parametrize('executable', CLIENT_LIBRARY_EXECUTABLES)
-def generate_test_description(executable, ready_fn):
+def generate_test_description(executable):
     command = [executable]
     # Execute python files using same python used to start this test
     env = dict(os.environ)
@@ -88,7 +88,7 @@ def generate_test_description(executable, ready_fn):
         test_context[replacement_name] = replacement_value.format(**locals())
 
     launch_description.add_action(
-        OpaqueFunction(function=lambda context: ready_fn())
+        launch_testing.actions.ReadyToTest()
     )
 
     return launch_description, test_context
