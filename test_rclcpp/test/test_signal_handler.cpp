@@ -38,14 +38,18 @@ int main(int argc, char ** argv)
   rclcpp::init(argc, argv);
   RCLCPP_INFO(rclcpp::get_logger("test_signal_handler"), "Called rclcpp::init.");
 
-  RCLCPP_INFO(rclcpp::get_logger("test_signal_handler"), "Waiting to give an opportunity for interrupt...");
+  RCLCPP_INFO(
+    rclcpp::get_logger("test_signal_handler"),
+    "Waiting to give an opportunity for interrupt...");
   std::this_thread::sleep_for(5s);
 
   RCLCPP_INFO(rclcpp::get_logger("test_signal_handler"), "Calling rclcpp::shutdown...");
   rclcpp::shutdown();
   RCLCPP_INFO(rclcpp::get_logger("test_signal_handler"), "Called rclcpp::shutdown.");
 
-  RCLCPP_INFO(rclcpp::get_logger("test_signal_handler"), "Waiting to give an opportunity for interrupt...");
+  RCLCPP_INFO(
+    rclcpp::get_logger("test_signal_handler"),
+    "Waiting to give an opportunity for interrupt...");
   std::this_thread::sleep_for(5s);
 
   RCLCPP_INFO(rclcpp::get_logger("test_signal_handler"), "Exiting.");
