@@ -22,7 +22,7 @@ using namespace std::chrono_literals;
 void sigintHandler(int sig)
 {
   (void)sig;
-  printf("Custom sigint handler called.\n");
+  RCLCPP_INFO(rclcpp::get_logger("test_signal_handler"), "Custom sigint handler called.");
 }
 
 int main(int argc, char ** argv)
@@ -30,25 +30,24 @@ int main(int argc, char ** argv)
   // This exectuable is used in combination with a script that interrupts it at different times.
   // Its purpose is to test that a user-defined signal handler gets called even when the rclcpp
   // signal handler is/has been in use.
-  setvbuf(stdout, NULL, _IONBF, BUFSIZ);
 
   // Override default sigint handler
   signal(SIGINT, sigintHandler);
-  printf("Registered custom signal handler.\n");
+  RCLCPP_INFO(rclcpp::get_logger("test_signal_handler"), "Registered custom signal handler.");
 
   rclcpp::init(argc, argv);
-  printf("Called rclcpp::init.\n");
+  RCLCPP_INFO(rclcpp::get_logger("test_signal_handler"), "Called rclcpp::init.");
 
-  printf("Waiting to give an opportunity for interrupt...\n");
+  RCLCPP_INFO(rclcpp::get_logger("test_signal_handler"), "Waiting to give an opportunity for interrupt...");
   std::this_thread::sleep_for(5s);
 
-  printf("Calling rclcpp::shutdown...\n");
+  RCLCPP_INFO(rclcpp::get_logger("test_signal_handler"), "Calling rclcpp::shutdown...");
   rclcpp::shutdown();
-  printf("Called rclcpp::shutdown.\n");
+  RCLCPP_INFO(rclcpp::get_logger("test_signal_handler"), "Called rclcpp::shutdown.");
 
-  printf("Waiting to give an opportunity for interrupt...\n");
+  RCLCPP_INFO(rclcpp::get_logger("test_signal_handler"), "Waiting to give an opportunity for interrupt...");
   std::this_thread::sleep_for(5s);
 
-  printf("Exiting.\n");
+  RCLCPP_INFO(rclcpp::get_logger("test_signal_handler"), "Exiting.");
   return 0;
 }

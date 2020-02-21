@@ -40,7 +40,7 @@ class TestExecutableOutput(unittest.TestCase):
         proc_output.assertWaitFor(
             expected_output=launch_testing.tools.expected_output_from_file(
                 path='@TEST_EXECUTABLE_TRIGGER_SHUTDOWN_OUTPUT@'
-            ), process=proc_under_test, output_filter=output_filter, timeout=10, stream='stdout'
+            ), process=proc_under_test, output_filter=output_filter, timeout=10
         )
 
 
@@ -51,7 +51,7 @@ class TestExecutableOutputAfterShutdown(unittest.TestCase):
         output_filter = launch_testing_ros.tools.basic_output_filter(
             filtered_rmw_implementation='@rmw_implementation@'
         )
-        launch_testing.asserts.assertInStdout(
+        launch_testing.asserts.assertInStderr(
             proc_output,
             expected_output=launch_testing.tools.expected_output_from_file(
                 path='@TEST_EXECUTABLE_EXPECTED_OUTPUT@'
