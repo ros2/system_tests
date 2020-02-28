@@ -51,7 +51,7 @@ class TestExecutableOutputAfterShutdown(unittest.TestCase):
         output_filter = launch_testing_ros.tools.basic_output_filter(
             filtered_rmw_implementation='@rmw_implementation@'
         )
-        launch_testing.asserts.assertInStdout(
+        launch_testing.asserts.assertInStderr(
             proc_output,
             expected_output=launch_testing.tools.expected_output_from_file(
                 path='@TEST_EXECUTABLE_EXPECTED_OUTPUT@'
