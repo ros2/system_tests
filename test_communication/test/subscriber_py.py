@@ -62,7 +62,7 @@ def listener(message_name, namespace):
     spin_count = 1
     print('subscriber: beginning loop')
     while (rclpy.ok() and len(received_messages) != len(expected_msgs)):
-        rclpy.spin_once(node)
+        rclpy.spin_once(node, timeout_sec=0.1)
         spin_count += 1
         print('spin_count: ' + str(spin_count))
     node.destroy_node()
