@@ -15,6 +15,11 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
 endif()
 
+option(SKIP_SINGLE_RMW_TESTS
+  "Skip tests involving only a single RMW implementation" OFF)
+option(SKIP_MULTI_RMW_TESTS
+  "Skip tests involving only multiple RMW implementations" OFF)
+
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
@@ -411,19 +416,28 @@ if(BUILD_TESTING)
     "test/test_action_server.cpp")
 
   macro(targets)
-    custom_test_c(test_messages_c
-      "test/test_messages_c.cpp")
+    if(NOT SKIP_SINGLE_RMW_TESTS)
+      custom_test_c(test_messages_c
+        "test/test_messages_c.cpp")
 
-    # publisher combined with a subscriber
-    custom_test(test_publisher_subscriber_cpp TRUE)
-    # subcription valid data
-    custom_test(test_subscription_valid_data_cpp FALSE)
+      # publisher combined with a subscriber
+      custom_test(test_publisher_subscriber_cpp TRUE)
+      # subcription valid data
+      custom_test(test_subscription_valid_data_cpp FALSE)
+    endif()
 
     set(rmw_implementation1 "${rmw_implementation}")
     set(target_suffix1 "${target_suffix}")
 
     foreach(rmw_implementation2 ${rmw_implementations2})
-      multi_client_libraries()
+      if(
+        rmw_implementation1 STREQUAL rmw_implementation2 AND
+        NOT SKIP_SINGLE_RMW_TESTS OR
+        NOT rmw_implementation1 STREQUAL rmw_implementation2 AND
+        NOT SKIP_MULTI_RMW_TESTS
+      )
+        multi_client_libraries()
+      endif()
     endforeach()
   endmacro()
 
@@ -510,8 +524,10 @@ if(BUILD_TESTING)
   ament_find_gtest()
 
   call_for_each_rmw_implementation(targets)
-  call_for_each_rmw_implementation(serialize)
-  call_for_each_rmw_implementation(pub_sub_serialized)
+  if(NOT SKIP_SINGLE_RMW_TESTS)
+    call_for_each_rmw_implementation(serialize)
+    call_for_each_rmw_implementation(pub_sub_serialized)
+  endif()
 endif()  # BUILD_TESTING
 
 ament_auto_package()
