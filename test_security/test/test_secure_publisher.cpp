@@ -65,10 +65,11 @@ int main(int argc, char ** argv)
       "pass a message type\n");
     return 1;
   }
-  rclcpp::init(argc, argv);
+  const char * args[] = {"--ros-args", "--security-context", "/publisher"};
+  rclcpp::init(sizeof(args) / sizeof(char *), args);
   std::string message = argv[1];
   std::string namespace_ = argv[2];
-  std::string node_name = "publisher";
+  std::string node_name = "test_secure_publisher";
   std::string topic_name = "chatter";
   std::shared_ptr<rclcpp::Node> node = nullptr;
   try {
