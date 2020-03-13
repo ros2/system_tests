@@ -48,6 +48,7 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 
   find_package(launch_testing_ament_cmake REQUIRED)
+  find_package(osrf_testing_tools_cpp REQUIRED)
 
   # get the rmw implementations ahead of time
   find_package(rmw_implementation_cmake REQUIRED)
@@ -80,7 +81,7 @@ if(BUILD_TESTING)
         ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
         ${_AMENT_EXPORT_LIBRARY_TARGETS})
       ament_target_dependencies(${target}${target_suffix}
-        "rcl")
+        "rcl" "osrf_testing_tools_cpp")
       set_tests_properties(
         ${target}${target_suffix}
         PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}${target_suffix}>"
@@ -329,13 +330,14 @@ if(BUILD_TESTING)
     # prevents finding it repeatedly in each local scope
     ament_find_gtest()
 
-    set(VALID_ROS_SECURITY_ROOT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test/test_security_files")
+    set(KEYSTORE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test/test_security_files")
+    set(VALID_ROS_SECURITY_ROOT_DIRECTORY "${KEYSTORE_DIRECTORY}/contexts")
 
     # generate security artifacts using sros2
     find_program(PROGRAM ros2)
 
     set(node_names_list "/publisher;/subscriber;/publisher_missing_key;/publisher_invalid_cert")
-    set(generate_artifacts_command ${PROGRAM} security generate_artifacts -k ${VALID_ROS_SECURITY_ROOT_DIRECTORY} -n ${node_names_list})
+    set(generate_artifacts_command ${PROGRAM} security generate_artifacts -k ${KEYSTORE_DIRECTORY} -c ${node_names_list})
     execute_process(
       COMMAND ${generate_artifacts_command}
       RESULT_VARIABLE GENERATE_ARTIFACTS_RESULT

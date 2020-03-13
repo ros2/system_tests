@@ -117,12 +117,13 @@ int main(int argc, char ** argv)
   }
   std::string message = argv[1];
   std::string namespace_ = argv[3];
-  std::string node_name = "subscriber";
+  std::string node_name = "test_secure_subscriber";
   std::string topic_name = "chatter";
   bool should_timeout =
     ((0 == strcmp(argv[2], "false")) || (0 == strcmp(argv[2], "0"))) ? false : true;
 
-  rclcpp::init(argc, argv);
+  const char * args[] = {"--ros-args", "--security-context", "/subscriber"};
+  rclcpp::init(sizeof(args) / sizeof(char *), args);
   std::shared_ptr<rclcpp::Node> node = nullptr;
   try {
     node = rclcpp::Node::make_shared(node_name, namespace_);
