@@ -182,14 +182,29 @@ if(BUILD_TESTING)
     else()
       set(target_suffix "__${rmw_implementation1}__${rmw_implementation2}")
     endif()
-    # TODO(hidmic): enable tests once FastRTPS <=> (Opensplice|Connext) interoperation
-    # issues are resolved (see https://github.com/ros2/rmw_fastrtps/issues/246).
-    custom_launch_test_two_executables(test_node_name
-      node_with_name node_name_list
-      ARGS1 "${rmw_implementation1}" ARGS2 "node_with_name_${rmw_implementation1}"
-      RMW1 ${rmw_implementation1} RMW2 ${rmw_implementation2}
-      TIMEOUT 15
-      ${SKIP_TEST})
+
+    set(rmw_implementation1_is_fastrtps FALSE)
+    set(rmw_implementation2_is_fastrtps FALSE)
+    if(rmw_implementation1 MATCHES "(.*)fastrtps(.*)")
+      set(rmw_implementation1_is_fastrtps TRUE)
+    endif()
+    if(rmw_implementation2 MATCHES "(.*)fastrtps(.*)")
+      set(rmw_implementation2_is_fastrtps TRUE)
+    endif()
+
+    # Skipped tests between fastrtps and others, as the node names are communicated with a different mechanism.
+    # TODO(ivanpauno): Reenable this tests after the other implementations also use one Participant per Context.
+    if(
+      (NOT rmw_implementation1_is_fastrtps AND NOT rmw_implementation2_is_fastrtps) OR
+      (rmw_implementation1_is_fastrtps AND rmw_implementation2_is_fastrtps)
+    )
+      custom_launch_test_two_executables(test_node_name
+        node_with_name node_name_list
+        ARGS1 "${rmw_implementation1}" ARGS2 "node_with_name_${rmw_implementation1}"
+        RMW1 ${rmw_implementation1} RMW2 ${rmw_implementation2}
+        TIMEOUT 15
+        ${SKIP_TEST})
+    endif()
   endmacro()
 
   macro(targets)
