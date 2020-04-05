@@ -72,8 +72,6 @@ if(BUILD_TESTING)
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation}
       ROS_SECURITY_KEYSTORE=${KEYSTORE_DIRECTORY_NATIVE_PATH}
-      # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
-      # at runtime as the system version of OpenSSL is not supported
       PATH="${TEST_PATH}"
     )
     if(TARGET ${target}${target_suffix})
@@ -159,8 +157,6 @@ if(BUILD_TESTING)
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             TARGET test_secure_publisher_subscriber${test_suffix}
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
-            # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
-            # at runtime as the system version of OpenSSL is not supported
             ENV
             PATH="${TEST_PATH}"
             TIMEOUT 20
@@ -201,8 +197,6 @@ if(BUILD_TESTING)
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             TARGET test_secure_publisher_subscriber${test_suffix}
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
-            # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
-            # at runtime as the system version of OpenSSL is not supported
             ENV
             PATH="${TEST_PATH}"
             TIMEOUT 20
@@ -243,8 +237,6 @@ if(BUILD_TESTING)
             "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
             TARGET test_secure_publisher_subscriber${test_suffix}
             APPEND_LIBRARY_DIRS "${append_library_dirs}"
-            # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
-            # at runtime as the system version of OpenSSL is not supported
             ENV
             PATH="${TEST_PATH}"
             TIMEOUT 20
@@ -265,15 +257,11 @@ if(BUILD_TESTING)
     file(TO_CMAKE_PATH "${ENV_PATH}" ENV_PATH)
     set(TEST_PATH "${ENV_PATH}")
     if(rmw_implementation STREQUAL "rmw_connext_cpp")
-      if(UNIX AND NOT APPLE)
-        # TODO(mikaelarguedas) remove this condition the day we want to use RTI's OpenSSL libraries
-        #  on all platforms
-        # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
-        # at runtime as the system version of OpenSSL is not supported
-        set(RTI_BIN_PATH "$ENV{RTI_OPENSSL_BIN}")
-        file(TO_CMAKE_PATH "${RTI_BIN_PATH}" RTI_BIN_PATH)
-        set(TEST_PATH "${RTI_BIN_PATH};${ENV_PATH}")
-      endif()
+      # Connext 5.3.1 needs RTI's OpenSSL binaries (based on EOL 1.0.2) to be
+      # on the PATH at runtime as the system version of OpenSSL is not supported
+      set(RTI_BIN_PATH "$ENV{RTI_OPENSSL_BIN}")
+      file(TO_CMAKE_PATH "${RTI_BIN_PATH}" RTI_BIN_PATH)
+      set(TEST_PATH "${RTI_BIN_PATH};${ENV_PATH}")
     endif()
 
     if(NOT WIN32)
@@ -304,29 +292,28 @@ if(BUILD_TESTING)
       "test/test_secure_subscriber.cpp")
 
     set(append_library_dirs "${CMAKE_CURRENT_BINARY_DIR}")
+    set(append_library_dirs "${append_library_dirs}:$ENV{RTI_OPENSSL_LIBS}")
     if(WIN32)
       set(append_library_dirs "${append_library_dirs}/$<CONFIG>")
-    elseif(APPLE)
-      # connext need the openssl libraries to be on the DYLD_LIBRARY_PATH at runtime
-      # as SIP strips these variables on recent MacOS we populate them here
-      # see https://github.com/ros2/ros2/issues/409
-      execute_process(
-        COMMAND "brew" "--prefix" "openssl"
-        RESULT_VARIABLE _retcode
-        OUTPUT_VARIABLE _out_var
-        ERROR_VARIABLE _error_var
-      )
-      if(NOT _retcode EQUAL 0)
-        message(FATAL_ERROR "command 'brew --prefix openssl' failed with error code '${_retcode}' and error message '${_error_var}'")
-      endif()
-      string(STRIP "${_out_var}" _out_var)
-      set(openssl_lib_path "${_out_var}/lib")
-      file(TO_NATIVE_PATH "${openssl_lib_path}" openssl_lib_path)
-      set(append_library_dirs "${append_library_dirs};${openssl_lib_path}")
-    elseif(UNIX)
-      # on bionic, Connext needs RTI's OpenSSL libraries to be on the LD_LIBRARY_PATH
-      # at runtime as the system version of OpenSSL is not supported
-      set(append_library_dirs "${append_library_dirs}:$ENV{RTI_OPENSSL_LIBS}")
+    # TODO(mikaelarguedas) uncomment this once Connext supports OpenSSL 1.1.1
+    # in the meantime use RTI_OPENSSL_LIBS
+    # elseif(APPLE)
+    #   # connext need the openssl libraries to be on the DYLD_LIBRARY_PATH at runtime
+    #   # as SIP strips these variables on recent MacOS we populate them here
+    #   # see https://github.com/ros2/ros2/issues/409
+    #   execute_process(
+    #     COMMAND "brew" "--prefix" "openssl"
+    #     RESULT_VARIABLE _retcode
+    #     OUTPUT_VARIABLE _out_var
+    #     ERROR_VARIABLE _error_var
+    #   )
+    #   if(NOT _retcode EQUAL 0)
+    #     message(FATAL_ERROR "command 'brew --prefix openssl' failed with error code '${_retcode}' and error message '${_error_var}'")
+    #   endif()
+    #   string(STRIP "${_out_var}" _out_var)
+    #   set(openssl_lib_path "${_out_var}/lib")
+    #   file(TO_NATIVE_PATH "${openssl_lib_path}" openssl_lib_path)
+    #   set(append_library_dirs "${append_library_dirs};${openssl_lib_path}")
     endif()
 
     # finding gtest once in the highest scope
