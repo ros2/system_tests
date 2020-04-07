@@ -71,7 +71,7 @@ if(BUILD_TESTING)
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation}
-      ROS_SECURITY_ROOT_DIRECTORY=${VALID_ROS_SECURITY_ROOT_DIRECTORY}
+      ROS_SECURITY_ROOT_DIRECTORY=${KEYSTORE_DIRECTORY}
       # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
       # at runtime as the system version of OpenSSL is not supported
       PATH="${TEST_PATH}"
@@ -104,8 +104,8 @@ if(BUILD_TESTING)
     set(non_secure_comm_SUBSCRIBER_ROS_SECURITY_ENABLE_LIST "false;false;false;false;true")
     set(non_secure_comm_PUBLISHER_ROS_SECURITY_STRATEGY_LIST "Enforce;garbage;garbage;Permissive;Garbage")
     set(non_secure_comm_SUBSCRIBER_ROS_SECURITY_STRATEGY_LIST "Enforce;Permissive;Garbage;Garbage;Permissive")
-    set(non_secure_comm_PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY_LIST "garbage;WHATEVER;${VALID_ROS_SECURITY_ROOT_DIRECTORY};garbage;garbage")
-    set(SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY_LIST "${VALID_ROS_SECURITY_ROOT_DIRECTORY};WHATEVER;garbage;garbage;garbage")
+    set(non_secure_comm_PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY_LIST "garbage;WHATEVER;${KEYSTORE_DIRECTORY};garbage;garbage")
+    set(SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY_LIST "${KEYSTORE_DIRECTORY};WHATEVER;garbage;garbage;garbage")
 
     # Test suite for secured communication
     set(secure_comm_PUBLISHER_ROS_SECURITY_ENABLE_LIST "true;true;true;true")
@@ -175,8 +175,8 @@ if(BUILD_TESTING)
 
         set(index 0)
         set(SUBSCRIBER_SHOULD_TIMEOUT "false")
-        set(PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY "${VALID_ROS_SECURITY_ROOT_DIRECTORY}")
-        set(SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY "${VALID_ROS_SECURITY_ROOT_DIRECTORY}")
+        set(PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY "${KEYSTORE_DIRECTORY}")
+        set(SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY "${KEYSTORE_DIRECTORY}")
         # configure all secure communication tests
         while(index LESS ${n_secure_communication_tests})
           # here we define all the variables needed for security template expansion
@@ -216,8 +216,8 @@ if(BUILD_TESTING)
         endwhile()
 
         set(index 0)
-        set(PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY "${VALID_ROS_SECURITY_ROOT_DIRECTORY}")
-        set(SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY "${VALID_ROS_SECURITY_ROOT_DIRECTORY}")
+        set(PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY "${KEYSTORE_DIRECTORY}")
+        set(SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY "${KEYSTORE_DIRECTORY}")
         set(SUBSCRIBER_SHOULD_TIMEOUT "true")
         # configure all not connecting tests
         while(index LESS ${n_not_connecting_tests})
@@ -331,7 +331,6 @@ if(BUILD_TESTING)
     ament_find_gtest()
 
     set(KEYSTORE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test/test_security_files")
-    set(VALID_ROS_SECURITY_ROOT_DIRECTORY "${KEYSTORE_DIRECTORY}/contexts")
 
     # generate security artifacts using sros2
     find_program(PROGRAM ros2)
@@ -348,11 +347,11 @@ if(BUILD_TESTING)
     endif()
 
     # deleting key of /publisher_missing_key
-    file(REMOVE "${VALID_ROS_SECURITY_ROOT_DIRECTORY}/publisher_missing_key/key.pem")
+    file(REMOVE "${KEYSTORE_DIRECTORY}/contexts/publisher_missing_key/key.pem")
 
     # copy invalid certificate from source tree
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/publisher_invalid_cert/cert.pem
-      DESTINATION ${VALID_ROS_SECURITY_ROOT_DIRECTORY}/publisher_invalid_cert/
+      DESTINATION ${KEYSTORE_DIRECTORY}/contexts/publisher_invalid_cert/
     )
     call_for_each_rmw_implementation(targets)
   endif()
