@@ -351,7 +351,7 @@ if(BUILD_TESTING)
       ERROR_VARIABLE GENERATE_ARTIFACTS_ERROR
     )
     if(NOT ${GENERATE_ARTIFACTS_RESULT} EQUAL 0)
-      message(WARNING "Failed to generate security artifacts: ${GENERATE_ARTIFACTS_ERROR}")
+      message(FATAL_ERROR "Failed to generate security artifacts: ${GENERATE_ARTIFACTS_ERROR}")
     endif()
 
     # deleting key of /publisher_missing_key
