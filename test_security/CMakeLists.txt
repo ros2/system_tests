@@ -71,7 +71,7 @@ if(BUILD_TESTING)
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation}
-      ROS_SECURITY_ROOT_DIRECTORY=${KEYSTORE_DIRECTORY}
+      ROS_SECURITY_ROOT_DIRECTORY=${KEYSTORE_DIRECTORY_NATIVE_PATH}
       # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
       # at runtime as the system version of OpenSSL is not supported
       PATH="${TEST_PATH}"
@@ -104,8 +104,8 @@ if(BUILD_TESTING)
     set(non_secure_comm_SUBSCRIBER_ROS_SECURITY_ENABLE_LIST "false;false;false;false;true")
     set(non_secure_comm_PUBLISHER_ROS_SECURITY_STRATEGY_LIST "Enforce;garbage;garbage;Permissive;Garbage")
     set(non_secure_comm_SUBSCRIBER_ROS_SECURITY_STRATEGY_LIST "Enforce;Permissive;Garbage;Garbage;Permissive")
-    set(non_secure_comm_PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY_LIST "garbage;WHATEVER;${KEYSTORE_DIRECTORY};garbage;garbage")
-    set(SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY_LIST "${KEYSTORE_DIRECTORY};WHATEVER;garbage;garbage;garbage")
+    set(non_secure_comm_PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY_LIST "garbage;WHATEVER;${KEYSTORE_DIRECTORY_NATIVE_PATH};garbage;garbage")
+    set(SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY_LIST "${KEYSTORE_DIRECTORY_NATIVE_PATH};WHATEVER;garbage;garbage;garbage")
 
     # Test suite for secured communication
     set(secure_comm_PUBLISHER_ROS_SECURITY_ENABLE_LIST "true;true;true;true")
@@ -175,8 +175,8 @@ if(BUILD_TESTING)
 
         set(index 0)
         set(SUBSCRIBER_SHOULD_TIMEOUT "false")
-        set(PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY "${KEYSTORE_DIRECTORY}")
-        set(SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY "${KEYSTORE_DIRECTORY}")
+        set(PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY "${KEYSTORE_DIRECTORY_NATIVE_PATH}")
+        set(SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY "${KEYSTORE_DIRECTORY_NATIVE_PATH}")
         # configure all secure communication tests
         while(index LESS ${n_secure_communication_tests})
           # here we define all the variables needed for security template expansion
@@ -216,8 +216,8 @@ if(BUILD_TESTING)
         endwhile()
 
         set(index 0)
-        set(PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY "${KEYSTORE_DIRECTORY}")
-        set(SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY "${KEYSTORE_DIRECTORY}")
+        set(PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY "${KEYSTORE_DIRECTORY_NATIVE_PATH}")
+        set(SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY "${KEYSTORE_DIRECTORY_NATIVE_PATH}")
         set(SUBSCRIBER_SHOULD_TIMEOUT "true")
         # configure all not connecting tests
         while(index LESS ${n_not_connecting_tests})
@@ -331,12 +331,13 @@ if(BUILD_TESTING)
     ament_find_gtest()
 
     set(KEYSTORE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test/test_security_files")
+    string(REPLACE "/" "\\\\" KEYSTORE_DIRECTORY_NATIVE_PATH "${KEYSTORE_DIRECTORY}")
 
     # generate security artifacts using sros2
     find_program(PROGRAM ros2)
 
     set(node_names_list "/publisher;/subscriber;/publisher_missing_key;/publisher_invalid_cert")
-    set(generate_artifacts_command ${PROGRAM} security generate_artifacts -k ${KEYSTORE_DIRECTORY} -c ${node_names_list})
+    set(generate_artifacts_command ${PROGRAM} security generate_artifacts -k ${KEYSTORE_DIRECTORY_NATIVE_PATH} -c ${node_names_list})
     execute_process(
       COMMAND ${generate_artifacts_command}
       RESULT_VARIABLE GENERATE_ARTIFACTS_RESULT
