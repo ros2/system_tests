@@ -331,7 +331,7 @@ if(BUILD_TESTING)
     ament_find_gtest()
 
     set(KEYSTORE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test/test_security_files")
-    if (WIN32)
+    if(WIN32)
       string(REPLACE "/" "\\\\" KEYSTORE_DIRECTORY_NATIVE_PATH "${KEYSTORE_DIRECTORY}")
     else()
       set(KEYSTORE_DIRECTORY_NATIVE_PATH "${KEYSTORE_DIRECTORY}")
