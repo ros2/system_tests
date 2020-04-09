@@ -104,7 +104,7 @@ TEST_P(TestSecureNodes, test_invalid_keystore) {
   ret = rcl_init_options_init(&init_options, rcl_get_default_allocator());
   ASSERT_EQ(RCL_RET_OK, ret) << rcl_get_error_string().str;
   context = rcl_get_zero_initialized_context();
-  const char * argv[] = {"--ros-args", "--security-context", test_config.context_name};
+  const char * argv[] = {"--ros-args", "--enclave", test_config.context_name};
   ret = rcl_init(sizeof(argv) / sizeof(char *), argv, &init_options, &context);
   if (test_config.should_fail_context_creation) {
     ASSERT_EQ(RCL_RET_ERROR, ret);
