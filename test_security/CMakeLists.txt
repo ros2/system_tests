@@ -331,7 +331,11 @@ if(BUILD_TESTING)
     ament_find_gtest()
 
     set(KEYSTORE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test/test_security_files")
-    string(REPLACE "/" "\\\\" KEYSTORE_DIRECTORY_NATIVE_PATH "${KEYSTORE_DIRECTORY}")
+    if (WIN32)
+      string(REPLACE "/" "\\\\" KEYSTORE_DIRECTORY_NATIVE_PATH "${KEYSTORE_DIRECTORY}")
+    else()
+      set(KEYSTORE_DIRECTORY_NATIVE_PATH "${KEYSTORE_DIRECTORY}")
+    endif()
 
     # generate security artifacts using sros2
     find_program(PROGRAM ros2)
