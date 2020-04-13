@@ -176,9 +176,22 @@ if(BUILD_TESTING)
       set(SKIP_TEST "SKIP_TEST")
     endif()
 
+    set(rmw_implementation1_is_connext FALSE)
+    if(rmw_implementation1 MATCHES "(.*)connext(.*)")
+      set(rmw_implementation1_is_connext TRUE)
+    endif()
     set(rmw_implementation2_is_connext FALSE)
     if(rmw_implementation2 MATCHES "(.*)connext(.*)")
       set(rmw_implementation2_is_connext TRUE)
+    endif()
+
+    set(rmw_implementation1_is_cyclonedds FALSE)
+    set(rmw_implementation2_is_cyclonedds FALSE)
+    if(rmw_implementation1 MATCHES "(.*)cyclonedds(.*)")
+      set(rmw_implementation1_is_cyclonedds TRUE)
+    endif()
+    if(rmw_implementation2 MATCHES "(.*)cyclonedds(.*)")
+      set(rmw_implementation2_is_cyclonedds TRUE)
     endif()
 
     set(rmw_implementation1_is_opensplice FALSE)
@@ -211,6 +224,16 @@ if(BUILD_TESTING)
         "${message_type}" STREQUAL "WStrings" AND
         (rmw_implementation1_is_opensplice OR rmw_implementation2_is_opensplice) AND
         NOT "${rmw_implementation1_is_opensplice}" STREQUAL "${rmw_implementation2_is_opensplice}"
+      )
+        continue()
+      endif()
+      # TODO(dirk-thomas) Connext and CycloneDDS don't interoperate for WString
+      if(
+        "${message_type}" STREQUAL "WStrings" AND
+        (
+          (rmw_implementation1_is_connext AND rmw_implementation2_is_cyclonedds) OR
+          (rmw_implementation1_is_cyclonedds AND rmw_implementation2_is_connext)
+        )
       )
         continue()
       endif()
