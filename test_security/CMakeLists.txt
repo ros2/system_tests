@@ -344,7 +344,7 @@ if(BUILD_TESTING)
     find_program(PROGRAM ros2)
 
     set(node_names_list "/publisher;/subscriber;/publisher_missing_key;/publisher_invalid_cert")
-    set(generate_artifacts_command ${PROGRAM} security generate_artifacts -k ${KEYSTORE_DIRECTORY_NATIVE_PATH} -c ${node_names_list})
+    set(generate_artifacts_command ${PROGRAM} security generate_artifacts -k ${KEYSTORE_DIRECTORY_NATIVE_PATH} -e ${node_names_list})
     execute_process(
       COMMAND ${generate_artifacts_command}
       RESULT_VARIABLE GENERATE_ARTIFACTS_RESULT
@@ -355,11 +355,11 @@ if(BUILD_TESTING)
     endif()
 
     # deleting key of /publisher_missing_key
-    file(REMOVE "${KEYSTORE_DIRECTORY}/contexts/publisher_missing_key/key.pem")
+    file(REMOVE "${KEYSTORE_DIRECTORY}/enclaves/publisher_missing_key/key.pem")
 
     # copy invalid certificate from source tree
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/publisher_invalid_cert/cert.pem
-      DESTINATION ${KEYSTORE_DIRECTORY}/contexts/publisher_invalid_cert/
+      DESTINATION ${KEYSTORE_DIRECTORY}/enclaves/publisher_invalid_cert/
     )
     call_for_each_rmw_implementation(targets)
   endif()
