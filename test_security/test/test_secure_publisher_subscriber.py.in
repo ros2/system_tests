@@ -44,7 +44,7 @@ def generate_test_description():
     publisher_env['RMW_IMPLEMENTATION'] = '@PUBLISHER_RMW@'
     publisher_env['ROS_SECURITY_ENABLE'] = '@PUBLISHER_ROS_SECURITY_ENABLE@'
     publisher_env['ROS_SECURITY_STRATEGY'] = '@PUBLISHER_ROS_SECURITY_STRATEGY@'
-    publisher_env['ROS_SECURITY_ROOT_DIRECTORY'] = '@PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY@'
+    publisher_env['ROS_SECURITY_KEYSTORE'] = '@PUBLISHER_ROS_SECURITY_KEYSTORE@'
 
     launch_description.add_action(ExecuteProcess(
         cmd=publisher_cmd,
@@ -56,7 +56,7 @@ def generate_test_description():
     subscriber_env['RMW_IMPLEMENTATION'] = '@SUBSCRIBER_RMW@'
     subscriber_env['ROS_SECURITY_ENABLE'] = '@SUBSCRIBER_ROS_SECURITY_ENABLE@'
     subscriber_env['ROS_SECURITY_STRATEGY'] = '@SUBSCRIBER_ROS_SECURITY_STRATEGY@'
-    subscriber_env['ROS_SECURITY_ROOT_DIRECTORY'] = '@SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY@'
+    subscriber_env['ROS_SECURITY_KEYSTORE'] = '@SUBSCRIBER_ROS_SECURITY_KEYSTORE@'
 
     subscriber_process = ExecuteProcess(
         cmd=subscriber_cmd,

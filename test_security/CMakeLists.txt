@@ -71,7 +71,7 @@ if(BUILD_TESTING)
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation}
-      ROS_SECURITY_ROOT_DIRECTORY=${KEYSTORE_DIRECTORY_NATIVE_PATH}
+      ROS_SECURITY_KEYSTORE=${KEYSTORE_DIRECTORY_NATIVE_PATH}
       # on bionic, Connext needs RTI's OpenSSL binaries to be on the PATH
       # at runtime as the system version of OpenSSL is not supported
       PATH="${TEST_PATH}"
@@ -104,8 +104,8 @@ if(BUILD_TESTING)
     set(non_secure_comm_SUBSCRIBER_ROS_SECURITY_ENABLE_LIST "false;false;false;false;true")
     set(non_secure_comm_PUBLISHER_ROS_SECURITY_STRATEGY_LIST "Enforce;garbage;garbage;Permissive;Garbage")
     set(non_secure_comm_SUBSCRIBER_ROS_SECURITY_STRATEGY_LIST "Enforce;Permissive;Garbage;Garbage;Permissive")
-    set(non_secure_comm_PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY_LIST "garbage;WHATEVER;${KEYSTORE_DIRECTORY_NATIVE_PATH};garbage;garbage")
-    set(SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY_LIST "${KEYSTORE_DIRECTORY_NATIVE_PATH};WHATEVER;garbage;garbage;garbage")
+    set(non_secure_comm_PUBLISHER_ROS_SECURITY_KEYSTORE_LIST "garbage;WHATEVER;${KEYSTORE_DIRECTORY_NATIVE_PATH};garbage;garbage")
+    set(SUBSCRIBER_ROS_SECURITY_KEYSTORE_LIST "${KEYSTORE_DIRECTORY_NATIVE_PATH};WHATEVER;garbage;garbage;garbage")
 
     # Test suite for secured communication
     set(secure_comm_PUBLISHER_ROS_SECURITY_ENABLE_LIST "true;true;true;true")
@@ -140,8 +140,8 @@ if(BUILD_TESTING)
           list(GET SUBSCRIBER_ROS_SECURITY_ENABLE_LIST ${index} SUBSCRIBER_ROS_SECURITY_ENABLE)
           list(GET PUBLISHER_ROS_SECURITY_STRATEGY_LIST ${index} PUBLISHER_ROS_SECURITY_STRATEGY)
           list(GET SUBSCRIBER_ROS_SECURITY_STRATEGY_LIST ${index} SUBSCRIBER_ROS_SECURITY_STRATEGY)
-          list(GET PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY_LIST ${index} PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY)
-          list(GET SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY_LIST ${index} SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY)
+          list(GET PUBLISHER_ROS_SECURITY_KEYSTORE_LIST ${index} PUBLISHER_ROS_SECURITY_KEYSTORE)
+          list(GET SUBSCRIBER_ROS_SECURITY_KEYSTORE_LIST ${index} SUBSCRIBER_ROS_SECURITY_KEYSTORE)
 
           set(test_suffix "__${TEST_MESSAGE_TYPE}${suffix}__non_secure_comm_${index}")
           configure_file(
@@ -175,8 +175,8 @@ if(BUILD_TESTING)
 
         set(index 0)
         set(SUBSCRIBER_SHOULD_TIMEOUT "false")
-        set(PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY "${KEYSTORE_DIRECTORY_NATIVE_PATH}")
-        set(SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY "${KEYSTORE_DIRECTORY_NATIVE_PATH}")
+        set(PUBLISHER_ROS_SECURITY_KEYSTORE "${KEYSTORE_DIRECTORY_NATIVE_PATH}")
+        set(SUBSCRIBER_ROS_SECURITY_KEYSTORE "${KEYSTORE_DIRECTORY_NATIVE_PATH}")
         # configure all secure communication tests
         while(index LESS ${n_secure_communication_tests})
           # here we define all the variables needed for security template expansion
@@ -216,8 +216,8 @@ if(BUILD_TESTING)
         endwhile()
 
         set(index 0)
-        set(PUBLISHER_ROS_SECURITY_ROOT_DIRECTORY "${KEYSTORE_DIRECTORY_NATIVE_PATH}")
-        set(SUBSCRIBER_ROS_SECURITY_ROOT_DIRECTORY "${KEYSTORE_DIRECTORY_NATIVE_PATH}")
+        set(PUBLISHER_ROS_SECURITY_KEYSTORE "${KEYSTORE_DIRECTORY_NATIVE_PATH}")
+        set(SUBSCRIBER_ROS_SECURITY_KEYSTORE "${KEYSTORE_DIRECTORY_NATIVE_PATH}")
         set(SUBSCRIBER_SHOULD_TIMEOUT "true")
         # configure all not connecting tests
         while(index LESS ${n_not_connecting_tests})

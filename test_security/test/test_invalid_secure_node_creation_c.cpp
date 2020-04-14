@@ -49,7 +49,7 @@ void custom_putenv(const char * name, const char * value)
 
 struct TestConfig
 {
-  const char * ROS_SECURITY_ROOT_DIRECTORY;
+  const char * ROS_SECURITY_KEYSTORE;
   const char * ROS_SECURITY_ENABLE;
   const char * ROS_SECURITY_STRATEGY;
   const char * context_name;
@@ -78,14 +78,14 @@ public:
   void SetUp()
   {
     const char * root_dir = nullptr;
-    ASSERT_EQ(nullptr, rcutils_get_env("ROS_SECURITY_ROOT_DIRECTORY", &root_dir));
+    ASSERT_EQ(nullptr, rcutils_get_env("ROS_SECURITY_KEYSTORE", &root_dir));
     previous_root_dir = rcutils_strdup(root_dir, allocator);
     ASSERT_NE(nullptr, previous_root_dir);
   }
 
   void TearDown()
   {
-    custom_putenv("ROS_SECURITY_ROOT_DIRECTORY", previous_root_dir);
+    custom_putenv("ROS_SECURITY_KEYSTORE", previous_root_dir);
     allocator.deallocate(previous_root_dir, allocator.state);
   }
 };
@@ -94,8 +94,8 @@ using TestSecureNodes = CLASSNAME(TestSecureNodes, RMW_IMPLEMENTATION);
 
 TEST_P(TestSecureNodes, test_invalid_keystore) {
   const auto & test_config = GetParam();
-  if (test_config.ROS_SECURITY_ROOT_DIRECTORY != NULL) {
-    custom_putenv("ROS_SECURITY_ROOT_DIRECTORY", test_config.ROS_SECURITY_ROOT_DIRECTORY);
+  if (test_config.ROS_SECURITY_KEYSTORE != NULL) {
+    custom_putenv("ROS_SECURITY_KEYSTORE", test_config.ROS_SECURITY_KEYSTORE);
   }
   custom_putenv("ROS_SECURITY_ENABLE", test_config.ROS_SECURITY_ENABLE);
   custom_putenv("ROS_SECURITY_STRATEGY", test_config.ROS_SECURITY_STRATEGY);
