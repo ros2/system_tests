@@ -72,21 +72,21 @@ class CLASSNAME (TestSecureNodes, RMW_IMPLEMENTATION)
 public:
   rcl_context_t context;
   rcl_node_t node;
-  char * previous_root_dir;
+  char * previous_keystore_dir;
   rcutils_allocator_t allocator = rcutils_get_default_allocator();
 
   void SetUp()
   {
-    const char * root_dir = nullptr;
-    ASSERT_EQ(nullptr, rcutils_get_env("ROS_SECURITY_KEYSTORE", &root_dir));
-    previous_root_dir = rcutils_strdup(root_dir, allocator);
-    ASSERT_NE(nullptr, previous_root_dir);
+    const char * keystore_dir = nullptr;
+    ASSERT_EQ(nullptr, rcutils_get_env("ROS_SECURITY_KEYSTORE", &keystore_dir));
+    previous_keystore_dir = rcutils_strdup(keystore_dir, allocator);
+    ASSERT_NE(nullptr, previous_keystore_dir);
   }
 
   void TearDown()
   {
-    custom_putenv("ROS_SECURITY_KEYSTORE", previous_root_dir);
-    allocator.deallocate(previous_root_dir, allocator.state);
+    custom_putenv("ROS_SECURITY_KEYSTORE", previous_keystore_dir);
+    allocator.deallocate(previous_keystore_dir, allocator.state);
   }
 };
 
