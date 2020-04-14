@@ -41,11 +41,11 @@ TEST(CLASSNAME(test_publisher, RMW_IMPLEMENTATION), publish_with_const_reference
   int counter = 0;
   auto callback =
     [&counter](test_rclcpp::msg::UInt32::ConstSharedPtr msg,
-      const rmw_message_info_t & info) -> void
+      const rclcpp::MessageInfo & info) -> void
     {
       ++counter;
       printf("  callback() %d with message data %u\n", counter, msg->data);
-      ASSERT_FALSE(info.from_intra_process);
+      ASSERT_FALSE(info.get_rmw_message_info().from_intra_process);
     };
   auto create_subscription_func =
     [&callback](

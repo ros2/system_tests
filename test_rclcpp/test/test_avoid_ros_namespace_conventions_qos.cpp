@@ -44,11 +44,11 @@ TEST(
   int counter = 0;
   auto callback =
     [&counter](test_rclcpp::msg::UInt32::ConstSharedPtr msg,
-      const rmw_message_info_t & info) -> void
+      const rclcpp::MessageInfo & info) -> void
     {
       ++counter;
       printf("  callback() %d with message data %u\n", counter, msg->data);
-      ASSERT_FALSE(info.from_intra_process);
+      ASSERT_FALSE(info.get_rmw_message_info().from_intra_process);
     };
   auto qos = rclcpp::QoS(rclcpp::KeepLast(10)).avoid_ros_namespace_conventions(true);
   auto create_subscription_func =

@@ -60,11 +60,11 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
 
   auto callback =
     [&counter, &intra_process](test_rclcpp::msg::UInt32::ConstSharedPtr msg,
-      const rmw_message_info_t & info) -> void
+      const rclcpp::MessageInfo & info) -> void
     {
       counter.fetch_add(1);
       printf("callback() %d with message data %u\n", counter.load(), msg->data);
-      ASSERT_EQ(intra_process, info.from_intra_process);
+      ASSERT_EQ(intra_process, info.get_rmw_message_info().from_intra_process);
     };
 
   // Try to saturate the MultithreadedExecutor's thread pool with subscriptions
