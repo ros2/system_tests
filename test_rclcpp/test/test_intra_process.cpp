@@ -47,14 +47,14 @@ TEST(CLASSNAME(test_intra_process_within_one_node, RMW_IMPLEMENTATION), nominal_
   auto callback =
     [&counter](
     const test_rclcpp::msg::UInt32::SharedPtr msg,
-    const rmw_message_info_t & message_info
+    const rclcpp::MessageInfo & message_info
     ) -> void
     {
       ++counter;
       printf("  callback() %d with message data %u\n", counter, msg->data);
       ASSERT_GE(counter, 0);
       ASSERT_EQ(static_cast<unsigned int>(counter), msg->data);
-      ASSERT_TRUE(message_info.from_intra_process);
+      ASSERT_TRUE(message_info.get_rmw_message_info().from_intra_process);
     };
 
   test_rclcpp::msg::UInt32 msg;
