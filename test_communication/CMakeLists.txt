@@ -135,9 +135,6 @@ if(BUILD_TESTING)
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation})
     if(TARGET ${target}${target_suffix})
-      target_link_libraries(${target}${target_suffix}
-        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-        ${_AMENT_EXPORT_LIBRARY_TARGETS})
       add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
       rosidl_target_interfaces(${target}${target_suffix}
         ${PROJECT_NAME} "rosidl_typesupport_c")
@@ -486,10 +483,6 @@ if(BUILD_TESTING)
       ${SKIP_TEST}
     )
     if(TARGET ${serialize_target_name})
-      target_link_libraries(${serialize_target_name}
-        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-        ${_AMENT_EXPORT_LIBRARY_TARGETS}
-      )
       add_dependencies(${serialize_target_name} ${PROJECT_NAME})
       ament_target_dependencies(${serialize_target_name}
         "rmw"
@@ -521,10 +514,6 @@ if(BUILD_TESTING)
       ${SKIP_TEST}
     )
     if(TARGET ${target_name})
-      target_link_libraries(${target_name}
-        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-        ${_AMENT_EXPORT_LIBRARY_TARGETS}
-      )
       add_dependencies(${target_name} ${PROJECT_NAME})
       ament_target_dependencies(${target_name}
         "rclcpp"
