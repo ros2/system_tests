@@ -350,8 +350,8 @@ if(BUILD_TESTING)
       RESULT_VARIABLE GENERATE_ARTIFACTS_RESULT
       ERROR_VARIABLE GENERATE_ARTIFACTS_ERROR
     )
-    if(NOT ${POLICY_RESULT} EQUAL 0)
-      message(WARNING "Failed to generate security artifacts: ${GENERATE_ARTIFACTS_ERROR}")
+    if(NOT ${GENERATE_ARTIFACTS_RESULT} EQUAL 0)
+      message(FATAL_ERROR "Failed to generate security artifacts: ${GENERATE_ARTIFACTS_ERROR}")
     endif()
 
     # deleting key of /publisher_missing_key
