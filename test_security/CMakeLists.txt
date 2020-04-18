@@ -292,9 +292,10 @@ if(BUILD_TESTING)
       "test/test_secure_subscriber.cpp")
 
     set(append_library_dirs "${CMAKE_CURRENT_BINARY_DIR}")
-    set(append_library_dirs "${append_library_dirs}:$ENV{RTI_OPENSSL_LIBS}")
     if(WIN32)
       set(append_library_dirs "${append_library_dirs}/$<CONFIG>")
+      string(REPLACE "\\" "\\\\" RTI_OPENSSL_LIBS "$ENV{RTI_OPENSSL_LIBS}")
+      set(append_library_dirs "${append_library_dirs};${RTI_OPENSSL_LIBS}")
     # TODO(mikaelarguedas) uncomment this once Connext supports OpenSSL 1.1.1
     # in the meantime use RTI_OPENSSL_LIBS
     # elseif(APPLE)
@@ -314,6 +315,8 @@ if(BUILD_TESTING)
     #   set(openssl_lib_path "${_out_var}/lib")
     #   file(TO_NATIVE_PATH "${openssl_lib_path}" openssl_lib_path)
     #   set(append_library_dirs "${append_library_dirs};${openssl_lib_path}")
+    else()
+      set(append_library_dirs "${append_library_dirs}:$ENV{RTI_OPENSSL_LIBS}")
     endif()
 
     # finding gtest once in the highest scope
