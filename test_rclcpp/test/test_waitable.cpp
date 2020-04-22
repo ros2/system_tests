@@ -43,7 +43,7 @@ public:
     rcl_ret_t ret = rcl_timer_init(
       timer_.get(),
       clock_handle,
-      rclcpp::contexts::default_context::get_global_default_context()->get_rcl_context().get(),
+      rclcpp::contexts::get_global_default_context()->get_rcl_context().get(),
       period_nanoseconds,
       nullptr,
       rcl_get_default_allocator());
@@ -93,7 +93,7 @@ TEST(CLASSNAME(test_waitable, RMW_IMPLEMENTATION), waitable_with_timer) {
   if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   auto node = rclcpp::Node::make_shared("waitable_with_timer");
   auto waitable = WaitableWithTimer::make_shared(node->get_clock());
-  auto group = node->create_callback_group(rclcpp::callback_group::CallbackGroupType::Reentrant);
+  auto group = node->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
   node->get_node_waitables_interface()->add_waitable(waitable, group);
 
   std::shared_future<bool> fut(waitable->execute_promise_.get_future());
