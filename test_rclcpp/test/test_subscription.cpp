@@ -40,12 +40,12 @@ using namespace std::chrono_literals;
 
 template<typename DurationT>
 void wait_for_future(
-  rclcpp::executor::Executor & executor,
+  rclcpp::Executor & executor,
   std::shared_future<void> & future,
   const DurationT & timeout)
 {
-  using rclcpp::executor::FutureReturnCode;
-  rclcpp::executor::FutureReturnCode future_ret;
+  using rclcpp::FutureReturnCode;
+  rclcpp::FutureReturnCode future_ret;
   auto start_time = std::chrono::steady_clock::now();
   future_ret = executor.spin_until_future_complete(future, timeout);
   auto elapsed_time = std::chrono::steady_clock::now() - start_time;
@@ -163,7 +163,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
   printf("spin_until_future_complete(short timeout) - no callbacks expected\n");
   sub_called = std::promise<void>();
   sub_called_future = sub_called.get_future();
-  using rclcpp::executor::FutureReturnCode;
+  using rclcpp::FutureReturnCode;
   FutureReturnCode future_ret = executor.spin_until_future_complete(sub_called_future, 100ms);
   EXPECT_EQ(FutureReturnCode::TIMEOUT, future_ret);
   ASSERT_EQ(5, counter);

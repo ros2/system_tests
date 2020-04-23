@@ -47,7 +47,7 @@ TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_noreqid) {
   auto result = client->async_send_request(request);
 
   auto ret = rclcpp::spin_until_future_complete(node, result, 5s);  // Wait for the result.
-  ASSERT_EQ(ret, rclcpp::executor::FutureReturnCode::SUCCESS);
+  ASSERT_EQ(ret, rclcpp::FutureReturnCode::SUCCESS);
 
   EXPECT_EQ(3, result.get()->sum);
 }
@@ -68,7 +68,7 @@ TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_reqid) {
   auto result = client->async_send_request(request);
 
   auto ret = rclcpp::spin_until_future_complete(node, result, 5s);  // Wait for the result.
-  ASSERT_EQ(ret, rclcpp::executor::FutureReturnCode::SUCCESS);
+  ASSERT_EQ(ret, rclcpp::FutureReturnCode::SUCCESS);
 
   EXPECT_EQ(9, result.get()->sum);
 }
@@ -96,5 +96,5 @@ TEST(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_return_request) {
     });
 
   auto ret = rclcpp::spin_until_future_complete(node, result, 5s);  // Wait for the result.
-  ASSERT_EQ(ret, rclcpp::executor::FutureReturnCode::SUCCESS);
+  ASSERT_EQ(ret, rclcpp::FutureReturnCode::SUCCESS);
 }
