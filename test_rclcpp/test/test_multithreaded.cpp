@@ -51,7 +51,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   auto node = rclcpp::Node::make_shared(
     node_topic_name, rclcpp::NodeOptions().use_intra_process_comms(intra_process));
   auto callback_group = node->create_callback_group(
-    rclcpp::callback_group::CallbackGroupType::Reentrant);
+    rclcpp::CallbackGroupType::Reentrant);
   const size_t num_messages = std::min<size_t>(executor.get_number_of_threads(), 16);
   auto pub = node->create_publisher<test_rclcpp::msg::UInt32>(node_topic_name, 5 * num_messages);
 
@@ -169,7 +169,7 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
   rmw_qos_profile_t qos_profile = rmw_qos_profile_services_default;
   qos_profile.depth = std::min<size_t>(executor.get_number_of_threads(), 16) * 2;
   auto callback_group = node->create_callback_group(
-    rclcpp::callback_group::CallbackGroupType::Reentrant);
+    rclcpp::CallbackGroupType::Reentrant);
   auto service = node->create_service<test_rclcpp::srv::AddTwoInts>(
     "multi_consumer_clients", callback, qos_profile, callback_group);
 
@@ -210,7 +210,7 @@ TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) 
     // Wait on each future
     for (uint32_t i = 0; i < results.size(); ++i) {
       auto result = executor.spin_until_future_complete(results[i]);
-      ASSERT_EQ(rclcpp::executor::FutureReturnCode::SUCCESS, result);
+      ASSERT_EQ(rclcpp::FutureReturnCode::SUCCESS, result);
     }
 
     // Check the status of all futures
@@ -269,9 +269,9 @@ static inline void multi_access_publisher(bool intra_process)
 
   auto node = rclcpp::Node::make_shared(node_topic_name, options);
   auto timer_callback_group = node->create_callback_group(
-    rclcpp::callback_group::CallbackGroupType::Reentrant);
+    rclcpp::CallbackGroupType::Reentrant);
   auto sub_callback_group = node->create_callback_group(
-    rclcpp::callback_group::CallbackGroupType::Reentrant);
+    rclcpp::CallbackGroupType::Reentrant);
 
   rclcpp::executors::MultiThreadedExecutor executor;
 

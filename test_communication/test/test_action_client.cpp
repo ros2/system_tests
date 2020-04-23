@@ -81,7 +81,7 @@ send_goals(
     auto goal_handle_future =
       action_client->async_send_goal(goal_tests[test_index].goal, send_goal_options);
 
-    using rclcpp::executor::FutureReturnCode;
+    using rclcpp::FutureReturnCode;
     // wait for the sent goal to be accepted
     auto status = rclcpp::spin_until_future_complete(node, goal_handle_future, 1000s);
     if (status != FutureReturnCode::SUCCESS) {

@@ -38,7 +38,7 @@ using namespace std::chrono_literals;
  */
 TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), test_spin_until_future_complete_timeout) {
   if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
-  using rclcpp::executor::FutureReturnCode;
+  using rclcpp::FutureReturnCode;
   rclcpp::executors::SingleThreadedExecutor executor;
 
   // Try passing an already complete future, it should succeed.
@@ -143,7 +143,7 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete) {
   executor.add_node(node);
   ASSERT_EQ(
     executor.spin_until_future_complete(future),
-    rclcpp::executor::FutureReturnCode::SUCCESS);
+    rclcpp::FutureReturnCode::SUCCESS);
   EXPECT_EQ(future.get(), true);
 }
 
@@ -163,12 +163,12 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete_timeou
 
   ASSERT_EQ(
     rclcpp::spin_until_future_complete(node, future, std::chrono::milliseconds(25)),
-    rclcpp::executor::FutureReturnCode::TIMEOUT);
+    rclcpp::FutureReturnCode::TIMEOUT);
 
   // If we wait a little longer, we should complete the future
   ASSERT_EQ(
     rclcpp::spin_until_future_complete(node, future, std::chrono::milliseconds(50)),
-    rclcpp::executor::FutureReturnCode::SUCCESS);
+    rclcpp::FutureReturnCode::SUCCESS);
 
   EXPECT_EQ(future.get(), true);
 }
@@ -195,7 +195,7 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete_interr
 
   ASSERT_EQ(
     rclcpp::spin_until_future_complete(node, future, std::chrono::milliseconds(50)),
-    rclcpp::executor::FutureReturnCode::INTERRUPTED);
+    rclcpp::FutureReturnCode::INTERRUPTED);
 }
 
 TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), cancel) {

@@ -40,7 +40,7 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_consistency_reg
 
   // Replicate the settings that caused https://github.com/ros2/system_tests/issues/153
   rmw_qos_profile_t rmw_qos_profile = rmw_qos_profile_default;
-  rclcpp::executor::FutureReturnCode ret1;
+  rclcpp::FutureReturnCode ret1;
 
   // Extra scope so the first client will be deleted afterwards
   {
@@ -60,7 +60,7 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_consistency_reg
     auto result1 = client1->async_send_request(request1);
 
     ret1 = rclcpp::spin_until_future_complete(node, result1, 5s);
-    if (ret1 == rclcpp::executor::FutureReturnCode::SUCCESS) {
+    if (ret1 == rclcpp::FutureReturnCode::SUCCESS) {
       printf("received first result\n");
       std::cout.flush();
       if (3 == result1.get()->sum) {
@@ -71,7 +71,7 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_consistency_reg
         std::cout.flush();
       }
     } else {
-      printf("first result not received: %s\n", rclcpp::executor::to_string(ret1).c_str());
+      printf("first result not received: %s\n", rclcpp::to_string(ret1).c_str());
       std::cout.flush();
     }
 
@@ -96,7 +96,7 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_consistency_reg
     auto result2 = client2->async_send_request(request2);
 
     auto ret2 = rclcpp::spin_until_future_complete(node, result2, 5s);
-    if (ret2 == rclcpp::executor::FutureReturnCode::SUCCESS) {
+    if (ret2 == rclcpp::FutureReturnCode::SUCCESS) {
       printf("received second result\n");
       std::cout.flush();
       if (5 == result2.get()->sum) {
@@ -107,7 +107,7 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_consistency_reg
         std::cout.flush();
       }
     } else {
-      printf("second result not received: %s\n", rclcpp::executor::to_string(ret2).c_str());
+      printf("second result not received: %s\n", rclcpp::to_string(ret2).c_str());
       std::cout.flush();
     }
 
