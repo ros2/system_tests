@@ -16,8 +16,8 @@
 #include <memory>
 
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp/serialization.hpp"
 
-#include "rmw/serialized_message.h"
 #include "rmw/types.h"
 
 #include "test_msgs/message_fixtures.hpp"
@@ -47,20 +47,18 @@ TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), serialized_callb
   size_t counter = 0;
 
   auto serialized_callback =
-    [&counter](const std::shared_ptr<rmw_serialized_message_t> serialized_msg) {
+    [&counter](const std::shared_ptr<rclcpp::SerializedMessage> serialized_msg) {
       printf("received message %zu\n", counter);
-      for (auto i = 0u; i < serialized_msg->buffer_length; ++i) {
-        printf("%02x ", serialized_msg->buffer[i]);
+      for (auto i = 0u; i < serialized_msg->size(); ++i) {
+        printf("%02x ", serialized_msg->get_rcl_serialized_message().buffer[i]);
       }
       printf("\n");
 
-      auto message_cpp_typesupport =
-        rosidl_typesupport_cpp::get_message_type_support_handle<test_msgs::msg::BasicTypes>();
-      auto basic_types_msg = std::make_shared<test_msgs::msg::BasicTypes>();
-      auto ret =
-        rmw_deserialize(serialized_msg.get(), message_cpp_typesupport, basic_types_msg.get());
-      ASSERT_EQ(RMW_RET_OK, ret);
-      EXPECT_EQ(counter, basic_types_msg->uint8_value);
+      using MessageT = test_msgs::msg::BasicTypes;
+      rclcpp::Serialization<MessageT> serializer;
+      MessageT basic_types_msg;
+      EXPECT_NO_THROW(serializer.deserialize_message(serialized_msg.get(), &basic_types_msg));
+      EXPECT_EQ(counter, basic_types_msg.uint8_value);
       counter++;
     };
 
