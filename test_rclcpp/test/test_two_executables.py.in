@@ -27,7 +27,8 @@ def generate_test_description():
         cmd=cmd,
         name='@TEST_EXECUTABLE1_NAME@',
         env=env,
-        sigterm_timeout=LaunchConfiguration('sigterm_timeout', default=30)
+        sigterm_timeout=LaunchConfiguration('sigterm_timeout', default=30),
+        output='screen'
     )
     launch_description.add_action(executable_1)
 
@@ -42,7 +43,8 @@ def generate_test_description():
         cmd=cmd,
         name='@TEST_EXECUTABLE2_NAME@',
         env=env,
-        sigterm_timeout=LaunchConfiguration('sigterm_timeout', default=30)
+        sigterm_timeout=LaunchConfiguration('sigterm_timeout', default=30),
+        output='screen'
     )
 
     launch_description.add_action(executable_2)
