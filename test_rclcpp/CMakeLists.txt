@@ -212,7 +212,7 @@ if(BUILD_TESTING)
 
 
     # Whitelist cross-vendor tests
-    if (NOT (rmw_implementation1 STREQUAL rmw_implementation2))
+    if(NOT (rmw_implementation1 STREQUAL rmw_implementation2))
       # TODO(sloretz) enable connext/cyclone/fastrtps when all three use 1 participant per context
       if(
         (rmw_implementation1_is_fastrtps AND rmw_implementation2_is_cyclonedds) OR
