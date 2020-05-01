@@ -192,19 +192,50 @@ if(BUILD_TESTING)
       set(rmw_implementation2_is_fastrtps TRUE)
     endif()
 
-    # Skipped tests between fastrtps and others, as the node names are communicated with a different mechanism.
-    # TODO(ivanpauno): Reenable this tests after the other implementations also use one Participant per Context.
-    if(
-      (NOT rmw_implementation1_is_fastrtps AND NOT rmw_implementation2_is_fastrtps) OR
-      (rmw_implementation1_is_fastrtps AND rmw_implementation2_is_fastrtps)
-    )
-      custom_launch_test_two_executables(test_node_name
-        node_with_name node_name_list
-        ARGS1 "${rmw_implementation1}" ARGS2 "node_with_name_${rmw_implementation1}"
-        RMW1 ${rmw_implementation1} RMW2 ${rmw_implementation2}
-        TIMEOUT 15
-        ${SKIP_TEST})
+    set(rmw_implementation1_is_connext FALSE)
+    set(rmw_implementation2_is_connext FALSE)
+    if(rmw_implementation1 MATCHES "(.*)connext(.*)")
+      set(rmw_implementation1_is_connext TRUE)
     endif()
+    if(rmw_implementation2 MATCHES "(.*)connext(.*)")
+      set(rmw_implementation2_is_connext TRUE)
+    endif()
+
+    set(rmw_implementation1_is_cyclonedds FALSE)
+    set(rmw_implementation2_is_cyclonedds FALSE)
+    if(rmw_implementation1 MATCHES "(.*)cyclonedds(.*)")
+      set(rmw_implementation1_is_cyclonedds TRUE)
+    endif()
+    if(rmw_implementation2 MATCHES "(.*)cyclonedds(.*)")
+      set(rmw_implementation2_is_cyclonedds TRUE)
+    endif()
+
+
+    # Whitelist cross-vendor tests
+    if(NOT (rmw_implementation1 STREQUAL rmw_implementation2))
+      # TODO(sloretz) enable connext/cyclone/fastrtps when all three use 1 participant per context
+      if(
+        (rmw_implementation1_is_fastrtps AND rmw_implementation2_is_cyclonedds) OR
+        (rmw_implementation1_is_cyclonedds AND rmw_implementation2_is_fastrtps) OR
+        (rmw_implementation1_is_fastrtps AND rmw_implementation2_is_fastrtps)
+      )
+        # Whitelisted cross-vendor tests
+        set(_crt_SKIP_TEST ${SKIP_TEST})
+      else()
+        # Default skip cross-vendor tests
+        set(_crt_SKIP_TEST "SKIP_TEST")
+      endif()
+    else()
+      # Same vendor tests always allowed
+      set(_crt_SKIP_TEST ${SKIP_TEST})
+    endif()
+
+    custom_launch_test_two_executables(test_node_name
+      node_with_name node_name_list
+      ARGS1 "${rmw_implementation1}" ARGS2 "node_with_name_${rmw_implementation1}"
+      RMW1 ${rmw_implementation1} RMW2 ${rmw_implementation2}
+      TIMEOUT 15
+      ${_crt_SKIP_TEST})
   endmacro()
 
   macro(targets)
