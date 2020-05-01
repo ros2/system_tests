@@ -64,8 +64,8 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), spin_some_max_duration) {
       std::this_thread::sleep_for(100ms);
     };
   std::vector<std::shared_ptr<rclcpp::WallTimer<decltype(lambda)>>> timers;
-  // creating 20 timers which will try to do 1 ms of work each
-  // only about 10ms worth of them should actually be performed
+  // creating 20 timers which will try to do 100 ms of work each
+  // only about 1s worth of them should actually be performed
   for (int i = 0; i < 20; i++) {
     auto timer = node->create_wall_timer(0s, lambda);
     timers.push_back(timer);
