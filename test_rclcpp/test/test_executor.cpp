@@ -77,7 +77,7 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), spin_some_max_duration) {
   executor.spin_some(max_duration);
   const auto end = std::chrono::steady_clock::now();
   ASSERT_LT(max_duration, end - start);
-  ASSERT_GT(max_duration + 200ms, end - start);
+  ASSERT_GT(max_duration + 500ms, end - start);
 }
 
 TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), multithreaded_spin_call) {
