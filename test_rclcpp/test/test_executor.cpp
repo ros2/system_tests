@@ -61,23 +61,23 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), spin_some_max_duration) {
   rclcpp::executors::SingleThreadedExecutor executor;
   auto node = rclcpp::Node::make_shared("spin_some_max_duration");
   auto lambda = []() {
-      std::this_thread::sleep_for(1ms);
+      std::this_thread::sleep_for(100ms);
     };
   std::vector<std::shared_ptr<rclcpp::WallTimer<decltype(lambda)>>> timers;
-  // creating 20 timers which will try to do 1 ms of work each
-  // only about 10ms worth of them should actually be performed
+  // creating 20 timers which will try to do 100 ms of work each
+  // only about 1s worth of them should actually be performed
   for (int i = 0; i < 20; i++) {
     auto timer = node->create_wall_timer(0s, lambda);
     timers.push_back(timer);
   }
   executor.add_node(node);
 
-  const auto max_duration = 10ms;
+  const auto max_duration = 1s;
   const auto start = std::chrono::steady_clock::now();
   executor.spin_some(max_duration);
   const auto end = std::chrono::steady_clock::now();
   ASSERT_LT(max_duration, end - start);
-  ASSERT_GT(max_duration + 5ms, end - start);
+  ASSERT_GT(max_duration + 500ms, end - start);
 }
 
 TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), multithreaded_spin_call) {
