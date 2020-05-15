@@ -271,12 +271,9 @@ if(BUILD_TESTING)
     # TODO(mikaelarguedas) only Connext and FastRTPS support DDS-Security for now
     if(
       rmw_implementation STREQUAL "rmw_connext_cpp" OR
-      rmw_implementation STREQUAL "rmw_connext_dynamic_cpp"
-      # TODO(clalancette): As of 2020-04-09, Fast-RTPS doesn't support OpenSSL 1.1.1{d,e,f}.
-      # Since this is the version used in all of our target platforms, security tests can't work.
-      # Disable the tests until https://github.com/eProsima/Fast-RTPS/issues/1087 is resolved.
-      # rmw_implementation STREQUAL "rmw_fastrtps_cpp" OR
-      # rmw_implementation STREQUAL "rmw_fastrtps_dynamic_cpp"
+      rmw_implementation STREQUAL "rmw_connext_dynamic_cpp" OR
+      rmw_implementation STREQUAL "rmw_fastrtps_cpp" OR
+      rmw_implementation STREQUAL "rmw_fastrtps_dynamic_cpp"
     )
       custom_security_test_c(test_security_nodes_c
         "test/test_invalid_secure_node_creation_c.cpp")
