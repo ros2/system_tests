@@ -253,21 +253,20 @@ if(BUILD_TESTING)
   endmacro()
 
   macro(targets)
-    set(ENV_PATH "$ENV{PATH}")
-    file(TO_CMAKE_PATH "${ENV_PATH}" ENV_PATH)
-    set(TEST_PATH "${ENV_PATH}")
+    set(TEST_PATH "$ENV{PATH}")
     if(rmw_implementation STREQUAL "rmw_connext_cpp")
       # Connext 5.3.1 needs RTI's OpenSSL binaries (based on EOL 1.0.2) to be
       # on the PATH at runtime as the system version of OpenSSL is not supported
       set(RTI_BIN_PATH "$ENV{RTI_OPENSSL_BIN}")
-      file(TO_CMAKE_PATH "${RTI_BIN_PATH}" RTI_BIN_PATH)
-      set(TEST_PATH "${RTI_BIN_PATH};${ENV_PATH}")
+      set(TEST_PATH "${RTI_BIN_PATH};${TEST_PATH}")
     endif()
 
     if(NOT WIN32)
+      file(TO_CMAKE_PATH "${TEST_PATH}" TEST_PATH)
       string(REPLACE ";" ":" TEST_PATH "${TEST_PATH}")
+    else()
+      string(REPLACE "\\" "\\\\" TEST_PATH "${TEST_PATH}")
     endif()
-
     # TODO(mikaelarguedas) only Connext and FastRTPS support DDS-Security for now
     if(
       rmw_implementation STREQUAL "rmw_connext_cpp" OR
