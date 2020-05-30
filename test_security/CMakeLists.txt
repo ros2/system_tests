@@ -271,8 +271,8 @@ if(BUILD_TESTING)
     # TODO(mikaelarguedas) only Connext and FastRTPS support DDS-Security for now
     # TODO(jacobperron) Disable Connext on Windows until we fix issue with CI
     if(
-      rmw_implementation STREQUAL "rmw_connext_cpp" AND NOT WIN32 OR
-      rmw_implementation STREQUAL "rmw_connext_dynamic_cpp" AND NOT WIN32 OR
+      (rmw_implementation STREQUAL "rmw_connext_cpp" AND NOT WIN32) OR
+      (rmw_implementation STREQUAL "rmw_connext_dynamic_cpp" AND NOT WIN32) OR
       rmw_implementation STREQUAL "rmw_fastrtps_cpp" OR
       rmw_implementation STREQUAL "rmw_fastrtps_dynamic_cpp"
     )
