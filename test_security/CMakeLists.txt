@@ -332,6 +332,7 @@ if(BUILD_TESTING)
     find_program(PROGRAM ros2)
 
     set(node_names_list "/publisher;/subscriber;/publisher_missing_key;/publisher_invalid_cert")
+    file(REMOVE_RECURSE "${KEYSTORE_DIRECTORY}/enclaves/publisher_invalid_cert")
     set(generate_artifacts_command ${PROGRAM} security generate_artifacts -k ${KEYSTORE_DIRECTORY_NATIVE_PATH} -e ${node_names_list})
     execute_process(
       COMMAND ${generate_artifacts_command}
