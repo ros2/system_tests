@@ -314,7 +314,7 @@ if(BUILD_TESTING)
     #   file(TO_NATIVE_PATH "${openssl_lib_path}" openssl_lib_path)
     #   set(append_library_dirs "${append_library_dirs};${openssl_lib_path}")
     else()
-      set(append_library_dirs "${append_library_dirs}:$ENV{RTI_OPENSSL_LIBS}")
+      set(append_library_dirs "${append_library_dirs};$ENV{RTI_OPENSSL_LIBS}")
     endif()
 
     # finding gtest once in the highest scope
