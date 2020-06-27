@@ -256,6 +256,11 @@ if(BUILD_TESTING)
     set(ENV_PATH "$ENV{PATH}")
     file(TO_CMAKE_PATH "${ENV_PATH}" ENV_PATH)
     set(TEST_PATH "${ENV_PATH}")
+    set(append_library_dirs "${CMAKE_CURRENT_BINARY_DIR}")
+    if(WIN32)
+      set(append_library_dirs "${append_library_dirs}/$<CONFIG>")
+    endif()
+
     if(rmw_implementation STREQUAL "rmw_connext_cpp")
       # Connext 5.3.1 needs RTI's OpenSSL binaries (based on EOL 1.0.2) to be
       # on the PATH at runtime as the system version of OpenSSL is not supported
@@ -315,11 +320,6 @@ if(BUILD_TESTING)
       "test/test_secure_publisher.cpp")
     custom_executable(test_secure_subscriber_cpp
       "test/test_secure_subscriber.cpp")
-
-    set(append_library_dirs "${CMAKE_CURRENT_BINARY_DIR}")
-    if(WIN32)
-      set(append_library_dirs "${append_library_dirs}/$<CONFIG>")
-    endif()
 
     # finding gtest once in the highest scope
     # prevents finding it repeatedly in each local scope
