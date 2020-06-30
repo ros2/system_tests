@@ -67,7 +67,7 @@ TEST(CLASSNAME(test_timeout_subscriber, RMW_IMPLEMENTATION), timeout_subscriber)
     auto blocking_diff = blocking_end - blocking_start;
     EXPECT_LT(
       std::chrono::duration_cast<std::chrono::nanoseconds>(blocking_diff).count(),
-      std::chrono::duration_cast<std::chrono::nanoseconds>(blocking_timeout + tolerance).count();
+      std::chrono::duration_cast<std::chrono::nanoseconds>(blocking_timeout + tolerance).count());
   }
 
   rclcpp::shutdown();
