@@ -48,7 +48,7 @@ TEST(CLASSNAME(test_timeout_subscriber, RMW_IMPLEMENTATION), timeout_subscriber)
   size_t num_cycles = 5;
 
   for (size_t i = 0; i < num_cycles; ++i) {
-    auto tolerance = std::chrono::milliseconds(15);
+    auto tolerance = std::chrono::milliseconds(20);
 
     // ensure that the non-blocking spin does return immediately
     auto nonblocking_start = std::chrono::steady_clock::now();
@@ -65,6 +65,9 @@ TEST(CLASSNAME(test_timeout_subscriber, RMW_IMPLEMENTATION), timeout_subscriber)
     executor.spin_node_once(node, blocking_timeout);
     auto blocking_end = std::chrono::steady_clock::now();
     auto blocking_diff = blocking_end - blocking_start;
+    EXPECT_GT(
+      std::chrono::duration_cast<std::chrono::nanoseconds>(blocking_diff).count(),
+      std::chrono::duration_cast<std::chrono::nanoseconds>(blocking_timeout - tolerance).count());
     EXPECT_LT(
       std::chrono::duration_cast<std::chrono::nanoseconds>(blocking_diff).count(),
       std::chrono::duration_cast<std::chrono::nanoseconds>(blocking_timeout + tolerance).count());
