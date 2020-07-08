@@ -152,10 +152,3 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
   EXPECT_EQ(expected_number_of_events - 1, last_pub_count);
   EXPECT_EQ((expected_number_of_events), last_sub_count);
 }
-
-int main(int argc, char ** argv)
-{
-  ::testing::InitGoogleTest(&argc, argv);
-  int ret = RUN_ALL_TESTS();
-  return ret;
-}

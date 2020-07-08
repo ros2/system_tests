@@ -26,6 +26,13 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 
+#ifdef RMW_IMPLEMENTATION
+# define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
+# define CLASSNAME(NAME, SUFFIX) CLASSNAME_(NAME, SUFFIX)
+#else
+# define CLASSNAME(NAME, SUFFIX) NAME
+#endif
+
 /// Helper time conversion method
 /**
  * @param milliseconds
@@ -34,7 +41,7 @@
 std::tuple<size_t, size_t> convert_chrono_milliseconds_to_size_t(
   const std::chrono::milliseconds & milliseconds);
 
-class QosRclcppTestFixture : public ::testing::Test
+class BaseQosRclcppTestFixture : public ::testing::Test
 {
 protected:
   void SetUp() override;
@@ -50,5 +57,9 @@ protected:
   // test fixture subscriber node
   std::shared_ptr<QosTestSubscriber> subscriber;
 };
+
+#define QosRclcppTestFixture CLASSNAME(QosRclcppTestFixture, RMW_IMPLEMENTATION)
+
+class QosRclcppTestFixture : public BaseQosRclcppTestFixture {};
 
 #endif  // TEST_QUALITY_OF_SERVICE__QOS_UTILITIES_HPP_

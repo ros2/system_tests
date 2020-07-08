@@ -77,10 +77,3 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
   EXPECT_LT(subscriber->get_count(), publisher->get_count());
   EXPECT_LT(subscriber->get_count() / 2, publisher->get_count());
 }
-
-int main(int argc, char ** argv)
-{
-  ::testing::InitGoogleTest(&argc, argv);
-  int ret = RUN_ALL_TESTS();
-  return ret;
-}
