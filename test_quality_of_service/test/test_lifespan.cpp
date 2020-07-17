@@ -30,11 +30,16 @@
 
 using namespace std::chrono_literals;
 
-TEST_F(QosRclcppTestFixture, test_deadline) {
-  const std::chrono::milliseconds lifespan_duration = 1s;
+TEST_F(QosRclcppTestFixture, test_lifespan) {
   const int history = 2;
-  const std::chrono::milliseconds max_test_length = 11s;
-  const int expected_published = 2 * static_cast<int>(max_test_length / lifespan_duration);
+  const std::chrono::milliseconds lifespan_duration = 1s;
+  const std::chrono::milliseconds subscriber_toggling_period = lifespan_duration * 2;
+  const int active_subscriber_num_periods = 3;
+  const int inactive_subscriber_num_periods = active_subscriber_num_periods - 1;
+  const int subscriber_toggling_num_periods =
+    active_subscriber_num_periods + inactive_subscriber_num_periods;
+  const std::chrono::milliseconds max_test_length =
+    subscriber_toggling_period * subscriber_toggling_num_periods;
   const std::chrono::milliseconds publish_period = 500ms;
 
   // define qos profile
@@ -50,11 +55,11 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
     "subscriber", topic, qos_profile);
 
   int timer_fired_count = 0;
-  // toggle publishing on and off to force deadline events
+  // toggle subscription on and off to exercise lifespan
   rclcpp::TimerBase::SharedPtr toggle_subscriber_timer = subscriber->create_wall_timer(
     lifespan_duration * 2,
     [this, &timer_fired_count]() -> void {
-      // start / stop publishing publish at a rate slower than lifespan
+      // start / stop publishing subscribing at a rate slower than lifespan
       subscriber->toggle();
       timer_fired_count++;
     });
@@ -70,10 +75,13 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
   toggle_subscriber_timer->cancel();
 
   EXPECT_GT(timer_fired_count, 0);
-  EXPECT_EQ(publisher->get_count(), expected_published);  // check if we published anything
+  EXPECT_GT(publisher->get_count(), 0);  // check if we published anything
   EXPECT_GT(subscriber->get_count(), 0);  // check if we received anything
 
   // check if lifespan simply worked
-  EXPECT_LT(subscriber->get_count(), publisher->get_count());
-  EXPECT_LT(subscriber->get_count() / 2, publisher->get_count());
+  const int sub_count_upper_bound = publisher->get_count();
+  const int sub_count_lower_bound =
+    (publisher->get_count() * active_subscriber_num_periods) / subscriber_toggling_num_periods;
+  EXPECT_LT(subscriber->get_count(), sub_count_upper_bound);
+  EXPECT_GT(subscriber->get_count(), sub_count_lower_bound);
 }
