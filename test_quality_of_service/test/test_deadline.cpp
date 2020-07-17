@@ -87,11 +87,11 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
       publisher->toggle();
     });
 
-  executor->add_node(subscriber);
   executor->add_node(publisher);
+  executor->add_node(subscriber);
 
-  subscriber->start();
   publisher->start();
+  subscriber->start();
 
   // the future will never be resolved, so simply time out to force the experiment to stop
   executor->spin_until_future_complete(dummy_future, max_test_length);
