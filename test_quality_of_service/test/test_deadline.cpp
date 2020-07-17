@@ -33,7 +33,8 @@ using namespace std::chrono_literals;
 /// Test Deadline with a single publishing node and single subscriber node
 TEST_F(QosRclcppTestFixture, test_deadline) {
   int expected_number_of_events = 4;
-  const std::chrono::milliseconds deadline_duration = 1s;
+  const std::chrono::milliseconds deadline_duration =
+    this_rmw_implementation.find("connext") != std::string::npos ? 2s : 1s;
   const std::chrono::milliseconds publisher_toggling_period = deadline_duration * 2;
   const std::chrono::milliseconds max_test_length =
     publisher_toggling_period * (expected_number_of_events + 1);

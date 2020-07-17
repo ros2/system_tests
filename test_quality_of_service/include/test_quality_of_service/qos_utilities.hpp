@@ -23,6 +23,7 @@
 
 #include "gtest/gtest.h"
 
+#include "rcutils/macros.h"
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 
@@ -60,6 +61,10 @@ protected:
 
 #define QosRclcppTestFixture CLASSNAME(QosRclcppTestFixture, RMW_IMPLEMENTATION)
 
-class QosRclcppTestFixture : public BaseQosRclcppTestFixture {};
+class QosRclcppTestFixture : public BaseQosRclcppTestFixture
+{
+protected:
+  const std::string this_rmw_implementation{RCUTILS_STRINGIFY(RMW_IMPLEMENTATION)};
+};
 
 #endif  // TEST_QUALITY_OF_SERVICE__QOS_UTILITIES_HPP_
