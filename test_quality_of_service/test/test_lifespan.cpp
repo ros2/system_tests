@@ -32,7 +32,8 @@ using namespace std::chrono_literals;
 
 TEST_F(QosRclcppTestFixture, test_lifespan) {
   const int history = 2;
-  const std::chrono::milliseconds lifespan_duration = 1s;
+  const std::chrono::milliseconds lifespan_duration =
+    this_rmw_implementation.find("connext") != std::string::npos ? 2s : 1s;
   const std::chrono::milliseconds subscriber_toggling_period = lifespan_duration * 2;
   const int active_subscriber_num_periods = 3;
   const int inactive_subscriber_num_periods = active_subscriber_num_periods - 1;
@@ -40,7 +41,7 @@ TEST_F(QosRclcppTestFixture, test_lifespan) {
     active_subscriber_num_periods + inactive_subscriber_num_periods;
   const std::chrono::milliseconds max_test_length =
     subscriber_toggling_period * subscriber_toggling_num_periods;
-  const std::chrono::milliseconds publish_period = 500ms;
+  const std::chrono::milliseconds publish_period = lifespan_duration / 2;
 
   // define qos profile
   rclcpp::QoS qos_profile(history);
@@ -64,11 +65,11 @@ TEST_F(QosRclcppTestFixture, test_lifespan) {
       timer_fired_count++;
     });
 
-  executor->add_node(subscriber);
-  subscriber->start();
-
   executor->add_node(publisher);
   publisher->start();
+
+  executor->add_node(subscriber);
+  subscriber->start();
 
   // the future will never be resolved, so simply time out to force the experiment to stop
   executor->spin_until_future_complete(dummy_future, max_test_length);
