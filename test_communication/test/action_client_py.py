@@ -17,6 +17,7 @@ import sys
 
 from test_msgs.action import Fibonacci
 from test_msgs.action import NestedMessage
+from test_msgs.action import ShortVariedMultiNested
 
 
 class ActionClientTest:
@@ -166,6 +167,44 @@ def generate_nested_message_goal_tests():
     return tests
 
 
+def generate_short_varied_nested_message_goal_tests():
+    tests = []
+
+    initial_value = True
+    expected_feedback_value = [True, True, True]
+    expected_result_value = True
+
+    goal = ShortVariedMultiNested.Goal()
+    goal.short_varied_nested.short_varied.bool_value = initial_value
+
+    test = ActionClientTest(goal)
+
+    def is_feedback_valid(feedback_message):
+        feedback = feedback_message.feedback
+        if feedback.bool_values != expected_feedback_value:
+            print('Expected feedback {} but got {}'.format(
+                expected_feedback_value, feedback.bool_values),
+                file=sys.stderr)
+            return False
+        return True
+
+    def is_result_valid(get_result_response):
+        result = get_result_response.result
+        if result.bool_value != expected_result_value:
+            print('Expected result {} but got {}'.format(
+                expected_result_value, result.bool_value),
+                file=sys.stderr)
+            return False
+        return True
+
+    test.is_feedback_valid = is_feedback_valid
+    test.is_result_valid = is_result_valid
+
+    tests.append(test)
+
+    return tests
+
+
 if __name__ == '__main__':
     import rclpy
 
@@ -183,6 +222,9 @@ if __name__ == '__main__':
             rc = send_goals(node, Fibonacci, generate_fibonacci_goal_tests())
         elif 'NestedMessage' == args.action_type:
             rc = send_goals(node, NestedMessage, generate_nested_message_goal_tests())
+        elif 'ShortVariedMultiNested' == args.action_type:
+            rc = send_goals(
+                node, ShortVariedMultiNested, generate_short_varied_nested_message_goal_tests())
         else:
             print('Unknown action type {!r}'.format(args.action_type), file=sys.stderr)
     except KeyboardInterrupt:

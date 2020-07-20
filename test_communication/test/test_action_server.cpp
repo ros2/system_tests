@@ -24,6 +24,7 @@
 
 #include "test_msgs/action/fibonacci.hpp"
 #include "test_msgs/action/nested_message.hpp"
+#include "test_msgs/action/short_varied_multi_nested.hpp"
 
 template<typename ActionT>
 struct ExpectedGoalRequest
@@ -237,6 +238,68 @@ generate_expected_nested_message_goals(rclcpp::Logger logger)
   return result;
 }
 
+std::vector<ExpectedGoalRequest<test_msgs::action::ShortVariedMultiNested>>
+generate_expected_short_varied_nested_message_goals(rclcpp::Logger logger)
+{
+  std::vector<ExpectedGoalRequest<test_msgs::action::ShortVariedMultiNested>> result;
+
+  {
+    ExpectedGoalRequest<test_msgs::action::ShortVariedMultiNested> expected_goal;
+
+    expected_goal.goal_is_expected =
+      [](auto goal) {
+        return goal && goal->short_varied_nested.short_varied.bool_value == true;
+      };
+
+    expected_goal.goal_is_valid =
+      [](auto) {
+        return true;
+      };
+
+    expected_goal.execute_goal =
+      [logger](auto goal_handle) {
+        const auto goal = goal_handle->get_goal();
+        rclcpp::Rate loop_rate(10);
+        const std::array<bool, 3> feedback_value = {true, true, true};
+        const bool result_value = true;
+
+        auto feedback = std::make_shared<test_msgs::action::ShortVariedMultiNested::Feedback>();
+
+        auto result = std::make_shared<test_msgs::action::ShortVariedMultiNested::Result>();
+
+        const size_t num_feedback = 10;
+
+        for (size_t i = 1; i < num_feedback; ++i) {
+          if (!rclcpp::ok()) {
+            return;
+          }
+          // Check if the goal was canceled.
+          if (goal_handle->is_canceling()) {
+            result->bool_value = result_value;
+            goal_handle->canceled(result);
+            RCLCPP_INFO(logger, "goal was canceled");
+            return;
+          }
+          // Update the feedback;
+          feedback->bool_values = feedback_value;
+          // Publish the current state as feedback.
+          goal_handle->publish_feedback(feedback);
+          RCLCPP_INFO(logger, "publishing feedback for goal");
+
+          loop_rate.sleep();
+        }
+
+        result->bool_value = result_value;
+        goal_handle->succeed(result);
+        RCLCPP_INFO(logger, "goal succeeded");
+      };
+
+    result.push_back(expected_goal);
+  }
+
+  return result;
+}
+
 int main(int argc, char ** argv)
 {
   if (argc != 3) {
@@ -259,6 +322,9 @@ int main(int argc, char ** argv)
   } else if (action == "NestedMessage") {
     server = receive_goals<test_msgs::action::NestedMessage>(
       node, action, generate_expected_nested_message_goals(node->get_logger()));
+  } else if (action == "ShortVariedMultiNested") {
+    server = receive_goals<test_msgs::action::ShortVariedMultiNested>(
+      node, action, generate_expected_short_varied_nested_message_goals(node->get_logger()));
   } else {
     fprintf(stderr, "Unknown action type '%s'\n", action.c_str());
     return 1;

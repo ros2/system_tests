@@ -123,6 +123,9 @@ int main(int argc, char ** argv)
   } else if (service == "Arrays") {
     rc = request<test_msgs::srv::Arrays>(
       node, service, get_services_arrays());
+  } else if (service == "ShortVariedMultiNested") {
+    rc = request<test_msgs::srv::ShortVariedMultiNested>(
+      node, service, get_services_short_varied_multi_nested());
   } else {
     fprintf(stderr, "Unknown service argument '%s'\n", service.c_str());
     rclcpp::shutdown();

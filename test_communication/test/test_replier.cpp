@@ -78,6 +78,7 @@ int main(int argc, char ** argv)
   auto services_empty = get_services_empty();
   auto services_basic_types = get_services_basic_types();
   auto services_arrays = get_services_arrays();
+  auto services_short_varied_multinested = get_services_short_varied_multi_nested();
   rclcpp::ServiceBase::SharedPtr server;
 
   if (service == "Empty") {
@@ -89,6 +90,9 @@ int main(int argc, char ** argv)
   } else if (service == "Arrays") {
     server = reply<test_msgs::srv::Arrays>(
       node, service, services_arrays);
+  } else if (service == "ShortVariedMultiNested") {
+    server = reply<test_msgs::srv::ShortVariedMultiNested>(
+      node, service, services_short_varied_multinested);
   } else {
     fprintf(stderr, "Unknown service argument '%s'\n", service.c_str());
     rclcpp::shutdown();

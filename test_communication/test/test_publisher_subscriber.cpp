@@ -126,6 +126,9 @@ int main(int argc, char ** argv)
   auto messages_defaults = get_messages_defaults();
   auto messages_strings = get_messages_strings();
   auto messages_wstrings = get_messages_wstrings();
+  auto messages_short_varied = get_messages_short_varied();
+  auto messages_short_varied_multi_nested = get_messages_short_varied_multi_nested();
+  auto messages_short_varied_nested = get_messages_short_varied_nested();
 
   std::thread spin_thread([node]() {
       rclcpp::spin(node);
@@ -181,6 +184,20 @@ int main(int argc, char ** argv)
     subscriber = subscribe<test_msgs::msg::WStrings>(
       node, message, messages_wstrings, received_messages);
     publish<test_msgs::msg::WStrings>(node, message, messages_wstrings);
+  } else if (message == "ShortVaried") {
+    subscriber = subscribe<test_msgs::msg::ShortVaried>(
+      node, message, messages_short_varied, received_messages);
+    publish<test_msgs::msg::ShortVaried>(node, message, messages_short_varied);
+  } else if (message == "ShortVariedMultiNested") {
+    subscriber = subscribe<test_msgs::msg::ShortVariedMultiNested>(
+      node, message, messages_short_varied_multi_nested, received_messages);
+    publish<test_msgs::msg::ShortVariedMultiNested>(
+      node, message,
+      messages_short_varied_multi_nested);
+  } else if (message == "ShortVariedNested") {
+    subscriber = subscribe<test_msgs::msg::ShortVariedNested>(
+      node, message, messages_short_varied_nested, received_messages);
+    publish<test_msgs::msg::ShortVariedNested>(node, message, messages_short_varied_nested);
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
     return 1;

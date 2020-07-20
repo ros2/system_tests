@@ -18,6 +18,7 @@ import time
 
 from test_msgs.action import Fibonacci
 from test_msgs.action import NestedMessage
+from test_msgs.action import ShortVariedMultiNested
 
 
 class ExpectedGoal:
@@ -148,6 +149,54 @@ def generate_expected_nested_message_goals():
     return expected_goals
 
 
+def generate_expected_short_varied_multi_nested_goals():
+    import rclpy
+
+    expected_goals = []
+
+    def is_goal_expected(goal):
+        return (isinstance(goal, ShortVariedMultiNested.Goal) and
+                goal.short_varied_nested.short_varied.bool_value is True)
+
+    def execute_goal(goal_handle):
+        feedback = ShortVariedMultiNested.Feedback()
+        feedback.ShortVariedMultiNested = [True, True, True]
+        result = ShortVariedMultiNested.Result()
+        result.bool_value = True
+
+        num_feedback = 10
+        for i in range(0, num_feedback):
+            if not rclpy.ok():
+                goal_handle.abort()
+                return ShortVariedMultiNested.Result()
+
+            # Check if the goal was canceled
+            if goal_handle.is_cancel_requested:
+                goal_handle.canceled()
+                print('Goal was canceled')
+                return result
+
+            # Publish feedback
+            goal_handle.publish_feedback(feedback)
+            print('Publishing feedback')
+
+            # 10 Hz update rate
+            time.sleep(0.1)
+
+        # Send final result
+        goal_handle.succeed()
+        print('Goal succeeded')
+        return result
+
+    expected_goal = ExpectedGoal()
+    expected_goal.is_goal_expected = is_goal_expected
+    expected_goal.execute_goal = execute_goal
+
+    expected_goals.append(expected_goal)
+
+    return expected_goals
+
+
 if __name__ == '__main__':
     import rclpy
 
@@ -166,6 +215,12 @@ if __name__ == '__main__':
             node,
             NestedMessage,
             generate_expected_nested_message_goals(),
+        )
+    elif 'ShortVariedMultiNested' == args.action_type:
+        action_server = receive_goals(
+            node,
+            ShortVariedMultiNested,
+            generate_expected_short_varied_multi_nested_goals(),
         )
     else:
         print('Unknown action type {!r}'.format(args.action_type), file=sys.stderr)

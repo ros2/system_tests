@@ -95,6 +95,14 @@ int main(int argc, char ** argv)
     publish<test_msgs::msg::Strings>(node, message, get_messages_strings());
   } else if (message == "WStrings") {
     publish<test_msgs::msg::WStrings>(node, message, get_messages_wstrings());
+  } else if (message == "ShortVaried") {
+    publish<test_msgs::msg::ShortVaried>(node, message, get_messages_short_varied());
+  } else if (message == "ShortVariedMultiNested") {
+    publish<test_msgs::msg::ShortVariedMultiNested>(
+      node, message,
+      get_messages_short_varied_multi_nested());
+  } else if (message == "ShortVariedNested") {
+    publish<test_msgs::msg::ShortVariedNested>(node, message, get_messages_short_varied_nested());
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
     rclcpp::shutdown();

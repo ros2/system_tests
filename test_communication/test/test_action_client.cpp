@@ -25,6 +25,7 @@
 
 #include "test_msgs/action/fibonacci.hpp"
 #include "test_msgs/action/nested_message.hpp"
+#include "test_msgs/action/short_varied_multi_nested.hpp"
 
 using namespace std::chrono_literals;
 
@@ -215,6 +216,50 @@ generate_nested_message_goal_tests()
   return result;
 }
 
+std::vector<ActionClientTest<test_msgs::action::ShortVariedMultiNested>>
+generate_short_varied_nested_message_goal_tests()
+{
+  std::vector<ActionClientTest<test_msgs::action::ShortVariedMultiNested>> result;
+
+  const bool initial_value = true;
+  const bool expected_feedback_value[3] = {true, true, true};
+  const bool expected_result_value = true;
+
+  {
+    ActionClientTest<test_msgs::action::ShortVariedMultiNested> test;
+    test.goal.short_varied_nested.short_varied.bool_value = initial_value;
+    test.result_is_valid =
+      [expected_result_value](auto result) -> bool {
+        if (result->bool_value != expected_result_value) {
+          fprintf(
+            stderr, "expected result %s but got %s\n",
+            expected_result_value ? "true" : "false",
+            result->bool_value ? "true" : "false");
+          return false;
+        }
+        return true;
+      };
+    test.feedback_is_valid =
+      [expected_feedback_value](auto feedback) -> bool {
+        bool is_correct = true;
+        for (int i = 0; i < static_cast<int>(sizeof(feedback->bool_values)); i++) {
+          if (feedback->bool_values[i] != expected_feedback_value[i]) {
+            fprintf(
+              stderr, "expected feedback %s but got %s at index %d\n",
+              expected_feedback_value[i] ? "true" : "false",
+              feedback->bool_values[i] ? "true" : "false",
+              i);
+            is_correct = false;
+          }
+        }
+        return is_correct;
+      };
+    result.push_back(test);
+  }
+
+  return result;
+}
+
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
@@ -233,6 +278,9 @@ int main(int argc, char ** argv)
   } else if (action == "NestedMessage") {
     rc = send_goals<test_msgs::action::NestedMessage>(
       node, action, generate_nested_message_goal_tests());
+  } else if (action == "ShortVariedMultiNested") {
+    rc = send_goals<test_msgs::action::ShortVariedMultiNested>(
+      node, action, generate_short_varied_nested_message_goal_tests());
   } else {
     fprintf(stderr, "Unknown action type '%s'\n", action.c_str());
     return 1;

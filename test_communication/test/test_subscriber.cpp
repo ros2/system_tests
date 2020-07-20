@@ -95,6 +95,9 @@ int main(int argc, char ** argv)
   auto messages_defaults = get_messages_defaults();
   auto messages_strings = get_messages_strings();
   auto messages_wstrings = get_messages_wstrings();
+  auto messages_short_varied = get_messages_short_varied();
+  auto messages_short_varied_multi_nested = get_messages_short_varied_multi_nested();
+  auto messages_short_varied_nested = get_messages_short_varied_nested();
 
   rclcpp::SubscriptionBase::SharedPtr subscriber;
   std::vector<bool> received_messages;  // collect flags about received messages
@@ -134,6 +137,15 @@ int main(int argc, char ** argv)
   } else if (message == "WStrings") {
     subscriber = subscribe<test_msgs::msg::WStrings>(
       node, message, messages_wstrings, received_messages);
+  } else if (message == "ShortVaried") {
+    subscriber = subscribe<test_msgs::msg::ShortVaried>(
+      node, message, messages_short_varied, received_messages);
+  } else if (message == "ShortVariedMultiNested") {
+    subscriber = subscribe<test_msgs::msg::ShortVariedMultiNested>(
+      node, message, messages_short_varied_multi_nested, received_messages);
+  } else if (message == "ShortVariedNested") {
+    subscriber = subscribe<test_msgs::msg::ShortVariedNested>(
+      node, message, messages_short_varied_nested, received_messages);
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
     rclcpp::shutdown();
