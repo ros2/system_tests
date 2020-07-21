@@ -160,7 +160,7 @@ def generate_expected_short_varied_multi_nested_goals():
 
     def execute_goal(goal_handle):
         feedback = ShortVariedMultiNested.Feedback()
-        feedback.ShortVariedMultiNested = [True, True, True]
+        feedback.bool_values = [True, True, True]
         result = ShortVariedMultiNested.Result()
         result.bool_value = True
 
