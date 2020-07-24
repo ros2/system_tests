@@ -43,7 +43,9 @@ TEST_F(QosRclcppTestFixture, test_lifespan) {
     active_subscriber_num_periods + inactive_subscriber_num_periods;
   const std::chrono::milliseconds max_test_length =
     subscriber_toggling_period * subscriber_toggling_num_periods;
-  const std::chrono::milliseconds publish_period = lifespan_duration / 2;
+  // Publish fast enough for lifespan QoS effects to be observable despite
+  // the "noise" that discovery introduces.
+  const std::chrono::milliseconds publish_period = lifespan_duration / 4;
 
   // define qos profile
   rclcpp::QoS qos_profile(history);
