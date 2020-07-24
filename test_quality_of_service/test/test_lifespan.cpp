@@ -32,6 +32,8 @@ using namespace std::chrono_literals;
 
 TEST_F(QosRclcppTestFixture, test_lifespan) {
   const int history = 2;
+  // Bump lifespan duration when testing against rmw_connext_cpp to
+  // cope with the longer discovery times it entails.
   const std::chrono::milliseconds lifespan_duration =
     this_rmw_implementation.find("connext") != std::string::npos ? 2s : 1s;
   const std::chrono::milliseconds subscriber_toggling_period = lifespan_duration * 2;

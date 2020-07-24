@@ -33,6 +33,8 @@ using namespace std::chrono_literals;
 /// Test Deadline with a single publishing node and single subscriber node
 TEST_F(QosRclcppTestFixture, test_deadline) {
   int expected_number_of_events = 4;
+  // Bump deadline duration when testing against rmw_connext_cpp to
+  // cope with the longer discovery times it entails.
   const std::chrono::milliseconds deadline_duration =
     this_rmw_implementation.find("connext") != std::string::npos ? 2s : 1s;
   const std::chrono::milliseconds publisher_toggling_period = deadline_duration * 2;
