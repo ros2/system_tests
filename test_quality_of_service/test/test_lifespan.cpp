@@ -45,7 +45,7 @@ TEST_F(QosRclcppTestFixture, test_lifespan) {
     subscriber_toggling_period * subscriber_toggling_num_periods;
   // Publish fast enough for lifespan QoS effects to be observable despite
   // the "noise" that discovery introduces.
-  const std::chrono::milliseconds publish_period = lifespan_duration / 4;
+  const std::chrono::milliseconds publish_period = lifespan_duration / 8;
 
   // define qos profile
   rclcpp::QoS qos_profile(history);
@@ -85,8 +85,10 @@ TEST_F(QosRclcppTestFixture, test_lifespan) {
 
   // check if lifespan simply worked
   const int sub_count_upper_bound = publisher->get_count();
+  // skip the first activity period as discovery often skews it
   const int sub_count_lower_bound =
-    (publisher->get_count() * active_subscriber_num_periods) / subscriber_toggling_num_periods;
+    (publisher->get_count() * (active_subscriber_num_periods - 1)) /
+    subscriber_toggling_num_periods;
   EXPECT_LT(subscriber->get_count(), sub_count_upper_bound);
   EXPECT_GT(subscriber->get_count(), sub_count_lower_bound);
 }
