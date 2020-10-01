@@ -170,7 +170,7 @@ std::vector<TestConfig> test_configs {
   },
 };
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
   TestInitializationFails,
   TestSecureNodes,
   ::testing::ValuesIn(test_configs),
