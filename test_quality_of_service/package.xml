@@ -6,6 +6,8 @@
     <description>
         Test quality of service features, specifically liveliness, deadline, and lifespan.
     </description>
+    <maintainer email="jacob@openrobotics.org">Jacob Perron</maintainer>
+    <maintainer email="william@openrobotics.org">William Woodall</maintainer>
     <maintainer email="ros-contributions@amazon.com">Amazon ROS Contributions</maintainer>
     <license>Apache License 2.0</license>
 
