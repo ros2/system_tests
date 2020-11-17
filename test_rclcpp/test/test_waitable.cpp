@@ -77,9 +77,16 @@ public:
     return false;
   }
 
-  void
-  execute() override
+  std::shared_ptr<void>
+  take_data() override
   {
+    return nullptr;
+  }
+
+  void
+  execute(std::shared_ptr<void> & data) override
+  {
+    (void)data;
     rcl_ret_t ret = rcl_timer_call(timer_.get());
     execute_promise_.set_value(RCL_RET_OK == ret);
   }
