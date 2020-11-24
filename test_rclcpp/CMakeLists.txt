@@ -388,3 +388,8 @@ endif()  # BUILD_TESTING
 
 # TODO should not install anything
 ament_package()
+
+if(TEST cppcheck)
+  # cppcheck test is created in hook in ament_package()
+  set_tests_properties(cppcheck PROPERTIES TIMEOUT 400)
+endif()
