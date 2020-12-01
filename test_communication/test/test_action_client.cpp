@@ -218,6 +218,10 @@ generate_nested_message_goal_tests()
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
+  RCLCPP_SCOPE_EXIT(
+  {
+    rclcpp::shutdown();
+  });
   if (argc != 3) {
     fprintf(stderr, "Wrong number of arguments, pass an action type and a namespace\n");
     return 1;

@@ -244,6 +244,10 @@ int main(int argc, char ** argv)
     return 1;
   }
   rclcpp::init(argc, argv);
+  RCLCPP_SCOPE_EXIT(
+  {
+    rclcpp::shutdown();
+  });
 
   auto start = std::chrono::steady_clock::now();
 

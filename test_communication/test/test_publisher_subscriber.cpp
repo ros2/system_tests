@@ -101,6 +101,10 @@ rclcpp::SubscriptionBase::SharedPtr subscribe(
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
+  RCLCPP_SCOPE_EXIT(
+  {
+    rclcpp::shutdown();
+  });
   if (argc != 2) {
     fprintf(stderr, "Wrong number of arguments, pass one message type\n");
     return 1;
