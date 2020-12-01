@@ -32,12 +32,26 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
+class CLASSNAME (test_avoid_ros_namespace_conventions_qos, RMW_IMPLEMENTATION)
+  : public ::testing::Test
+{
+public:
+  static void SetUpTestCase()
+  {
+    rclcpp::init(0, nullptr);
+  }
+
+  static void TearDownTestCase()
+  {
+    rclcpp::shutdown();
+  }
+};
+
 // Test communciation works with the avoid_ros_namespace_conventions QoS enabled.
-TEST(
+TEST_F(
   CLASSNAME(test_avoid_ros_namespace_conventions_qos, RMW_IMPLEMENTATION),
   pub_sub_works
 ) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   // topic name
   std::string topic_name = "test_avoid_ros_namespace_conventions_qos";
   // code to create the callback and subscription
