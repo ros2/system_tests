@@ -31,13 +31,16 @@
 
 using namespace std::chrono_literals;
 
-class CLASSNAME (test_services_client, RMW_IMPLEMENTATION) : public ::testing::Test {
+class CLASSNAME (test_services_client, RMW_IMPLEMENTATION) : public ::testing::Test
+{
 public:
-  static void SetUpTestCase() {
+  static void SetUpTestCase()
+  {
     rclcpp::init(0, nullptr);
   }
 
-  static void TearDownTestCase() {
+  static void TearDownTestCase()
+  {
     rclcpp::shutdown();
   }
 };

@@ -39,13 +39,16 @@
 
 using namespace std::chrono_literals;
 
-class CLASSNAME (test_multithreaded, RMW_IMPLEMENTATION) : public ::testing::Test {
+class CLASSNAME (test_multithreaded, RMW_IMPLEMENTATION) : public ::testing::Test
+{
 public:
-  static void SetUpTestCase() {
+  void SetUp()
+  {
     rclcpp::init(0, nullptr);
   }
 
-  static void TearDownTestCase() {
+  void TearDown()
+  {
     rclcpp::shutdown();
   }
 };

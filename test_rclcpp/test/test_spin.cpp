@@ -33,13 +33,16 @@
 
 using namespace std::chrono_literals;
 
-class CLASSNAME (test_spin, RMW_IMPLEMENTATION) : public ::testing::Test {
+class CLASSNAME (test_spin, RMW_IMPLEMENTATION) : public ::testing::Test
+{
 public:
-  void SetUp() {
+  void SetUp()
+  {
     rclcpp::init(0, nullptr);
   }
 
-  void TearDownTestCase() {
+  void TearDown()
+  {
     if (rclcpp::ok()) {
       rclcpp::shutdown();
     }

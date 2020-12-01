@@ -31,13 +31,16 @@
 
 using namespace std::chrono_literals;
 
-class CLASSNAME (parameters, RMW_IMPLEMENTATION) : public ::testing::Test {
+class CLASSNAME (parameters, RMW_IMPLEMENTATION) : public ::testing::Test
+{
 public:
-  static void SetUpTestCase() {
+  static void SetUpTestCase()
+  {
     rclcpp::init(0, nullptr);
   }
 
-  static void TearDownTestCase() {
+  static void TearDownTestCase()
+  {
     rclcpp::shutdown();
   }
 };
@@ -94,13 +97,16 @@ TEST_F(CLASSNAME(parameters, RMW_IMPLEMENTATION), test_set_remote_parameters_ato
   test_get_parameters_sync(parameters_client);
 }
 
-class CLASSNAME (parameters_must_declare, RMW_IMPLEMENTATION) : public ::testing::Test {
+class CLASSNAME (parameters_must_declare, RMW_IMPLEMENTATION) : public ::testing::Test
+{
 public:
-  static void SetUpTestCase() {
+  static void SetUpTestCase()
+  {
     rclcpp::init(0, nullptr);
   }
 
-  static void TearDownTestCase() {
+  static void TearDownTestCase()
+  {
     rclcpp::shutdown();
   }
 };

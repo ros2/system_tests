@@ -32,13 +32,16 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
-class CLASSNAME (test_publisher, RMW_IMPLEMENTATION) : public ::testing::Test {
+class CLASSNAME (test_publisher, RMW_IMPLEMENTATION) : public ::testing::Test
+{
 public:
-  static void SetUpTestCase() {
+  static void SetUpTestCase()
+  {
     rclcpp::init(0, nullptr);
   }
 
-  static void TearDownTestCase() {
+  static void TearDownTestCase()
+  {
     rclcpp::shutdown();
   }
 };

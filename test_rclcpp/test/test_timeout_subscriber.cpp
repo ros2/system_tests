@@ -33,13 +33,16 @@ void callback(const test_rclcpp::msg::UInt32::SharedPtr /*msg*/)
   throw std::runtime_error("The subscriber received a message but there should be no publisher!");
 }
 
-class CLASSNAME (test_timeout_subscriber, RMW_IMPLEMENTATION) : public ::testing::Test {
+class CLASSNAME (test_timeout_subscriber, RMW_IMPLEMENTATION) : public ::testing::Test
+{
 public:
-  static void SetUpTestCase() {
+  static void SetUpTestCase()
+  {
     rclcpp::init(0, nullptr);
   }
 
-  static void TearDownTestCase() {
+  static void TearDownTestCase()
+  {
     rclcpp::shutdown();
   }
 };

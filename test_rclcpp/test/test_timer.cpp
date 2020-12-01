@@ -26,16 +26,17 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
-class CLASSNAME (test_time, RMW_IMPLEMENTATION) : public ::testing::Test {
+class CLASSNAME (test_time, RMW_IMPLEMENTATION) : public ::testing::Test
+{
 public:
-  void SetUp() {
+  static void SetUpTestCase()
+  {
     rclcpp::init(0, nullptr);
   }
 
-  void TearDown() {
-    if (rclcpp::ok()) {
-      rclcpp::shutdown();
-    }
+  static void TearDownTestCase()
+  {
+    rclcpp::shutdown();
   }
 };
 
@@ -132,7 +133,7 @@ TEST_F(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_during_wait) {
   printf("sleeping for 4 periods\n");
   std::this_thread::sleep_for(4 * period);
   printf("shutdown()\n");
-  rclcpp::shutdown();
+  executor.cancel();
   thread.join();
 
   // check number of callbacks

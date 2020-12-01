@@ -55,13 +55,16 @@ void wait_for_future(
     " milliseconds\n";
 }
 
-class CLASSNAME (test_subscription, RMW_IMPLEMENTATION) : public ::testing::Test {
+class CLASSNAME (test_subscription, RMW_IMPLEMENTATION) : public ::testing::Test
+{
 public:
-  static void SetUpTestCase() {
+  static void SetUpTestCase()
+  {
     rclcpp::init(0, nullptr);
   }
 
-  static void TearDownTestCase() {
+  static void TearDownTestCase()
+  {
     rclcpp::shutdown();
   }
 };

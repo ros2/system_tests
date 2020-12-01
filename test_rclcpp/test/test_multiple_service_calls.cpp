@@ -43,13 +43,16 @@ void handle_add_two_ints(
   response->sum = request->a + request->b;
 }
 
-class CLASSNAME (test_two_service_calls, RMW_IMPLEMENTATION) : public ::testing::Test {
+class CLASSNAME (test_two_service_calls, RMW_IMPLEMENTATION) : public ::testing::Test
+{
 public:
-  static void SetUpTestCase() {
+  static void SetUpTestCase()
+  {
     rclcpp::init(0, nullptr);
   }
 
-  static void TearDownTestCase() {
+  static void TearDownTestCase()
+  {
     rclcpp::shutdown();
   }
 };
@@ -143,13 +146,16 @@ TEST_F(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), recursive_service_
   EXPECT_TRUE(second_result_received);
 }
 
-class CLASSNAME (test_multiple_service_calls, RMW_IMPLEMENTATION) : public ::testing::Test {
+class CLASSNAME (test_multiple_service_calls, RMW_IMPLEMENTATION) : public ::testing::Test
+{
 public:
-  static void SetUpTestCase() {
+  static void SetUpTestCase()
+  {
     rclcpp::init(0, nullptr);
   }
 
-  static void TearDownTestCase() {
+  static void TearDownTestCase()
+  {
     rclcpp::shutdown();
   }
 };

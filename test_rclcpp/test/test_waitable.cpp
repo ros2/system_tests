@@ -96,13 +96,16 @@ public:
   std::promise<bool> execute_promise_;
 };  // class WaitableWithTimer
 
-class CLASSNAME (test_waitable, RMW_IMPLEMENTATION) : public ::testing::Test {
+class CLASSNAME (test_waitable, RMW_IMPLEMENTATION) : public ::testing::Test
+{
 public:
-  static void SetUpTestCase() {
+  static void SetUpTestCase()
+  {
     rclcpp::init(0, nullptr);
   }
 
-  static void TearDownTestCase() {
+  static void TearDownTestCase()
+  {
     rclcpp::shutdown();
   }
 };
