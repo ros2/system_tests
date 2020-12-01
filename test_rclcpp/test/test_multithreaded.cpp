@@ -163,6 +163,9 @@ TEST_F(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_intra_p
   multi_consumer_pub_sub_test(true);
 }
 
+// TODO(brawner) On high core-count machines, this test fails with rmw_cyclonedds_cpp because
+// cyclonedds hard codes the maximum allowed threads.
+// For potential resolution, see https://github.com/ros2/rmw_cyclonedds/issues/268
 TEST_F(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) {
   // multiple clients, single server
   auto node = rclcpp::Node::make_shared("multi_consumer_clients");
