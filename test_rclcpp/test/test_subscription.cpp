@@ -55,8 +55,18 @@ void wait_for_future(
     " milliseconds\n";
 }
 
-TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+class CLASSNAME (test_subscription, RMW_IMPLEMENTATION) : public ::testing::Test {
+public:
+  static void SetUpTestCase() {
+    rclcpp::init(0, nullptr);
+  }
+
+  static void TearDownTestCase() {
+    rclcpp::shutdown();
+  }
+};
+
+TEST_F(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning) {
   auto node = rclcpp::Node::make_shared("test_subscription");
 
   std::string topic = "test_subscription";
@@ -170,8 +180,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinning
 }
 
 // Shortened version of the test for the ConstSharedPtr callback signature
-TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_const) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_const) {
   std::string topic_name = "test_subscription_subscription_shared_ptr_const";
   // create the callback and subscription
   int counter = 0;
@@ -218,11 +227,10 @@ public:
 };
 
 // Shortened version of the test for the ConstSharedPtr callback signature in a method
-TEST(
+TEST_F(
   CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
   subscription_shared_ptr_const_method_std_function
 ) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   std::string topic_name = "test_subscription_shared_ptr_const_method_std_function";
   // create the callback and subscription
   CallbackHolder cb_holder;
@@ -251,11 +259,10 @@ TEST(
 }
 
 // Shortened version of the test for the ConstSharedPtr callback signature in a method
-TEST(
+TEST_F(
   CLASSNAME(test_subscription, RMW_IMPLEMENTATION),
   subscription_shared_ptr_const_method_direct
 ) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   std::string topic_name = "test_subscription_shared_ptr_const_method_direct";
   // create the callback and subscription
   CallbackHolder cb_holder;
@@ -284,8 +291,7 @@ TEST(
 }
 
 // Shortened version of the test for the ConstSharedPtr with info callback signature
-TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_const_with_info) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_const_with_info) {
   std::string topic_name = "test_subscription_shared_ptr_const_method_direct";
   // create the callback and subscription
   int counter = 0;
@@ -320,8 +326,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_shared_ptr_c
 }
 
 // Shortened version of the test for subscribing after spinning has started.
-TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), spin_before_subscription) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), spin_before_subscription) {
   std::string topic_name = "test_spin_before_subscription";
   // create the callback and subscription
   int counter = 0;
@@ -363,8 +368,7 @@ TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), spin_before_subscription)
 }
 
 // Test of the queue size create_subscription signature.
-TEST(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), create_subscription_with_queue_size) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), create_subscription_with_queue_size) {
   auto node = rclcpp::Node::make_shared("test_subscription");
 
   auto callback = [](test_rclcpp::msg::UInt32::ConstSharedPtr) -> void {};

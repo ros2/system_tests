@@ -53,8 +53,18 @@ private:
   rclcpp::ServiceBase::SharedPtr service_;
 };
 
-TEST(CLASSNAME(test_services_in_constructor, RMW_IMPLEMENTATION), service_in_constructor) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+class CLASSNAME (test_services_in_constructor, RMW_IMPLEMENTATION) : public ::testing::Test {
+public:
+  static void SetUpTestCase() {
+    rclcpp::init(0, nullptr);
+  }
+
+  static void TearDownTestCase() {
+    rclcpp::shutdown();
+  }
+};
+
+TEST_F(CLASSNAME(test_services_in_constructor, RMW_IMPLEMENTATION), service_in_constructor) {
   auto n = std::make_shared<MyNodeWithService>();
 }
 
@@ -71,7 +81,6 @@ private:
   rclcpp::ClientBase::SharedPtr client_;
 };
 
-TEST(CLASSNAME(test_services_in_constructor, RMW_IMPLEMENTATION), client_in_constructor) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(test_services_in_constructor, RMW_IMPLEMENTATION), client_in_constructor) {
   auto n = std::make_shared<MyNodeWithClient>();
 }

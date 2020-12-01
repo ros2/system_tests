@@ -96,8 +96,18 @@ public:
   std::promise<bool> execute_promise_;
 };  // class WaitableWithTimer
 
-TEST(CLASSNAME(test_waitable, RMW_IMPLEMENTATION), waitable_with_timer) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+class CLASSNAME (test_waitable, RMW_IMPLEMENTATION) : public ::testing::Test {
+public:
+  static void SetUpTestCase() {
+    rclcpp::init(0, nullptr);
+  }
+
+  static void TearDownTestCase() {
+    rclcpp::shutdown();
+  }
+};
+
+TEST_F(CLASSNAME(test_waitable, RMW_IMPLEMENTATION), waitable_with_timer) {
   auto node = rclcpp::Node::make_shared("waitable_with_timer");
   auto waitable = WaitableWithTimer::make_shared(node->get_clock());
   auto group = node->create_callback_group(rclcpp::CallbackGroupType::Reentrant);

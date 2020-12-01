@@ -33,11 +33,23 @@
 
 using namespace std::chrono_literals;
 
+class CLASSNAME (test_spin, RMW_IMPLEMENTATION) : public ::testing::Test {
+public:
+  void SetUp() {
+    rclcpp::init(0, nullptr);
+  }
+
+  void TearDownTestCase() {
+    if (rclcpp::ok()) {
+      rclcpp::shutdown();
+    }
+  }
+};
+
 /*
    Ensures that the timeout behavior of spin_until_future_complete is correct.
  */
-TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), test_spin_until_future_complete_timeout) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(test_spin, RMW_IMPLEMENTATION), test_spin_until_future_complete_timeout) {
   using rclcpp::FutureReturnCode;
   rclcpp::executors::SingleThreadedExecutor executor;
 
@@ -124,8 +136,7 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), test_spin_until_future_complete_t
   }
 }
 
-TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete) {
   auto node = rclcpp::Node::make_shared("test_spin");
 
   // Construct a fake future to wait on
@@ -147,8 +158,7 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete) {
   EXPECT_EQ(future.get(), true);
 }
 
-TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete_timeout) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete_timeout) {
   auto node = rclcpp::Node::make_shared("test_spin");
 
   // Construct a fake future to wait on
@@ -173,8 +183,7 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete_timeou
   EXPECT_EQ(future.get(), true);
 }
 
-TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete_interrupted) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete_interrupted) {
   auto node = rclcpp::Node::make_shared("test_spin");
 
   // Construct a fake future to wait on
@@ -198,8 +207,7 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete_interr
     rclcpp::FutureReturnCode::INTERRUPTED);
 }
 
-TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), cancel) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(test_spin, RMW_IMPLEMENTATION), cancel) {
   auto node = rclcpp::Node::make_shared("cancel");
   rclcpp::executors::SingleThreadedExecutor executor;
   auto pub = node->create_publisher<test_rclcpp::msg::UInt32>("cancel", 10);

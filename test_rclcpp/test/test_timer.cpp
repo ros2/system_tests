@@ -26,8 +26,20 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
-TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_fire_regularly) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+class CLASSNAME (test_time, RMW_IMPLEMENTATION) : public ::testing::Test {
+public:
+  void SetUp() {
+    rclcpp::init(0, nullptr);
+  }
+
+  void TearDown() {
+    if (rclcpp::ok()) {
+      rclcpp::shutdown();
+    }
+  }
+};
+
+TEST_F(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_fire_regularly) {
   auto node = rclcpp::Node::make_shared("test_timer_fire_regularly");
 
   int counter = 0;
@@ -81,8 +93,7 @@ TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_fire_regularly) {
   printf("running for %.3f seconds\n", diff.count());
 }
 
-TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_during_wait) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_during_wait) {
   auto node = rclcpp::Node::make_shared("test_timer_during_wait");
 
   int counter = 0;
@@ -134,8 +145,7 @@ TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), timer_during_wait) {
 }
 
 
-TEST(CLASSNAME(test_time, RMW_IMPLEMENTATION), finite_timer) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(test_time, RMW_IMPLEMENTATION), finite_timer) {
   auto node = rclcpp::Node::make_shared("finite_timer");
 
   int counter = 0;

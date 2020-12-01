@@ -29,9 +29,19 @@
 
 using namespace std::chrono_literals;
 
+class CLASSNAME (service_client, RMW_IMPLEMENTATION) : public ::testing::Test {
+public:
+  static void SetUpTestCase() {
+    rclcpp::init(0, nullptr);
+  }
+
+  static void TearDownTestCase() {
+    rclcpp::shutdown();
+  }
+};
+
 // rclcpp::shutdown() should wake up wait_for_service, even without spin.
-TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), wait_for_service_shutdown) {
-  rclcpp::init(0, nullptr);
+TEST_F(CLASSNAME(service_client, RMW_IMPLEMENTATION), wait_for_service_shutdown) {
   auto node = rclcpp::Node::make_shared("wait_for_service_shutdown");
 
   auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("wait_for_service_shutdown");

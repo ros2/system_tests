@@ -43,8 +43,18 @@ void handle_add_two_ints(
   response->sum = request->a + request->b;
 }
 
-TEST(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), two_service_calls) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+class CLASSNAME (test_two_service_calls, RMW_IMPLEMENTATION) : public ::testing::Test {
+public:
+  static void SetUpTestCase() {
+    rclcpp::init(0, nullptr);
+  }
+
+  static void TearDownTestCase() {
+    rclcpp::shutdown();
+  }
+};
+
+TEST_F(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), two_service_calls) {
   auto node = rclcpp::Node::make_shared("test_two_service_calls");
 
   auto service = node->create_service<test_rclcpp::srv::AddTwoInts>(
@@ -86,8 +96,7 @@ TEST(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), two_service_calls) {
 
 // Regression test for async client not being able to queue another request in a response callback.
 // See https://github.com/ros2/rclcpp/pull/415
-TEST(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), recursive_service_call) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), recursive_service_call) {
   auto node = rclcpp::Node::make_shared("test_recursive_service_call");
 
   auto service = node->create_service<test_rclcpp::srv::AddTwoInts>(
@@ -134,8 +143,18 @@ TEST(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), recursive_service_ca
   EXPECT_TRUE(second_result_received);
 }
 
-TEST(CLASSNAME(test_multiple_service_calls, RMW_IMPLEMENTATION), multiple_clients) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+class CLASSNAME (test_multiple_service_calls, RMW_IMPLEMENTATION) : public ::testing::Test {
+public:
+  static void SetUpTestCase() {
+    rclcpp::init(0, nullptr);
+  }
+
+  static void TearDownTestCase() {
+    rclcpp::shutdown();
+  }
+};
+
+TEST_F(CLASSNAME(test_multiple_service_calls, RMW_IMPLEMENTATION), multiple_clients) {
   const uint32_t n = 5;
 
   auto node = rclcpp::Node::make_shared("test_multiple_clients");

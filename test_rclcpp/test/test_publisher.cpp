@@ -32,9 +32,19 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
+class CLASSNAME (test_publisher, RMW_IMPLEMENTATION) : public ::testing::Test {
+public:
+  static void SetUpTestCase() {
+    rclcpp::init(0, nullptr);
+  }
+
+  static void TearDownTestCase() {
+    rclcpp::shutdown();
+  }
+};
+
 // Short test for the const reference publish signature.
-TEST(CLASSNAME(test_publisher, RMW_IMPLEMENTATION), publish_with_const_reference) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(test_publisher, RMW_IMPLEMENTATION), publish_with_const_reference) {
   // topic name
   std::string topic_name = "test_publish_with_const_reference";
   // code to create the callback and subscription

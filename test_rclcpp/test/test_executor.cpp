@@ -40,8 +40,18 @@
 
 using namespace std::chrono_literals;
 
-TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), recursive_spin_call) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+class CLASSNAME (test_executor, RMW_IMPLEMENTATION) : public ::testing::Test {
+public:
+  static void SetUpTestCase() {
+    rclcpp::init(0, nullptr);
+  }
+
+  static void TearDownTestCase() {
+    rclcpp::shutdown();
+  }
+};
+
+TEST_F(CLASSNAME(test_executor, RMW_IMPLEMENTATION), recursive_spin_call) {
   rclcpp::executors::SingleThreadedExecutor executor;
   auto node = rclcpp::Node::make_shared("recursive_spin_call");
   auto timer = node->create_wall_timer(
@@ -56,8 +66,7 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), recursive_spin_call) {
   executor.spin();
 }
 
-TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), spin_some_max_duration) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(test_executor, RMW_IMPLEMENTATION), spin_some_max_duration) {
   rclcpp::executors::SingleThreadedExecutor executor;
   auto node = rclcpp::Node::make_shared("spin_some_max_duration");
   auto lambda = []() {
@@ -80,8 +89,7 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), spin_some_max_duration) {
   ASSERT_GT(max_duration + 500ms, end - start);
 }
 
-TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), multithreaded_spin_call) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(test_executor, RMW_IMPLEMENTATION), multithreaded_spin_call) {
   rclcpp::executors::SingleThreadedExecutor executor;
   auto node = rclcpp::Node::make_shared("multithreaded_spin_call");
   std::mutex m;
@@ -113,8 +121,7 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), multithreaded_spin_call) {
 }
 
 // Try spinning 2 single-threaded executors in two separate threads.
-TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), multiple_executors) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(test_executor, RMW_IMPLEMENTATION), multiple_executors) {
   std::atomic_uint counter1;
   counter1 = 0;
   std::atomic_uint counter2;
@@ -174,8 +181,7 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), multiple_executors) {
 
 // Check that the executor is notified when a node adds a new timer, publisher, subscription,
 // service or client.
-TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), notify) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(test_executor, RMW_IMPLEMENTATION), notify) {
   rclcpp::executors::SingleThreadedExecutor executor;
   auto executor_spin_lambda = [&executor]() {
       executor.spin();

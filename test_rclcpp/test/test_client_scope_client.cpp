@@ -30,8 +30,18 @@
 
 using namespace std::chrono_literals;
 
-TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_regression_test) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+class CLASSNAME (service_client, RMW_IMPLEMENTATION) : public ::testing::Test {
+public:
+  static void SetUpTestCase() {
+    rclcpp::init(0, nullptr);
+  }
+
+  static void TearDownTestCase() {
+    rclcpp::shutdown();
+  }
+};
+
+TEST_F(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_regression_test) {
   auto node = rclcpp::Node::make_shared("client_scope_regression_test");
 
   // Extra scope so the first client will be deleted afterwards
