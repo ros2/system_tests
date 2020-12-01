@@ -29,9 +29,25 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
-TEST(CLASSNAME(test_repeated_publisher_subscriber, RMW_IMPLEMENTATION), subscription_and_spinning) {
-  rclcpp::init(0, nullptr);
+class CLASSNAME (test_repeated_publisher_subscriber, RMW_IMPLEMENTATION)
+  : public ::testing::Test
+{
+public:
+  static void SetUpTestCase()
+  {
+    rclcpp::init(0, nullptr);
+  }
 
+  static void TearDownTestCase()
+  {
+    rclcpp::shutdown();
+  }
+};
+
+TEST_F(
+  CLASSNAME(test_repeated_publisher_subscriber, RMW_IMPLEMENTATION),
+  subscription_and_spinning)
+{
   auto node = rclcpp::Node::make_shared("test_repeated_publisher_subscriber");
 
   auto callback =

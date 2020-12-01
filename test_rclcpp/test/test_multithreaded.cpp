@@ -39,6 +39,20 @@
 
 using namespace std::chrono_literals;
 
+class CLASSNAME (test_multithreaded, RMW_IMPLEMENTATION) : public ::testing::Test
+{
+public:
+  void SetUp()
+  {
+    rclcpp::init(0, nullptr);
+  }
+
+  void TearDown()
+  {
+    rclcpp::shutdown();
+  }
+};
+
 static inline void multi_consumer_pub_sub_test(bool intra_process)
 {
   std::string node_topic_name = "multi_consumer";
@@ -139,20 +153,20 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   EXPECT_EQ(expected_count, counter.load());
 }
 
-TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_single_producer) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_single_producer) {
   // multiple subscriptions, single publisher
   multi_consumer_pub_sub_test(false);
 }
 
-TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_intra_process) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_intra_process) {
   // multiple subscriptions, single publisher, intra-process
   multi_consumer_pub_sub_test(true);
 }
 
-TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+// TODO(brawner) On high core-count machines, this test fails with rmw_cyclonedds_cpp because
+// cyclonedds hard codes the maximum allowed threads.
+// For potential resolution, see https://github.com/ros2/rmw_cyclonedds/issues/268
+TEST_F(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) {
   // multiple clients, single server
   auto node = rclcpp::Node::make_shared("multi_consumer_clients");
   rclcpp::executors::MultiThreadedExecutor executor;
@@ -330,12 +344,10 @@ static inline void multi_access_publisher(bool intra_process)
   ASSERT_EQ(subscription_counter, timer_counter.load());
 }
 
-TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_access_publisher) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_access_publisher) {
   multi_access_publisher(false);
 }
 
-TEST(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_access_publisher_intra_process) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_access_publisher_intra_process) {
   multi_access_publisher(true);
 }

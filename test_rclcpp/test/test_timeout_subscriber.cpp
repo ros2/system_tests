@@ -33,9 +33,21 @@ void callback(const test_rclcpp::msg::UInt32::SharedPtr /*msg*/)
   throw std::runtime_error("The subscriber received a message but there should be no publisher!");
 }
 
-TEST(CLASSNAME(test_timeout_subscriber, RMW_IMPLEMENTATION), timeout_subscriber) {
-  rclcpp::init(0, nullptr);
+class CLASSNAME (test_timeout_subscriber, RMW_IMPLEMENTATION) : public ::testing::Test
+{
+public:
+  static void SetUpTestCase()
+  {
+    rclcpp::init(0, nullptr);
+  }
 
+  static void TearDownTestCase()
+  {
+    rclcpp::shutdown();
+  }
+};
+
+TEST_F(CLASSNAME(test_timeout_subscriber, RMW_IMPLEMENTATION), timeout_subscriber) {
   auto start = std::chrono::steady_clock::now();
 
   auto node = rclcpp::Node::make_shared("test_timeout_subscriber");
@@ -73,7 +85,6 @@ TEST(CLASSNAME(test_timeout_subscriber, RMW_IMPLEMENTATION), timeout_subscriber)
       std::chrono::duration_cast<std::chrono::nanoseconds>(blocking_timeout + tolerance).count());
   }
 
-  rclcpp::shutdown();
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);
   printf("subscribed for %f seconds\n", diff.count());
