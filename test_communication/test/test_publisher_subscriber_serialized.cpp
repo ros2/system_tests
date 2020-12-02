@@ -44,20 +44,28 @@ public:
 };
 
 TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), serialized_callback) {
+  bool got_first_msg = false;
   size_t counter = 0;
 
   auto serialized_callback =
-    [&counter](const std::shared_ptr<rclcpp::SerializedMessage> serialized_msg) {
+    [&got_first_msg, &counter](const std::shared_ptr<rclcpp::SerializedMessage> serialized_msg) {
+      using MessageT = test_msgs::msg::BasicTypes;
+      rclcpp::Serialization<MessageT> serializer;
+      MessageT basic_types_msg;
+      EXPECT_NO_THROW(serializer.deserialize_message(serialized_msg.get(), &basic_types_msg));
+
+      if (!got_first_msg) {
+        // start counting from first message received, in case we miss the first couple messages
+        counter = basic_types_msg.uint8_value;
+        got_first_msg = true;
+      }
+
       printf("received message %zu\n", counter);
       for (auto i = 0u; i < serialized_msg->size(); ++i) {
         printf("%02x ", serialized_msg->get_rcl_serialized_message().buffer[i]);
       }
       printf("\n");
 
-      using MessageT = test_msgs::msg::BasicTypes;
-      rclcpp::Serialization<MessageT> serializer;
-      MessageT basic_types_msg;
-      EXPECT_NO_THROW(serializer.deserialize_message(serialized_msg.get(), &basic_types_msg));
       EXPECT_EQ(counter, basic_types_msg.uint8_value);
       counter++;
     };
