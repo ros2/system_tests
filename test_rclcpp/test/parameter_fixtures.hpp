@@ -15,6 +15,7 @@
 #ifndef PARAMETER_FIXTURES_HPP_
 #define PARAMETER_FIXTURES_HPP_
 
+#include <chrono>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
@@ -60,7 +61,8 @@ void test_set_parameters_sync(
 {
   printf("Setting parameters\n");
   std::vector<rclcpp::Parameter> parameters = get_test_parameters();
-  auto set_parameters_results = parameters_client->set_parameters(parameters);
+  auto set_parameters_results =
+    parameters_client->set_parameters(parameters, std::chrono::seconds(1));
   printf("Got set_parameters result\n");
 
   ASSERT_EQ(set_parameters_results.size(), parameters.size());
@@ -86,7 +88,8 @@ void test_set_parameters_atomically_sync(
 {
   printf("Setting parameters atomically\n");
   std::vector<rclcpp::Parameter> parameters = get_test_parameters();
-  auto set_parameters_result = parameters_client->set_parameters_atomically(parameters);
+  auto set_parameters_result =
+    parameters_client->set_parameters_atomically(parameters, std::chrono::seconds(1));
   printf("Got set_parameters_atomically result\n");
 
   // Check to see if they were set.
@@ -126,7 +129,8 @@ void test_get_parameters_sync(
   printf("Listing parameters with recursive depth\n");
   // Test recursive depth (=0)
   auto parameters_and_prefixes = parameters_client->list_parameters(
-    {"foo", "bar"}, rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE);
+    {"foo", "bar"}, rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE,
+    std::chrono::seconds(1));
   for (auto & name : parameters_and_prefixes.names) {
     EXPECT_TRUE(name == "foo" || name == "bar" || name == "foo.first" || name == "foo.second");
   }
@@ -136,7 +140,8 @@ void test_get_parameters_sync(
 
   printf("Listing parameters with depth of 1\n");
   // Test different depth
-  auto parameters_and_prefixes4 = parameters_client->list_parameters({"foo"}, 1);
+  auto parameters_and_prefixes4 =
+    parameters_client->list_parameters({"foo"}, 1, std::chrono::seconds(1));
   for (auto & name : parameters_and_prefixes4.names) {
     EXPECT_EQ(name, "foo");
   }
@@ -146,7 +151,8 @@ void test_get_parameters_sync(
 
   printf("Listing parameters with depth of 2\n");
   // Test different depth
-  auto parameters_and_prefixes5 = parameters_client->list_parameters({"foo"}, 2);
+  auto parameters_and_prefixes5 =
+    parameters_client->list_parameters({"foo"}, 2, std::chrono::seconds(1));
   for (auto & name : parameters_and_prefixes5.names) {
     EXPECT_TRUE(name == "foo" || name == "foo.first" || name == "foo.second");
   }
@@ -156,7 +162,9 @@ void test_get_parameters_sync(
 
   printf("Getting parameters\n");
   // Get a few of the parameters just set.
-  for (auto & parameter : parameters_client->get_parameters({"foo", "bar", "baz"})) {
+  for (auto & parameter :
+    parameters_client->get_parameters({"foo", "bar", "baz"}, std::chrono::seconds(1)))
+  {
     // std::cout << "Parameter is:" << std::endl << parameter.to_yaml() << std::endl;
     if (parameter.get_name() == "foo") {
       EXPECT_STREQ(
@@ -180,7 +188,7 @@ void test_get_parameters_sync(
   // Get a few non existant parameters
   {
     std::vector<rclcpp::Parameter> retrieved_params =
-      parameters_client->get_parameters({"not_foo", "not_baz"});
+      parameters_client->get_parameters({"not_foo", "not_baz"}, std::chrono::seconds(1));
     ASSERT_EQ(2u, retrieved_params.size());
     EXPECT_STREQ("not_foo", retrieved_params[0].get_name().c_str());
     EXPECT_STREQ("not_baz", retrieved_params[1].get_name().c_str());
@@ -191,7 +199,7 @@ void test_get_parameters_sync(
   printf("Listing parameters with recursive depth\n");
   // List all of the parameters, using an empty prefix list and depth=0
   parameters_and_prefixes = parameters_client->list_parameters(
-    {}, rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE);
+    {}, rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE, std::chrono::seconds(1));
   std::vector<std::string> all_names = {
     "foo", "bar", "barstr", "baz", "foo.first", "foo.second", "foobar", "use_sim_time"
   };
@@ -206,7 +214,7 @@ void test_get_parameters_sync(
   }
   printf("Listing parameters with depth 100\n");
   // List all of the parameters, using an empty prefix list and large depth
-  parameters_and_prefixes = parameters_client->list_parameters({}, 100);
+  parameters_and_prefixes = parameters_client->list_parameters({}, 100, std::chrono::seconds(1));
   EXPECT_EQ(parameters_and_prefixes.names.size(), all_names.size());
   for (auto & name : all_names) {
     EXPECT_NE(
@@ -218,7 +226,7 @@ void test_get_parameters_sync(
   }
   printf("Listing parameters with depth 1\n");
   // List most of the parameters, using an empty prefix list and depth=1
-  parameters_and_prefixes = parameters_client->list_parameters({}, 1u);
+  parameters_and_prefixes = parameters_client->list_parameters({}, 1u, std::chrono::seconds(1));
   std::vector<std::string> depth_one_names = {
     "foo", "bar", "barstr", "baz", "foobar", "use_sim_time"
   };
