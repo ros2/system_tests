@@ -197,7 +197,7 @@ TEST_F(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
     rclcpp::Parameter("baz", 1.45),
     rclcpp::Parameter("foobar", true),
     rclcpp::Parameter("barfoo", std::vector<uint8_t>{0, 1, 2}),
-  }, 100ms);
+  }, 1s);
   printf("Got set_parameters result\n");
 
   // Check to see if they were set.
@@ -320,7 +320,7 @@ TEST_F(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_primi
     rclcpp::Parameter("baz", 1.45),
     rclcpp::Parameter("foobar", true),
     rclcpp::Parameter("barfoo", std::vector<uint8_t>{3, 4, 5}),
-  }, 100ms);
+  }, 1s);
   printf("Got set_parameters result\n");
 
   // Check to see if they were set.
@@ -395,7 +395,7 @@ TEST_F(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_varia
     Parameter("baz", 1.45),
     Parameter("foobar", true),
     Parameter("barfoo", std::vector<uint8_t>{3, 4, 5}),
-  }, 100ms);
+  }, 1s);
   printf("Got set_parameters result\n");
 
   // Check to see if they were set.
