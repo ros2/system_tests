@@ -39,9 +39,13 @@ int main(int argc, char ** argv)
     "client_scope", handle_add_two_ints, rmw_qos_profile);
 
   rclcpp::WallRate loop_rate(30);
-  while (rclcpp::ok()) {
-    rclcpp::spin_some(node);
-    loop_rate.sleep();
+  try {
+    while (rclcpp::ok()) {
+      rclcpp::spin_some(node);
+      loop_rate.sleep();
+    }
+  } catch (const rclcpp::exceptions::RCLError & ex) {
+    RCLCPP_ERROR(node->get_logger(), "failed with %s", ex.what());
   }
   rclcpp::shutdown();
   return 0;
