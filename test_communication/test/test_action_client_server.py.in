@@ -23,41 +23,44 @@ def generate_test_description(action_type):
     launch_description = LaunchDescription()
 
     action_client_cmd = ['@TEST_ACTION_CLIENT_EXECUTABLE@', action_type, namespace]
-    action_server_cmd = ['@TEST_ACTION_SERVER_EXECUTABLE@', action_type, namespace]
-
-    action_server_env = dict(os.environ)
     action_client_env = dict(os.environ)
-
-    if '@TEST_ACTION_SERVER_RCL@' == 'rclpy':
-        action_server_cmd.insert(0, sys.executable)
-        action_server_env['PYTHONUNBUFFERED'] = '1'
     if '@TEST_ACTION_CLIENT_RCL@' == 'rclpy':
         action_client_cmd.insert(0, sys.executable)
         action_client_env['PYTHONUNBUFFERED'] = '1'
-
-    action_server_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@ACTION_SERVER_RMW@'
-    action_server_env['RMW_IMPLEMENTATION'] = '@ACTION_SERVER_RMW@'
-
-    launch_description.add_action(ExecuteProcess(
-        cmd=action_server_cmd,
-        name='test_action_server',
-        env=action_server_env,
-    ))
-
     action_client_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@ACTION_CLIENT_RMW@'
     action_client_env['RMW_IMPLEMENTATION'] = '@ACTION_CLIENT_RMW@'
-
     action_client_process = ExecuteProcess(
         cmd=action_client_cmd,
         name='test_action_client',
         env=action_client_env,
     )
-    launch_description.add_action(action_client_process)
 
-    launch_description.add_action(
-        launch_testing.actions.ReadyToTest()
+    action_server_cmd = ['@TEST_ACTION_SERVER_EXECUTABLE@', action_type, namespace]
+    action_server_env = dict(os.environ)
+    if '@TEST_ACTION_SERVER_RCL@' == 'rclpy':
+        action_server_cmd.insert(0, sys.executable)
+        action_server_env['PYTHONUNBUFFERED'] = '1'
+    action_server_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@ACTION_SERVER_RMW@'
+    action_server_env['RMW_IMPLEMENTATION'] = '@ACTION_SERVER_RMW@'
+
+    action_server_process = ExecuteProcess(
+        cmd=action_server_cmd,
+        name='test_action_server',
+        env=action_server_env,
     )
-    return launch_description, locals()
+
+    return LaunchDescription([
+        # Always stop daemon to isolate tests.
+        ExecuteProcess(
+            cmd=['ros2', 'daemon', 'stop'],
+            name='daemon-stop',
+            on_exit=[
+                action_server_process,
+                action_client_process,
+                launch_testing.actions.ReadyToTest()
+            ]
+        )
+    ]), locals()
 
 
 class TestActionClientServer(unittest.TestCase):
