@@ -20,44 +20,44 @@ SERVICE_TYPES = '@TEST_SERVICE_TYPES@'.split(';')
 def generate_test_description(service_type):
     namespace = '/test_time_%s' % time.strftime('%H_%M_%S', time.gmtime())
 
-    launch_description = LaunchDescription()
-
-    requester_cmd = ['@TEST_REQUESTER_EXECUTABLE@', service_type, namespace]
     replier_cmd = ['@TEST_REPLIER_EXECUTABLE@', service_type, namespace]
-
     replier_env = dict(os.environ)
-    requester_env = dict(os.environ)
-
     if '@TEST_REPLIER_RCL@' == 'rclpy':
         replier_cmd.insert(0, sys.executable)
         replier_env['PYTHONUNBUFFERED'] = '1'
-    if '@TEST_REQUESTER_RCL@' == 'rclpy':
-        requester_cmd.insert(0, sys.executable)
-        requester_env['PYTHONUNBUFFERED'] = '1'
-
     replier_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@REPLIER_RMW@'
     replier_env['RMW_IMPLEMENTATION'] = '@REPLIER_RMW@'
-
-    launch_description.add_action(ExecuteProcess(
+    replier_process = ExecuteProcess(
         cmd=replier_cmd,
         name='test_replier',
         env=replier_env,
-    ))
+    )
 
+    requester_cmd = ['@TEST_REQUESTER_EXECUTABLE@', service_type, namespace]
+    requester_env = dict(os.environ)
+    if '@TEST_REQUESTER_RCL@' == 'rclpy':
+        requester_cmd.insert(0, sys.executable)
+        requester_env['PYTHONUNBUFFERED'] = '1'
     requester_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@REQUESTER_RMW@'
     requester_env['RMW_IMPLEMENTATION'] = '@REQUESTER_RMW@'
-
     requester_process = ExecuteProcess(
         cmd=requester_cmd,
         name='test_requester',
         env=requester_env,
     )
-    launch_description.add_action(requester_process)
 
-    launch_description.add_action(
-        launch_testing.actions.ReadyToTest()
-    )
-    return launch_description, locals()
+    return LaunchDescription([
+        # Always stop daemon to isolate tests.
+        ExecuteProcess(
+            cmd=['ros2', 'daemon', 'stop'],
+            name='daemon-stop',
+            on_exit=[
+                replier_process,
+                requester_process,
+                launch_testing.actions.ReadyToTest()
+            ]
+        )
+    ]), locals()
 
 
 class TestRequesterReplier(unittest.TestCase):
