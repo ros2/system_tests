@@ -191,15 +191,6 @@ if(BUILD_TESTING)
       set(rmw_implementation2_is_cyclonedds TRUE)
     endif()
 
-    set(rmw_implementation1_is_opensplice FALSE)
-    set(rmw_implementation2_is_opensplice FALSE)
-    if(rmw_implementation1 MATCHES "(.*)opensplice(.*)")
-      set(rmw_implementation1_is_opensplice TRUE)
-    endif()
-    if(rmw_implementation2 MATCHES "(.*)opensplice(.*)")
-      set(rmw_implementation2_is_opensplice TRUE)
-    endif()
-
     set(PUBLISHER_RMW ${rmw_implementation1})
     set(SUBSCRIBER_RMW ${rmw_implementation2})
     set(TEST_MESSAGE_TYPES "")
@@ -212,15 +203,6 @@ if(BUILD_TESTING)
         rmw_implementation1_is_fastrtps AND
         rmw_implementation2_is_connext AND
         APPLE
-      )
-        continue()
-      endif()
-      # TODO(dirk-thomas) OpenSplice doesn't support WString and the rmw impl.
-      # maps it to string which has a different wire representation
-      if(
-        "${message_type}" STREQUAL "WStrings" AND
-        (rmw_implementation1_is_opensplice OR rmw_implementation2_is_opensplice) AND
-        NOT "${rmw_implementation1_is_opensplice}" STREQUAL "${rmw_implementation2_is_opensplice}"
       )
         continue()
       endif()
@@ -468,7 +450,7 @@ if(BUILD_TESTING)
 
   macro(serialize)
     set(SKIP_TEST "")
-    if(${rmw_implementation} STREQUAL "rmw_connext_dynamic_cpp" OR ${rmw_implementation} STREQUAL "rmw_opensplice_cpp")
+    if(${rmw_implementation} STREQUAL "rmw_connext_dynamic_cpp")
       message(STATUS "skipping serialize tests for ${rmw_implementation}")
       set(SKIP_TEST "SKIP_TEST")
     endif()
@@ -500,7 +482,7 @@ if(BUILD_TESTING)
 
   macro(pub_sub_serialized)
     set(SKIP_TEST "")
-    if(${rmw_implementation} STREQUAL "rmw_connext_dynamic_cpp" OR ${rmw_implementation} STREQUAL "rmw_opensplice_cpp")
+    if(${rmw_implementation} STREQUAL "rmw_connext_dynamic_cpp")
       message(STATUS "skipping serialize tests for ${rmw_implementation}")
       set(SKIP_TEST "SKIP_TEST")
     endif()
