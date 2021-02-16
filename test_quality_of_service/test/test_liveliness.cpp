@@ -118,10 +118,3 @@ TEST_F(QosRclcppTestFixture, test_automatic_liveliness_changed) {
   EXPECT_GT(number_of_published_messages, 0);  // check if we published anything
   EXPECT_GT(subscriber->get_count(), 0);  // check if we received anything
 }
-
-int main(int argc, char ** argv)
-{
-  ::testing::InitGoogleTest(&argc, argv);
-  int ret = RUN_ALL_TESTS();
-  return ret;
-}

@@ -30,57 +30,16 @@
 
 using namespace std::chrono_literals;
 
-///// Test Deadline with a single subscriber node
-TEST_F(QosRclcppTestFixture, test_deadline_no_publisher) {
-  const std::chrono::milliseconds deadline_duration = 1s;
-  const std::chrono::milliseconds test_duration = 10500ms;
-  const int expected_number_of_deadline_callbacks = static_cast<int>(
-    test_duration / deadline_duration);
-
-  int total_number_of_subscriber_deadline_events = 0;
-  int last_sub_count = 0;
-
-  // define qos profile
-  rclcpp::QoS qos_profile(10);
-  qos_profile.deadline(deadline_duration);
-
-  const std::string topic("test_deadline_no_publisher");
-
-  // register a publisher for the topic but don't publish anything or use QoS options
-  publisher = std::make_shared<QosTestPublisher>(
-    "publisher", topic, qos_profile, test_duration);
-  subscriber = std::make_shared<QosTestSubscriber>(
-    "subscriber", topic, qos_profile);
-
-  // setup subscription options and callback
-  subscriber->options().event_callbacks.deadline_callback =
-    [this, &last_sub_count, &total_number_of_subscriber_deadline_events](
-    rclcpp::QOSDeadlineRequestedInfo & event) -> void
-    {
-      RCLCPP_INFO(subscriber->get_logger(), "QOSDeadlineRequestedInfo callback");
-      total_number_of_subscriber_deadline_events++;
-      // assert the correct value on a change
-      ASSERT_EQ(1, event.total_count_change);
-      last_sub_count = event.total_count;
-    };
-
-  executor->add_node(subscriber);
-  subscriber->start();
-
-  // the future will never be resolved, so simply time out to force the experiment to stop
-  executor->spin_until_future_complete(dummy_future, test_duration);
-
-  EXPECT_EQ(subscriber->get_count(), 0);
-  EXPECT_EQ(publisher->get_count(), 0);
-  EXPECT_EQ(last_sub_count, expected_number_of_deadline_callbacks);
-  EXPECT_EQ(total_number_of_subscriber_deadline_events, expected_number_of_deadline_callbacks);
-}
-
 /// Test Deadline with a single publishing node and single subscriber node
 TEST_F(QosRclcppTestFixture, test_deadline) {
-  int expected_number_of_events = 5;
-  const std::chrono::milliseconds deadline_duration = 1s;
-  const std::chrono::milliseconds max_test_length = 10s;
+  int expected_number_of_events = 4;
+  // Bump deadline duration when testing against rmw_connext_cpp to
+  // cope with the longer discovery times it entails.
+  const std::chrono::milliseconds deadline_duration =
+    this_rmw_implementation.find("connext") != std::string::npos ? 2s : 1s;
+  const std::chrono::milliseconds publisher_toggling_period = deadline_duration * 2;
+  const std::chrono::milliseconds max_test_length =
+    publisher_toggling_period * (expected_number_of_events + 1);
   const std::chrono::milliseconds publish_rate = deadline_duration / expected_number_of_events;
 
   // used for lambda capture
@@ -125,17 +84,17 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
 
   // toggle publishing on and off to force deadline events
   rclcpp::TimerBase::SharedPtr toggle_publisher_timer = subscriber->create_wall_timer(
-    deadline_duration * 2,
+    publisher_toggling_period,
     [this]() -> void {
       // start / stop publishing to trigger deadline
       publisher->toggle();
     });
 
-  executor->add_node(subscriber);
   executor->add_node(publisher);
+  executor->add_node(subscriber);
 
-  subscriber->start();
   publisher->start();
+  subscriber->start();
 
   // the future will never be resolved, so simply time out to force the experiment to stop
   executor->spin_until_future_complete(dummy_future, max_test_length);
@@ -146,16 +105,9 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
 
   // check to see if callbacks fired as expected
   EXPECT_EQ(expected_number_of_events, total_number_of_subscriber_deadline_events);
-  EXPECT_EQ((expected_number_of_events - 1), total_number_of_publisher_deadline_events);
+  EXPECT_EQ(expected_number_of_events, total_number_of_publisher_deadline_events);
 
   // check values reported by the callback
-  EXPECT_EQ(expected_number_of_events - 1, last_pub_count);
-  EXPECT_EQ((expected_number_of_events), last_sub_count);
-}
-
-int main(int argc, char ** argv)
-{
-  ::testing::InitGoogleTest(&argc, argv);
-  int ret = RUN_ALL_TESTS();
-  return ret;
+  EXPECT_EQ(expected_number_of_events, last_pub_count);
+  EXPECT_EQ(expected_number_of_events, last_sub_count);
 }
