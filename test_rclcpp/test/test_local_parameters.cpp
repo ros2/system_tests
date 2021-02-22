@@ -153,7 +153,6 @@ public:
         // Check to see if they were set.
         size_t i = 0;
         for (auto & result : future.get()) {
-          fprintf(stderr, "param: %zu\n", i++);
           ASSERT_TRUE(result.successful);
         }
         executor.cancel();
