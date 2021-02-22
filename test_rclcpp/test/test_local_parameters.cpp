@@ -151,7 +151,6 @@ public:
       {
         printf("Got set_parameters result\n");
         // Check to see if they were set.
-        size_t i = 0;
         for (auto & result : future.get()) {
           ASSERT_TRUE(result.successful);
         }
