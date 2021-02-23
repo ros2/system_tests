@@ -51,7 +51,7 @@ void declare_test_parameters(std::shared_ptr<rclcpp::Node> node, int declare_up_
   }
 
   for (int i = 0u; i < declare_up_to; ++i) {
-    node->declare_parameter(parameters[i].get_name());
+    node->declare_parameter(parameters[i].get_name(), parameters[i].get_parameter_value());
   }
 }
 
