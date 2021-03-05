@@ -256,7 +256,7 @@ if(BUILD_TESTING)
     set(ENV_PATH "$ENV{PATH}")
     file(TO_CMAKE_PATH "${ENV_PATH}" ENV_PATH)
     set(TEST_PATH "${ENV_PATH}")
-    if(rmw_implementation STREQUAL "rmw_connext_cpp")
+    if(rmw_implementation STREQUAL "rmw_connextdds")
       # Connext 5.3.1 needs RTI's OpenSSL binaries (based on EOL 1.0.2) to be
       # on the PATH at runtime as the system version of OpenSSL is not supported
       set(RTI_BIN_PATH "$ENV{RTI_OPENSSL_BIN}")
@@ -270,8 +270,7 @@ if(BUILD_TESTING)
 
     # TODO(jacobperron) Disable Connext on Windows until we fix issue with CI
     if(
-      (rmw_implementation STREQUAL "rmw_connext_cpp" AND NOT WIN32) OR
-      (rmw_implementation STREQUAL "rmw_connext_dynamic_cpp" AND NOT WIN32) OR
+      (rmw_implementation STREQUAL "rmw_connextdds" AND NOT WIN32) OR
       rmw_implementation STREQUAL "rmw_fastrtps_cpp" OR
       rmw_implementation STREQUAL "rmw_fastrtps_dynamic_cpp" OR
       rmw_implementation STREQUAL "rmw_cyclonedds_cpp"
