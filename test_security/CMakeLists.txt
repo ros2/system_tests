@@ -269,7 +269,10 @@ if(BUILD_TESTING)
     endif()
 
     # TODO(jacobperron) Disable Connext on Windows until we fix issue with CI
+    # TODO(asorbini): Remove exceptions once ros2/rmw_connext is deprecated.
     if(
+      (rmw_implementation STREQUAL "rmw_connext_cpp" AND NOT WIN32) OR
+      (rmw_implementation STREQUAL "rmw_connext_dynamic_cpp" AND NOT WIN32) OR
       (rmw_implementation STREQUAL "rmw_connextdds" AND NOT WIN32) OR
       rmw_implementation STREQUAL "rmw_fastrtps_cpp" OR
       rmw_implementation STREQUAL "rmw_fastrtps_dynamic_cpp" OR

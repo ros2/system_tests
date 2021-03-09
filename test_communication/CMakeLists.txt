@@ -249,7 +249,11 @@ if(BUILD_TESTING)
 
     # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)
     # TODO different vendors can't talk to each other right now
-    if(NOT rmw_implementation1 STREQUAL rmw_implementation2)
+    # TODO(asorbini): Remove Connext exceptions once ros2/rmw_connext is deprecated.
+    if(NOT rmw_implementation1 STREQUAL rmw_implementation2 OR
+      (client_library1 STREQUAL "rclpy" AND rmw_implementation1 MATCHES "rmw_connext_dynamic_cpp") OR
+      (client_library2 STREQUAL "rclpy" AND rmw_implementation2 MATCHES "rmw_connext_dynamic_cpp")
+    )
       set(SKIP_TEST "SKIP_TEST")
     endif()
 
@@ -440,6 +444,13 @@ if(BUILD_TESTING)
   endif()
 
   macro(serialize)
+    # TODO(asorbini): Remove this exception once ros2/rmw_connext is deprecated.
+    set(SKIP_TEST "")
+    if(${rmw_implementation} STREQUAL "rmw_connext_dynamic_cpp")
+      message(STATUS "skipping serialize tests for ${rmw_implementation}")
+      set(SKIP_TEST "SKIP_TEST")
+    endif()
+
     set(serialize_target_name "test_serialize${target}${target_suffix}")
     ament_add_gtest(
       ${serialize_target_name} test/test_message_serialization.cpp
@@ -447,6 +458,7 @@ if(BUILD_TESTING)
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation}
+      ${SKIP_TEST}
     )
     if(TARGET ${serialize_target_name})
       add_dependencies(${serialize_target_name} ${PROJECT_NAME})
@@ -465,6 +477,13 @@ if(BUILD_TESTING)
   endmacro()
 
   macro(pub_sub_serialized)
+    # TODO(asorbini): Remove this exception once ros2/rmw_connext is deprecated.
+    set(SKIP_TEST "")
+    if(${rmw_implementation} STREQUAL "rmw_connext_dynamic_cpp")
+      message(STATUS "skipping serialize tests for ${rmw_implementation}")
+      set(SKIP_TEST "SKIP_TEST")
+    endif()
+
     set(target_name "test_publisher_subscriber_serialized${target}${target_suffix}")
     ament_add_gtest(
       ${target_name} test/test_publisher_subscriber_serialized.cpp
@@ -472,6 +491,7 @@ if(BUILD_TESTING)
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation}
+      ${SKIP_TEST}
     )
     if(TARGET ${target_name})
       add_dependencies(${target_name} ${PROJECT_NAME})
