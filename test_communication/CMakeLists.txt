@@ -182,6 +182,32 @@ if(BUILD_TESTING)
       set(rmw_implementation2_is_connext TRUE)
     endif()
 
+    # TODO(asorbini) Skip tests between rmw_connext_cpp and rmw_connextdds
+    # since they are not meant to coexist (and used incompatible typecodes by default).
+    set(rmw_implementation1_is_connextdds FALSE)
+    if(rmw_implementation1 MATCHES "(.*)connextdds")
+      set(rmw_implementation1_is_connextdds TRUE)
+    endif()
+    set(rmw_implementation2_is_connextdds FALSE)
+    if(rmw_implementation2 MATCHES "(.*)connextdds")
+      set(rmw_implementation2_is_connextdds TRUE)
+    endif()
+
+    set(rmw_implementation1_is_connext_cpp FALSE)
+    if(rmw_implementation1 MATCHES "(.*)connext(.*)_cpp")
+      set(rmw_implementation1_is_connext_cpp TRUE)
+    endif()
+    set(rmw_implementation2_is_connext_cpp FALSE)
+    if(rmw_implementation2 MATCHES "(.*)connext(.*)_cpp")
+      set(rmw_implementation2_is_connext_cpp TRUE)
+    endif()
+
+    if((rmw_implementation1_is_connextdds AND rmw_implementation2_is_connext_cpp) OR
+      (rmw_implementation1_is_connext_cpp AND rmw_implementation2_is_connextdds)
+    )
+      set(SKIP_TEST "SKIP_TEST")
+    endif()
+
     set(rmw_implementation1_is_cyclonedds FALSE)
     set(rmw_implementation2_is_cyclonedds FALSE)
     if(rmw_implementation1 MATCHES "(.*)cyclonedds(.*)")
