@@ -56,6 +56,9 @@ TEST_F(CLASSNAME(test_timeout_subscriber, RMW_IMPLEMENTATION), timeout_subscribe
     "test_message_timeout_uint32", 10, callback);
 
   rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(node);
+
+  executor.spin_all(std::chrono::milliseconds{100});  // clear any previous ready executable
 
   size_t num_cycles = 5;
 
@@ -64,7 +67,7 @@ TEST_F(CLASSNAME(test_timeout_subscriber, RMW_IMPLEMENTATION), timeout_subscribe
 
     // ensure that the non-blocking spin does return immediately
     auto nonblocking_start = std::chrono::steady_clock::now();
-    executor.spin_node_once(node, std::chrono::milliseconds::zero());
+    executor.spin_once(std::chrono::milliseconds::zero());
     auto nonblocking_end = std::chrono::steady_clock::now();
     auto nonblocking_diff = nonblocking_end - nonblocking_start;
     EXPECT_LT(
@@ -74,7 +77,7 @@ TEST_F(CLASSNAME(test_timeout_subscriber, RMW_IMPLEMENTATION), timeout_subscribe
     // ensure that the blocking spin does return after the specified timeout
     auto blocking_timeout = std::chrono::milliseconds(100);
     auto blocking_start = std::chrono::steady_clock::now();
-    executor.spin_node_once(node, blocking_timeout);
+    executor.spin_once(blocking_timeout);
     auto blocking_end = std::chrono::steady_clock::now();
     auto blocking_diff = blocking_end - blocking_start;
     EXPECT_GT(
