@@ -182,6 +182,32 @@ if(BUILD_TESTING)
       set(rmw_implementation2_is_connext TRUE)
     endif()
 
+    # TODO(asorbini) Skip tests between rmw_connext_cpp and rmw_connextdds
+    # since they are not meant to coexist (and used incompatible typecodes by default).
+    set(rmw_implementation1_is_connextdds FALSE)
+    if(rmw_implementation1 MATCHES "(.*)connextdds")
+      set(rmw_implementation1_is_connextdds TRUE)
+    endif()
+    set(rmw_implementation2_is_connextdds FALSE)
+    if(rmw_implementation2 MATCHES "(.*)connextdds")
+      set(rmw_implementation2_is_connextdds TRUE)
+    endif()
+
+    set(rmw_implementation1_is_connext_cpp FALSE)
+    if(rmw_implementation1 MATCHES "(.*)connext(.*)_cpp")
+      set(rmw_implementation1_is_connext_cpp TRUE)
+    endif()
+    set(rmw_implementation2_is_connext_cpp FALSE)
+    if(rmw_implementation2 MATCHES "(.*)connext(.*)_cpp")
+      set(rmw_implementation2_is_connext_cpp TRUE)
+    endif()
+
+    if((rmw_implementation1_is_connextdds AND rmw_implementation2_is_connext_cpp) OR
+      (rmw_implementation1_is_connext_cpp AND rmw_implementation2_is_connextdds)
+    )
+      set(SKIP_TEST "SKIP_TEST")
+    endif()
+
     set(rmw_implementation1_is_cyclonedds FALSE)
     set(rmw_implementation2_is_cyclonedds FALSE)
     if(rmw_implementation1 MATCHES "(.*)cyclonedds(.*)")
@@ -249,14 +275,9 @@ if(BUILD_TESTING)
 
     # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)
     # TODO different vendors can't talk to each other right now
-    if(NOT rmw_implementation1 STREQUAL rmw_implementation2 AND
-      (NOT(rmw_implementation1 MATCHES "(.*)connext(.*)" AND rmw_implementation2 MATCHES "(.*)connext(.*)"))
-    )
-      set(SKIP_TEST "SKIP_TEST")
-    endif()
-
-    # TODO(mikaelarguedas) connext_dynamic doesn't support C services for now
-    if((client_library1 STREQUAL "rclpy" AND rmw_implementation1 MATCHES "rmw_connext_dynamic_cpp") OR
+    # TODO(asorbini): Remove Connext exceptions once ros2/rmw_connext is deprecated.
+    if(NOT rmw_implementation1 STREQUAL rmw_implementation2 OR
+      (client_library1 STREQUAL "rclpy" AND rmw_implementation1 MATCHES "rmw_connext_dynamic_cpp") OR
       (client_library2 STREQUAL "rclpy" AND rmw_implementation2 MATCHES "rmw_connext_dynamic_cpp")
     )
       set(SKIP_TEST "SKIP_TEST")
@@ -449,6 +470,7 @@ if(BUILD_TESTING)
   endif()
 
   macro(serialize)
+    # TODO(asorbini): Remove this exception once ros2/rmw_connext is deprecated.
     set(SKIP_TEST "")
     if(${rmw_implementation} STREQUAL "rmw_connext_dynamic_cpp")
       message(STATUS "skipping serialize tests for ${rmw_implementation}")
@@ -481,11 +503,13 @@ if(BUILD_TESTING)
   endmacro()
 
   macro(pub_sub_serialized)
+    # TODO(asorbini): Remove this exception once ros2/rmw_connext is deprecated.
     set(SKIP_TEST "")
     if(${rmw_implementation} STREQUAL "rmw_connext_dynamic_cpp")
       message(STATUS "skipping serialize tests for ${rmw_implementation}")
       set(SKIP_TEST "SKIP_TEST")
     endif()
+
     set(target_name "test_publisher_subscriber_serialized${target}${target_suffix}")
     ament_add_gtest(
       ${target_name} test/test_publisher_subscriber_serialized.cpp
