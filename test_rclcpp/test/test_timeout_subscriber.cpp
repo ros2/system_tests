@@ -51,6 +51,7 @@ TEST_F(CLASSNAME(test_timeout_subscriber, RMW_IMPLEMENTATION), timeout_subscribe
   auto start = std::chrono::steady_clock::now();
 
   auto node = rclcpp::Node::make_shared("test_timeout_subscriber");
+  // Add subscription to its own callback group to avoid interference from other things in the node
   auto cg = node->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   rclcpp::SubscriptionOptions options;
   options.callback_group = cg;
