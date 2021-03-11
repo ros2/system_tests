@@ -51,14 +51,15 @@ TEST_F(CLASSNAME(test_timeout_subscriber, RMW_IMPLEMENTATION), timeout_subscribe
   auto start = std::chrono::steady_clock::now();
 
   auto node = rclcpp::Node::make_shared("test_timeout_subscriber");
+  auto cg = node->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+  rclcpp::SubscriptionOptions options;
+  options.callback_group = cg;
 
   auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
-    "test_message_timeout_uint32", 10, callback);
+    "test_message_timeout_uint32", 10, callback, options);
 
   rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node);
-
-  executor.spin_all(std::chrono::milliseconds{100});  // clear any previous ready executable
+  executor.add_callback_group(cg, node->get_node_base_interface());
 
   size_t num_cycles = 5;
 
