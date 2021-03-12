@@ -15,7 +15,9 @@
 #ifndef PARAMETER_FIXTURES_HPP_
 #define PARAMETER_FIXTURES_HPP_
 
+#include <algorithm>
 #include <chrono>
+#include <cstring>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
@@ -203,7 +205,14 @@ void test_get_parameters_sync(
   std::vector<std::string> all_names = {
     "foo", "bar", "barstr", "baz", "foo.first", "foo.second", "foobar", "use_sim_time"
   };
-  EXPECT_EQ(parameters_and_prefixes.names.size(), all_names.size());
+  size_t filtered_size = 0u;
+  for (const auto & item : parameters_and_prefixes.names) {
+    const char prefix_not_to_count[] = "qos_overrides.";
+    if (std::strncmp(item.c_str(), prefix_not_to_count, sizeof(prefix_not_to_count) - 1u) != 0) {
+      ++filtered_size;
+    }
+  }
+  EXPECT_EQ(filtered_size, all_names.size());
   for (auto & name : all_names) {
     EXPECT_NE(
       std::find(
@@ -215,7 +224,14 @@ void test_get_parameters_sync(
   printf("Listing parameters with depth 100\n");
   // List all of the parameters, using an empty prefix list and large depth
   parameters_and_prefixes = parameters_client->list_parameters({}, 100, std::chrono::seconds(1));
-  EXPECT_EQ(parameters_and_prefixes.names.size(), all_names.size());
+  filtered_size = 0u;
+  for (const auto & item : parameters_and_prefixes.names) {
+    const char prefix_not_to_count[] = "qos_overrides.";
+    if (std::strncmp(item.c_str(), prefix_not_to_count, sizeof(prefix_not_to_count) - 1u) != 0) {
+      ++filtered_size;
+    }
+  }
+  EXPECT_EQ(filtered_size, all_names.size());
   for (auto & name : all_names) {
     EXPECT_NE(
       std::find(
@@ -329,7 +345,14 @@ void test_get_parameters_async(
   std::vector<std::string> all_names = {
     "foo", "bar", "barstr", "baz", "foo.first", "foo.second", "foobar", "use_sim_time"
   };
-  EXPECT_EQ(parameters_and_prefixes.names.size(), all_names.size());
+  size_t filtered_size = 0u;
+  for (const auto & item : parameters_and_prefixes.names) {
+    const char prefix_not_to_count[] = "qos_overrides.";
+    if (std::strncmp(item.c_str(), prefix_not_to_count, sizeof(prefix_not_to_count) - 1u) != 0) {
+      ++filtered_size;
+    }
+  }
+  EXPECT_EQ(filtered_size, all_names.size());
   for (auto & name : all_names) {
     EXPECT_NE(
       std::find(
