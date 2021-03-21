@@ -126,7 +126,8 @@ void test_set_parameters_async(
 }
 
 void test_get_parameters_sync(
-  std::shared_ptr<rclcpp::SyncParametersClient> parameters_client)
+  std::shared_ptr<rclcpp::SyncParametersClient> parameters_client,
+  bool allowed_undeclared = false)
 {
   printf("Listing parameters with recursive depth\n");
   // Test recursive depth (=0)
@@ -191,11 +192,15 @@ void test_get_parameters_sync(
   {
     std::vector<rclcpp::Parameter> retrieved_params =
       parameters_client->get_parameters({"not_foo", "not_baz"}, std::chrono::seconds(1));
-    ASSERT_EQ(2u, retrieved_params.size());
-    EXPECT_STREQ("not_foo", retrieved_params[0].get_name().c_str());
-    EXPECT_STREQ("not_baz", retrieved_params[1].get_name().c_str());
-    EXPECT_EQ(rclcpp::ParameterType::PARAMETER_NOT_SET, retrieved_params[0].get_type());
-    EXPECT_EQ(rclcpp::ParameterType::PARAMETER_NOT_SET, retrieved_params[1].get_type());
+    if (allowed_undeclared == false) {
+      ASSERT_EQ(0u, retrieved_params.size());
+    } else { // allowed_undeclared == true
+      ASSERT_EQ(2u, retrieved_params.size());
+      EXPECT_STREQ("not_foo", retrieved_params[0].get_name().c_str());
+      EXPECT_STREQ("not_baz", retrieved_params[1].get_name().c_str());
+      EXPECT_EQ(rclcpp::ParameterType::PARAMETER_NOT_SET, retrieved_params[0].get_type());
+      EXPECT_EQ(rclcpp::ParameterType::PARAMETER_NOT_SET, retrieved_params[1].get_type());
+    }
   }
 
   printf("Listing parameters with recursive depth\n");
@@ -259,7 +264,8 @@ void test_get_parameters_sync(
 
 void test_get_parameters_async(
   std::shared_ptr<rclcpp::Node> node,
-  std::shared_ptr<rclcpp::AsyncParametersClient> parameters_client)
+  std::shared_ptr<rclcpp::AsyncParametersClient> parameters_client,
+  bool allowed_undeclared = false)
 {
   printf("Listing parameters with recursive depth\n");
   // Test recursive depth (=0)
@@ -329,11 +335,15 @@ void test_get_parameters_async(
     auto result3 = parameters_client->get_parameters({"not_foo", "not_baz"});
     rclcpp::spin_until_future_complete(node, result3);
     std::vector<rclcpp::Parameter> retrieved_params = result3.get();
-    ASSERT_EQ(2u, retrieved_params.size());
-    EXPECT_STREQ("not_foo", retrieved_params[0].get_name().c_str());
-    EXPECT_STREQ("not_baz", retrieved_params[1].get_name().c_str());
-    EXPECT_EQ(rclcpp::ParameterType::PARAMETER_NOT_SET, retrieved_params[0].get_type());
-    EXPECT_EQ(rclcpp::ParameterType::PARAMETER_NOT_SET, retrieved_params[1].get_type());
+    if (allowed_undeclared == false) {
+      ASSERT_EQ(0u, retrieved_params.size());
+    } else { // allowed_undeclared == true
+      ASSERT_EQ(2u, retrieved_params.size());
+      EXPECT_STREQ("not_foo", retrieved_params[0].get_name().c_str());
+      EXPECT_STREQ("not_baz", retrieved_params[1].get_name().c_str());
+      EXPECT_EQ(rclcpp::ParameterType::PARAMETER_NOT_SET, retrieved_params[0].get_type());
+      EXPECT_EQ(rclcpp::ParameterType::PARAMETER_NOT_SET, retrieved_params[1].get_type());
+    }
   }
 
   printf("Listing parameters with recursive depth\n");

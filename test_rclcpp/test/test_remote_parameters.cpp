@@ -62,7 +62,7 @@ TEST_F(CLASSNAME(parameters, RMW_IMPLEMENTATION), test_remote_parameters_async) 
 
   test_set_parameters_async(node, parameters_client);
 
-  test_get_parameters_async(node, parameters_client);
+  test_get_parameters_async(node, parameters_client, true);
 }
 
 TEST_F(CLASSNAME(parameters, RMW_IMPLEMENTATION), test_remote_parameters_sync) {
@@ -78,7 +78,7 @@ TEST_F(CLASSNAME(parameters, RMW_IMPLEMENTATION), test_remote_parameters_sync) {
 
   test_set_parameters_sync(parameters_client);
 
-  test_get_parameters_sync(parameters_client);
+  test_get_parameters_sync(parameters_client, true);
 }
 
 TEST_F(CLASSNAME(parameters, RMW_IMPLEMENTATION), test_set_remote_parameters_atomically_sync) {
@@ -94,7 +94,7 @@ TEST_F(CLASSNAME(parameters, RMW_IMPLEMENTATION), test_set_remote_parameters_ato
 
   test_set_parameters_atomically_sync(parameters_client);
 
-  test_get_parameters_sync(parameters_client);
+  test_get_parameters_sync(parameters_client, true);
 }
 
 class CLASSNAME (parameters_must_declare, RMW_IMPLEMENTATION) : public ::testing::Test
