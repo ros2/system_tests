@@ -194,7 +194,7 @@ void test_get_parameters_sync(
       parameters_client->get_parameters({"not_foo", "not_baz"}, std::chrono::seconds(1));
     if (allowed_undeclared == false) {
       ASSERT_EQ(0u, retrieved_params.size());
-    } else { // allowed_undeclared == true
+    } else {
       ASSERT_EQ(2u, retrieved_params.size());
       EXPECT_STREQ("not_foo", retrieved_params[0].get_name().c_str());
       EXPECT_STREQ("not_baz", retrieved_params[1].get_name().c_str());
@@ -337,7 +337,7 @@ void test_get_parameters_async(
     std::vector<rclcpp::Parameter> retrieved_params = result3.get();
     if (allowed_undeclared == false) {
       ASSERT_EQ(0u, retrieved_params.size());
-    } else { // allowed_undeclared == true
+    } else {
       ASSERT_EQ(2u, retrieved_params.size());
       EXPECT_STREQ("not_foo", retrieved_params[0].get_name().c_str());
       EXPECT_STREQ("not_baz", retrieved_params[1].get_name().c_str());
