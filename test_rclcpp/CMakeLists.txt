@@ -293,12 +293,6 @@ if(BUILD_TESTING)
       RMW_IMPLEMENTATION=${rmw_implementation}
       TIMEOUT 60)
 
-    if(rmw_implementation STREQUAL "rmw_cyclonedds_cpp")
-      # TODO(tfoote) Disable this tests on CI as it's being flakey
-      # This should be removed when https://github.com/ros2/rmw_cyclonedds/issues/183 is resolved.
-      ament_add_test_label(test_parameter_server_cpp${target_suffix} xfail)
-    endif()
-
     # Service tests single implementation
     custom_launch_test_two_executables(test_services_cpp
       test_services_server_cpp test_services_client_cpp
