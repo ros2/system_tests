@@ -85,7 +85,7 @@ def generate_test_description(executable):
                 name='name_maker_' + replacement_name, env=env
             )
         )
-        test_context[replacement_name] = replacement_value.format(**locals())
+        test_context[replacement_name] = replacement_value.format(random_string=random_string)
 
     launch_description.add_action(
         launch_testing.actions.ReadyToTest()
