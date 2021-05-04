@@ -28,7 +28,7 @@
 #include "rcl/rcl.h"
 #include "rcl/error_handling.h"
 
-#include "rcutils/get_env.h"
+#include "rcutils/env.h"
 #include "rcutils/strdup.h"
 
 #ifdef RMW_IMPLEMENTATION
