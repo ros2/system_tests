@@ -10,31 +10,31 @@ Forthcoming
 
 0.11.0 (2021-04-06)
 -------------------
-* Revert "disable flakey test" (`#467 <https://github.com/ros2/system_tests/issues/467>`_)
+* Revert "disable flakey test". (`#467 <https://github.com/ros2/system_tests/issues/467>`_)
   This reverts commit 4bedf8dcf7f78b69dd1721a999c40f443e9f4896.
-* get_parameters_service\_ should return empty if allow_undeclared\_ is false (`#466 <https://github.com/ros2/system_tests/issues/466>`_)
+* get_parameters_service\_ should return empty if allow_undeclared\_ is false. (`#466 <https://github.com/ros2/system_tests/issues/466>`_)
 * Contributors: Michel Hidalgo, Tomoya Fujita
 
 0.10.0 (2021-03-18)
 -------------------
-* Make test pass after rclcpp`#1532 <https://github.com/ros2/system_tests/issues/1532>`_ (`#465 <https://github.com/ros2/system_tests/issues/465>`_)
+* Make test pass after rclcpp`#1532 <https://github.com/ros2/system_tests/issues/1532>`_. (`#465 <https://github.com/ros2/system_tests/issues/465>`_)
   * Ignore qos parameter overrides
   * Improve flaky test
-* Adapt tests to statically typed parameters (`#462 <https://github.com/ros2/system_tests/issues/462>`_)
-* Guard against TOCTTOU with rclcpp::ok and rclcpp:spin_some (`#459 <https://github.com/ros2/system_tests/issues/459>`_)
+* Adapt tests to statically typed parameters. (`#462 <https://github.com/ros2/system_tests/issues/462>`_)
+* Guard against TOCTTOU with rclcpp::ok and rclcpp:spin_some. (`#459 <https://github.com/ros2/system_tests/issues/459>`_)
   Fixes `#458 <https://github.com/ros2/system_tests/issues/458>`_.
   An exception can be thrown if an interrupt occurs between checking rclcpp::ok() and rclcpp::spin_some().
   Related to https://github.com/ros2/rclcpp/issues/1066
 * update parameter client test with timeout. (`#457 <https://github.com/ros2/system_tests/issues/457>`_)
   * update parameter client test with timeout.
   * test duration should be long enough not to detect unnecessary timeout
-* Call rclcpp::init and rclcpp::shutdown in each test for test_rclcpp (`#454 <https://github.com/ros2/system_tests/issues/454>`_)
+* Call rclcpp::init and rclcpp::shutdown in each test for test_rclcpp. (`#454 <https://github.com/ros2/system_tests/issues/454>`_)
   * Fix test_rclcpp system tests
   * Cleanup
   * Add comment about test failure
-* Set cppcheck timeout to 400 seconds (`#453 <https://github.com/ros2/system_tests/issues/453>`_)
-* Modify to match Waitable interface adding take_data (`#444 <https://github.com/ros2/system_tests/issues/444>`_)
-* Update maintainers (`#450 <https://github.com/ros2/system_tests/issues/450>`_)
+* Set cppcheck timeout to 400 seconds. (`#453 <https://github.com/ros2/system_tests/issues/453>`_)
+* Modify to match Waitable interface adding take_data. (`#444 <https://github.com/ros2/system_tests/issues/444>`_)
+* Update maintainers. (`#450 <https://github.com/ros2/system_tests/issues/450>`_)
 * Contributors: Audrow Nash, Ivan Santiago Paunovic, Jacob Perron, Shane Loretz, Stephen Brawner, tomoya
 
 0.9.1 (2020-07-06)
@@ -42,7 +42,7 @@ Forthcoming
 * Fix rclcpp timeout subscriber test. (`#440 <https://github.com/ros2/system_tests/issues/440>`_)
   * Use nonzero lower bound for timeout checks.
   * Relax time tolerance.
-* show numbers of nanseconds in EXPECT with durations (`#438 <https://github.com/ros2/system_tests/issues/438>`_)
+* show numbers of nanseconds in EXPECT with durations. (`#438 <https://github.com/ros2/system_tests/issues/438>`_)
   * show numbers of nanseconds in expect with durations
   * fix syntax
 * Remove ament_pytest dependency from test_rclcpp. (`#437 <https://github.com/ros2/system_tests/issues/437>`_)
@@ -55,7 +55,7 @@ Forthcoming
   disable flakey test
 * disable flakey test
   Tracked at: https://github.com/ros2/rmw_cyclonedds/issues/183
-* Make `test_executor.spin_some_max_duration` more reliable (`#430 <https://github.com/ros2/system_tests/issues/430>`_)
+* Make `test_executor.spin_some_max_duration` more reliable. (`#430 <https://github.com/ros2/system_tests/issues/430>`_)
 * Change which node name cross-vendor tests are enabled. (`#428 <https://github.com/ros2/system_tests/issues/428>`_)
   * Change which rmws do cross node name tests
   Disable connext cross-vendor since it still uses 1 participant per node
@@ -64,27 +64,27 @@ Forthcoming
   Generate all cross-vendor tests
   Whitelist which cross-vendor tests are expected to work
   * Whitespace
-* Send output of test_rclcpp tests to screen (`#419 <https://github.com/ros2/system_tests/issues/419>`_)
+* Send output of test_rclcpp tests to screen. (`#419 <https://github.com/ros2/system_tests/issues/419>`_)
   This makes it easier to determine which tests are failing as we can see the gtest output.
-* avoid new deprecations (`#426 <https://github.com/ros2/system_tests/issues/426>`_)
+* avoid new deprecations. (`#426 <https://github.com/ros2/system_tests/issues/426>`_)
   * avoid new deprecations
   * avoid more deprecations
-* updates since changes to message_info in rclcpp (`#423 <https://github.com/ros2/system_tests/issues/423>`_)
-* Update the expected exception thrown when getting an invalid parameter type (`#411 <https://github.com/ros2/system_tests/issues/411>`_)
+* updates since changes to message_info in rclcpp. (`#423 <https://github.com/ros2/system_tests/issues/423>`_)
+* Update the expected exception thrown when getting an invalid parameter type. (`#411 <https://github.com/ros2/system_tests/issues/411>`_)
   The type of the exception was changed in https://github.com/ros2/rclcpp/pull/1027
 * Skip failing cross vendor tests after Fast-RTPS based rmw implementations are using one Participant per Context
-* Setting AMENT_CMAKE_CPPCHECK_ADDITIONAL_INCLUDE_DIRS with rclcpp (`#400 <https://github.com/ros2/system_tests/issues/400>`_)
+* Setting AMENT_CMAKE_CPPCHECK_ADDITIONAL_INCLUDE_DIRS with rclcpp. (`#400 <https://github.com/ros2/system_tests/issues/400>`_)
 * Specify stdout as the stream to look at. (`#398 <https://github.com/ros2/system_tests/issues/398>`_)
   * Specify stdout as the stream to look at.
-* code style only: wrap after open parenthesis if not in one line (`#397 <https://github.com/ros2/system_tests/issues/397>`_)
-* Remove ready_fn, and one self.proc_info (`#391 <https://github.com/ros2/system_tests/issues/391>`_)
-* Modifying test for failing on getting an empty node name (`#374 <https://github.com/ros2/system_tests/issues/374>`_)
+* code style only: wrap after open parenthesis if not in one line. (`#397 <https://github.com/ros2/system_tests/issues/397>`_)
+* Remove ready_fn, and one self.proc_info. (`#391 <https://github.com/ros2/system_tests/issues/391>`_)
+* Modifying test for failing on getting an empty node name. (`#374 <https://github.com/ros2/system_tests/issues/374>`_)
   * modifing test for failing on getting an empty nodename
   * outputing specific msg for empty names
 * Set log format for test executables. (`#395 <https://github.com/ros2/system_tests/issues/395>`_)
   In order to prevent tests breaking when the default logging format
   changes, let's set an explicit log format for these test executables.
-* Adjusted spin_some test due to new behavior (`#394 <https://github.com/ros2/system_tests/issues/394>`_)
+* Adjusted spin_some test due to new behavior. (`#394 <https://github.com/ros2/system_tests/issues/394>`_)
   Previously would constantly trigger based on a 0ms delay timer;
   now only evaluates a single timer once per spin_some call. Test
   now adds multiple timers with a short delay to simulate performing
@@ -100,8 +100,8 @@ Forthcoming
 * Bump test timeouts in test_rclcpp. (`#392 <https://github.com/ros2/system_tests/issues/392>`_)
 * Don't set ignore_local_publications = true. (`#388 <https://github.com/ros2/system_tests/issues/388>`_)
   intra_process still needs local pub and sub to send msg.
-* remove tests for now removed, previously deprecated, features (`#386 <https://github.com/ros2/system_tests/issues/386>`_)
-* Fix some comparisons with a sign mismatch (`#373 <https://github.com/ros2/system_tests/issues/373>`_)
+* remove tests for now removed, previously deprecated, features. (`#386 <https://github.com/ros2/system_tests/issues/386>`_)
+* Fix some comparisons with a sign mismatch. (`#373 <https://github.com/ros2/system_tests/issues/373>`_)
 * Contributors: ChenYing Kuo, Michael Carroll, Michel Hidalgo, Scott K Logan, William Woodall
 
 0.7.1 (2019-05-29)
@@ -109,25 +109,25 @@ Forthcoming
 
 0.7.0 (2019-05-20)
 ------------------
-* Improve tests for parameters (`#366 <https://github.com/ros2/system_tests/issues/366>`_)
+* Improve tests for parameters. (`#366 <https://github.com/ros2/system_tests/issues/366>`_)
   * Improve parameter tests
   * Add parameters service tests for failures due to undeclared parameters
   * Refactor parameter test fixtures
   Renamed functions for consistency and reduced code-smell
   * Increase SIGTERM timeout in launch test
   * Increase launch test shutdown timeout
-* Handle launch_testing assertExitCodes correctly (`#367 <https://github.com/ros2/system_tests/issues/367>`_)
-* changes to avoid deprecated API's (`#361 <https://github.com/ros2/system_tests/issues/361>`_)
+* Handle launch_testing assertExitCodes correctly. (`#367 <https://github.com/ros2/system_tests/issues/367>`_)
+* changes to avoid deprecated API's. (`#361 <https://github.com/ros2/system_tests/issues/361>`_)
   * changes to avoid deprecated API's
   * review comments
-* Corrected publish calls with shared_ptr signature (`#348 <https://github.com/ros2/system_tests/issues/348>`_)
+* Corrected publish calls with shared_ptr signature. (`#348 <https://github.com/ros2/system_tests/issues/348>`_)
   * Corrected publish calls with shared_ptr signature
   * Updated with PR comments
   * Correct linter failure
 * Merge pull request `#357 <https://github.com/ros2/system_tests/issues/357>`_ from `ros2/ros2#658 <https://github.com/ros2/ros2/issues/658>`__leftovers
   Delete unnecessary usage of target_include_directories and target_link_libraries with gtest macros
 * Corrected CMakelists
-* [WIP] Modify get_node_names to return fully qualified names (`#345 <https://github.com/ros2/system_tests/issues/345>`_)
+* [WIP] Modify get_node_names to return fully qualified names. (`#345 <https://github.com/ros2/system_tests/issues/345>`_)
   * get_node_names now returns qualified names
   Amended the tests to reflect this
   * Auto stash before rebase of "jhdcs/master"
@@ -139,7 +139,7 @@ Forthcoming
   * Removed undesirable print statements
   * Remove unwanted includes
   * Removed more unwanted includes
-* Migrate launch tests to new launch_testing features & API (`#340 <https://github.com/ros2/system_tests/issues/340>`_)
+* Migrate launch tests to new launch_testing features & API. (`#340 <https://github.com/ros2/system_tests/issues/340>`_)
   * Update after launch_testing features becoming legacy.
   * Migrate test_rclcpp tests to new launch_testing API.
   * Migrate test_communication tests to new launch_testing API.
@@ -151,7 +151,7 @@ Forthcoming
   * Bump test_security tests timeout to please CI.
   * Address peer review comments.
   * Please flake8 on test_cli_remapping.
-* Read only parameters (`#278 <https://github.com/ros2/system_tests/issues/278>`_)
+* Read only parameters. (`#278 <https://github.com/ros2/system_tests/issues/278>`_)
   * Expect declared parameters + use_sim_time
   * replace create_parameter with declare_parameter
   * Expect declared parameters + use_sim_time
@@ -163,8 +163,8 @@ Forthcoming
   * fixup tests
   * extend deprecation warning suppression to support Windows too
   * use option to allow declaring of parameters via yaml file for test
-* correct initialization of rmw_qos_profile_t struct instances (`#344 <https://github.com/ros2/system_tests/issues/344>`_)
-* Move away from deprecated rclcpp APIs (`#343 <https://github.com/ros2/system_tests/issues/343>`_)
+* correct initialization of rmw_qos_profile_t struct instances. (`#344 <https://github.com/ros2/system_tests/issues/344>`_)
+* Move away from deprecated rclcpp APIs. (`#343 <https://github.com/ros2/system_tests/issues/343>`_)
 * Add launch along with launch_testing as test dependencies. (`#334 <https://github.com/ros2/system_tests/issues/334>`_)
 * Drops legacy launch API usage. (`#328 <https://github.com/ros2/system_tests/issues/328>`_)
   * Drops legacy launch API usage.
@@ -182,18 +182,18 @@ Forthcoming
   2.  Changing the checking node to take a parameter
   3.  Changing the CMakeLists.txt to substitute in the number of nodes
   * Fix review feedback.
-* Update for NodeOptions Node constructor (`#329 <https://github.com/ros2/system_tests/issues/329>`_)
+* Update for NodeOptions Node constructor. (`#329 <https://github.com/ros2/system_tests/issues/329>`_)
   * [test_rclcpp] Updates for NodeOptions.
   * Wrap long line.
-* Remove unnecessary semicolon (`#326 <https://github.com/ros2/system_tests/issues/326>`_)
-* Ignore RCLError during Node constructor (`#325 <https://github.com/ros2/system_tests/issues/325>`_)
+* Remove unnecessary semicolon. (`#326 <https://github.com/ros2/system_tests/issues/326>`_)
+* Ignore RCLError during Node constructor. (`#325 <https://github.com/ros2/system_tests/issues/325>`_)
   * Ignore RCLError during Node constructor
   * Print out error message
 * Contributors: Chris Lalancette, Emerson Knapp, Jacob Perron, M. M, Michael Carroll, Michel Hidalgo, Shane Loretz, William Woodall, ivanpauno, jhdcs
 
 0.6.0 (2018-12-14)
 ------------------
-* refactor to support init options and context (`#313 <https://github.com/ros2/system_tests/issues/313>`_)
+* refactor to support init options and context. (`#313 <https://github.com/ros2/system_tests/issues/313>`_)
   * refactor to support init options and context
   * fix security tests
   * pass context to timer api
@@ -202,7 +202,7 @@ Forthcoming
   * update expected output
   * add missing fini in test fixture
   * fixup pub/sub test fixture
-* Add test for waitable (`#314 <https://github.com/ros2/system_tests/issues/314>`_)
+* Add test for waitable. (`#314 <https://github.com/ros2/system_tests/issues/314>`_)
   * Add test for waitable
   * Fix is_ready
   * Fix linter issues
@@ -222,9 +222,9 @@ Forthcoming
   * Add in a test for the new get_parameter_or_set_default API.
   * Switch to using get_parameter_or_set_default.
   * Rename get_parameter_or_set_default -> get_parameter_or_set
-* Add test for spin_some(max_duration) (`#299 <https://github.com/ros2/system_tests/issues/299>`_)
-* fix indentation to comply with uncrusity 0.67 (`#286 <https://github.com/ros2/system_tests/issues/286>`_)
-* Expose cdr (`#267 <https://github.com/ros2/system_tests/issues/267>`_)
+* Add test for spin_some(max_duration). (`#299 <https://github.com/ros2/system_tests/issues/299>`_)
+* fix indentation to comply with uncrusity 0.67. (`#286 <https://github.com/ros2/system_tests/issues/286>`_)
+* Expose cdr. (`#267 <https://github.com/ros2/system_tests/issues/267>`_)
   * change to new rclcpp subscription api
   * uncrustify
   * add serialization tests
@@ -233,27 +233,27 @@ Forthcoming
   * address review comments
   * warn unused
   * raw->serialized
-  * use size_t (`#283 <https://github.com/ros2/system_tests/issues/283>`_)
+  * use size_t. (`#283 <https://github.com/ros2/system_tests/issues/283>`_)
   * raw->serialized
   * use size_t
-* add test for set parameters atomically (`#277 <https://github.com/ros2/system_tests/issues/277>`_)
-* Get parameters that aren't set (`#276 <https://github.com/ros2/system_tests/issues/276>`_)
-* Initial values to node constructor (`#272 <https://github.com/ros2/system_tests/issues/272>`_)
-* migrate launch -> launch.legacy (`#273 <https://github.com/ros2/system_tests/issues/273>`_)
-* Split ParameterVariant (`#271 <https://github.com/ros2/system_tests/issues/271>`_)
+* add test for set parameters atomically. (`#277 <https://github.com/ros2/system_tests/issues/277>`_)
+* Get parameters that aren't set. (`#276 <https://github.com/ros2/system_tests/issues/276>`_)
+* Initial values to node constructor. (`#272 <https://github.com/ros2/system_tests/issues/272>`_)
+* migrate launch -> launch.legacy. (`#273 <https://github.com/ros2/system_tests/issues/273>`_)
+* Split ParameterVariant. (`#271 <https://github.com/ros2/system_tests/issues/271>`_)
   * ParameterTypeException
   * rclcpp::parameter::ParameterVariant -> rclcpp::Parameter
-* Parameter services automatically start (`#270 <https://github.com/ros2/system_tests/issues/270>`_)
-* Add cli args to Node constructor (`#262 <https://github.com/ros2/system_tests/issues/262>`_)
+* Parameter services automatically start. (`#270 <https://github.com/ros2/system_tests/issues/270>`_)
+* Add cli args to Node constructor. (`#262 <https://github.com/ros2/system_tests/issues/262>`_)
 * prefix node names with a dash to separate it from the empty line separating the results from separate queries
 * add unit test to check for node names across rmw impl. (`#260 <https://github.com/ros2/system_tests/issues/260>`_)
-* Increased timeout for tests with multiple wait_for_service (`#259 <https://github.com/ros2/system_tests/issues/259>`_)
-* update style (`#258 <https://github.com/ros2/system_tests/issues/258>`_)
+* Increased timeout for tests with multiple wait_for_service. (`#259 <https://github.com/ros2/system_tests/issues/259>`_)
+* update style. (`#258 <https://github.com/ros2/system_tests/issues/258>`_)
 * Contributors: Chris Lalancette, Dirk Thomas, Karsten Knese, Mikael Arguedas, Shane Loretz, William Woodall, dhood
 
 0.4.0 (2017-12-08)
 ------------------
-* Update for rclcpp namespace removals (`#255 <https://github.com/ros2/system_tests/issues/255>`_)
+* Update for rclcpp namespace removals. (`#255 <https://github.com/ros2/system_tests/issues/255>`_)
   * Remove subscription:: namespace
   * Remove client:: namespace
   * Remove service:: namespace
@@ -263,29 +263,29 @@ Forthcoming
   * Remove node:: namespace
   * Remove event:: namespace
   * Remove utilities:: namespace
-* Regression test for set_parameters with bad callback reference (`#253 <https://github.com/ros2/system_tests/issues/253>`_)
+* Regression test for set_parameters with bad callback reference. (`#253 <https://github.com/ros2/system_tests/issues/253>`_)
   * Add regression test for set_parameters with callback
   * Make it like the parameter_events_async node to excercise the bad reference
   * Create paramters_client\_ in constructor of node subclass
   Possible since https://github.com/ros2/rclcpp/pull/413
-* Add regression test for recursive service calls (`#254 <https://github.com/ros2/system_tests/issues/254>`_)
+* Add regression test for recursive service calls. (`#254 <https://github.com/ros2/system_tests/issues/254>`_)
 * Merge pull request `#252 <https://github.com/ros2/system_tests/issues/252>`_ from ros2/check_if_test_exists_before_adding_properties
   check if test exists before adding properties
 * check if test exists before adding properties
-* cmake 3.10 compatibility: pass absolute path to file(GENERATE) function (`#251 <https://github.com/ros2/system_tests/issues/251>`_)
+* cmake 3.10 compatibility: pass absolute path to file(GENERATE) function. (`#251 <https://github.com/ros2/system_tests/issues/251>`_)
 * Merge pull request `#245 <https://github.com/ros2/system_tests/issues/245>`_ from ros2/ament_cmake_pytest
   use ament_cmake_pytest instead of ament_cmake_nose
 * use ament_cmake_pytest instead of ament_cmake_nose
 * 240 fixups
-* Replaces "std::cout<<" with "printf" (`#240 <https://github.com/ros2/system_tests/issues/240>`_)
+* Replaces "std::cout<<" with "printf". (`#240 <https://github.com/ros2/system_tests/issues/240>`_)
   * [test_communication]replace uses of iostream
   * [test_rclcpp] remove use of std::cout except flushing
   * missed some
   * we use float duration not double
   * remove now unused include
-* removing /bigobj flag on windows (`#239 <https://github.com/ros2/system_tests/issues/239>`_)
-* increase remote parameter test to 60 (`#235 <https://github.com/ros2/system_tests/issues/235>`_)
-* add test for sync parameter_client (`#231 <https://github.com/ros2/system_tests/issues/231>`_)
+* removing /bigobj flag on windows. (`#239 <https://github.com/ros2/system_tests/issues/239>`_)
+* increase remote parameter test to 60. (`#235 <https://github.com/ros2/system_tests/issues/235>`_)
+* add test for sync parameter_client. (`#231 <https://github.com/ros2/system_tests/issues/231>`_)
 * Merge pull request `#234 <https://github.com/ros2/system_tests/issues/234>`_ from ros2/remove_indent_off
   remove obsolete INDENT-OFF usage
 * Merge pull request `#233 <https://github.com/ros2/system_tests/issues/233>`_ from ros2/uncrustify_master
@@ -293,15 +293,15 @@ Forthcoming
 * remove obsolete INDENT-OFF usage
 * update style to match latest uncrustify
 * 0.0.3
-* Revert "apply forward slash for list_parameters (`#224 <https://github.com/ros2/system_tests/issues/224>`_)" (`#229 <https://github.com/ros2/system_tests/issues/229>`_)
+* Revert "apply forward slash for list_parameters. (`#224 <https://github.com/ros2/system_tests/issues/224>`_)". (`#229 <https://github.com/ros2/system_tests/issues/229>`_)
   This reverts commit 8e9d767891e4e619b2bbfbd4dac5e6fffafd84bc.
 * Merge pull request `#228 <https://github.com/ros2/system_tests/issues/228>`_ from ros2/increase_timeout
   increase timeout of test
 * increase timeout of test
-* revert hack shortening node name (`#227 <https://github.com/ros2/system_tests/issues/227>`_)
-* apply forward slash for list_parameters (`#224 <https://github.com/ros2/system_tests/issues/224>`_)
-* call rclcpp::shutdown in all tests (`#225 <https://github.com/ros2/system_tests/issues/225>`_)
-* Use wait_for_service after creating parameters_client (`#219 <https://github.com/ros2/system_tests/issues/219>`_)
+* revert hack shortening node name. (`#227 <https://github.com/ros2/system_tests/issues/227>`_)
+* apply forward slash for list_parameters. (`#224 <https://github.com/ros2/system_tests/issues/224>`_)
+* call rclcpp::shutdown in all tests. (`#225 <https://github.com/ros2/system_tests/issues/225>`_)
+* Use wait_for_service after creating parameters_client. (`#219 <https://github.com/ros2/system_tests/issues/219>`_)
   * Use wait_for_service after creating parameters_client
   * Increase timeout for parameter tests
   * Add prints so we can know where the test hangs
@@ -311,14 +311,14 @@ Forthcoming
   * Revert "No need for wait_for_service in local_parameters tests (we know the service is there)"
   This reverts commit dce810a515ad58299da353df18e0b7cb29a0b82b.
   * Connext needs the timeout to be high still
-* Add tests for user-defined signal handler (`#215 <https://github.com/ros2/system_tests/issues/215>`_)
+* Add tests for user-defined signal handler. (`#215 <https://github.com/ros2/system_tests/issues/215>`_)
   * Add tests for user-defined signal handler
   * Skip signal handler tests on Windows
   launch_testing will terminate the process instead of sending SIGINT, so the tests can't check the response to interrupt
   * Fixup
   * Remove argument parsing
-* Ensure nodes have called rclcpp::shutdown before exiting (`#220 <https://github.com/ros2/system_tests/issues/220>`_)
-* fix flaky multi-threaded test (`#217 <https://github.com/ros2/system_tests/issues/217>`_)
+* Ensure nodes have called rclcpp::shutdown before exiting. (`#220 <https://github.com/ros2/system_tests/issues/220>`_)
+* fix flaky multi-threaded test. (`#217 <https://github.com/ros2/system_tests/issues/217>`_)
   * swap order of expected and actualy value in ASSERT and EXPECT macros
   * create subscribers and wait before start publishing
   * fix condition to not abort executor too early
@@ -328,20 +328,20 @@ Forthcoming
   * use actual topic name to work for intra process test too
 * 0.0.2
 * use CMAKE_X_STANDARD and check compiler rather than platform
-* add test for avoid_ros_namespace_conventions qos (`#206 <https://github.com/ros2/system_tests/issues/206>`_)
-* remove unnecessary topic name check (`#203 <https://github.com/ros2/system_tests/issues/203>`_)
+* add test for avoid_ros_namespace_conventions qos. (`#206 <https://github.com/ros2/system_tests/issues/206>`_)
+* remove unnecessary topic name check. (`#203 <https://github.com/ros2/system_tests/issues/203>`_)
   * remove incorrect and unnecessary topic name check
   * up timeout for slow test
-* fix type and style (`#201 <https://github.com/ros2/system_tests/issues/201>`_)
+* fix type and style. (`#201 <https://github.com/ros2/system_tests/issues/201>`_)
   * fix type and style
   * fix more style
-* Fix tests for many core machines (`#200 <https://github.com/ros2/system_tests/issues/200>`_)
-* support addition of node namespace in rclcpp API (`#196 <https://github.com/ros2/system_tests/issues/196>`_)
-* use 64-bit integer for parameter tests (`#197 <https://github.com/ros2/system_tests/issues/197>`_)
+* Fix tests for many core machines. (`#200 <https://github.com/ros2/system_tests/issues/200>`_)
+* support addition of node namespace in rclcpp API. (`#196 <https://github.com/ros2/system_tests/issues/196>`_)
+* use 64-bit integer for parameter tests. (`#197 <https://github.com/ros2/system_tests/issues/197>`_)
   * use 64-bit integer for parameter tests
   * more fixes for Linux and Windows
-* tests for get_parameter_or and set_parameter_if_not_set (`#193 <https://github.com/ros2/system_tests/issues/193>`_)
-* Use -Wpedantic (`#189 <https://github.com/ros2/system_tests/issues/189>`_)
+* tests for get_parameter_or and set_parameter_if_not_set. (`#193 <https://github.com/ros2/system_tests/issues/193>`_)
+* Use -Wpedantic. (`#189 <https://github.com/ros2/system_tests/issues/189>`_)
   * add pedantic flag
   * fix pedantic warning
   * fix C4456 warning
@@ -351,7 +351,7 @@ Forthcoming
   use rmw implementation
 * use rmw implementation
 * replace deprecated <CONFIGURATION> with <CONFIG>
-* use new rclcpp::literals namespace + constness issue fix (`#178 <https://github.com/ros2/system_tests/issues/178>`_)
+* use new rclcpp::literals namespace + constness issue fix. (`#178 <https://github.com/ros2/system_tests/issues/178>`_)
   * use new rclcpp::literals namespace
   * test_subscription.cpp: fix missing 'const'
   wait_for_future() required a non-const reference but
@@ -359,9 +359,9 @@ Forthcoming
   which aren't lvalue.
   * add NOLINT to 'using namespace rclcpp::literals'
   * use std::chrono_literals
-* c++14 (`#181 <https://github.com/ros2/system_tests/issues/181>`_)
-* Rename QoS policies (`#184 <https://github.com/ros2/system_tests/issues/184>`_)
-* add test for creating clients and services in a Node constructor (`#182 <https://github.com/ros2/system_tests/issues/182>`_)
+* c++14. (`#181 <https://github.com/ros2/system_tests/issues/181>`_)
+* Rename QoS policies. (`#184 <https://github.com/ros2/system_tests/issues/184>`_)
+* add test for creating clients and services in a Node constructor. (`#182 <https://github.com/ros2/system_tests/issues/182>`_)
   * add test for creating clients and services in a Node constructor
   * style fixes
 * Merge pull request `#180 <https://github.com/ros2/system_tests/issues/180>`_ from ros2/typesupport_reloaded
@@ -370,7 +370,7 @@ Forthcoming
 * Merge pull request `#171 <https://github.com/ros2/system_tests/issues/171>`_ from ros2/rosidl_target_interfaces_add_dependency
   remove obsolete add_dependencies
 * remove obsolete add_dependencies
-* support local graph changes in Connext (`#164 <https://github.com/ros2/system_tests/issues/164>`_)
+* support local graph changes in Connext. (`#164 <https://github.com/ros2/system_tests/issues/164>`_)
   * remove blocks and workarounds on service tests
   * remove no longer needed sleep
   * remove blocks and workarounds on new service test
@@ -385,20 +385,20 @@ Forthcoming
   * increase timeout for test_rclcpp/test_subscription to 60s
   * comment cleanup
   * Fix typo
-* Fixed tests after pull request `ros2/rclcpp#261 <https://github.com/ros2/rclcpp/issues/261>`_ (`#170 <https://github.com/ros2/system_tests/issues/170>`_)
-* Consistent naming when using CMake variable for rmw implementation (`#169 <https://github.com/ros2/system_tests/issues/169>`_)
+* Fixed tests after pull request `ros2/rclcpp#261 <https://github.com/ros2/rclcpp/issues/261>`_. (`#170 <https://github.com/ros2/system_tests/issues/170>`_)
+* Consistent naming when using CMake variable for rmw implementation. (`#169 <https://github.com/ros2/system_tests/issues/169>`_)
 * Merge pull request `#166 <https://github.com/ros2/system_tests/issues/166>`_ from ros2/fix_cpplint
   comply with stricter cpplint rules
 * comply with stricter cpplint rules
-* Add regression test for different behaviour between first and second client (`#156 <https://github.com/ros2/system_tests/issues/156>`_)
+* Add regression test for different behaviour between first and second client. (`#156 <https://github.com/ros2/system_tests/issues/156>`_)
   * Add regression test for different behaviour between first and second client
   * lint
   * Fix compiler warnings
   * Spelling fixup
-* add sleep to avoid client/server race until we have a better solution (`#159 <https://github.com/ros2/system_tests/issues/159>`_)
+* add sleep to avoid client/server race until we have a better solution. (`#159 <https://github.com/ros2/system_tests/issues/159>`_)
   * add sleep to avoid client/server race until we have a better solution
   * fix uncrustify being dumb
-* Add tests for getting single parameter from node (`#158 <https://github.com/ros2/system_tests/issues/158>`_)
+* Add tests for getting single parameter from node. (`#158 <https://github.com/ros2/system_tests/issues/158>`_)
   * Add tests for getting local parameters from node handle
   * avoid gcc warnings
   * try to avoid msbuild warnings
@@ -406,8 +406,8 @@ Forthcoming
 * Merge pull request `#157 <https://github.com/ros2/system_tests/issues/157>`_ from ros2/init_vars
   init variables to avoid compiler warnings
 * init variables to avoid compiler warnings
-* add tests for param helpers (`#155 <https://github.com/ros2/system_tests/issues/155>`_)
-* Allow more time for multithreaded tests (`#151 <https://github.com/ros2/system_tests/issues/151>`_)
+* add tests for param helpers. (`#155 <https://github.com/ros2/system_tests/issues/155>`_)
+* Allow more time for multithreaded tests. (`#151 <https://github.com/ros2/system_tests/issues/151>`_)
   * Allow more time for multithreaded tests
   * Shorten time
 * Merge pull request `#148 <https://github.com/ros2/system_tests/issues/148>`_ from ros2/remove_noop
@@ -418,7 +418,7 @@ Forthcoming
   use sleep if wait_for_service throws
 * use sleep if wait_for_service throws
 * add schema to manifest files
-* Use wait_for_service to make Service tests less flaky (`#132 <https://github.com/ros2/system_tests/issues/132>`_)
+* Use wait_for_service to make Service tests less flaky. (`#132 <https://github.com/ros2/system_tests/issues/132>`_)
   * use wait_for_service to make tests less flaky
   * realign timeouts
   * avoid using wait_for_service with fastrtps
@@ -426,7 +426,7 @@ Forthcoming
   * [test_communication] avoid wait_for_service with fastrtps
   it can be undone once fastrtps supports wait_for_service
   * add test to ensure wait_for_service wakes after shutdown/sigint
-* Update tests for changes in parameter handling (`#140 <https://github.com/ros2/system_tests/issues/140>`_)
+* Update tests for changes in parameter handling. (`#140 <https://github.com/ros2/system_tests/issues/140>`_)
   * Update tests for changes in parameter handling
   * use enum instead of constant
 * Merge pull request `#136 <https://github.com/ros2/system_tests/issues/136>`_ from ros2/cmake35
@@ -441,14 +441,14 @@ Forthcoming
 * Merge pull request `#120 <https://github.com/ros2/system_tests/issues/120>`_ from dhood/test-linking-runtime
   Ensure using correct rmw implementation in tests
 * Use RCL_ASSERT_RMW_ID_MATCHES to ensure correct rmw implementation is being used
-* add classname label to some tests (`#116 <https://github.com/ros2/system_tests/issues/116>`_)
+* add classname label to some tests. (`#116 <https://github.com/ros2/system_tests/issues/116>`_)
 * Merge pull request `#115 <https://github.com/ros2/system_tests/issues/115>`_ from ros2/ctest_build_testing
   use CTest BUILD_TESTING
-* Get only C++ typesupport implementations (`#114 <https://github.com/ros2/system_tests/issues/114>`_)
+* Get only C++ typesupport implementations. (`#114 <https://github.com/ros2/system_tests/issues/114>`_)
   * Get only C++ typesupport implementations
   * Add busy_wait_for_subscriber to make publisher test unflaky
 * use CTest BUILD_TESTING
-* Use rcl (`#113 <https://github.com/ros2/system_tests/issues/113>`_)
+* Use rcl. (`#113 <https://github.com/ros2/system_tests/issues/113>`_)
   * init is required now
   * Fix multiple init calls
   * Add init to a test, increase timeout and change an assertion to an expectation
@@ -683,7 +683,7 @@ Forthcoming
 * Merge pull request `#25 <https://github.com/ros2/system_tests/issues/25>`_ from ros2/timer_test
   add test for timers
 * add tests for timers
-* relax test even more to make OS X happier (`#23 <https://github.com/ros2/system_tests/issues/23>`_)
+* relax test even more to make OS X happier. (`#23 <https://github.com/ros2/system_tests/issues/23>`_)
 * Merge pull request `#23 <https://github.com/ros2/system_tests/issues/23>`_ from ros2/try_osx
   relax test to make OS X happy
 * relax test to make OS X happy

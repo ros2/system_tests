@@ -7,7 +7,7 @@ Forthcoming
 
 0.11.1 (2021-04-26)
 -------------------
-* Fix test_cli_remapping flaky test (`#470 <https://github.com/ros2/system_tests/issues/470>`_)
+* Fix test_cli_remapping flaky test. (`#470 <https://github.com/ros2/system_tests/issues/470>`_)
   * Change remapped names to prevent collisions
   * **locals() -> random_string kwarg
 * Contributors: Shane Loretz
@@ -17,8 +17,8 @@ Forthcoming
 
 0.10.0 (2021-03-18)
 -------------------
-* Update maintainers (`#450 <https://github.com/ros2/system_tests/issues/450>`_)
-* Enable -Wall, -Wextra, and -Wpedantic (`#448 <https://github.com/ros2/system_tests/issues/448>`_)
+* Update maintainers. (`#450 <https://github.com/ros2/system_tests/issues/450>`_)
+* Enable -Wall, -Wextra, and -Wpedantic. (`#448 <https://github.com/ros2/system_tests/issues/448>`_)
 * Contributors: Audrow Nash, Jacob Perron
 
 0.9.1 (2020-07-06)
@@ -26,14 +26,14 @@ Forthcoming
 
 0.9.0 (2020-06-04)
 ------------------
-* Remove ready_fn, and one self.proc_info (`#391 <https://github.com/ros2/system_tests/issues/391>`_)
+* Remove ready_fn, and one self.proc_info. (`#391 <https://github.com/ros2/system_tests/issues/391>`_)
 * Contributors: Peter Baughman
 
 0.8.0 (2019-11-20)
 ------------------
 * 0.8.0
 * Use of -r/--remap flags where appropriate. (`#384 <https://github.com/ros2/system_tests/issues/384>`_)
-* Adapt to '--ros-args ... [--]'-based ROS args extraction (`#381 <https://github.com/ros2/system_tests/issues/381>`_)
+* Adapt to '--ros-args ... [--]'-based ROS args extraction. (`#381 <https://github.com/ros2/system_tests/issues/381>`_)
   * Use --ros-args in test_cli package tests.
   * Use --ros-args in test_cli_remapping package tests.
 * Contributors: Michael Carroll, Michel Hidalgo
@@ -43,11 +43,11 @@ Forthcoming
 
 0.7.0 (2019-05-20)
 ------------------
-* Fix deprecation warnings (`#364 <https://github.com/ros2/system_tests/issues/364>`_)
-* changes to avoid deprecated API's (`#361 <https://github.com/ros2/system_tests/issues/361>`_)
+* Fix deprecation warnings. (`#364 <https://github.com/ros2/system_tests/issues/364>`_)
+* changes to avoid deprecated API's. (`#361 <https://github.com/ros2/system_tests/issues/361>`_)
   * changes to avoid deprecated API's
   * review comments
-* Migrate launch tests to new launch_testing features & API (`#340 <https://github.com/ros2/system_tests/issues/340>`_)
+* Migrate launch tests to new launch_testing features & API. (`#340 <https://github.com/ros2/system_tests/issues/340>`_)
   * Update after launch_testing features becoming legacy.
   * Migrate test_rclcpp tests to new launch_testing API.
   * Migrate test_communication tests to new launch_testing API.
@@ -72,11 +72,11 @@ Forthcoming
 
 0.6.0 (2018-12-14)
 ------------------
-* Use debug python executable on windows (`#281 <https://github.com/ros2/system_tests/issues/281>`_)
+* Use debug python executable on windows. (`#281 <https://github.com/ros2/system_tests/issues/281>`_)
   * use debug python executable on windows
   * get python debug executable from pythonextra
-* use new launch legacy namespace (`#275 <https://github.com/ros2/system_tests/issues/275>`_)
-* Add tests for command line remapping (`#268 <https://github.com/ros2/system_tests/issues/268>`_)
+* use new launch legacy namespace. (`#275 <https://github.com/ros2/system_tests/issues/275>`_)
+* Add tests for command line remapping. (`#268 <https://github.com/ros2/system_tests/issues/268>`_)
   * Add tests for command line remapping
 * Contributors: Mikael Arguedas, Shane Loretz
 

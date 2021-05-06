@@ -13,49 +13,49 @@ Forthcoming
 
 0.10.0 (2021-03-18)
 -------------------
-* Add support for rmw_connextdds (`#463 <https://github.com/ros2/system_tests/issues/463>`_)
-* Update deprecated gtest macros (`#449 <https://github.com/ros2/system_tests/issues/449>`_)
-* Update maintainers (`#450 <https://github.com/ros2/system_tests/issues/450>`_)
-* Run test_security on CycloneDDS as well (`#408 <https://github.com/ros2/system_tests/issues/408>`_)
+* Add support for rmw_connextdds. (`#463 <https://github.com/ros2/system_tests/issues/463>`_)
+* Update deprecated gtest macros. (`#449 <https://github.com/ros2/system_tests/issues/449>`_)
+* Update maintainers. (`#450 <https://github.com/ros2/system_tests/issues/450>`_)
+* Run test_security on CycloneDDS as well. (`#408 <https://github.com/ros2/system_tests/issues/408>`_)
   * [test_security] enable tests for cyclonedds
   * remove TODO now that all tier1 RMW support DDS-Security
 * Contributors: Andrea Sorbini, Audrow Nash, Jacob Perron, Mikael Arguedas
 
 0.9.1 (2020-07-06)
 ------------------
-* remove invalid cert folder to force regeneration of certificates (`#434 <https://github.com/ros2/system_tests/issues/434>`_)
+* remove invalid cert folder to force regeneration of certificates. (`#434 <https://github.com/ros2/system_tests/issues/434>`_)
 * Contributors: Mikael Arguedas
 
 0.9.0 (2020-06-04)
 ------------------
-* Disable Connext security tests on Windows (`#433 <https://github.com/ros2/system_tests/issues/433>`_)
+* Disable Connext security tests on Windows. (`#433 <https://github.com/ros2/system_tests/issues/433>`_)
   * Disable Connext security tests on Windows
   Connext needs a different version of OpenSSL (1.0.2n) than the system
   version.
   Disabling these tests until we can figure out how to run them on CI.
   * Use parentheses
-* Re-enable Fast-RTPS security tests (`#415 <https://github.com/ros2/system_tests/issues/415>`_)
-* Make Connext use Connext's openssl on all platforms (`#409 <https://github.com/ros2/system_tests/issues/409>`_)
+* Re-enable Fast-RTPS security tests. (`#415 <https://github.com/ros2/system_tests/issues/415>`_)
+* Make Connext use Connext's openssl on all platforms. (`#409 <https://github.com/ros2/system_tests/issues/409>`_)
   * Make connext use Connext's openssl on all platforms
   Ubuntu Focal, Homebrew and chocolatey now provide OpenSSL 1.1.1
   RTI Connext 5.3.1 supports only 1.0.2 so we need to modify the library path and the path for connext's version of openssl be used when running tests with connext. Use system OpenSSL for other rmw implementations
-* Fix outdated variable name and error on file generation failure (`#412 <https://github.com/ros2/system_tests/issues/412>`_)
+* Fix outdated variable name and error on file generation failure. (`#412 <https://github.com/ros2/system_tests/issues/412>`_)
   * POLICY_RESULT->GENERATE_ARTIFACTS_RESULT
   * fail CMake configure if security artifacts fail to be generated
-* Update security environment variables (`#422 <https://github.com/ros2/system_tests/issues/422>`_)
-* security-context -> enclave (`#414 <https://github.com/ros2/system_tests/issues/414>`_)
+* Update security environment variables. (`#422 <https://github.com/ros2/system_tests/issues/422>`_)
+* security-context -> enclave. (`#414 <https://github.com/ros2/system_tests/issues/414>`_)
 * Disable Fast-RTPS security tests until they work on Focal. (`#413 <https://github.com/ros2/system_tests/issues/413>`_)
   https://github.com/eProsima/Fast-RTPS/issues/1087 is the
   issue that needs to be resolved.
-* Use keystore root as security root directory, and not contexts folder (`#410 <https://github.com/ros2/system_tests/issues/410>`_)
+* Use keystore root as security root directory, and not contexts folder. (`#410 <https://github.com/ros2/system_tests/issues/410>`_)
 * Update test_security tests to use security contexts
-* Remove ready_fn, and one self.proc_info (`#391 <https://github.com/ros2/system_tests/issues/391>`_)
+* Remove ready_fn, and one self.proc_info. (`#391 <https://github.com/ros2/system_tests/issues/391>`_)
 * Contributors: Chris Lalancette, Ivan Santiago Paunovic, Jacob Perron, Mikael Arguedas, Peter Baughman, Ruffin, Steven! Ragnarök
 
 0.8.0 (2019-11-20)
 ------------------
 * 0.8.0
-* [test_security] Generate security artifacts using sros2 (`#380 <https://github.com/ros2/system_tests/issues/380>`_)
+* [test_security] Generate security artifacts using sros2. (`#380 <https://github.com/ros2/system_tests/issues/380>`_)
   * remove publisher and subscriber security artifacts
   * use sros2 to generated security artifacts
   * print info message to stdout
@@ -65,7 +65,7 @@ Forthcoming
   * give test more explainatory names
   * reenable xmllint now that no DDS xml files are hosted in the sources
   * valid_node_names_list -> node_name_list
-* use new message name (`#379 <https://github.com/ros2/system_tests/issues/379>`_)
+* use new message name. (`#379 <https://github.com/ros2/system_tests/issues/379>`_)
 * Contributors: Michael Carroll, Mikael Arguedas
 
 0.7.1 (2019-05-29)
@@ -73,15 +73,15 @@ Forthcoming
 
 0.7.0 (2019-05-20)
 ------------------
-* Handle launch_testing assertExitCodes correctly (`#367 <https://github.com/ros2/system_tests/issues/367>`_)
-* changes to avoid deprecated API's (`#361 <https://github.com/ros2/system_tests/issues/361>`_)
+* Handle launch_testing assertExitCodes correctly. (`#367 <https://github.com/ros2/system_tests/issues/367>`_)
+* changes to avoid deprecated API's. (`#361 <https://github.com/ros2/system_tests/issues/361>`_)
   * changes to avoid deprecated API's
   * review comments
-* Corrected publish calls with shared_ptr signature (`#348 <https://github.com/ros2/system_tests/issues/348>`_)
+* Corrected publish calls with shared_ptr signature. (`#348 <https://github.com/ros2/system_tests/issues/348>`_)
   * Corrected publish calls with shared_ptr signature
   * Updated with PR comments
   * Correct linter failure
-* Use new interface definitions (`#350 <https://github.com/ros2/system_tests/issues/350>`_)
+* Use new interface definitions. (`#350 <https://github.com/ros2/system_tests/issues/350>`_)
   * Replace Primitives with BasicTypes
   * Replace StaticArrayPrimitives with Arrays
   * Replace BoundedArrayPrimitives with BoundedSequences
@@ -97,7 +97,7 @@ Forthcoming
   * Update test_security package to use new interface definitions
   * Use BasicTypes for checking message serialization size
   It seems that BoundedSequences does not have a consistent size between tests.
-* Migrate launch tests to new launch_testing features & API (`#340 <https://github.com/ros2/system_tests/issues/340>`_)
+* Migrate launch tests to new launch_testing features & API. (`#340 <https://github.com/ros2/system_tests/issues/340>`_)
   * Update after launch_testing features becoming legacy.
   * Migrate test_rclcpp tests to new launch_testing API.
   * Migrate test_communication tests to new launch_testing API.
@@ -122,7 +122,7 @@ Forthcoming
 
 0.6.0 (2018-12-14)
 ------------------
-* refactor to support init options and context (`#313 <https://github.com/ros2/system_tests/issues/313>`_)
+* refactor to support init options and context. (`#313 <https://github.com/ros2/system_tests/issues/313>`_)
   * refactor to support init options and context
   * fix security tests
   * pass context to timer api
@@ -132,21 +132,21 @@ Forthcoming
   * add missing fini in test fixture
   * fixup pub/sub test fixture
 * Update package maintainer. (`#309 <https://github.com/ros2/system_tests/issues/309>`_)
-* Adjusting namespace for security tests (`#308 <https://github.com/ros2/system_tests/issues/308>`_)
-* use new error handling API from rcutils (`#306 <https://github.com/ros2/system_tests/issues/306>`_)
+* Adjusting namespace for security tests. (`#308 <https://github.com/ros2/system_tests/issues/308>`_)
+* use new error handling API from rcutils. (`#306 <https://github.com/ros2/system_tests/issues/306>`_)
   * use new error handling API from rcutils
   * fix some more cases where the new error handling API is used
 * Merge pull request `#303 <https://github.com/ros2/system_tests/issues/303>`_ from ros2/hidmic/namespace-messages-with-subfolder
   Handles msg files with the same name in different subfolders
 * Handles msg files with the same name in different subfolders.
-* separating identity and permission CAs (`#298 <https://github.com/ros2/system_tests/issues/298>`_)
-* regenerate security artifacts (`#289 <https://github.com/ros2/system_tests/issues/289>`_)
-* match rmw_fastrtps_dynamic_cpp / rmw_connext_dynamic_cpp (`#288 <https://github.com/ros2/system_tests/issues/288>`_)
-* disable xmllint correctly (`#287 <https://github.com/ros2/system_tests/issues/287>`_)
-* disable xmllint for now (`#287 <https://github.com/ros2/system_tests/issues/287>`_)
-* comment out currently unused rclpy dependency (`#280 <https://github.com/ros2/system_tests/issues/280>`_)
-* migrate launch -> launch.legacy (`#273 <https://github.com/ros2/system_tests/issues/273>`_)
-* Place RTI OpenSSL on the (LD_LIBRARY\_)PATH on Linux (`#263 <https://github.com/ros2/system_tests/issues/263>`_)
+* separating identity and permission CAs. (`#298 <https://github.com/ros2/system_tests/issues/298>`_)
+* regenerate security artifacts. (`#289 <https://github.com/ros2/system_tests/issues/289>`_)
+* match rmw_fastrtps_dynamic_cpp / rmw_connext_dynamic_cpp. (`#288 <https://github.com/ros2/system_tests/issues/288>`_)
+* disable xmllint correctly. (`#287 <https://github.com/ros2/system_tests/issues/287>`_)
+* disable xmllint for now. (`#287 <https://github.com/ros2/system_tests/issues/287>`_)
+* comment out currently unused rclpy dependency. (`#280 <https://github.com/ros2/system_tests/issues/280>`_)
+* migrate launch -> launch.legacy. (`#273 <https://github.com/ros2/system_tests/issues/273>`_)
+* Place RTI OpenSSL on the (LD_LIBRARY\_)PATH on Linux. (`#263 <https://github.com/ros2/system_tests/issues/263>`_)
   * use RTI_OPENSSL env vars for tests
   * pass PATH to tests directly
   * remove dead code and add comments
@@ -157,10 +157,10 @@ Forthcoming
   Modify PATH only if connext is being tested
   modify path for all connext tests (not sure why it worked before)
   * TEST_PATH_WITH_RTI_BIN -> TEST_PATH
-* sslv3 certificates with CA:false extension (`#265 <https://github.com/ros2/system_tests/issues/265>`_)
-* new security files including governance fix (`#264 <https://github.com/ros2/system_tests/issues/264>`_)
+* sslv3 certificates with CA:false extension. (`#265 <https://github.com/ros2/system_tests/issues/265>`_)
+* new security files including governance fix. (`#264 <https://github.com/ros2/system_tests/issues/264>`_)
   provide wide domain id range to work on all ci machines
-* [test_communication] Unique namespaces (`#256 <https://github.com/ros2/system_tests/issues/256>`_)
+* [test_communication] Unique namespaces. (`#256 <https://github.com/ros2/system_tests/issues/256>`_)
   * add namespace to pubsub tests
   * add namespace to service tests
   * uncrustify
@@ -171,7 +171,7 @@ Forthcoming
 
 0.4.0 (2017-12-08)
 ------------------
-* Update for rclcpp namespace removals (`#255 <https://github.com/ros2/system_tests/issues/255>`_)
+* Update for rclcpp namespace removals. (`#255 <https://github.com/ros2/system_tests/issues/255>`_)
   * Remove subscription:: namespace
   * Remove client:: namespace
   * Remove service:: namespace
@@ -184,21 +184,21 @@ Forthcoming
 * Merge pull request `#252 <https://github.com/ros2/system_tests/issues/252>`_ from ros2/check_if_test_exists_before_adding_properties
   check if test exists before adding properties
 * check if test exists before adding properties
-* cmake 3.10 compatibility: pass absolute path to file(GENERATE) function (`#251 <https://github.com/ros2/system_tests/issues/251>`_)
+* cmake 3.10 compatibility: pass absolute path to file(GENERATE) function. (`#251 <https://github.com/ros2/system_tests/issues/251>`_)
 * add comment for DYLD_LIBRARY_PATH and connext
-* use brew to find openssl library path and add it to the library dirs (`#250 <https://github.com/ros2/system_tests/issues/250>`_)
-* find gtest before macro invocation so that its not find during each macro invocation (`#246 <https://github.com/ros2/system_tests/issues/246>`_)
+* use brew to find openssl library path and add it to the library dirs. (`#250 <https://github.com/ros2/system_tests/issues/250>`_)
+* find gtest before macro invocation so that its not find during each macro invocation. (`#246 <https://github.com/ros2/system_tests/issues/246>`_)
 * Merge pull request `#245 <https://github.com/ros2/system_tests/issues/245>`_ from ros2/ament_cmake_pytest
   use ament_cmake_pytest instead of ament_cmake_nose
 * use ament_cmake_pytest instead of ament_cmake_nose
-* Add namespace to avoid crosstalk in security 'no connection' tests (`#243 <https://github.com/ros2/system_tests/issues/243>`_)
+* Add namespace to avoid crosstalk in security 'no connection' tests. (`#243 <https://github.com/ros2/system_tests/issues/243>`_)
   * Add namespace for security tests so 'no connection' tests don't have crosstalk
   * Rename namespace var
-* Restore bigobj (`#241 <https://github.com/ros2/system_tests/issues/241>`_)
+* Restore bigobj. (`#241 <https://github.com/ros2/system_tests/issues/241>`_)
   * [test_communication] restore bigobj
   * [test_security] restore bigobj
   * make it explicit that bigobj is needed only in debug mode
-* Replaces "std::cout<<" with "printf" (`#240 <https://github.com/ros2/system_tests/issues/240>`_)
+* Replaces "std::cout<<" with "printf". (`#240 <https://github.com/ros2/system_tests/issues/240>`_)
   * [test_communication]replace uses of iostream
   * [test_rclcpp] remove use of std::cout except flushing
   * missed some
