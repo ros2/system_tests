@@ -30,7 +30,7 @@ Forthcoming
 
 0.9.0 (2020-06-04)
 ------------------
-* code style only: wrap after open parenthesis if not in one line. (`#397 <https://github.com/ros2/system_tests/issues/397>`_)
+* Code style only: wrap after open parenthesis if not in one line. (`#397 <https://github.com/ros2/system_tests/issues/397>`_)
 * Contributors: Dirk Thomas
 
 0.8.0 (2019-11-20)
@@ -58,11 +58,11 @@ Forthcoming
   * Addressed review comments
   Fixed bugs in fixture bringup and teardown
   Fixed base class issues
-  * fix compiler errors
-  * update to be compatible with latest rclcpp API
+  * Fix compiler errors
+  * Update to be compatible with latest rclcpp API
   * Removes unused find_package for pytest.
-  * fix windows compiler warnings
-  * replace rclcpp::get_logger() with Node::get_logger()
+  * Fix windows compiler warnings
+  * Replace rclcpp::get_logger() with Node::get_logger()
 * Contributors: Devin Bonnie
 
 0.7.0 (2019-05-20)

@@ -44,9 +44,9 @@ Forthcoming
 0.7.0 (2019-05-20)
 ------------------
 * Fix deprecation warnings. (`#364 <https://github.com/ros2/system_tests/issues/364>`_)
-* changes to avoid deprecated API's. (`#361 <https://github.com/ros2/system_tests/issues/361>`_)
-  * changes to avoid deprecated API's
-  * review comments
+* Changes to avoid deprecated API's. (`#361 <https://github.com/ros2/system_tests/issues/361>`_)
+  * Changes to avoid deprecated API's
+  * Review comments
 * Migrate launch tests to new launch_testing features & API. (`#340 <https://github.com/ros2/system_tests/issues/340>`_)
   * Update after launch_testing features becoming legacy.
   * Migrate test_rclcpp tests to new launch_testing API.
@@ -73,9 +73,9 @@ Forthcoming
 0.6.0 (2018-12-14)
 ------------------
 * Use debug python executable on windows. (`#281 <https://github.com/ros2/system_tests/issues/281>`_)
-  * use debug python executable on windows
-  * get python debug executable from pythonextra
-* use new launch legacy namespace. (`#275 <https://github.com/ros2/system_tests/issues/275>`_)
+  * Use debug python executable on windows
+  * Get python debug executable from pythonextra
+* Use new launch legacy namespace. (`#275 <https://github.com/ros2/system_tests/issues/275>`_)
 * Add tests for command line remapping. (`#268 <https://github.com/ros2/system_tests/issues/268>`_)
   * Add tests for command line remapping
 * Contributors: Mikael Arguedas, Shane Loretz
