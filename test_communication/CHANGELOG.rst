@@ -13,16 +13,16 @@ Forthcoming
 
 0.10.0 (2021-03-18)
 -------------------
-* Add support for rmw_connextdds (`#463 <https://github.com/ros2/system_tests/issues/463>`_)
+* Add support for rmw_connextdds. (`#463 <https://github.com/ros2/system_tests/issues/463>`_)
 * Kill off the ros2 daemon before running tests.
 * Remove Opensplice from test_communication.
-* Make TestMessageSerialization robust to missed messages (`#456 <https://github.com/ros2/system_tests/issues/456>`_)
+* Make TestMessageSerialization robust to missed messages. (`#456 <https://github.com/ros2/system_tests/issues/456>`_)
   Though unlikely, I think it's possible for the first couple messages to be missed since we directly
   start publishing after creating the subscription. If this happens, it will throw off the expected
   value based on the counter. I think this is what was responsible for the reported test failure in `#451 <https://github.com/ros2/system_tests/issues/451>`_.
   This change accounts for possible missed messages by setting the counter to the value in the first received message.
-* Add corresponding rclcpp::shutdown (`#455 <https://github.com/ros2/system_tests/issues/455>`_)
-* Update maintainers (`#450 <https://github.com/ros2/system_tests/issues/450>`_)
+* Add corresponding rclcpp::shutdown. (`#455 <https://github.com/ros2/system_tests/issues/455>`_)
+* Update maintainers. (`#450 <https://github.com/ros2/system_tests/issues/450>`_)
 * Contributors: Andrea Sorbini, Chris Lalancette, Jacob Perron, Stephen Brawner
 
 0.9.1 (2020-07-06)
@@ -30,17 +30,17 @@ Forthcoming
 
 0.9.0 (2020-06-04)
 ------------------
-* avoid new deprecations (`#426 <https://github.com/ros2/system_tests/issues/426>`_)
+* avoid new deprecations. (`#426 <https://github.com/ros2/system_tests/issues/426>`_)
   * avoid new deprecations
   * avoid more deprecations
-* use serilaized message in callback (`#427 <https://github.com/ros2/system_tests/issues/427>`_)
-* fix CMake warning about using uninitialized variables (`#425 <https://github.com/ros2/system_tests/issues/425>`_)
-* disabled Connext-CycloneDDS WString tests (`#421 <https://github.com/ros2/system_tests/issues/421>`_)
-* rename rosidl_generator_c namespace to rosidl_runtime_c (`#416 <https://github.com/ros2/system_tests/issues/416>`_)
-* add options to selectively ignore single/multi RMW tests (`#403 <https://github.com/ros2/system_tests/issues/403>`_)
-* code style only: wrap after open parenthesis if not in one line (`#397 <https://github.com/ros2/system_tests/issues/397>`_)
-* Remove ready_fn, and one self.proc_info (`#391 <https://github.com/ros2/system_tests/issues/391>`_)
-* Clean up bounded sequences check (`#393 <https://github.com/ros2/system_tests/issues/393>`_)
+* use serilaized message in callback. (`#427 <https://github.com/ros2/system_tests/issues/427>`_)
+* fix CMake warning about using uninitialized variables. (`#425 <https://github.com/ros2/system_tests/issues/425>`_)
+* disabled Connext-CycloneDDS WString tests. (`#421 <https://github.com/ros2/system_tests/issues/421>`_)
+* rename rosidl_generator_c namespace to rosidl_runtime_c. (`#416 <https://github.com/ros2/system_tests/issues/416>`_)
+* add options to selectively ignore single/multi RMW tests. (`#403 <https://github.com/ros2/system_tests/issues/403>`_)
+* code style only: wrap after open parenthesis if not in one line. (`#397 <https://github.com/ros2/system_tests/issues/397>`_)
+* Remove ready_fn, and one self.proc_info. (`#391 <https://github.com/ros2/system_tests/issues/391>`_)
+* Clean up bounded sequences check. (`#393 <https://github.com/ros2/system_tests/issues/393>`_)
   * Clean up bounded sequences check
   1. Use a macro to extract repeated logic
   2. Check the sequence length so we get a test error message instead of segfaulting.
@@ -53,16 +53,16 @@ Forthcoming
 0.8.0 (2019-11-20)
 ------------------
 * 0.8.0
-* Revert "Skip rclcpp__rclpy__rmw_connext_cpp__rmw_fastrtps_cpp tests (`#382 <https://github.com/ros2/system_tests/issues/382>`_)" (`#383 <https://github.com/ros2/system_tests/issues/383>`_)
+* Revert "Skip rclcpp__rclpy__rmw_connext_cpp__rmw_fastrtps_cpp tests. (`#382 <https://github.com/ros2/system_tests/issues/382>`_)". (`#383 <https://github.com/ros2/system_tests/issues/383>`_)
   This reverts commit bde886a231ba262b2d8c1e81513b0c8f85e1f3bb.
-* Skip rclcpp__rclpy__rmw_connext_cpp__rmw_fastrtps_cpp tests (`#382 <https://github.com/ros2/system_tests/issues/382>`_)
+* Skip rclcpp__rclpy__rmw_connext_cpp__rmw_fastrtps_cpp tests. (`#382 <https://github.com/ros2/system_tests/issues/382>`_)
   These tests fail consistently due to an assertion in Fast-RTPS which was
   recently introduced.
-* fix condition to not skip FastRTPS to FastRTPS pub/sub tests (`#377 <https://github.com/ros2/system_tests/issues/377>`_)
+* fix condition to not skip FastRTPS to FastRTPS pub/sub tests. (`#377 <https://github.com/ros2/system_tests/issues/377>`_)
   * fix condition to not skip FastRTPS to FastRTPS pub/sub tests
   * fix and simplify comparison logic
   * skip WStrings on macOS from FastRTPS to Connext
-* Support Arrays.srv in communication tests (`#376 <https://github.com/ros2/system_tests/issues/376>`_)
+* Support Arrays.srv in communication tests. (`#376 <https://github.com/ros2/system_tests/issues/376>`_)
 * Contributors: Dirk Thomas, Jacob Perron, Michael Carroll, Scott K Logan
 
 0.7.1 (2019-05-29)
@@ -70,31 +70,31 @@ Forthcoming
 
 0.7.0 (2019-05-20)
 ------------------
-* Fix memory leaks in test_communication tests (`#368 <https://github.com/ros2/system_tests/issues/368>`_)
+* Fix memory leaks in test_communication tests. (`#368 <https://github.com/ros2/system_tests/issues/368>`_)
   Fix memory leaks detected by AddressSanitizer in
   test_message_serialization and test_messages_c tests.
-* Handle launch_testing assertExitCodes correctly (`#367 <https://github.com/ros2/system_tests/issues/367>`_)
-* Fix deprecation warnings (`#364 <https://github.com/ros2/system_tests/issues/364>`_)
+* Handle launch_testing assertExitCodes correctly. (`#367 <https://github.com/ros2/system_tests/issues/367>`_)
+* Fix deprecation warnings. (`#364 <https://github.com/ros2/system_tests/issues/364>`_)
 * Make test_subscriber_cpp always fail gracefully. (`#363 <https://github.com/ros2/system_tests/issues/363>`_)
   * Make test_subscriber_cpp always fail gracefully.
   * Use fprintf to stderr instead of std::cerr.
-* changes to avoid deprecated API's (`#361 <https://github.com/ros2/system_tests/issues/361>`_)
+* changes to avoid deprecated API's. (`#361 <https://github.com/ros2/system_tests/issues/361>`_)
   * changes to avoid deprecated API's
   * review comments
-* Corrected publish calls with shared_ptr signature (`#348 <https://github.com/ros2/system_tests/issues/348>`_)
+* Corrected publish calls with shared_ptr signature. (`#348 <https://github.com/ros2/system_tests/issues/348>`_)
   * Corrected publish calls with shared_ptr signature
   * Updated with PR comments
   * Correct linter failure
-* Fix issues with C messages test (`#355 <https://github.com/ros2/system_tests/issues/355>`_)
+* Fix issues with C messages test. (`#355 <https://github.com/ros2/system_tests/issues/355>`_)
   * Initialize BasicTypes field of Array
   Otherwise, tests may fail if garbage values are used.
   * Correct the number of BoundedSequences messages
   * Add C message tests for Constants.msg, Defaults.msg, and Empty.msg
-* skip cross vendor testing of OpenSplice for WStrings (`#354 <https://github.com/ros2/system_tests/issues/354>`_)
-* update to be compatible with latest QoS changes (`#349 <https://github.com/ros2/system_tests/issues/349>`_)
-* add WString tests (`#353 <https://github.com/ros2/system_tests/issues/353>`_)
+* skip cross vendor testing of OpenSplice for WStrings. (`#354 <https://github.com/ros2/system_tests/issues/354>`_)
+* update to be compatible with latest QoS changes. (`#349 <https://github.com/ros2/system_tests/issues/349>`_)
+* add WString tests. (`#353 <https://github.com/ros2/system_tests/issues/353>`_)
 * API updates for RMW preallocation work. (`#352 <https://github.com/ros2/system_tests/issues/352>`_)
-* Use new interface definitions (`#350 <https://github.com/ros2/system_tests/issues/350>`_)
+* Use new interface definitions. (`#350 <https://github.com/ros2/system_tests/issues/350>`_)
   * Replace Primitives with BasicTypes
   * Replace StaticArrayPrimitives with Arrays
   * Replace BoundedArrayPrimitives with BoundedSequences
@@ -110,7 +110,7 @@ Forthcoming
   * Update test_security package to use new interface definitions
   * Use BasicTypes for checking message serialization size
   It seems that BoundedSequences does not have a consistent size between tests.
-* Migrate launch tests to new launch_testing features & API (`#340 <https://github.com/ros2/system_tests/issues/340>`_)
+* Migrate launch tests to new launch_testing features & API. (`#340 <https://github.com/ros2/system_tests/issues/340>`_)
   * Update after launch_testing features becoming legacy.
   * Migrate test_rclcpp tests to new launch_testing API.
   * Migrate test_communication tests to new launch_testing API.
@@ -122,12 +122,12 @@ Forthcoming
   * Bump test_security tests timeout to please CI.
   * Address peer review comments.
   * Please flake8 on test_cli_remapping.
-* Update call to async_send_goal (`#346 <https://github.com/ros2/system_tests/issues/346>`_)
+* Update call to async_send_goal. (`#346 <https://github.com/ros2/system_tests/issues/346>`_)
   * Update call to async_send_goal
   It now takes an options struct that contains a reference to the feedback callback.
   * Use action client method for requesting goal result
   Otherwise, an exception is thrown since there was no result callback provided when sending the goal.
-* Rename action state transitions (`#342 <https://github.com/ros2/system_tests/issues/342>`_)
+* Rename action state transitions. (`#342 <https://github.com/ros2/system_tests/issues/342>`_)
   * Rename action state transitions
   Now using active verbs as described in the design doc:
   http://design.ros2.org/articles/actions.html#goal-states
@@ -135,8 +135,8 @@ Forthcoming
 * Merge pull request `#339 <https://github.com/ros2/system_tests/issues/339>`_ from ros2/`ivanpauno/ros2#658 <https://github.com/ivanpauno/ros2/issues/658>`_
   Using ament_target_dependencies where possible
 * Used ament_target_directories where possible in test_communication CMakeLists
-* refactor test generation (`#336 <https://github.com/ros2/system_tests/issues/336>`_)
-* update char type mapping, update to use separated action types (`#315 <https://github.com/ros2/system_tests/issues/315>`_)
+* refactor test generation. (`#336 <https://github.com/ros2/system_tests/issues/336>`_)
+* update char type mapping, update to use separated action types. (`#315 <https://github.com/ros2/system_tests/issues/315>`_)
   * update char type mapping
   * match renamed action types
   * use correct term
@@ -144,7 +144,7 @@ Forthcoming
   * make the build pass for now
   * update action API
   * update action API
-* Add communication tests for Python Actions (`#333 <https://github.com/ros2/system_tests/issues/333>`_)
+* Add communication tests for Python Actions. (`#333 <https://github.com/ros2/system_tests/issues/333>`_)
 * Add launch along with launch_testing as test dependencies. (`#334 <https://github.com/ros2/system_tests/issues/334>`_)
 * Drops legacy launch API usage. (`#328 <https://github.com/ros2/system_tests/issues/328>`_)
   * Drops legacy launch API usage.
@@ -154,10 +154,10 @@ Forthcoming
   * Applies misc fixes after Windows triaging.
   * Applies more fixes after Windows triaging.
   * Disables test_rclcpp cross vendor tests on Windows.
-* Add test for test_msgs/NestedMessage.action (`#330 <https://github.com/ros2/system_tests/issues/330>`_)
+* Add test for test_msgs/NestedMessage.action. (`#330 <https://github.com/ros2/system_tests/issues/330>`_)
   * Add test for test_msgs/NestedMessage.action
   * Fixes for cpplint and uncrustify
-* pass context to wait set (`#324 <https://github.com/ros2/system_tests/issues/324>`_)
+* pass context to wait set. (`#324 <https://github.com/ros2/system_tests/issues/324>`_)
 * Contributors: Dirk Thomas, Jacob Perron, M. M, Michael Carroll, Michel Hidalgo, Prajakta Gokhale, Shane Loretz, William Woodall, ivanpauno
 
 0.6.0 (2018-12-14)
@@ -167,16 +167,16 @@ Forthcoming
   Builds are actually failing for all cross-vendor tests involving
   rmw_fastrtps_cpp not just those between Connext and Fast-RTPS.
   * Address linter feedback.
-* Disable cross vendor tests for pub/sub fastrtps/connext (`#320 <https://github.com/ros2/system_tests/issues/320>`_)
+* Disable cross vendor tests for pub/sub fastrtps/connext. (`#320 <https://github.com/ros2/system_tests/issues/320>`_)
   * disable cross vendor tests for pub/sub fastrtps/connext
   * Only skip tests on Windows.
-* add Fibonacci test for actions (`#316 <https://github.com/ros2/system_tests/issues/316>`_)
+* add Fibonacci test for actions. (`#316 <https://github.com/ros2/system_tests/issues/316>`_)
   * add Fibonacci test for actions
   * fixup test creation
   * remove debug code
   * action tests depend on action client and server
   * static cast to get rid of warning
-* refactor to support init options and context (`#313 <https://github.com/ros2/system_tests/issues/313>`_)
+* refactor to support init options and context. (`#313 <https://github.com/ros2/system_tests/issues/313>`_)
   * refactor to support init options and context
   * fix security tests
   * pass context to timer api
@@ -185,32 +185,32 @@ Forthcoming
   * update expected output
   * add missing fini in test fixture
   * fixup pub/sub test fixture
-* only consider .msg files with a msg namespace (`#310 <https://github.com/ros2/system_tests/issues/310>`_)
-* add new fixtures (`#312 <https://github.com/ros2/system_tests/issues/312>`_)
+* only consider .msg files with a msg namespace. (`#310 <https://github.com/ros2/system_tests/issues/310>`_)
+* add new fixtures. (`#312 <https://github.com/ros2/system_tests/issues/312>`_)
   * add new fixtures
   * fix copy paste error
-* Update rcl_wait_set_add_guard_condition() call (`#311 <https://github.com/ros2/system_tests/issues/311>`_)
+* Update rcl_wait_set_add_guard_condition() call. (`#311 <https://github.com/ros2/system_tests/issues/311>`_)
   Now the function takes an optional output index argument.
 * Merge pull request `#307 <https://github.com/ros2/system_tests/issues/307>`_ from ros2/array-terminology
   rename dynamic array to sequence
 * rename files
 * rename dynamic array to sequence
-* use new error handling API from rcutils (`#306 <https://github.com/ros2/system_tests/issues/306>`_)
+* use new error handling API from rcutils. (`#306 <https://github.com/ros2/system_tests/issues/306>`_)
   * use new error handling API from rcutils
   * fix some more cases where the new error handling API is used
 * Merge pull request `#303 <https://github.com/ros2/system_tests/issues/303>`_ from ros2/hidmic/namespace-messages-with-subfolder
   Handles msg files with the same name in different subfolders
 * Prevents tests from being generated for action messages and services.
 * Handles msg files with the same name in different subfolders.
-* Add new test message type DynamicArrayStaticArrayPrimitivesNested for communcation tests (`#302 <https://github.com/ros2/system_tests/issues/302>`_)
+* Add new test message type DynamicArrayStaticArrayPrimitivesNested for communcation tests. (`#302 <https://github.com/ros2/system_tests/issues/302>`_)
 * use add_compile_options instead of setting only cxx flags
-* Use consolidated rcl_wait_set_clear() (`#292 <https://github.com/ros2/system_tests/issues/292>`_)
-* remove unused builtin_interfaces dependency (`#285 <https://github.com/ros2/system_tests/issues/285>`_)
-* only test serialization on fastrtps and connext (`#284 <https://github.com/ros2/system_tests/issues/284>`_)
+* Use consolidated rcl_wait_set_clear(). (`#292 <https://github.com/ros2/system_tests/issues/292>`_)
+* remove unused builtin_interfaces dependency. (`#285 <https://github.com/ros2/system_tests/issues/285>`_)
+* only test serialization on fastrtps and connext. (`#284 <https://github.com/ros2/system_tests/issues/284>`_)
   * only test serialization on fastrtps and connext
   * use skip_test
   * reset skip test
-* Expose cdr (`#267 <https://github.com/ros2/system_tests/issues/267>`_)
+* Expose cdr. (`#267 <https://github.com/ros2/system_tests/issues/267>`_)
   * change to new rclcpp subscription api
   * uncrustify
   * add serialization tests
@@ -219,36 +219,36 @@ Forthcoming
   * address review comments
   * warn unused
   * raw->serialized
-  * use size_t (`#283 <https://github.com/ros2/system_tests/issues/283>`_)
+  * use size_t. (`#283 <https://github.com/ros2/system_tests/issues/283>`_)
   * raw->serialized
   * use size_t
-* Use debug python executable on windows (`#281 <https://github.com/ros2/system_tests/issues/281>`_)
+* Use debug python executable on windows. (`#281 <https://github.com/ros2/system_tests/issues/281>`_)
   * use debug python executable on windows
   * get python debug executable from pythonextra
-* migrate launch -> launch.legacy (`#273 <https://github.com/ros2/system_tests/issues/273>`_)
-* account for null-terminator character (`#269 <https://github.com/ros2/system_tests/issues/269>`_)
+* migrate launch -> launch.legacy. (`#273 <https://github.com/ros2/system_tests/issues/273>`_)
+* account for null-terminator character. (`#269 <https://github.com/ros2/system_tests/issues/269>`_)
   * account for null-terminator character
   * modify tmpstr to be able to represent any size_t value
-* Use call_async (`#257 <https://github.com/ros2/system_tests/issues/257>`_)
-* [test_communication] Unique namespaces (`#256 <https://github.com/ros2/system_tests/issues/256>`_)
+* Use call_async. (`#257 <https://github.com/ros2/system_tests/issues/257>`_)
+* [test_communication] Unique namespaces. (`#256 <https://github.com/ros2/system_tests/issues/256>`_)
   * add namespace to pubsub tests
   * add namespace to service tests
   * uncrustify
   * use UTC time rather than datetime
   * Single quotes
   * make arguments mandatory like in C++
-* Skip python service tests only for connext dynamic (`#249 <https://github.com/ros2/system_tests/issues/249>`_)
+* Skip python service tests only for connext dynamic. (`#249 <https://github.com/ros2/system_tests/issues/249>`_)
   * enable python services for all but connext dynamic
   * remove changes from 248
   * up to 20 spins
   * Revert "remove changes from 248"
   This reverts commit 77fc9f4b5e488533dfc8e079178ed17e2f8c288f.
-* reenable service tests: rclcpp requester rclpy replier on Windows (`#248 <https://github.com/ros2/system_tests/issues/248>`_)
+* reenable service tests: rclcpp requester rclpy replier on Windows. (`#248 <https://github.com/ros2/system_tests/issues/248>`_)
 * Contributors: Alexis Pojomovsky, Dirk Thomas, Jacob Perron, Karsten Knese, Michel Hidalgo, Mikael Arguedas, Shane Loretz, Steven! Ragnarök, William Woodall
 
 0.4.0 (2017-12-08)
 ------------------
-* Update for rclcpp namespace removals (`#255 <https://github.com/ros2/system_tests/issues/255>`_)
+* Update for rclcpp namespace removals. (`#255 <https://github.com/ros2/system_tests/issues/255>`_)
   * Remove subscription:: namespace
   * Remove client:: namespace
   * Remove service:: namespace
@@ -261,22 +261,22 @@ Forthcoming
 * Merge pull request `#252 <https://github.com/ros2/system_tests/issues/252>`_ from ros2/check_if_test_exists_before_adding_properties
   check if test exists before adding properties
 * check if test exists before adding properties
-* cmake 3.10 compatibility: pass absolute path to file(GENERATE) function (`#251 <https://github.com/ros2/system_tests/issues/251>`_)
-* Wait for service before calling it (`#244 <https://github.com/ros2/system_tests/issues/244>`_)
+* cmake 3.10 compatibility: pass absolute path to file(GENERATE) function. (`#251 <https://github.com/ros2/system_tests/issues/251>`_)
+* Wait for service before calling it. (`#244 <https://github.com/ros2/system_tests/issues/244>`_)
   * Wait for service before calling it
   * Wait for a maximum of 15 seconds
   * Refactor to make sure cleanup happens
-* find gtest before macro invocation so that its not find during each macro invocation (`#246 <https://github.com/ros2/system_tests/issues/246>`_)
+* find gtest before macro invocation so that its not find during each macro invocation. (`#246 <https://github.com/ros2/system_tests/issues/246>`_)
 * Merge pull request `#245 <https://github.com/ros2/system_tests/issues/245>`_ from ros2/ament_cmake_pytest
   use ament_cmake_pytest instead of ament_cmake_nose
 * use ament_cmake_pytest instead of ament_cmake_nose
 * typo
-* Restore bigobj (`#241 <https://github.com/ros2/system_tests/issues/241>`_)
+* Restore bigobj. (`#241 <https://github.com/ros2/system_tests/issues/241>`_)
   * [test_communication] restore bigobj
   * [test_security] restore bigobj
   * make it explicit that bigobj is needed only in debug mode
 * 240 fixups
-* Replaces "std::cout<<" with "printf" (`#240 <https://github.com/ros2/system_tests/issues/240>`_)
+* Replaces "std::cout<<" with "printf". (`#240 <https://github.com/ros2/system_tests/issues/240>`_)
   * [test_communication]replace uses of iostream
   * [test_rclcpp] remove use of std::cout except flushing
   * missed some
@@ -284,7 +284,7 @@ Forthcoming
   * remove now unused include
 * Merge pull request `#230 <https://github.com/ros2/system_tests/issues/230>`_ from ros2/test_connext_secure
   Test connext secure
-* removing /bigobj flag on windows (`#239 <https://github.com/ros2/system_tests/issues/239>`_)
+* removing /bigobj flag on windows. (`#239 <https://github.com/ros2/system_tests/issues/239>`_)
 * move security tests in different package
   generate new security files with latest sros2 generation script
 * Merge pull request `#236 <https://github.com/ros2/system_tests/issues/236>`_ from ros2/optimize_test_publisher_subscriber
@@ -292,10 +292,10 @@ Forthcoming
 * Minimize the number of calls to message.__repr_\_()
 * Merge pull request `#233 <https://github.com/ros2/system_tests/issues/233>`_ from ros2/uncrustify_master
   update style to match latest uncrustify
-* n need to tweak python path now that messages come from test_msgs (`#232 <https://github.com/ros2/system_tests/issues/232>`_)
+* n need to tweak python path now that messages come from test_msgs. (`#232 <https://github.com/ros2/system_tests/issues/232>`_)
 * update style to match latest uncrustify
 * 0.0.3
-* Test msgs (`#223 <https://github.com/ros2/system_tests/issues/223>`_)
+* Test msgs. (`#223 <https://github.com/ros2/system_tests/issues/223>`_)
   * use messages from test_msgs
   * update tests to use messages from new package
   * delete unused message files
@@ -306,21 +306,21 @@ Forthcoming
   * rename message field for DynamicArrayPrimitivesNested
   * remove spurious line change
   * iterate over interface files to built list of services and messages
-* Update test_messages_c.cpp (`#226 <https://github.com/ros2/system_tests/issues/226>`_)
+* Update test_messages_c.cpp. (`#226 <https://github.com/ros2/system_tests/issues/226>`_)
   Array initialized with 2 while 3 elements filled, increased size.
-* call rclcpp::shutdown in all tests (`#225 <https://github.com/ros2/system_tests/issues/225>`_)
+* call rclcpp::shutdown in all tests. (`#225 <https://github.com/ros2/system_tests/issues/225>`_)
 * commenting out unused import for flake8 compliance
 * Merge pull request `#222 <https://github.com/ros2/system_tests/issues/222>`_ from ros2/enable_array_tests_opensplice
   reenable array tests with OpenSplice
 * reenable array tests with OpenSplice
-* Ensure nodes have called rclcpp::shutdown before exiting (`#220 <https://github.com/ros2/system_tests/issues/220>`_)
-* use unbuffered Python in launch files (`#218 <https://github.com/ros2/system_tests/issues/218>`_)
+* Ensure nodes have called rclcpp::shutdown before exiting. (`#220 <https://github.com/ros2/system_tests/issues/220>`_)
+* use unbuffered Python in launch files. (`#218 <https://github.com/ros2/system_tests/issues/218>`_)
   * use unbuffered Python in launch files
   * use unbuffered Python in secure pubsub launch file
-* testing array longers than 101 (`#216 <https://github.com/ros2/system_tests/issues/216>`_)
-* Use _WIN32 everywhere (`#213 <https://github.com/ros2/system_tests/issues/213>`_)
+* testing array longers than 101. (`#216 <https://github.com/ros2/system_tests/issues/216>`_)
+* Use _WIN32 everywhere. (`#213 <https://github.com/ros2/system_tests/issues/213>`_)
 * 0.0.2
-* C memleak testing (`#211 <https://github.com/ros2/system_tests/issues/211>`_)
+* C memleak testing. (`#211 <https://github.com/ros2/system_tests/issues/211>`_)
   * Added nested message that always breaks because of the bug
   * Added C++ code for DynamicArrayPrimitivesNested message
   * Fixed style and publisher/subscriber (combo) test case
@@ -336,10 +336,10 @@ Forthcoming
   * use all messages fron the fixtures rather the only the first one
   * linters
   * what's cool with functions is that you can call them rather than copy-n-paste code
-* destroy node before shutdown (`#210 <https://github.com/ros2/system_tests/issues/210>`_)
+* destroy node before shutdown. (`#210 <https://github.com/ros2/system_tests/issues/210>`_)
 * use CMAKE_X_STANDARD and check compiler rather than platform
-* add option for security tests (`#208 <https://github.com/ros2/system_tests/issues/208>`_)
-* Adding security tests (`#204 <https://github.com/ros2/system_tests/issues/204>`_)
+* add option for security tests. (`#208 <https://github.com/ros2/system_tests/issues/208>`_)
+* Adding security tests. (`#204 <https://github.com/ros2/system_tests/issues/204>`_)
   * WIP: add security tests
   * keys, certs and crap used for testing
   * switching to a multi process test because of https://github.com/eProsima/Fast-RTPS/issues/106
@@ -364,35 +364,35 @@ Forthcoming
   * rename test suite to match what is being tested
   * rename security environment variables
   * trailing whitespace
-* destroy node before shutdown (`#207 <https://github.com/ros2/system_tests/issues/207>`_)
+* destroy node before shutdown. (`#207 <https://github.com/ros2/system_tests/issues/207>`_)
 * Merge pull request `#205 <https://github.com/ros2/system_tests/issues/205>`_ from ros2/move_time
   remove unnecessary usage of RCL_S_TO_NS
 * remove unnecessary usage of RCL_S_TO_NS
-* remove unnecessary topic name check (`#203 <https://github.com/ros2/system_tests/issues/203>`_)
+* remove unnecessary topic name check. (`#203 <https://github.com/ros2/system_tests/issues/203>`_)
   * remove incorrect and unnecessary topic name check
   * up timeout for slow test
-* set_tests_properties for correct requester replier executable (`#202 <https://github.com/ros2/system_tests/issues/202>`_)
-* support addition of node namespace in rclcpp API (`#196 <https://github.com/ros2/system_tests/issues/196>`_)
+* set_tests_properties for correct requester replier executable. (`#202 <https://github.com/ros2/system_tests/issues/202>`_)
+* support addition of node namespace in rclcpp API. (`#196 <https://github.com/ros2/system_tests/issues/196>`_)
 * Merge pull request `#199 <https://github.com/ros2/system_tests/issues/199>`_ from ros2/use_explicit_kwargs
   use explicit kwargs
 * use explicit kwargs
-* Add missing exec dep on builtin_interfaces (`#198 <https://github.com/ros2/system_tests/issues/198>`_)
+* Add missing exec dep on builtin_interfaces. (`#198 <https://github.com/ros2/system_tests/issues/198>`_)
   * Add missing exec dep on builtin_interfaces
   * alphabetically is better
-* Fix deps (`#192 <https://github.com/ros2/system_tests/issues/192>`_)
+* Fix deps. (`#192 <https://github.com/ros2/system_tests/issues/192>`_)
   * every day I'm reshuffling
   * auto
-* Install msgs and fixtures for use by other packages (`#190 <https://github.com/ros2/system_tests/issues/190>`_)
+* Install msgs and fixtures for use by other packages. (`#190 <https://github.com/ros2/system_tests/issues/190>`_)
   * Install msgs and fixtures for use by other packages
   * reshuffle depends
   * reshuffle depends
-* Use -Wpedantic (`#189 <https://github.com/ros2/system_tests/issues/189>`_)
+* Use -Wpedantic. (`#189 <https://github.com/ros2/system_tests/issues/189>`_)
   * add pedantic flag
   * fix pedantic warning
   * fix C4456 warning
   * reduce scope of wait_sets
   * reduce scope rather than renaming variable
-* Comply with flake8 + flake-import-order (`#188 <https://github.com/ros2/system_tests/issues/188>`_)
+* Comply with flake8 + flake-import-order. (`#188 <https://github.com/ros2/system_tests/issues/188>`_)
 * Merge pull request `#187 <https://github.com/ros2/system_tests/issues/187>`_ from ros2/use_rmw_impl
   use rmw implementation
 * remove usage of RCLPY_IMPLEMENTATION
@@ -401,7 +401,7 @@ Forthcoming
   use rosidl_typesupport_c
 * use rosidl_typesupport_c
 * replace deprecated <CONFIGURATION> with <CONFIG>
-* use new rclcpp::literals namespace + constness issue fix (`#178 <https://github.com/ros2/system_tests/issues/178>`_)
+* use new rclcpp::literals namespace + constness issue fix. (`#178 <https://github.com/ros2/system_tests/issues/178>`_)
   * use new rclcpp::literals namespace
   * test_subscription.cpp: fix missing 'const'
   wait_for_future() required a non-const reference but
@@ -409,13 +409,13 @@ Forthcoming
   which aren't lvalue.
   * add NOLINT to 'using namespace rclcpp::literals'
   * use std::chrono_literals
-* c++14 (`#181 <https://github.com/ros2/system_tests/issues/181>`_)
-* rclpy tests match rclcpp timing (`#183 <https://github.com/ros2/system_tests/issues/183>`_)
+* c++14. (`#181 <https://github.com/ros2/system_tests/issues/181>`_)
+* rclpy tests match rclcpp timing. (`#183 <https://github.com/ros2/system_tests/issues/183>`_)
 * Merge pull request `#180 <https://github.com/ros2/system_tests/issues/180>`_ from ros2/typesupport_reloaded
   append build space to library path
-* test loong strings for services (`#179 <https://github.com/ros2/system_tests/issues/179>`_)
+* test loong strings for services. (`#179 <https://github.com/ros2/system_tests/issues/179>`_)
 * append build space to library path
-* Mark blacklisted tests as skipped (`#177 <https://github.com/ros2/system_tests/issues/177>`_)
+* Mark blacklisted tests as skipped. (`#177 <https://github.com/ros2/system_tests/issues/177>`_)
   * skip opensplice failing tests
   * use new SKIP_TEST arg rather than hacking templates
   * lint cmake
@@ -423,17 +423,17 @@ Forthcoming
   * use _SKIP_TEST variable everywhere
   * rename _SKIP_TEST to SKIP_TEST
   * indent cmake
-* Test python services (`#175 <https://github.com/ros2/system_tests/issues/175>`_)
+* Test python services. (`#175 <https://github.com/ros2/system_tests/issues/175>`_)
   * extend service template to test python services
   * trailing whitespace
   * skipping tests raising SkipTest
   * remove SKIP_TEST for non nose tests
   * add bracket because linter doesnt understand multiline conditions
-* remove unnecessary ament_index_build_path (`#174 <https://github.com/ros2/system_tests/issues/174>`_)
-* use generator for target file location (`#173 <https://github.com/ros2/system_tests/issues/173>`_)
+* remove unnecessary ament_index_build_path. (`#174 <https://github.com/ros2/system_tests/issues/174>`_)
+* use generator for target file location. (`#173 <https://github.com/ros2/system_tests/issues/173>`_)
   * use generator for target file location
   * remove unused variable
-* add a bunch of tests for rcl and rosidl_generator_c messages (`#122 <https://github.com/ros2/system_tests/issues/122>`_)
+* add a bunch of tests for rcl and rosidl_generator_c messages. (`#122 <https://github.com/ros2/system_tests/issues/122>`_)
   * rcl tests for rosidl_generator_c and c type support
   * add test source file
   * don't need assignn
@@ -450,7 +450,7 @@ Forthcoming
 * Merge pull request `#172 <https://github.com/ros2/system_tests/issues/172>`_ from ros2/fix_pyflakes
   fix pyflakes
 * fix pyflakes
-* Test cross RCL communication (`#152 <https://github.com/ros2/system_tests/issues/152>`_)
+* Test cross RCL communication. (`#152 <https://github.com/ros2/system_tests/issues/152>`_)
   * unify templates and configure them in a macro
   * remove unnecessary logic
   * reenable single process tests
@@ -466,7 +466,7 @@ Forthcoming
 * Merge pull request `#171 <https://github.com/ros2/system_tests/issues/171>`_ from ros2/rosidl_target_interfaces_add_dependency
   remove obsolete add_dependencies
 * remove obsolete add_dependencies
-* support local graph changes in Connext (`#164 <https://github.com/ros2/system_tests/issues/164>`_)
+* support local graph changes in Connext. (`#164 <https://github.com/ros2/system_tests/issues/164>`_)
   * remove blocks and workarounds on service tests
   * remove no longer needed sleep
   * remove blocks and workarounds on new service test
@@ -481,7 +481,7 @@ Forthcoming
   * increase timeout for test_rclcpp/test_subscription to 60s
   * comment cleanup
   * Fix typo
-* Fixed tests after pull request `ros2/rclcpp#261 <https://github.com/ros2/rclcpp/issues/261>`_ (`#170 <https://github.com/ros2/system_tests/issues/170>`_)
+* Fixed tests after pull request `ros2/rclcpp#261 <https://github.com/ros2/rclcpp/issues/261>`_. (`#170 <https://github.com/ros2/system_tests/issues/170>`_)
 * Merge pull request `#168 <https://github.com/ros2/system_tests/issues/168>`_ from ros2/looong_strings
   tests strings > 256
 * tests strings > 256
@@ -490,7 +490,7 @@ Forthcoming
 * comply with stricter cpplint rules
 * increase max spin count to handle fastrtps different spin behaviour
 * enable fastrtps python tests
-* Ascii fixture (`#161 <https://github.com/ros2/system_tests/issues/161>`_)
+* Ascii fixture. (`#161 <https://github.com/ros2/system_tests/issues/161>`_)
   * use ASCII value for char
   * homogenize BoundedArrayPrimitives fixtures
 * Merge pull request `#148 <https://github.com/ros2/system_tests/issues/148>`_ from ros2/remove_noop
@@ -514,7 +514,7 @@ Forthcoming
 * support bounded vectors
 * add communication tests for bounded arrays
 * update test times
-* Use wait_for_service to make Service tests less flaky (`#132 <https://github.com/ros2/system_tests/issues/132>`_)
+* Use wait_for_service to make Service tests less flaky. (`#132 <https://github.com/ros2/system_tests/issues/132>`_)
   * use wait_for_service to make tests less flaky
   * realign timeouts
   * avoid using wait_for_service with fastrtps
@@ -522,16 +522,16 @@ Forthcoming
   * [test_communication] avoid wait_for_service with fastrtps
   it can be undone once fastrtps supports wait_for_service
   * add test to ensure wait_for_service wakes after shutdown/sigint
-* Windows python debug (`#138 <https://github.com/ros2/system_tests/issues/138>`_)
+* Windows python debug. (`#138 <https://github.com/ros2/system_tests/issues/138>`_)
   * pass python interpreter to nose test
   * rename interpreter to executable
   * rename PYTHON_DBG_EXECUTABLE to PYTHON_EXECUTABLE_DEBUG
   * cmake3.5 remove variable expansion
-* add tests for all message_files (`#125 <https://github.com/ros2/system_tests/issues/125>`_)
+* add tests for all message_files. (`#125 <https://github.com/ros2/system_tests/issues/125>`_)
   * add tests for all messages
   * do not run opensplice failing test
   * use cmake3.5 syntax, fixed rmw_implementation variable
-* dont assert type support during import (`#141 <https://github.com/ros2/system_tests/issues/141>`_)
+* dont assert type support during import. (`#141 <https://github.com/ros2/system_tests/issues/141>`_)
 * wrap complex condition
 * Merge pull request `#136 <https://github.com/ros2/system_tests/issues/136>`_ from ros2/cmake35
   require CMake 3.5
@@ -541,7 +541,7 @@ Forthcoming
 * fix string comparison cmake
 * Merge pull request `#121 <https://github.com/ros2/system_tests/issues/121>`_ from ros2/add_rclpy_talker_listener_to_test_communication
   add tests for rclpy talker listener
-* check the rmw id matches in cross-vendor tests (`#126 <https://github.com/ros2/system_tests/issues/126>`_)
+* check the rmw id matches in cross-vendor tests. (`#126 <https://github.com/ros2/system_tests/issues/126>`_)
 * rclpy from install folder
 * revert cpp tests addition, handled by `#125 <https://github.com/ros2/system_tests/issues/125>`_
 * cleanup
@@ -599,11 +599,11 @@ Forthcoming
 * add message which has fields with the same non-primitive type
 * Merge pull request `#115 <https://github.com/ros2/system_tests/issues/115>`_ from ros2/ctest_build_testing
   use CTest BUILD_TESTING
-* Get only C++ typesupport implementations (`#114 <https://github.com/ros2/system_tests/issues/114>`_)
+* Get only C++ typesupport implementations. (`#114 <https://github.com/ros2/system_tests/issues/114>`_)
   * Get only C++ typesupport implementations
   * Add busy_wait_for_subscriber to make publisher test unflaky
 * use CTest BUILD_TESTING
-* Use rcl (`#113 <https://github.com/ros2/system_tests/issues/113>`_)
+* Use rcl. (`#113 <https://github.com/ros2/system_tests/issues/113>`_)
   * init is required now
   * Fix multiple init calls
   * Add init to a test, increase timeout and change an assertion to an expectation
@@ -690,7 +690,7 @@ Forthcoming
 * fix narrowing conversion error on windows
 * Merge pull request `#5 <https://github.com/ros2/system_tests/issues/5>`_ from ros2/refactor_msg_gen
   refactor message generation
-* refactor message generation (`ros2/ros2#48 <https://github.com/ros2/ros2/issues/48>`_)
+* refactor message generation. (`ros2/ros2#48 <https://github.com/ros2/ros2/issues/48>`_)
 * Merge pull request `#4 <https://github.com/ros2/system_tests/issues/4>`_ from ros2/test_nested
   add tests for nested messages
 * add tests for builtin messages

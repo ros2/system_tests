@@ -13,7 +13,7 @@ Forthcoming
 
 0.10.0 (2021-03-18)
 -------------------
-* Add support for rmw_connextdds (`#463 <https://github.com/ros2/system_tests/issues/463>`_)
+* Add support for rmw_connextdds. (`#463 <https://github.com/ros2/system_tests/issues/463>`_)
 * Run QoS tests. (`#441 <https://github.com/ros2/system_tests/issues/441>`_)
   * Fix deadline QoS tests.
   * Use longer deadlines for rmw_connext_cpp.
@@ -22,7 +22,7 @@ Forthcoming
   * Explain different QoS durations.
   * Cope with discovery noise in lifespan test.
   * Adjust lifespan test again to deal discovery.
-* Update maintainers (`#450 <https://github.com/ros2/system_tests/issues/450>`_)
+* Update maintainers. (`#450 <https://github.com/ros2/system_tests/issues/450>`_)
 * Contributors: Andrea Sorbini, Jacob Perron, Michel Hidalgo
 
 0.9.1 (2020-07-06)
@@ -30,18 +30,18 @@ Forthcoming
 
 0.9.0 (2020-06-04)
 ------------------
-* code style only: wrap after open parenthesis if not in one line (`#397 <https://github.com/ros2/system_tests/issues/397>`_)
+* code style only: wrap after open parenthesis if not in one line. (`#397 <https://github.com/ros2/system_tests/issues/397>`_)
 * Contributors: Dirk Thomas
 
 0.8.0 (2019-11-20)
 ------------------
 * 0.8.0
-* Remove broken constructors (`#389 <https://github.com/ros2/system_tests/issues/389>`_)
+* Remove broken constructors. (`#389 <https://github.com/ros2/system_tests/issues/389>`_)
 * Contributors: Dan Rose, Michael Carroll
 
 0.7.1 (2019-05-29)
 ------------------
-* QoS System Tests (`#347 <https://github.com/ros2/system_tests/issues/347>`_)
+* QoS System Tests. (`#347 <https://github.com/ros2/system_tests/issues/347>`_)
   * Added new Quality of Service system test package
   Added simple test for liveliness
   * Added deadline system test
