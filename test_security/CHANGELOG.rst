@@ -2,9 +2,6 @@
 Changelog for package test_security
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
-
 0.11.1 (2021-04-26)
 -------------------
 
@@ -17,8 +14,6 @@ Forthcoming
 * Update deprecated gtest macros. (`#449 <https://github.com/ros2/system_tests/issues/449>`_)
 * Update maintainers. (`#450 <https://github.com/ros2/system_tests/issues/450>`_)
 * Run test_security on CycloneDDS as well. (`#408 <https://github.com/ros2/system_tests/issues/408>`_)
-  * [test_security] enable tests for cyclonedds
-  * Remove TODO now that all tier1 RMW support DDS-Security
 * Contributors: Andrea Sorbini, Audrow Nash, Jacob Perron, Mikael Arguedas
 
 0.9.1 (2020-07-06)

@@ -2,9 +2,6 @@
 Changelog for package test_quality_of_service
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
-
 0.11.1 (2021-04-26)
 -------------------
 
@@ -15,13 +12,6 @@ Forthcoming
 -------------------
 * Add support for rmw_connextdds. (`#463 <https://github.com/ros2/system_tests/issues/463>`_)
 * Run QoS tests. (`#441 <https://github.com/ros2/system_tests/issues/441>`_)
-  * Fix deadline QoS tests.
-  * Use longer deadlines for rmw_connext_cpp.
-  * Fix lifespan QoS test.
-  * Use longer lifespans for rmw_connext_cpp.
-  * Explain different QoS durations.
-  * Cope with discovery noise in lifespan test.
-  * Adjust lifespan test again to deal discovery.
 * Update maintainers. (`#450 <https://github.com/ros2/system_tests/issues/450>`_)
 * Contributors: Andrea Sorbini, Jacob Perron, Michel Hidalgo
 
