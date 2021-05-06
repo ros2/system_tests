@@ -2,14 +2,9 @@
 Changelog for package test_cli_remapping
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
-
 0.11.1 (2021-04-26)
 -------------------
 * Fix test_cli_remapping flaky test. (`#470 <https://github.com/ros2/system_tests/issues/470>`_)
-  * Change remapped names to prevent collisions
-  * **locals() -> random_string kwarg
 * Contributors: Shane Loretz
 
 0.11.0 (2021-04-06)

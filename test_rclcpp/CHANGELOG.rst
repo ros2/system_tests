@@ -2,36 +2,22 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
-
 0.11.1 (2021-04-26)
 -------------------
 
 0.11.0 (2021-04-06)
 -------------------
-* Revert "disable flakey test". (`#467 <https://github.com/ros2/system_tests/issues/467>`_)
-  This reverts commit 4bedf8dcf7f78b69dd1721a999c40f443e9f4896.
+* Reenable test that used to be flaky. (`#467 <https://github.com/ros2/system_tests/issues/467>`_)
 * Get_parameters_service\_ should return empty if allow_undeclared\_ is false. (`#466 <https://github.com/ros2/system_tests/issues/466>`_)
 * Contributors: Michel Hidalgo, Tomoya Fujita
 
 0.10.0 (2021-03-18)
 -------------------
 * Make test pass after rclcpp`#1532 <https://github.com/ros2/system_tests/issues/1532>`_. (`#465 <https://github.com/ros2/system_tests/issues/465>`_)
-  * Ignore qos parameter overrides
-  * Improve flaky test
 * Adapt tests to statically typed parameters. (`#462 <https://github.com/ros2/system_tests/issues/462>`_)
 * Guard against TOCTTOU with rclcpp::ok and rclcpp:spin_some. (`#459 <https://github.com/ros2/system_tests/issues/459>`_)
-  Fixes `#458 <https://github.com/ros2/system_tests/issues/458>`_.
-  An exception can be thrown if an interrupt occurs between checking rclcpp::ok() and rclcpp::spin_some().
-  Related to https://github.com/ros2/rclcpp/issues/1066
 * Update parameter client test with timeout. (`#457 <https://github.com/ros2/system_tests/issues/457>`_)
-  * Update parameter client test with timeout.
-  * Test duration should be long enough not to detect unnecessary timeout
 * Call rclcpp::init and rclcpp::shutdown in each test for test_rclcpp. (`#454 <https://github.com/ros2/system_tests/issues/454>`_)
-  * Fix test_rclcpp system tests
-  * Cleanup
-  * Add comment about test failure
 * Set cppcheck timeout to 400 seconds. (`#453 <https://github.com/ros2/system_tests/issues/453>`_)
 * Modify to match Waitable interface adding take_data. (`#444 <https://github.com/ros2/system_tests/issues/444>`_)
 * Update maintainers. (`#450 <https://github.com/ros2/system_tests/issues/450>`_)

@@ -2,9 +2,6 @@
 Changelog for package test_communication
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
-
 0.11.1 (2021-04-26)
 -------------------
 
@@ -14,13 +11,9 @@ Forthcoming
 0.10.0 (2021-03-18)
 -------------------
 * Add support for rmw_connextdds. (`#463 <https://github.com/ros2/system_tests/issues/463>`_)
-* Kill off the ros2 daemon before running tests.
-* Remove Opensplice from test_communication.
+* Kill off the ros2 daemon before running tests. (`#460 <https://github.com/ros2/system_tests/pull/460>`_)
+* Remove Opensplice from test_communication. (`#460 <https://github.com/ros2/system_tests/pull/460>`_)
 * Make TestMessageSerialization robust to missed messages. (`#456 <https://github.com/ros2/system_tests/issues/456>`_)
-  Though unlikely, I think it's possible for the first couple messages to be missed since we directly
-  start publishing after creating the subscription. If this happens, it will throw off the expected
-  value based on the counter. I think this is what was responsible for the reported test failure in `#451 <https://github.com/ros2/system_tests/issues/451>`_.
-  This change accounts for possible missed messages by setting the counter to the value in the first received message.
 * Add corresponding rclcpp::shutdown. (`#455 <https://github.com/ros2/system_tests/issues/455>`_)
 * Update maintainers. (`#450 <https://github.com/ros2/system_tests/issues/450>`_)
 * Contributors: Andrea Sorbini, Chris Lalancette, Jacob Perron, Stephen Brawner
