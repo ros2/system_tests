@@ -38,37 +38,37 @@ Forthcoming
 
 0.7.1 (2019-05-29)
 ------------------
-* update to use new parameter option names. (`#370 <https://github.com/ros2/system_tests/issues/370>`_)
+* Update to use new parameter option names. (`#370 <https://github.com/ros2/system_tests/issues/370>`_)
 * Contributors: William Woodall
 
 0.7.0 (2019-05-20)
 ------------------
-* disable long term flaky test test_params_yaml. (`#369 <https://github.com/ros2/system_tests/issues/369>`_)
+* Disable long term flaky test test_params_yaml. (`#369 <https://github.com/ros2/system_tests/issues/369>`_)
 * Declaring initial parameters. (`#358 <https://github.com/ros2/system_tests/issues/358>`_)
 * Merge pull request `#356 <https://github.com/ros2/system_tests/issues/356>`_ from ros2/issue/`#321 <https://github.com/ros2/system_tests/issues/321>`__enhance_parameter_api
   Using new parameter API: allowing undeclared parameters.
 * Using new parameter API; allowing undeclared parameters.
 * Read only parameters. (`#278 <https://github.com/ros2/system_tests/issues/278>`_)
   * Expect declared parameters + use_sim_time
-  * replace create_parameter with declare_parameter
+  * Replace create_parameter with declare_parameter
   * Expect declared parameters + use_sim_time
-  * replace create_parameter with declare_parameter
-  * fixup node constructor now that we have NodeOptions
-  * cleanup test_parameters_server.cpp
-  * silence warnings for tests of deprecated methods
-  * remove redundant test (now lives in rclcpp's test_node.cpp)
-  * fixup tests
-  * extend deprecation warning suppression to support Windows too
-  * use option to allow declaring of parameters via yaml file for test
-* fixes a failing test introduced by the switch to array.array. (`#341 <https://github.com/ros2/system_tests/issues/341>`_)
+  * Replace create_parameter with declare_parameter
+  * Fixup node constructor now that we have NodeOptions
+  * Cleanup test_parameters_server.cpp
+  * Silence warnings for tests of deprecated methods
+  * Remove redundant test (now lives in rclcpp's test_node.cpp)
+  * Fixup tests
+  * Extend deprecation warning suppression to support Windows too
+  * Use option to allow declaring of parameters via yaml file for test
+* Fixes a failing test introduced by the switch to array.array. (`#341 <https://github.com/ros2/system_tests/issues/341>`_)
 * Contributors: Dirk Thomas, Juan Ignacio Ubeira, Shane Loretz
 
 0.6.0 (2018-12-14)
 ------------------
 * Test parameter behavior for rclpy nodes. (`#293 <https://github.com/ros2/system_tests/issues/293>`_)
 * Use debug python executable on windows. (`#281 <https://github.com/ros2/system_tests/issues/281>`_)
-  * use debug python executable on windows
-  * get python debug executable from pythonextra
+  * Use debug python executable on windows
+  * Get python debug executable from pythonextra
 * Test initializing parameters from command line. (`#274 <https://github.com/ros2/system_tests/issues/274>`_)
   * Add test_cli package with tests for __params:= argument
 * Contributors: Shane Loretz, Steven! Ragnarök
