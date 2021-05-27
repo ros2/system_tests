@@ -157,7 +157,6 @@ if(BUILD_TESTING)
 
     set(SKIP_TEST "")
 
-    # TODO(wjwwood): Connext and Fast-RTPS do not currently communicate over pub/sub
     set(rmw_implementation1_is_fastrtps FALSE)
     set(rmw_implementation2_is_fastrtps FALSE)
     if(rmw_implementation1 MATCHES "(.*)fastrtps(.*)")
@@ -165,12 +164,6 @@ if(BUILD_TESTING)
     endif()
     if(rmw_implementation2 MATCHES "(.*)fastrtps(.*)")
       set(rmw_implementation2_is_fastrtps TRUE)
-    endif()
-    if(
-      WIN32 AND
-      NOT "${rmw_implementation1_is_fastrtps}" STREQUAL "${rmw_implementation2_is_fastrtps}"
-    )
-      set(SKIP_TEST "SKIP_TEST")
     endif()
 
     set(rmw_implementation1_is_connext FALSE)
