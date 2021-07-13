@@ -34,6 +34,27 @@ void handle_add_two_ints_reqid(
   response->sum = request->a + request->b;
 }
 
+class DeferedCbServiceWrapper
+{
+public:
+  explicit DeferedCbServiceWrapper(rclcpp::Node & node)
+  {
+    impl_ = node.create_service<test_rclcpp::srv::AddTwoInts>(
+      "add_two_ints_defered_cb",
+      [this](
+        const std::shared_ptr<rmw_request_id_t> request_header,
+        const std::shared_ptr<test_rclcpp::srv::AddTwoInts::Request> request)
+      {
+        test_rclcpp::srv::AddTwoInts::Response response;
+        response.sum = request->a + request->b;
+        this->impl_->send_response(*request_header, response);
+      });
+  }
+
+private:
+  std::shared_ptr<rclcpp::Service<test_rclcpp::srv::AddTwoInts>> impl_;
+};
+
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
@@ -48,6 +69,8 @@ int main(int argc, char ** argv)
 
   auto service_return_req = node->create_service<test_rclcpp::srv::AddTwoInts>(
     "add_two_ints_reqid_return_request", handle_add_two_ints_reqid);
+
+  DeferedCbServiceWrapper defered_cb{*node};
 
   rclcpp::spin(node);
 
