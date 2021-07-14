@@ -17,6 +17,7 @@
 #include <test_rclcpp/srv/add_two_ints.hpp>
 
 #include <memory>
+#include <utility>
 
 void handle_add_two_ints_noreqid(
   const std::shared_ptr<test_rclcpp::srv::AddTwoInts::Request> request,
@@ -34,10 +35,13 @@ void handle_add_two_ints_reqid(
   response->sum = request->a + request->b;
 }
 
-class DeferedCbServiceWrapper
+class DeferedCbServiceWrapper : public std::enable_shared_from_this<DeferedCbServiceWrapper>
 {
 public:
-  explicit DeferedCbServiceWrapper(rclcpp::Node & node)
+  DeferedCbServiceWrapper() = default;
+
+  // we need two steps initialization because of shared_from_this()
+  void create_service(rclcpp::Node & node)
   {
     impl_ = node.create_service<test_rclcpp::srv::AddTwoInts>(
       "add_two_ints_defered_cb",
@@ -45,14 +49,34 @@ public:
         const std::shared_ptr<rmw_request_id_t> request_header,
         const std::shared_ptr<test_rclcpp::srv::AddTwoInts::Request> request)
       {
-        test_rclcpp::srv::AddTwoInts::Response response;
-        response.sum = request->a + request->b;
-        this->impl_->send_response(*request_header, response);
+        if (handle_defered_response_thread_.joinable()) {
+          throw std::runtime_error{"expected the callback to be called only once"};
+        }
+        fprintf(stderr, "handling request\n");
+        handle_defered_response_thread_ = std::thread {
+          [
+            me = this->shared_from_this(),
+            request = std::move(request),
+            request_header = std::move(request_header)]()
+          {
+            test_rclcpp::srv::AddTwoInts::Response response;
+            response.sum = request->a + request->b;
+            me->impl_->send_response(*request_header, response);
+          }};
+        fprintf(stderr, "launched thread\n");
       });
+  }
+
+  ~DeferedCbServiceWrapper()
+  {
+    if (handle_defered_response_thread_.joinable()) {
+      handle_defered_response_thread_.join();
+    }
   }
 
 private:
   std::shared_ptr<rclcpp::Service<test_rclcpp::srv::AddTwoInts>> impl_;
+  std::thread handle_defered_response_thread_;
 };
 
 int main(int argc, char ** argv)
@@ -70,10 +94,10 @@ int main(int argc, char ** argv)
   auto service_return_req = node->create_service<test_rclcpp::srv::AddTwoInts>(
     "add_two_ints_reqid_return_request", handle_add_two_ints_reqid);
 
-  DeferedCbServiceWrapper defered_cb{*node};
+  auto defered_cb = std::make_shared<DeferedCbServiceWrapper>();
+  defered_cb->create_service(*node);
 
   rclcpp::spin(node);
-
   rclcpp::shutdown();
   return 0;
 }
