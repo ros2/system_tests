@@ -97,6 +97,28 @@ int main(int argc, char ** argv)
   auto defered_cb = std::make_shared<DeferedCbServiceWrapper>();
   defered_cb->create_service(*node);
 
+  auto derefed_cb_with_handle = node->create_service<test_rclcpp::srv::AddTwoInts>(
+    "add_two_ints_defered_cb_with_handle",
+    [node](
+      const std::shared_ptr<rclcpp::Service<test_rclcpp::srv::AddTwoInts>> handle,
+      const std::shared_ptr<rmw_request_id_t> request_header,
+      const std::shared_ptr<test_rclcpp::srv::AddTwoInts::Request> request)
+    {
+      // We defer handling the response in another callback, for example a timer.
+      node->create_wall_timer(
+        std::chrono::nanoseconds{0},
+        [
+          handle = std::move(handle),
+          header = std::move(request_header),
+          request = std::move(request)
+        ]()
+        {
+          test_rclcpp::srv::AddTwoInts::Response response;
+          response.sum = request->a + request->b;
+          handle->send_response(*header, response);
+        });
+    });
+
   rclcpp::spin(node);
   rclcpp::shutdown();
   return 0;

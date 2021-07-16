@@ -134,3 +134,28 @@ TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_two_ints_de
   auto ret = rclcpp::spin_until_future_complete(node, result, 5s);  // Wait for the result.
   ASSERT_EQ(ret, rclcpp::FutureReturnCode::SUCCESS);
 }
+
+TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_two_ints_defcb_with_handle) {
+  auto node = rclcpp::Node::make_shared("test_services_client_add_two_ints_defered_cb");
+
+  auto client = node->create_client<test_rclcpp::srv::AddTwoInts>(
+    "add_two_ints_defered_cb_with_handle");
+  auto request = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
+  request->a = 4;
+  request->b = 5;
+
+  if (!client->wait_for_service(20s)) {
+    ASSERT_TRUE(false) << "service not available after waiting";
+  }
+
+  auto result = client->async_send_request(
+    request,
+    [](rclcpp::Client<test_rclcpp::srv::AddTwoInts>::SharedFutureWithRequest future) {
+      EXPECT_EQ(4, future.get().first->a);
+      EXPECT_EQ(5, future.get().first->b);
+      EXPECT_EQ(9, future.get().second->sum);
+    });
+
+  auto ret = rclcpp::spin_until_future_complete(node, result, 5s);  // Wait for the result.
+  ASSERT_EQ(ret, rclcpp::FutureReturnCode::SUCCESS);
+}
