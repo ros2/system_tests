@@ -52,8 +52,7 @@ public:
         if (handle_defered_response_thread_.joinable()) {
           throw std::runtime_error{"expected the callback to be called only once"};
         }
-        fprintf(stderr, "handling request\n");
-        handle_defered_response_thread_ = std::thread {
+        handle_defered_response_thread_ = std::thread(
           [
             me = this->shared_from_this(),
             request = std::move(request),
@@ -62,8 +61,7 @@ public:
             test_rclcpp::srv::AddTwoInts::Response response;
             response.sum = request->a + request->b;
             me->impl_->send_response(*request_header, response);
-          }};
-        fprintf(stderr, "launched thread\n");
+          });
       });
   }
 
