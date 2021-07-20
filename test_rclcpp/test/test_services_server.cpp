@@ -52,9 +52,10 @@ public:
         if (handle_defered_response_thread_.joinable()) {
           throw std::runtime_error{"expected the callback to be called only once"};
         }
+        auto shared_this = this->shared_from_this();
         handle_defered_response_thread_ = std::thread(
           [
-            me = this->shared_from_this(),
+            me = std::move(shared_this),
             request = std::move(request),
             request_header = std::move(request_header)]()
           {
