@@ -136,7 +136,7 @@ TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_two_ints_de
 }
 
 TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_two_ints_defcb_with_handle) {
-  auto node = rclcpp::Node::make_shared("test_services_client_add_two_ints_defered_cb");
+  auto node = rclcpp::Node::make_shared("test_services_client_add_two_ints_defered_cb_with_handle");
 
   auto client = node->create_client<test_rclcpp::srv::AddTwoInts>(
     "add_two_ints_defered_cb_with_handle");
