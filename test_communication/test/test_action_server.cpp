@@ -22,6 +22,8 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 
+#include "rcpputils/scope_exit.hpp"
+
 #include "test_msgs/action/fibonacci.hpp"
 #include "test_msgs/action/nested_message.hpp"
 
@@ -244,7 +246,7 @@ int main(int argc, char ** argv)
     return 1;
   }
   rclcpp::init(argc, argv);
-  RCLCPP_SCOPE_EXIT(
+  RCPPUTILS_SCOPE_EXIT(
   {
     rclcpp::shutdown();
   });

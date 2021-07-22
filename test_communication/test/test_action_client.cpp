@@ -19,9 +19,10 @@
 #include <vector>
 
 #include "rclcpp/exceptions.hpp"
-#include "rclcpp/scope_exit.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
+
+#include "rcpputils/scope_exit.hpp"
 
 #include "test_msgs/action/fibonacci.hpp"
 #include "test_msgs/action/nested_message.hpp"
@@ -55,7 +56,7 @@ send_goals(
   size_t test_index = 0;
   bool invalid_feedback = false;
   auto start = std::chrono::steady_clock::now();
-  RCLCPP_SCOPE_EXIT(
+  RCPPUTILS_SCOPE_EXIT(
   {
     auto end = std::chrono::steady_clock::now();
     std::chrono::duration<float> diff = (end - start);
@@ -218,7 +219,7 @@ generate_nested_message_goal_tests()
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
-  RCLCPP_SCOPE_EXIT(
+  RCPPUTILS_SCOPE_EXIT(
   {
     rclcpp::shutdown();
   });
