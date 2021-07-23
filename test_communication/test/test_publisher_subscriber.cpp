@@ -19,6 +19,8 @@
 
 #include "rclcpp/rclcpp.hpp"
 
+#include "rcpputils/scope_exit.hpp"
+
 #include "test_msgs/message_fixtures.hpp"
 
 template<typename T>
@@ -101,7 +103,7 @@ rclcpp::SubscriptionBase::SharedPtr subscribe(
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
-  RCLCPP_SCOPE_EXIT(
+  RCPPUTILS_SCOPE_EXIT(
   {
     rclcpp::shutdown();
   });
