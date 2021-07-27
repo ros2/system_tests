@@ -51,8 +51,8 @@ if(BUILD_TESTING)
     if(TARGET ${target}${target_suffix})
       target_compile_definitions(${target}${target_suffix}
         PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
-      rosidl_target_interfaces(${target}${target_suffix}
-        ${PROJECT_NAME} "rosidl_typesupport_cpp")
+      rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
+      target_link_libraries(${target}${target_suffix} "${cpp_typesupport_target}")
       ament_target_dependencies(${target}${target_suffix}
         "rclcpp")
       target_include_directories(${target}${target_suffix} PUBLIC include)
@@ -63,8 +63,8 @@ if(BUILD_TESTING)
     add_executable(${target} ${ARGN})
     target_compile_definitions(${target}
       PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
-    rosidl_target_interfaces(${target}
-      ${PROJECT_NAME} "rosidl_typesupport_cpp")
+    rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
+    target_link_libraries(${target} "${cpp_typesupport_target}")
     ament_target_dependencies(${target}
       "rclcpp")
   endfunction()
@@ -73,8 +73,8 @@ if(BUILD_TESTING)
     ament_add_gtest_executable(${target} ${ARGN})
     target_compile_definitions(${target}
       PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
-    rosidl_target_interfaces(${target}
-      ${PROJECT_NAME} "rosidl_typesupport_cpp")
+    rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
+    target_link_libraries(${target} "${cpp_typesupport_target}")
     ament_target_dependencies(${target}
       "rclcpp")
   endfunction()
