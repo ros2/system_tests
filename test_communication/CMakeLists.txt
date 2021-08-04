@@ -118,8 +118,8 @@ if(BUILD_TESTING)
 
   function(custom_executable target)
     add_executable(${target} ${ARGN})
-    rosidl_target_interfaces(${target}
-      ${PROJECT_NAME} "rosidl_typesupport_cpp")
+    rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
+    target_link_libraries(${target} "${cpp_typesupport_target}")
     ament_target_dependencies(${target}
       "rclcpp"
       "rclcpp_action"
@@ -135,9 +135,8 @@ if(BUILD_TESTING)
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation})
     if(TARGET ${target}${target_suffix})
-      add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
-      rosidl_target_interfaces(${target}${target_suffix}
-        ${PROJECT_NAME} "rosidl_typesupport_c")
+      rosidl_get_typesupport_target(c_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_c")
+      target_link_libraries(${target}${target_suffix} "${c_typesupport_target}")
       ament_target_dependencies(${target}${target_suffix}
         "osrf_testing_tools_cpp" "rcl")
       set_tests_properties(
