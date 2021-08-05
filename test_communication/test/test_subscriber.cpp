@@ -87,6 +87,7 @@ int main(int argc, char ** argv)
   auto messages_basic_types = get_messages_basic_types();
   auto messages_arrays = get_messages_arrays();
   auto messages_unbounded_sequences = get_messages_unbounded_sequences();
+  auto messages_bounded_plain_sequences = get_messages_bounded_plain_sequences();
   auto messages_bounded_sequences = get_messages_bounded_sequences();
   auto messages_nested = get_messages_nested();
   auto messages_multi_nested = get_messages_multi_nested();
@@ -110,6 +111,9 @@ int main(int argc, char ** argv)
   } else if (message == "UnboundedSequences") {
     subscriber = subscribe<test_msgs::msg::UnboundedSequences>(
       node, message, messages_unbounded_sequences, received_messages);
+  } else if (message == "BoundedPlainSequences") {
+    subscriber = subscribe<test_msgs::msg::BoundedPlainSequences>(
+      node, message, messages_bounded_plain_sequences, received_messages);
   } else if (message == "BoundedSequences") {
     subscriber = subscribe<test_msgs::msg::BoundedSequences>(
       node, message, messages_bounded_sequences, received_messages);
