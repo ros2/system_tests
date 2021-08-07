@@ -34,7 +34,8 @@ QosTestSubscriber::QosTestSubscriber(
   RCLCPP_INFO(this->get_logger(), "created subscriber %s %s", name.c_str(), topic.c_str());
 }
 
-void QosTestSubscriber::listen_to_message(const std_msgs::msg::String::SharedPtr received_message)
+void QosTestSubscriber::listen_to_message(
+  const std_msgs::msg::String::ConstSharedPtr received_message)
 {
   RCLCPP_INFO(
     this->get_logger(), "%s: subscriber heard [%s]", this->name_.c_str(),
