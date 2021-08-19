@@ -219,7 +219,7 @@ TEST_F(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients
       if (!pair.first->wait_for_service(20s)) {
         ASSERT_TRUE(false) << "service not available after waiting";
       }
-      results.push_back(pair.first->async_send_request(pair.second));
+      results.push_back(pair.first->async_send_request(pair.second).future);
     }
     // Wait on each future
     for (uint32_t i = 0; i < results.size(); ++i) {
@@ -245,7 +245,7 @@ TEST_F(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients
       if (!pair.first->wait_for_service(20s)) {
         ASSERT_TRUE(false) << "service not available after waiting";
       }
-      results.push_back(pair.first->async_send_request(pair.second));
+      results.push_back(pair.first->async_send_request(pair.second).future);
     }
     auto timer_callback = [&executor, &results]() {
         for (auto & result : results) {
