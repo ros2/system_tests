@@ -78,7 +78,7 @@ rclcpp::SubscriptionBase::SharedPtr attempt_subscribe(
   rclcpp::executors::SingleThreadedExecutor & exec)
 {
   auto subscription_callback =
-    [&sub_callback_called, &exec](const typename T::SharedPtr) -> void
+    [&sub_callback_called, &exec](const typename T::ConstSharedPtr) -> void
     {
       printf("***SUB_CALLBACK***\n");
       sub_callback_called = true;
