@@ -81,7 +81,7 @@ TEST_F(CLASSNAME(test_subscription, RMW_IMPLEMENTATION), subscription_and_spinni
   std::shared_future<void> sub_called_future(sub_called.get_future());
   auto fail_after_timeout = 5s;
   auto callback =
-    [&counter, &sub_called](const test_rclcpp::msg::UInt32::SharedPtr msg) -> void
+    [&counter, &sub_called](const test_rclcpp::msg::UInt32::ConstSharedPtr msg) -> void
     {
       ++counter;
       printf("  callback() %d with message data %u\n", counter, msg->data);

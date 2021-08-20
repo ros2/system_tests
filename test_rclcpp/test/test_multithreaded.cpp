@@ -294,7 +294,7 @@ static inline void multi_access_publisher(bool intra_process)
   // callback groups?
 
   std::atomic_uint subscription_counter(0);
-  auto sub_callback = [&subscription_counter](const test_rclcpp::msg::UInt32::SharedPtr msg)
+  auto sub_callback = [&subscription_counter](const test_rclcpp::msg::UInt32::ConstSharedPtr msg)
     {
       ++subscription_counter;
       printf("Subscription callback %u\n", subscription_counter.load());
