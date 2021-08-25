@@ -35,7 +35,7 @@ rclcpp::SubscriptionBase::SharedPtr attempt_subscribe(
 
   auto callback =
     [&expected_messages, &received_messages](
-      const typename T::ConstSharedPtr received_message
+    const typename T::ConstSharedPtr received_message
     ) -> void
     {
       // find received message in vector of expected messages
