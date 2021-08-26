@@ -34,7 +34,9 @@ rclcpp::SubscriptionBase::SharedPtr attempt_subscribe(
   received_messages.assign(expected_messages.size(), false);
 
   auto callback =
-    [&expected_messages, &received_messages](const typename T::SharedPtr received_message) -> void
+    [&expected_messages, &received_messages](
+    const typename T::ConstSharedPtr received_message
+    ) -> void
     {
       // find received message in vector of expected messages
       auto received = received_messages.begin();
@@ -77,7 +79,7 @@ rclcpp::SubscriptionBase::SharedPtr attempt_subscribe(
   rclcpp::executors::SingleThreadedExecutor & exec)
 {
   auto subscription_callback =
-    [&sub_callback_called, &exec](const typename T::SharedPtr) -> void
+    [&sub_callback_called, &exec](const typename T::ConstSharedPtr) -> void
     {
       printf("***SUB_CALLBACK***\n");
       sub_callback_called = true;

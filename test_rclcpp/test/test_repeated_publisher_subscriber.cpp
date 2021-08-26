@@ -51,7 +51,7 @@ TEST_F(
   auto node = rclcpp::Node::make_shared("test_repeated_publisher_subscriber");
 
   auto callback =
-    [](const test_rclcpp::msg::UInt32::SharedPtr) -> void
+    [](const test_rclcpp::msg::UInt32::ConstSharedPtr) -> void
     {
     };
 

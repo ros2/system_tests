@@ -28,7 +28,7 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
-void callback(const test_rclcpp::msg::UInt32::SharedPtr /*msg*/)
+void callback(const test_rclcpp::msg::UInt32::ConstSharedPtr /*msg*/)
 {
   throw std::runtime_error("The subscriber received a message but there should be no publisher!");
 }

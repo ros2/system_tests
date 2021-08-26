@@ -58,7 +58,7 @@ TEST_F(CLASSNAME(test_intra_process_within_one_node, RMW_IMPLEMENTATION), nomina
   int counter = 0;
   auto callback =
     [&counter](
-    const test_rclcpp::msg::UInt32::SharedPtr msg,
+    const test_rclcpp::msg::UInt32::ConstSharedPtr msg,
     const rclcpp::MessageInfo & message_info
     ) -> void
     {

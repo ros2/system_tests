@@ -41,7 +41,7 @@ public:
   void teardown() override;
 
 private:
-  void listen_to_message(std_msgs::msg::String::SharedPtr);
+  void listen_to_message(std_msgs::msg::String::ConstSharedPtr);
   void setup_start() override;
   void setup_stop() override;
 
