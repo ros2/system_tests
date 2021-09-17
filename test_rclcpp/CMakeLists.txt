@@ -143,15 +143,20 @@ if(BUILD_TESTING)
   # then check the output of the executable against different console output.
   macro(custom_launch_test_executable_output test_name executable)
 
+    cmake_parse_arguments(_ARG "" "LAUNCH_TEST_TEMPLATE" "" ${ARGN})
+    if(NOT _ARG_LAUNCH_TEST_TEMPLATE)
+      set(_ARG_LAUNCH_TEST_TEMPLATE test/test_executable_output.py.in)
+    endif()
+
     set(TEST_NAME "${test_name}")
     set(TEST_EXECUTABLE "$<TARGET_FILE:${executable}>")
     set(TEST_EXECUTABLE_NAME "${executable}")
     set(TEST_EXECUTABLE_TRIGGER_SHUTDOWN_OUTPUT
-      "${CMAKE_CURRENT_SOURCE_DIR}/test/${test_name}__trigger_shutdown")
+      "${CMAKE_CURRENT_SOURCE_DIR}/test/expected_outputs/${test_name}__trigger_shutdown")
     set(TEST_EXECUTABLE_EXPECTED_OUTPUT
-      "${CMAKE_CURRENT_SOURCE_DIR}/test/${test_name}__expected_output")
+      "${CMAKE_CURRENT_SOURCE_DIR}/test/expected_outputs/${test_name}__expected_output")
     configure_file(
-      test/test_executable_output.py.in
+      ${_ARG_LAUNCH_TEST_TEMPLATE}
       ${test_name}${target_suffix}.py.configure
       @ONLY
     )
@@ -162,7 +167,7 @@ if(BUILD_TESTING)
     add_launch_test(
       "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIG>.py"
       TARGET ${test_name}${target_suffix}
-      ${ARGN}
+      ${_ARG_UNPARSED_ARGUMENTS}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
@@ -338,6 +343,22 @@ if(BUILD_TESTING)
       TIMEOUT 30
       ${SKIP_TEST})
 
+        # Test that a user-defined signal handler is called on interrupt:
+    # after rclcpp::init has been called, but before rclcpp::shutdown has been called.
+    custom_launch_test_executable_output(test_sigterm_handler_before_shutdown
+      test_sigterm_handler
+      LAUNCH_TEST_TEMPLATE test/test_sigterm.py.in
+      TIMEOUT 30
+      ${SKIP_TEST})
+
+    # Test that a user-defined signal handler is restored after rclcpp::init and rclcpp::shutdown
+    # have been called.
+    custom_launch_test_executable_output(test_sigterm_handler_after_shutdown
+      test_sigterm_handler
+      LAUNCH_TEST_TEMPLATE test/test_sigterm.py.in
+      TIMEOUT 30
+      ${SKIP_TEST})
+
     # Test node names
     set(rmw_implementation1 "${rmw_implementation}")
     foreach(rmw_implementation2 ${rmw_implementations})
@@ -364,6 +385,7 @@ if(BUILD_TESTING)
   call_for_each_rmw_implementation(targets)
 
   custom_executable(test_signal_handler "test/test_signal_handler.cpp")
+  custom_executable(test_sigterm_handler "test/test_sigterm_handler.cpp")
 
   # Parameter tests single implementation
   custom_executable(test_parameters_server_cpp "test/test_parameters_server.cpp")
