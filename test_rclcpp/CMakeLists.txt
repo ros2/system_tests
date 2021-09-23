@@ -331,15 +331,15 @@ if(BUILD_TESTING)
     endif()
     # Test that a user-defined signal handler is called on interrupt:
     # after rclcpp::init has been called, but before rclcpp::shutdown has been called.
-    custom_launch_test_executable_output(test_signal_handler_before_shutdown
-      test_signal_handler
+    custom_launch_test_executable_output(test_sigint_handler_before_shutdown
+      test_sigint_handler
       TIMEOUT 30
       ${SKIP_TEST})
 
     # Test that a user-defined signal handler is restored after rclcpp::init and rclcpp::shutdown
     # have been called.
-    custom_launch_test_executable_output(test_signal_handler_after_shutdown
-      test_signal_handler
+    custom_launch_test_executable_output(test_sigint_handler_after_shutdown
+      test_sigint_handler
       TIMEOUT 30
       ${SKIP_TEST})
 
@@ -384,7 +384,7 @@ if(BUILD_TESTING)
 
   call_for_each_rmw_implementation(targets)
 
-  custom_executable(test_signal_handler "test/test_signal_handler.cpp")
+  custom_executable(test_sigint_handler "test/test_sigint_handler.cpp")
   custom_executable(test_sigterm_handler "test/test_sigterm_handler.cpp")
 
   # Parameter tests single implementation
