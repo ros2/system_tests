@@ -343,7 +343,7 @@ if(BUILD_TESTING)
       TIMEOUT 30
       ${SKIP_TEST})
 
-        # Test that a user-defined signal handler is called on interrupt:
+    # Test that a user-defined signal handler is called on interrupt:
     # after rclcpp::init has been called, but before rclcpp::shutdown has been called.
     custom_launch_test_executable_output(test_sigterm_handler_before_shutdown
       test_sigterm_handler

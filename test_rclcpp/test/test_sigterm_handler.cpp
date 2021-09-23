@@ -19,9 +19,8 @@
 
 using namespace std::chrono_literals;
 
-void sigtermHandler(int sig)
+void sigterm_handler(int)
 {
-  (void)sig;
   RCLCPP_INFO(rclcpp::get_logger("test_sigterm_handler"), "Custom sigterm handler called.");
 }
 
@@ -32,7 +31,7 @@ int main(int argc, char ** argv)
   // signal handler is/has been in use.
 
   // Override default sigterm handler
-  signal(SIGTERM, sigtermHandler);
+  signal(SIGTERM, sigterm_handler);
   RCLCPP_INFO(rclcpp::get_logger("test_sigterm_handler"), "Registered custom signal handler.");
 
   rclcpp::init(argc, argv);
