@@ -19,8 +19,9 @@
 
 using namespace std::chrono_literals;
 
-void sigterm_handler(int)
+void sigterm_handler(int signum)
 {
+  (void)signum;
   RCLCPP_INFO(rclcpp::get_logger("test_sigterm_handler"), "Custom sigterm handler called.");
 }
 
