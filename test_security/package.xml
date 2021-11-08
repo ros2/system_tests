@@ -6,11 +6,13 @@
   <description>
     Test nodes, publishers and subscribers with DDS-Security.
   </description>
-  <maintainer email="jacob@openrobotics.org">Jacob Perron</maintainer>
-  <maintainer email="william@openrobotics.org">William Woodall</maintainer>
+  <maintainer email="aditya.pande@openrobotics.org">Aditya Pande</maintainer>
+  <maintainer email="shane@openrobotics.org">Shane Loretz</maintainer>
   <license>Apache License 2.0</license>
 
   <author email="michael@openrobotics.org">Michael Carroll</author>
+  <author email="jacob@openrobotics.org">Jacob Perron</author>
+  <author email="william@openrobotics.org">William Woodall</author>
   <author>Mikael Arguedas</author>
 
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
