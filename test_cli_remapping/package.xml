@@ -6,8 +6,8 @@
   <description>
     Test command line remapping of topic names, service names, node namespace, and node name.
   </description>
-  <maintainer email="aditya.pande@osrfoundation.org">Aditya Pande</maintainer>
-  <maintainer email="shane@osrfoundation.org">Shane Loretz</maintainer>
+  <maintainer email="aditya.pande@openrobotics.org">Aditya Pande</maintainer>
+  <maintainer email="shane@openrobotics.org">Shane Loretz</maintainer>
   <license>Apache License 2.0</license>
 
   <author email="sloretz@openrobotics.org">Shane Loretz</author>

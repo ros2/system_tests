@@ -6,8 +6,8 @@
   <description>
     Test nodes, publishers and subscribers with DDS-Security.
   </description>
-  <maintainer email="aditya.pande@osrfoundation.org">Aditya Pande</maintainer>
-  <maintainer email="shane@osrfoundation.org">Shane Loretz</maintainer>
+  <maintainer email="aditya.pande@openrobotics.org">Aditya Pande</maintainer>
+  <maintainer email="shane@openrobotics.org">Shane Loretz</maintainer>
   <license>Apache License 2.0</license>
 
   <author email="michael@openrobotics.org">Michael Carroll</author>

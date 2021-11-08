@@ -6,8 +6,8 @@
     <description>
         Test quality of service features, specifically liveliness, deadline, and lifespan.
     </description>
-    <maintainer email="aditya.pande@osrfoundation.org">Aditya Pande</maintainer>
-    <maintainer email="shane@osrfoundation.org">Shane Loretz</maintainer>
+    <maintainer email="aditya.pande@openrobotics.org">Aditya Pande</maintainer>
+    <maintainer email="shane@openrobotics.org">Shane Loretz</maintainer>
     <maintainer email="ros-contributions@amazon.com">Amazon ROS Contributions</maintainer>
     <license>Apache License 2.0</license>
     
