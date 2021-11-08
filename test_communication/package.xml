@@ -8,11 +8,13 @@
     Also exchange dynamic and static arrays and nested message structures.
     Each test is run with every available rmw implementation for the sending as well as the receiving side.
   </description>
-  <maintainer email="jacob@openrobotics.org">Jacob Perron</maintainer>
-  <maintainer email="william@openrobotics.org">William Woodall</maintainer>
+  <maintainer email="aditya.pande@osrfoundation.org">Aditya Pande</maintainer>
+  <maintainer email="shane@osrfoundation.org">Shane Loretz</maintainer>
   <license>Apache License 2.0</license>
 
   <author email="dthomas@openrobotics.org">Dirk Thomas</author>
+  <author email="jacob@openrobotics.org">Jacob Perron</author>
+  <author email="william@openrobotics.org">William Woodall</author>
 
   <build_depend>rosidl_default_generators</build_depend>
 
