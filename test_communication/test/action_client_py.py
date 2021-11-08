@@ -190,7 +190,8 @@ if __name__ == '__main__':
     except BaseException:
         print('Exception in action client:', file=sys.stderr)
         raise
+    else:
+        rclpy.shutdown()
     finally:
         node.destroy_node()
-        rclpy.shutdown()
     sys.exit(rc)

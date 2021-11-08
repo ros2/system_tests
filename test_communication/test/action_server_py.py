@@ -180,6 +180,7 @@ if __name__ == '__main__':
     except BaseException:
         print('Exception in action server:', file=sys.stderr)
         raise
+    else:
+        rclpy.shutdown()
     finally:
         node.destroy_node()
-        rclpy.shutdown()
