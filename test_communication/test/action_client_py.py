@@ -189,12 +189,12 @@ if __name__ == '__main__':
             print('Unknown action type {!r}'.format(args.action_type), file=sys.stderr)
     except KeyboardInterrupt:
         print('Action client stopped cleanly')
-    except BaseException:
-        print('Exception in action client:', file=sys.stderr)
-        raise
     except ExternalShutdownException:
         print('Action client stopped with sigterm', file=sys.stderr)
         rc = 1
+    except BaseException:
+        print('Exception in action client:', file=sys.stderr)
+        raise
     finally:
         rclpy.try_shutdown()
         node.destroy_node()
