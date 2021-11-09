@@ -179,11 +179,11 @@ if __name__ == '__main__':
         rclpy.spin(node)
     except KeyboardInterrupt:
         print('Action server stopped cleanly')
+    except ExternalShutdownException:
+        sys.exit(1)
     except BaseException:
         print('Exception in action server:', file=sys.stderr)
         raise
-    except ExternalShutdownException:
-        sys.exit(1)
     finally:
         rclpy.try_shutdown()
         node.destroy_node()
