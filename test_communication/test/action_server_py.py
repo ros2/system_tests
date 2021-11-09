@@ -16,6 +16,8 @@ import argparse
 import sys
 import time
 
+from rclpy.exception import ExternalShutdownException
+
 from test_msgs.action import Fibonacci
 from test_msgs.action import NestedMessage
 
@@ -180,7 +182,8 @@ if __name__ == '__main__':
     except BaseException:
         print('Exception in action server:', file=sys.stderr)
         raise
-    else:
-        rclpy.shutdown()
+    except ExternalShutdownException:
+        sys.exit(1)
     finally:
+        rclpy.try_shutdown()
         node.destroy_node()

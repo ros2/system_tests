@@ -15,6 +15,8 @@
 import argparse
 import sys
 
+from rclpy.exceptions import ExternalShutdownException
+
 from test_msgs.action import Fibonacci
 from test_msgs.action import NestedMessage
 
@@ -190,8 +192,10 @@ if __name__ == '__main__':
     except BaseException:
         print('Exception in action client:', file=sys.stderr)
         raise
-    else:
-        rclpy.shutdown()
+    except ExternalShutdownException:
+        print('Action client stopped with sigterm', file=sys.stderr)
+        rc = 1
     finally:
+        rclpy.try_shutdown()
         node.destroy_node()
     sys.exit(rc)
