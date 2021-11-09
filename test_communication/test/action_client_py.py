@@ -15,7 +15,7 @@
 import argparse
 import sys
 
-from rclpy.exceptions import ExternalShutdownException
+from rclpy.executors import ExternalShutdownException
 
 from test_msgs.action import Fibonacci
 from test_msgs.action import NestedMessage

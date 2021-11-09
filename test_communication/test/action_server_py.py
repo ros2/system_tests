@@ -16,7 +16,7 @@ import argparse
 import sys
 import time
 
-from rclpy.exception import ExternalShutdownException
+from rclpy.executors import ExternalShutdownException
 
 from test_msgs.action import Fibonacci
 from test_msgs.action import NestedMessage
