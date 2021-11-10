@@ -43,6 +43,7 @@ if __name__ == '__main__':
         rclpy.spin(node)
     except KeyboardInterrupt:
         print('Shutting down name_maker.py')
+    else:
+        rclpy.shutdown()
     finally:
         node.destroy_node()
-        rclpy.shutdown()
