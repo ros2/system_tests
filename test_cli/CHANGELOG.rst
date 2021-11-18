@@ -2,6 +2,12 @@
 Changelog for package test_cli
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Updated maintainers (`#489 <https://github.com/ros2/system_tests/issues/489>`_)
+* Add changelogs (`#473 <https://github.com/ros2/system_tests/issues/473>`_)
+* Contributors: Aditya Pande, Ivan Santiago Paunovic
+
 0.11.1 (2021-04-26)
 -------------------
 

@@ -2,6 +2,15 @@
 Changelog for package test_security
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Updated maintainers (`#489 <https://github.com/ros2/system_tests/issues/489>`_)
+* Fix deprecated subscriber callback warnings (`#483 <https://github.com/ros2/system_tests/issues/483>`_)
+* Add changelogs (`#473 <https://github.com/ros2/system_tests/issues/473>`_)
+* Simplify the test_secure_subscriber code. (`#471 <https://github.com/ros2/system_tests/issues/471>`_)
+* Update includes after rcutils/get_env.h deprecation (`#472 <https://github.com/ros2/system_tests/issues/472>`_)
+* Contributors: Abrar Rahman Protyasha, Aditya Pande, Chris Lalancette, Christophe Bedard, Ivan Santiago Paunovic
+
 0.11.1 (2021-04-26)
 -------------------
 

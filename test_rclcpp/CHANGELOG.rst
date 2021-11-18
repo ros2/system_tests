@@ -2,6 +2,18 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Updated maintainers (`#489 <https://github.com/ros2/system_tests/issues/489>`_)
+* Add tests for rclcpp sigterm handler (`#485 <https://github.com/ros2/system_tests/issues/485>`_)
+* Fix deprecated subscriber callback warnings (`#483 <https://github.com/ros2/system_tests/issues/483>`_)
+* Fix deprecation warnings and failures after client API update (`#482 <https://github.com/ros2/system_tests/issues/482>`_)
+* Use rosidl_get_typesupport_target() (`#480 <https://github.com/ros2/system_tests/issues/480>`_)
+* Use rcpputils/scope_exit.hpp instead of rclcpp/scope_exit.hpp (`#479 <https://github.com/ros2/system_tests/issues/479>`_)
+* Add test for defered service callback signature (`#478 <https://github.com/ros2/system_tests/issues/478>`_)
+* Add changelogs (`#473 <https://github.com/ros2/system_tests/issues/473>`_)
+* Contributors: Abrar Rahman Protyasha, Aditya Pande, Christophe Bedard, Ivan Santiago Paunovic, Shane Loretz
+
 0.11.1 (2021-04-26)
 -------------------
 

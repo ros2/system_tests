@@ -2,6 +2,13 @@
 Changelog for package test_quality_of_service
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Updated maintainers (`#489 <https://github.com/ros2/system_tests/issues/489>`_)
+* Fix deprecated subscriber callback warnings (`#483 <https://github.com/ros2/system_tests/issues/483>`_)
+* Add changelogs (`#473 <https://github.com/ros2/system_tests/issues/473>`_)
+* Contributors: Abrar Rahman Protyasha, Aditya Pande, Ivan Santiago Paunovic
+
 0.11.1 (2021-04-26)
 -------------------
 
