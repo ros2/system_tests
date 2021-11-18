@@ -2,8 +2,8 @@
 Changelog for package test_cli_remapping
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.12.0 (2021-11-18)
+-------------------
 * Update python nodes SIGINT handling (`#490 <https://github.com/ros2/system_tests/issues/490>`_)
 * Updated maintainers (`#489 <https://github.com/ros2/system_tests/issues/489>`_)
 * Add changelogs (`#473 <https://github.com/ros2/system_tests/issues/473>`_)

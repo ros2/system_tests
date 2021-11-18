@@ -2,8 +2,8 @@
 Changelog for package test_communication
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.12.0 (2021-11-18)
+-------------------
 * Update python nodes SIGINT handling (`#490 <https://github.com/ros2/system_tests/issues/490>`_)
 * Updated maintainers (`#489 <https://github.com/ros2/system_tests/issues/489>`_)
 * Fix deprecated subscriber callback warnings (`#483 <https://github.com/ros2/system_tests/issues/483>`_)

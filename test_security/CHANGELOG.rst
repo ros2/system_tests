@@ -2,8 +2,8 @@
 Changelog for package test_security
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.12.0 (2021-11-18)
+-------------------
 * Updated maintainers (`#489 <https://github.com/ros2/system_tests/issues/489>`_)
 * Fix deprecated subscriber callback warnings (`#483 <https://github.com/ros2/system_tests/issues/483>`_)
 * Add changelogs (`#473 <https://github.com/ros2/system_tests/issues/473>`_)
