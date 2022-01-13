@@ -2,6 +2,12 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.12.1 (2022-01-13)
+-------------------
+* Fix include order for cpplint (`#493 <https://github.com/ros2/system_tests/issues/493>`_)
+* Fix test (`#488 <https://github.com/ros2/system_tests/issues/488>`_)
+* Contributors: Jacob Perron, Mauro Passerino
+
 0.12.0 (2021-11-18)
 -------------------
 * Updated maintainers (`#489 <https://github.com/ros2/system_tests/issues/489>`_)

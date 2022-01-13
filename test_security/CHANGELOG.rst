@@ -2,6 +2,9 @@
 Changelog for package test_security
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.12.1 (2022-01-13)
+-------------------
+
 0.12.0 (2021-11-18)
 -------------------
 * Updated maintainers (`#489 <https://github.com/ros2/system_tests/issues/489>`_)
