@@ -123,6 +123,7 @@ if(BUILD_TESTING)
     ament_target_dependencies(${target}
       "rclcpp"
       "rclcpp_action"
+      "test_msgs"
     )
   endfunction()
 
