@@ -2,6 +2,11 @@
 Changelog for package test_communication
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.12.2 (2022-03-28)
+-------------------
+* Add test_msgs dependency (`#497 <https://github.com/ros2/system_tests/issues/497>`_)
+* Contributors: Shane Loretz
+
 0.12.1 (2022-01-13)
 -------------------
 

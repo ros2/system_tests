@@ -2,6 +2,9 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.12.2 (2022-03-28)
+-------------------
+
 0.12.1 (2022-01-13)
 -------------------
 * Fix include order for cpplint (`#493 <https://github.com/ros2/system_tests/issues/493>`_)

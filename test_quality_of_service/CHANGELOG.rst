@@ -2,6 +2,9 @@
 Changelog for package test_quality_of_service
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.12.2 (2022-03-28)
+-------------------
+
 0.12.1 (2022-01-13)
 -------------------
 * Update maintainers to Aditya Pande and Shane Loretz (`#491 <https://github.com/ros2/system_tests/issues/491>`_)
