@@ -106,7 +106,7 @@ void test_set_parameters_async(
   printf("Setting parameters\n");
   std::vector<rclcpp::Parameter> parameters = get_test_parameters();
   auto set_parameters_results = parameters_client->set_parameters(parameters);
-  rclcpp::spin_until_future_complete(node, set_parameters_results);  // Wait for the results.
+  rclcpp::spin_until_complete(node, set_parameters_results);  // Wait for the results.
   printf("Got set_parameters result\n");
 
   if (successful_up_to < 0 || successful_up_to > static_cast<int>(parameters.size())) {
@@ -271,7 +271,7 @@ void test_get_parameters_async(
   // Test recursive depth (=0)
   auto result = parameters_client->list_parameters(
     {"foo", "bar"}, rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE);
-  rclcpp::spin_until_future_complete(node, result);
+  rclcpp::spin_until_complete(node, result);
   auto parameters_and_prefixes = result.get();
   for (auto & name : parameters_and_prefixes.names) {
     EXPECT_TRUE(name == "foo" || name == "bar" || name == "foo.first" || name == "foo.second");
@@ -283,7 +283,7 @@ void test_get_parameters_async(
   printf("Listing parameters with depth 1\n");
   // Test different depth
   auto result4 = parameters_client->list_parameters({"foo"}, 1);
-  rclcpp::spin_until_future_complete(node, result4);
+  rclcpp::spin_until_complete(node, result4);
   auto parameters_and_prefixes4 = result4.get();
   for (auto & name : parameters_and_prefixes4.names) {
     EXPECT_EQ(name, "foo");
@@ -295,7 +295,7 @@ void test_get_parameters_async(
   // Test different depth
   printf("Listing parameters with depth 2\n");
   auto result4a = parameters_client->list_parameters({"foo"}, 2);
-  rclcpp::spin_until_future_complete(node, result4a);
+  rclcpp::spin_until_complete(node, result4a);
   auto parameters_and_prefixes4a = result4a.get();
   for (auto & name : parameters_and_prefixes4a.names) {
     EXPECT_TRUE(name == "foo" || name == "foo.first" || name == "foo.second");
@@ -308,7 +308,7 @@ void test_get_parameters_async(
   printf("Getting parameters\n");
   // Get a few of the parameters just set.
   auto result2 = parameters_client->get_parameters({"foo", "bar", "baz"});
-  rclcpp::spin_until_future_complete(node, result2);
+  rclcpp::spin_until_complete(node, result2);
   for (auto & parameter : result2.get()) {
     if (parameter.get_name() == "foo") {
       EXPECT_STREQ("foo", parameter.get_name().c_str());
@@ -333,7 +333,7 @@ void test_get_parameters_async(
   // Get a few non existant parameters
   {
     auto result3 = parameters_client->get_parameters({"not_foo", "not_baz"});
-    rclcpp::spin_until_future_complete(node, result3);
+    rclcpp::spin_until_complete(node, result3);
     std::vector<rclcpp::Parameter> retrieved_params = result3.get();
     if (allowed_undeclared == false) {
       ASSERT_EQ(0u, retrieved_params.size());
@@ -350,7 +350,7 @@ void test_get_parameters_async(
   // List all of the parameters, using an empty prefix list
   auto result5 = parameters_client->list_parameters(
     {}, rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE);
-  rclcpp::spin_until_future_complete(node, result5);
+  rclcpp::spin_until_complete(node, result5);
   parameters_and_prefixes = result5.get();
   std::vector<std::string> all_names = {
     "foo", "bar", "barstr", "baz", "foo.first", "foo.second", "foobar", "use_sim_time"
