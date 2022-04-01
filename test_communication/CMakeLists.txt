@@ -426,6 +426,9 @@ if(BUILD_TESTING)
   custom_executable(test_publisher_cpp
     "test/test_publisher.cpp")
   custom_executable(test_subscriber_cpp
+    "test/subscribe_array_types.cpp"
+    "test/subscribe_basic_types.cpp"
+    "test/subscribe_string_types.cpp"
     "test/test_subscriber.cpp")
   # executables requester / replier
   custom_executable(test_requester_cpp
