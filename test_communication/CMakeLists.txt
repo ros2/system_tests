@@ -416,9 +416,18 @@ if(BUILD_TESTING)
     endforeach()
   endmacro()
 
+  add_library(subscribe_types SHARED
+    "test/subscribe_array_types.cpp"
+    "test/subscribe_basic_types.cpp"
+    "test/subscribe_string_types.cpp")
+  ament_target_dependencies(subscribe_types
+    "rclcpp"
+    "test_msgs")
+
   # publisher combined with a subscriber
   custom_executable(test_publisher_subscriber_cpp
     "test/test_publisher_subscriber.cpp")
+  target_link_libraries(test_publisher_subscriber_cpp subscribe_types)
   # subcription valid data
   custom_executable(test_subscription_valid_data_cpp
     "test/test_subscription_valid_data.cpp")
@@ -426,10 +435,8 @@ if(BUILD_TESTING)
   custom_executable(test_publisher_cpp
     "test/test_publisher.cpp")
   custom_executable(test_subscriber_cpp
-    "test/subscribe_array_types.cpp"
-    "test/subscribe_basic_types.cpp"
-    "test/subscribe_string_types.cpp"
     "test/test_subscriber.cpp")
+  target_link_libraries(test_subscriber_cpp subscribe_types)
   # executables requester / replier
   custom_executable(test_requester_cpp
     "test/test_requester.cpp")
