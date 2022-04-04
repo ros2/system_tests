@@ -416,7 +416,7 @@ if(BUILD_TESTING)
     endforeach()
   endmacro()
 
-  add_library(subscribe_types SHARED
+  add_library(subscribe_types STATIC
     "test/subscribe_array_types.cpp"
     "test/subscribe_basic_types.cpp"
     "test/subscribe_string_types.cpp")
