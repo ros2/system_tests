@@ -2,6 +2,9 @@
 Changelog for package test_quality_of_service
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.12.2 (2022-03-28)
 -------------------
 

@@ -2,6 +2,9 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.12.2 (2022-03-28)
 -------------------
 
@@ -131,8 +134,7 @@ Changelog for package test_rclcpp
   * Corrected publish calls with shared_ptr signature
   * Updated with PR comments
   * Correct linter failure
-* Merge pull request `#357 <https://github.com/ros2/system_tests/issues/357>`_ from `ros2/ros2#658 <https://github.com/ros2/ros2/issues/658>`__leftovers
-  Delete unnecessary usage of target_include_directories and target_link_libraries with gtest macros
+* Merge pull request `#357 <https://github.com/ros2/system_tests/issues/357>`_ from ros2/ros2_658_leftovers
 * Corrected CMakelists
 * [WIP] Modify get_node_names to return fully qualified names. (`#345 <https://github.com/ros2/system_tests/issues/345>`_)
   * Get_node_names now returns qualified names

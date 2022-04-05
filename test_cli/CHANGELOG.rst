@@ -2,6 +2,9 @@
 Changelog for package test_cli
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.12.2 (2022-03-28)
 -------------------
 
@@ -54,8 +57,7 @@ Changelog for package test_cli
 ------------------
 * Disable long term flaky test test_params_yaml. (`#369 <https://github.com/ros2/system_tests/issues/369>`_)
 * Declaring initial parameters. (`#358 <https://github.com/ros2/system_tests/issues/358>`_)
-* Merge pull request `#356 <https://github.com/ros2/system_tests/issues/356>`_ from ros2/issue/`#321 <https://github.com/ros2/system_tests/issues/321>`__enhance_parameter_api
-  Using new parameter API: allowing undeclared parameters.
+* Merge pull request `#356 <https://github.com/ros2/system_tests/issues/356>`_ from ros2/issue/321_enhance_parameter_api
 * Using new parameter API; allowing undeclared parameters.
 * Read only parameters. (`#278 <https://github.com/ros2/system_tests/issues/278>`_)
   * Expect declared parameters + use_sim_time

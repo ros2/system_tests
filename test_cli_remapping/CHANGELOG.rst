@@ -2,6 +2,9 @@
 Changelog for package test_cli_remapping
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.12.2 (2022-03-28)
 -------------------
 
