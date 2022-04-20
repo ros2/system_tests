@@ -18,6 +18,7 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 
   find_package(ament_cmake_gtest REQUIRED)
+  find_package(rcl REQUIRED)
   find_package(rclcpp REQUIRED)
   find_package(rcutils)
   find_package(rmw REQUIRED)
@@ -53,13 +54,14 @@ if(BUILD_TESTING)
     target_compile_definitions(${target}${target_suffix}
       PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
     target_link_libraries(${target}${target_suffix} ${PROJECT_NAME}_support)
-    ament_target_dependencies(${target}${target_suffix} rclcpp rcutils std_msgs)
+    ament_target_dependencies(${target}${target_suffix} rcl rclcpp rcutils std_msgs)
   endfunction()
 
   macro(tests)
     add_custom_gtest(test_deadline test/test_deadline.cpp)
     add_custom_gtest(test_lifespan test/test_lifespan.cpp)
     add_custom_gtest(test_liveliness test/test_liveliness.cpp)
+    add_custom_gtest(test_best_available test/test_best_available.cpp)
   endmacro()
 
   call_for_each_rmw_implementation(tests)
