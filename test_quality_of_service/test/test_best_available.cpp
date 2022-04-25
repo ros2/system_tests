@@ -34,11 +34,11 @@ TEST_F(QosRclcppTestFixture, test_best_available_policies_subscription) {
 
   rclcpp::QoS publisher_qos_profile(1);
   publisher_qos_profile
-    .best_effort()
-    .transient_local()
-    .deadline(publisher_deadline)
-    .liveliness(rclcpp::LivelinessPolicy::Automatic)
-    .liveliness_lease_duration(publisher_liveliness_lease_duration);
+  .best_effort()
+  .transient_local()
+  .deadline(publisher_deadline)
+  .liveliness(rclcpp::LivelinessPolicy::Automatic)
+  .liveliness_lease_duration(publisher_liveliness_lease_duration);
 
   rclcpp::BestAvailableQoS subscription_qos_profile;
 
@@ -86,11 +86,11 @@ TEST_F(QosRclcppTestFixture, test_best_available_policies_publisher) {
 
   rclcpp::QoS subscription_qos_profile(1);
   subscription_qos_profile
-    .best_effort()
-    .durability_volatile()
-    .deadline(subscription_deadline)
-    .liveliness(rclcpp::LivelinessPolicy::ManualByTopic)
-    .liveliness_lease_duration(subscription_liveliness_lease_duration);
+  .best_effort()
+  .durability_volatile()
+  .deadline(subscription_deadline)
+  .liveliness(rclcpp::LivelinessPolicy::ManualByTopic)
+  .liveliness_lease_duration(subscription_liveliness_lease_duration);
 
   rclcpp::BestAvailableQoS publisher_qos_profile;
 
