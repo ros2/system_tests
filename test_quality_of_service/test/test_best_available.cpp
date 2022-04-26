@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <chrono>
+#include <functional>
 #include <memory>
 #include <string>
 
@@ -21,6 +22,8 @@
 #include "rcl/graph.h"
 
 #include "rclcpp/rclcpp.hpp"
+
+#include "test_msgs/srv/empty.hpp"
 
 #include "test_quality_of_service/qos_test_publisher.hpp"
 #include "test_quality_of_service/qos_test_subscriber.hpp"
@@ -130,4 +133,23 @@ TEST_F(QosRclcppTestFixture, test_best_available_policies_publisher) {
   EXPECT_EQ(actual_qos.liveliness(), subscription_qos_profile.liveliness());
   EXPECT_EQ(
     actual_qos.liveliness_lease_duration(), subscription_qos_profile.liveliness_lease_duration());
+}
+
+TEST_F(QosRclcppTestFixture, test_best_available_policies_services) {
+  // Test no errors occur when creating a service with best available policies
+  rclcpp::Node node("test_create_service_with_best_available_policies");
+  node.create_service<test_msgs::srv::Empty>(
+    "test_best_available_service",
+    [](
+      std::shared_ptr<rmw_request_id_t>,
+      std::shared_ptr<test_msgs::srv::Empty::Request>,
+      std::shared_ptr<test_msgs::srv::Empty::Response>) {},
+    rmw_qos_profile_best_available);
+}
+
+TEST_F(QosRclcppTestFixture, test_best_available_policies_clients) {
+  // Test no errors occur when creating a client with best available policies
+  rclcpp::Node node("test_create_client_with_best_available_policies");
+  node.create_client<test_msgs::srv::Empty>(
+    "test_best_available_client", rmw_qos_profile_best_available);
 }
