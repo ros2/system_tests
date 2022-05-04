@@ -2,6 +2,11 @@
 Changelog for package test_quality_of_service
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.13.0 (2022-05-04)
+-------------------
+* Add tests for 'best available' QoS policies (`#501 <https://github.com/ros2/system_tests/issues/501>`_)
+* Contributors: Jacob Perron
+
 0.12.3 (2022-04-05)
 -------------------
 
