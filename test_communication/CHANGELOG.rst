@@ -2,6 +2,14 @@
 Changelog for package test_communication
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.13.0 (2022-05-04)
+-------------------
+
+0.12.3 (2022-04-05)
+-------------------
+* Split test_subscriber into multiple compilation units. (`#500 <https://github.com/ros2/system_tests/issues/500>`_)
+* Contributors: Chris Lalancette
+
 0.12.2 (2022-03-28)
 -------------------
 * Add test_msgs dependency (`#497 <https://github.com/ros2/system_tests/issues/497>`_)
