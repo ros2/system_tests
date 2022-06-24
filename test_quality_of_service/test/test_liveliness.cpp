@@ -110,7 +110,7 @@ TEST_F(QosRclcppTestFixture, test_automatic_liveliness_changed) {
   publisher->start();
 
   // the future will never be resolved, so simply time out to force the experiment to stop
-  executor->spin_until_complete(dummy_future, max_test_length);
+  executor->spin_until_future_complete(dummy_future, max_test_length);
   kill_publisher_timer->cancel();
 
   EXPECT_EQ(1, timer_fired_count);
