@@ -45,7 +45,7 @@ def requester(service_name, namespace):
             # Make one call to that service
             for req, resp in srv_fixtures:
                 future = client.call_async(req)
-                rclpy.spin_until_complete(node, future)
+                rclpy.spin_until_future_complete(node, future)
                 assert repr(future.result()) == repr(resp), \
                     'unexpected response %r\n\nwas expecting %r' % (future.result(), resp)
                 print('received reply #%d of %d' % (

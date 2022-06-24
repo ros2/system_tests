@@ -61,7 +61,7 @@ def send_goals(node, action_type, tests):
             test.goal,
             feedback_callback=feedback_callback)
 
-        rclpy.spin_until_complete(node, goal_handle_future)
+        rclpy.spin_until_future_complete(node, goal_handle_future)
 
         goal_handle = goal_handle_future.result()
         if not goal_handle.accepted:
@@ -70,7 +70,7 @@ def send_goals(node, action_type, tests):
 
         get_result_future = goal_handle.get_result_async()
 
-        rclpy.spin_until_complete(node, get_result_future)
+        rclpy.spin_until_future_complete(node, get_result_future)
 
         result = get_result_future.result()
 
