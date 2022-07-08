@@ -151,5 +151,5 @@ TEST_F(QosRclcppTestFixture, test_best_available_policies_clients) {
   // Test no errors occur when creating a client with best available policies
   rclcpp::Node node("test_create_client_with_best_available_policies");
   node.create_client<test_msgs::srv::Empty>(
-    "test_best_available_client", rmw_qos_profile_best_available);
+    "test_best_available_client", rclcpp::BestAvailableQoS());
 }
