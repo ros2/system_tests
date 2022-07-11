@@ -180,12 +180,12 @@ TEST_F(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients
       response->sum = request->a + request->b;
     };
 
-  rmw_qos_profile_t qos_profile = rmw_qos_profile_services_default;
-  qos_profile.depth = std::min<size_t>(executor.get_number_of_threads(), 16) * 2;
+  rclcpp::ServicesQoS qos_profile;
+  qos_profile.keep_last(std::min<size_t>(executor.get_number_of_threads(), 16) * 2);
   auto callback_group = node->create_callback_group(
     rclcpp::CallbackGroupType::Reentrant);
   auto service = node->create_service<test_rclcpp::srv::AddTwoInts>(
-    "multi_consumer_clients", callback, qos_profile, callback_group);
+    "multi_consumer_clients", callback, qos_profile.get_rmw_qos_profile(), callback_group);
 
   using ClientRequestPair = std::pair<
     rclcpp::Client<test_rclcpp::srv::AddTwoInts>::SharedPtr,
