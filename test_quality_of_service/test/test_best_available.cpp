@@ -144,7 +144,7 @@ TEST_F(QosRclcppTestFixture, test_best_available_policies_services) {
       std::shared_ptr<rmw_request_id_t>,
       std::shared_ptr<test_msgs::srv::Empty::Request>,
       std::shared_ptr<test_msgs::srv::Empty::Response>) {},
-    rmw_qos_profile_best_available);
+    rclcpp::BestAvailableQoS());
 }
 
 TEST_F(QosRclcppTestFixture, test_best_available_policies_clients) {
