@@ -185,7 +185,7 @@ TEST_F(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients
   auto callback_group = node->create_callback_group(
     rclcpp::CallbackGroupType::Reentrant);
   auto service = node->create_service<test_rclcpp::srv::AddTwoInts>(
-    "multi_consumer_clients", callback, qos_profile.get_rmw_qos_profile(), callback_group);
+    "multi_consumer_clients", callback, qos_profile, callback_group);
 
   using ClientRequestPair = std::pair<
     rclcpp::Client<test_rclcpp::srv::AddTwoInts>::SharedPtr,
