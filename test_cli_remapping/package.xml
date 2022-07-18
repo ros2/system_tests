@@ -2,12 +2,17 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>test_cli_remapping</name>
-  <version>0.9.1</version>
+  <version>0.13.0</version>
   <description>
     Test command line remapping of topic names, service names, node namespace, and node name.
   </description>
-  <maintainer email="sloretz@openrobotics.org">Shane Loretz</maintainer>
+  <maintainer email="aditya.pande@openrobotics.org">Aditya Pande</maintainer>
+  <maintainer email="shane@openrobotics.org">Shane Loretz</maintainer>
   <license>Apache License 2.0</license>
+
+  <author email="sloretz@openrobotics.org">Shane Loretz</author>
+  <author email="jacob@openrobotics.org">Jacob Perron</author>
+  <author email="william@openrobotics.org">William Woodall</author>
 
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
   <buildtool_depend>python_cmake_module</buildtool_depend>

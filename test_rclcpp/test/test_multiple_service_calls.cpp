@@ -43,8 +43,21 @@ void handle_add_two_ints(
   response->sum = request->a + request->b;
 }
 
-TEST(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), two_service_calls) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+class CLASSNAME (test_two_service_calls, RMW_IMPLEMENTATION) : public ::testing::Test
+{
+public:
+  static void SetUpTestCase()
+  {
+    rclcpp::init(0, nullptr);
+  }
+
+  static void TearDownTestCase()
+  {
+    rclcpp::shutdown();
+  }
+};
+
+TEST_F(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), two_service_calls) {
   auto node = rclcpp::Node::make_shared("test_two_service_calls");
 
   auto service = node->create_service<test_rclcpp::srv::AddTwoInts>(
@@ -80,14 +93,11 @@ TEST(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), two_service_calls) {
   rclcpp::spin_until_future_complete(node, result2);
   printf("Received second reply\n");
   EXPECT_EQ(2, result2.get()->sum);
-  // The first result should still be 1.
-  EXPECT_EQ(1, result1.get()->sum);
 }
 
 // Regression test for async client not being able to queue another request in a response callback.
 // See https://github.com/ros2/rclcpp/pull/415
-TEST(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), recursive_service_call) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), recursive_service_call) {
   auto node = rclcpp::Node::make_shared("test_recursive_service_call");
 
   auto service = node->create_service<test_rclcpp::srv::AddTwoInts>(
@@ -134,8 +144,21 @@ TEST(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), recursive_service_ca
   EXPECT_TRUE(second_result_received);
 }
 
-TEST(CLASSNAME(test_multiple_service_calls, RMW_IMPLEMENTATION), multiple_clients) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+class CLASSNAME (test_multiple_service_calls, RMW_IMPLEMENTATION) : public ::testing::Test
+{
+public:
+  static void SetUpTestCase()
+  {
+    rclcpp::init(0, nullptr);
+  }
+
+  static void TearDownTestCase()
+  {
+    rclcpp::shutdown();
+  }
+};
+
+TEST_F(CLASSNAME(test_multiple_service_calls, RMW_IMPLEMENTATION), multiple_clients) {
   const uint32_t n = 5;
 
   auto node = rclcpp::Node::make_shared("test_multiple_clients");
@@ -167,7 +190,7 @@ TEST(CLASSNAME(test_multiple_service_calls, RMW_IMPLEMENTATION), multiple_client
     if (!pair.first->wait_for_service(20s)) {
       ASSERT_TRUE(false) << "service not available after waiting";
     }
-    results.push_back(pair.first->async_send_request(pair.second));
+    results.push_back(pair.first->async_send_request(pair.second).future);
   }
 
   auto timer_callback = [&executor, &results]() {
@@ -188,8 +211,9 @@ TEST(CLASSNAME(test_multiple_service_calls, RMW_IMPLEMENTATION), multiple_client
   // Check the status of all futures
   for (uint32_t i = 0; i < results.size(); ++i) {
     ASSERT_EQ(std::future_status::ready, results[i].wait_for(std::chrono::seconds(0)));
-    EXPECT_EQ(results[i].get()->sum, 2 * i + 1);
-    printf("Got response #%u with value %" PRId64 "\n", i, results[i].get()->sum);
+    auto response = results.at(i).get();
+    EXPECT_EQ(response->sum, 2 * i + 1);
+    printf("Got response #%u with value %" PRId64 "\n", i, response->sum);
     fflush(stdout);
   }
 }

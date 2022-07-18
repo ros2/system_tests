@@ -33,9 +33,21 @@
 static const std::chrono::milliseconds sleep_per_loop(10);
 static const int max_loops = 200;
 
-TEST(CLASSNAME(test_intra_process_within_one_node, RMW_IMPLEMENTATION), nominal_usage) {
-  rclcpp::init(0, nullptr);
+class CLASSNAME (test_intra_process_within_one_node, RMW_IMPLEMENTATION) : public ::testing::Test
+{
+public:
+  static void SetUpTestCase()
+  {
+    rclcpp::init(0, nullptr);
+  }
 
+  static void TearDownTestCase()
+  {
+    rclcpp::shutdown();
+  }
+};
+
+TEST_F(CLASSNAME(test_intra_process_within_one_node, RMW_IMPLEMENTATION), nominal_usage) {
   // use intra process = true
   auto node = rclcpp::Node::make_shared(
     "test_intra_process",
@@ -46,7 +58,7 @@ TEST(CLASSNAME(test_intra_process_within_one_node, RMW_IMPLEMENTATION), nominal_
   int counter = 0;
   auto callback =
     [&counter](
-    const test_rclcpp::msg::UInt32::SharedPtr msg,
+    const test_rclcpp::msg::UInt32::ConstSharedPtr msg,
     const rclcpp::MessageInfo & message_info
     ) -> void
     {
@@ -164,5 +176,4 @@ TEST(CLASSNAME(test_intra_process_within_one_node, RMW_IMPLEMENTATION), nominal_
   printf("spin_node_some() - no callbacks expected\n");
   executor.spin_node_some(node);
   ASSERT_EQ(5, counter);
-  rclcpp::shutdown();
 }

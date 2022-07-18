@@ -51,8 +51,8 @@ if(BUILD_TESTING)
     if(TARGET ${target}${target_suffix})
       target_compile_definitions(${target}${target_suffix}
         PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
-      rosidl_target_interfaces(${target}${target_suffix}
-        ${PROJECT_NAME} "rosidl_typesupport_cpp")
+      rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
+      target_link_libraries(${target}${target_suffix} "${cpp_typesupport_target}")
       ament_target_dependencies(${target}${target_suffix}
         "rclcpp")
       target_include_directories(${target}${target_suffix} PUBLIC include)
@@ -63,8 +63,8 @@ if(BUILD_TESTING)
     add_executable(${target} ${ARGN})
     target_compile_definitions(${target}
       PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
-    rosidl_target_interfaces(${target}
-      ${PROJECT_NAME} "rosidl_typesupport_cpp")
+    rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
+    target_link_libraries(${target} "${cpp_typesupport_target}")
     ament_target_dependencies(${target}
       "rclcpp")
   endfunction()
@@ -73,8 +73,8 @@ if(BUILD_TESTING)
     ament_add_gtest_executable(${target} ${ARGN})
     target_compile_definitions(${target}
       PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
-    rosidl_target_interfaces(${target}
-      ${PROJECT_NAME} "rosidl_typesupport_cpp")
+    rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
+    target_link_libraries(${target} "${cpp_typesupport_target}")
     ament_target_dependencies(${target}
       "rclcpp")
   endfunction()
@@ -143,15 +143,20 @@ if(BUILD_TESTING)
   # then check the output of the executable against different console output.
   macro(custom_launch_test_executable_output test_name executable)
 
+    cmake_parse_arguments(_ARG "" "LAUNCH_TEST_TEMPLATE" "" ${ARGN})
+    if(NOT _ARG_LAUNCH_TEST_TEMPLATE)
+      set(_ARG_LAUNCH_TEST_TEMPLATE test/test_executable_output.py.in)
+    endif()
+
     set(TEST_NAME "${test_name}")
     set(TEST_EXECUTABLE "$<TARGET_FILE:${executable}>")
     set(TEST_EXECUTABLE_NAME "${executable}")
     set(TEST_EXECUTABLE_TRIGGER_SHUTDOWN_OUTPUT
-      "${CMAKE_CURRENT_SOURCE_DIR}/test/${test_name}__trigger_shutdown")
+      "${CMAKE_CURRENT_SOURCE_DIR}/test/expected_outputs/${test_name}__trigger_shutdown")
     set(TEST_EXECUTABLE_EXPECTED_OUTPUT
-      "${CMAKE_CURRENT_SOURCE_DIR}/test/${test_name}__expected_output")
+      "${CMAKE_CURRENT_SOURCE_DIR}/test/expected_outputs/${test_name}__expected_output")
     configure_file(
-      test/test_executable_output.py.in
+      ${_ARG_LAUNCH_TEST_TEMPLATE}
       ${test_name}${target_suffix}.py.configure
       @ONLY
     )
@@ -162,7 +167,7 @@ if(BUILD_TESTING)
     add_launch_test(
       "${CMAKE_CURRENT_BINARY_DIR}/${test_name}${target_suffix}_$<CONFIG>.py"
       TARGET ${test_name}${target_suffix}
-      ${ARGN}
+      ${_ARG_UNPARSED_ARGUMENTS}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
@@ -293,12 +298,6 @@ if(BUILD_TESTING)
       RMW_IMPLEMENTATION=${rmw_implementation}
       TIMEOUT 60)
 
-    if(rmw_implementation STREQUAL "rmw_cyclonedds_cpp")
-      # TODO(tfoote) Disable this tests on CI as it's being flakey
-      # This should be removed when https://github.com/ros2/rmw_cyclonedds/issues/183 is resolved.
-      ament_add_test_label(test_parameter_server_cpp${target_suffix} xfail)
-    endif()
-
     # Service tests single implementation
     custom_launch_test_two_executables(test_services_cpp
       test_services_server_cpp test_services_client_cpp
@@ -332,15 +331,31 @@ if(BUILD_TESTING)
     endif()
     # Test that a user-defined signal handler is called on interrupt:
     # after rclcpp::init has been called, but before rclcpp::shutdown has been called.
-    custom_launch_test_executable_output(test_signal_handler_before_shutdown
-      test_signal_handler
+    custom_launch_test_executable_output(test_sigint_handler_before_shutdown
+      test_sigint_handler
       TIMEOUT 30
       ${SKIP_TEST})
 
     # Test that a user-defined signal handler is restored after rclcpp::init and rclcpp::shutdown
     # have been called.
-    custom_launch_test_executable_output(test_signal_handler_after_shutdown
-      test_signal_handler
+    custom_launch_test_executable_output(test_sigint_handler_after_shutdown
+      test_sigint_handler
+      TIMEOUT 30
+      ${SKIP_TEST})
+
+    # Test that a user-defined signal handler is called on interrupt:
+    # after rclcpp::init has been called, but before rclcpp::shutdown has been called.
+    custom_launch_test_executable_output(test_sigterm_handler_before_shutdown
+      test_sigterm_handler
+      LAUNCH_TEST_TEMPLATE test/test_sigterm.py.in
+      TIMEOUT 30
+      ${SKIP_TEST})
+
+    # Test that a user-defined signal handler is restored after rclcpp::init and rclcpp::shutdown
+    # have been called.
+    custom_launch_test_executable_output(test_sigterm_handler_after_shutdown
+      test_sigterm_handler
+      LAUNCH_TEST_TEMPLATE test/test_sigterm.py.in
       TIMEOUT 30
       ${SKIP_TEST})
 
@@ -369,7 +384,8 @@ if(BUILD_TESTING)
 
   call_for_each_rmw_implementation(targets)
 
-  custom_executable(test_signal_handler "test/test_signal_handler.cpp")
+  custom_executable(test_sigint_handler "test/test_sigint_handler.cpp")
+  custom_executable(test_sigterm_handler "test/test_sigterm_handler.cpp")
 
   # Parameter tests single implementation
   custom_executable(test_parameters_server_cpp "test/test_parameters_server.cpp")
@@ -388,3 +404,8 @@ endif()  # BUILD_TESTING
 
 # TODO should not install anything
 ament_package()
+
+if(TEST cppcheck)
+  # cppcheck test is created in hook in ament_package()
+  set_tests_properties(cppcheck PROPERTIES TIMEOUT 400)
+endif()

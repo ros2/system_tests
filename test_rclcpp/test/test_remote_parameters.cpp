@@ -31,8 +31,21 @@
 
 using namespace std::chrono_literals;
 
-TEST(CLASSNAME(parameters, rmw_implementation), test_remote_parameters_async) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+class CLASSNAME (parameters, RMW_IMPLEMENTATION) : public ::testing::Test
+{
+public:
+  static void SetUpTestCase()
+  {
+    rclcpp::init(0, nullptr);
+  }
+
+  static void TearDownTestCase()
+  {
+    rclcpp::shutdown();
+  }
+};
+
+TEST_F(CLASSNAME(parameters, RMW_IMPLEMENTATION), test_remote_parameters_async) {
   std::string test_server_name = "test_parameters_server_allow_undeclared";
   // TODO(tfoote) make test_server name parameterizable
   // if (argc >= 2) {
@@ -49,11 +62,10 @@ TEST(CLASSNAME(parameters, rmw_implementation), test_remote_parameters_async) {
 
   test_set_parameters_async(node, parameters_client);
 
-  test_get_parameters_async(node, parameters_client);
+  test_get_parameters_async(node, parameters_client, true);
 }
 
-TEST(CLASSNAME(parameters, rmw_implementation), test_remote_parameters_sync) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(parameters, RMW_IMPLEMENTATION), test_remote_parameters_sync) {
   std::string test_server_name = "test_parameters_server_allow_undeclared";
 
   auto node = rclcpp::Node::make_shared(std::string("test_remote_parameters_sync"));
@@ -66,11 +78,10 @@ TEST(CLASSNAME(parameters, rmw_implementation), test_remote_parameters_sync) {
 
   test_set_parameters_sync(parameters_client);
 
-  test_get_parameters_sync(parameters_client);
+  test_get_parameters_sync(parameters_client, true);
 }
 
-TEST(CLASSNAME(parameters, rmw_implementation), test_set_remote_parameters_atomically_sync) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(parameters, RMW_IMPLEMENTATION), test_set_remote_parameters_atomically_sync) {
   std::string test_server_name = "test_parameters_server_allow_undeclared";
 
   auto node = rclcpp::Node::make_shared(std::string("test_set_remote_parameters_atomically_sync"));
@@ -83,11 +94,24 @@ TEST(CLASSNAME(parameters, rmw_implementation), test_set_remote_parameters_atomi
 
   test_set_parameters_atomically_sync(parameters_client);
 
-  test_get_parameters_sync(parameters_client);
+  test_get_parameters_sync(parameters_client, true);
 }
 
-TEST(CLASSNAME(parameters_must_declare, rmw_implementation), test_remote_parameters_async) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+class CLASSNAME (parameters_must_declare, RMW_IMPLEMENTATION) : public ::testing::Test
+{
+public:
+  static void SetUpTestCase()
+  {
+    rclcpp::init(0, nullptr);
+  }
+
+  static void TearDownTestCase()
+  {
+    rclcpp::shutdown();
+  }
+};
+
+TEST_F(CLASSNAME(parameters_must_declare, RMW_IMPLEMENTATION), test_remote_parameters_async) {
   std::string test_server_name = "test_parameters_server_must_declare";
 
   auto node = rclcpp::Node::make_shared(std::string("test_remote_parameters_async"));
@@ -102,8 +126,7 @@ TEST(CLASSNAME(parameters_must_declare, rmw_implementation), test_remote_paramet
   test_set_parameters_async(node, parameters_client, 0);
 }
 
-TEST(CLASSNAME(parameters_must_declare, rmw_implementation), test_remote_parameters_sync) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(parameters_must_declare, RMW_IMPLEMENTATION), test_remote_parameters_sync) {
   std::string test_server_name = "test_parameters_server_must_declare";
 
   auto node = rclcpp::Node::make_shared(std::string("test_remote_parameters_sync"));
@@ -118,11 +141,10 @@ TEST(CLASSNAME(parameters_must_declare, rmw_implementation), test_remote_paramet
   test_set_parameters_sync(parameters_client, 0);
 }
 
-TEST(
-  CLASSNAME(parameters_must_declare, rmw_implementation),
+TEST_F(
+  CLASSNAME(parameters_must_declare, RMW_IMPLEMENTATION),
   test_set_remote_parameters_atomically_sync)
 {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
   std::string test_server_name = "test_parameters_server_must_declare";
 
   auto node = rclcpp::Node::make_shared(std::string("test_set_remote_parameters_atomically_sync"));

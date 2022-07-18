@@ -17,7 +17,7 @@
 
 #include "gtest/gtest.h"
 #include "rclcpp/rclcpp.hpp"
-#include "rclcpp/scope_exit.hpp"
+#include "rcpputils/scope_exit.hpp"
 #include "test_rclcpp/srv/add_two_ints.hpp"
 
 #ifdef RMW_IMPLEMENTATION
@@ -29,9 +29,22 @@
 
 using namespace std::chrono_literals;
 
+class CLASSNAME (service_client, RMW_IMPLEMENTATION) : public ::testing::Test
+{
+public:
+  static void SetUpTestCase()
+  {
+    rclcpp::init(0, nullptr);
+  }
+
+  static void TearDownTestCase()
+  {
+    rclcpp::shutdown();
+  }
+};
+
 // rclcpp::shutdown() should wake up wait_for_service, even without spin.
-TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), wait_for_service_shutdown) {
-  rclcpp::init(0, nullptr);
+TEST_F(CLASSNAME(service_client, RMW_IMPLEMENTATION), wait_for_service_shutdown) {
   auto node = rclcpp::Node::make_shared("wait_for_service_shutdown");
 
   auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("wait_for_service_shutdown");
@@ -41,7 +54,7 @@ TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), wait_for_service_shutdown) {
       std::this_thread::sleep_for(1s);
       rclcpp::shutdown();
     });
-  RCLCPP_SCOPE_EXIT({shutdown_thread.join();});
+  RCPPUTILS_SCOPE_EXIT({shutdown_thread.join();});
   auto start = std::chrono::steady_clock::now();
   client->wait_for_service(15s);
   auto end = std::chrono::steady_clock::now();

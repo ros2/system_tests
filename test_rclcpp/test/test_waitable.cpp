@@ -61,11 +61,13 @@ public:
     return 1u;
   }
 
-  bool
+  void
   add_to_wait_set(rcl_wait_set_t * wait_set) override
   {
     rcl_ret_t ret = rcl_wait_set_add_timer(wait_set, timer_.get(), &timer_idx_);
-    return RCL_RET_OK == ret;
+    if (RCL_RET_OK != ret) {
+      throw std::runtime_error("failed to add timer to wait set");
+    }
   }
 
   bool
@@ -77,9 +79,16 @@ public:
     return false;
   }
 
-  void
-  execute() override
+  std::shared_ptr<void>
+  take_data() override
   {
+    return nullptr;
+  }
+
+  void
+  execute(std::shared_ptr<void> & data) override
+  {
+    (void)data;
     rcl_ret_t ret = rcl_timer_call(timer_.get());
     execute_promise_.set_value(RCL_RET_OK == ret);
   }
@@ -89,8 +98,21 @@ public:
   std::promise<bool> execute_promise_;
 };  // class WaitableWithTimer
 
-TEST(CLASSNAME(test_waitable, RMW_IMPLEMENTATION), waitable_with_timer) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+class CLASSNAME (test_waitable, RMW_IMPLEMENTATION) : public ::testing::Test
+{
+public:
+  static void SetUpTestCase()
+  {
+    rclcpp::init(0, nullptr);
+  }
+
+  static void TearDownTestCase()
+  {
+    rclcpp::shutdown();
+  }
+};
+
+TEST_F(CLASSNAME(test_waitable, RMW_IMPLEMENTATION), waitable_with_timer) {
   auto node = rclcpp::Node::make_shared("waitable_with_timer");
   auto waitable = WaitableWithTimer::make_shared(node->get_clock());
   auto group = node->create_callback_group(rclcpp::CallbackGroupType::Reentrant);

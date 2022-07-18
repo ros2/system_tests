@@ -8,19 +8,22 @@ if(NOT CMAKE_CXX_STANDARD)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+  add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
 find_package(ament_cmake REQUIRED)
 
 if(BUILD_TESTING)
-
   find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+
   find_package(ament_cmake_gtest REQUIRED)
+  find_package(rcl REQUIRED)
   find_package(rclcpp REQUIRED)
   find_package(rcutils)
   find_package(rmw REQUIRED)
   find_package(std_msgs REQUIRED)
+  find_package(test_msgs REQUIRED)
 
   # get the rmw implementations ahead of time
   find_package(rmw_implementation_cmake REQUIRED)
@@ -30,24 +33,39 @@ if(BUILD_TESTING)
   endforeach()
 
   include_directories(include)
-  ament_lint_auto_find_test_dependencies()
 
-  # build a gtest executable with an implemented main
-  function(custom_gtest_executable target)
-    ament_add_gtest_executable(${target} ${ARGN} test/${target}.cpp
-      test/qos_test_node.cpp
-      test/qos_test_publisher.cpp
-      test/qos_test_subscriber.cpp
-      test/qos_utilities.cpp)
-    target_compile_definitions(${target}  PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
-    ament_target_dependencies(${target} rclcpp rcutils std_msgs)
-    install(TARGETS ${target} DESTINATION lib/${PROJECT_NAME})
+  add_library(${PROJECT_NAME}_support
+    test/qos_test_node.cpp
+    test/qos_test_publisher.cpp
+    test/qos_test_subscriber.cpp
+    test/qos_utilities.cpp
+  )
+
+  ament_find_gtest()
+  target_include_directories(${PROJECT_NAME}_support PUBLIC "${GTEST_INCLUDE_DIRS}")
+  target_link_libraries(${PROJECT_NAME}_support ${GTEST_LIBRARIES})
+  ament_target_dependencies(${PROJECT_NAME}_support rclcpp rcutils std_msgs)
+
+  function(add_custom_gtest target)
+    ament_add_gtest(${target}${target_suffix} ${ARGN}
+      ENV
+        RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
+        RMW_IMPLEMENTATION=${rmw_implementation}
+    )
+    target_compile_definitions(${target}${target_suffix}
+      PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
+    target_link_libraries(${target}${target_suffix} ${PROJECT_NAME}_support)
+    ament_target_dependencies(${target}${target_suffix} rcl rclcpp rcutils std_msgs test_msgs)
   endfunction()
 
-  custom_gtest_executable(test_deadline "test/test_deadline.cpp")
-  custom_gtest_executable(test_lifespan "test/test_lifespan.cpp")
-  custom_gtest_executable(test_liveliness "test/test_liveliness.cpp")
+  macro(tests)
+    add_custom_gtest(test_deadline test/test_deadline.cpp)
+    add_custom_gtest(test_lifespan test/test_lifespan.cpp)
+    add_custom_gtest(test_liveliness test/test_liveliness.cpp)
+    add_custom_gtest(test_best_available test/test_best_available.cpp)
+  endmacro()
 
+  call_for_each_rmw_implementation(tests)
 endif()
 
 ament_package()

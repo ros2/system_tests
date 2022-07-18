@@ -30,7 +30,7 @@ std::tuple<size_t, size_t> convert_chrono_milliseconds_to_size_t(
   return std::make_tuple(seconds, nanoseconds);
 }
 
-void QosRclcppTestFixture::SetUp()
+void BaseQosRclcppTestFixture::SetUp()
 {
   rclcpp::init(0, nullptr);
   executor = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
@@ -40,7 +40,7 @@ void QosRclcppTestFixture::SetUp()
   subscriber = nullptr;
 }
 
-void QosRclcppTestFixture::TearDown()
+void BaseQosRclcppTestFixture::TearDown()
 {
   if (publisher) {
     publisher->teardown();

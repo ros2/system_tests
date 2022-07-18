@@ -28,22 +28,39 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
-void callback(const test_rclcpp::msg::UInt32::SharedPtr /*msg*/)
+void callback(const test_rclcpp::msg::UInt32::ConstSharedPtr /*msg*/)
 {
   throw std::runtime_error("The subscriber received a message but there should be no publisher!");
 }
 
-TEST(CLASSNAME(test_timeout_subscriber, RMW_IMPLEMENTATION), timeout_subscriber) {
-  rclcpp::init(0, nullptr);
+class CLASSNAME (test_timeout_subscriber, RMW_IMPLEMENTATION) : public ::testing::Test
+{
+public:
+  static void SetUpTestCase()
+  {
+    rclcpp::init(0, nullptr);
+  }
 
+  static void TearDownTestCase()
+  {
+    rclcpp::shutdown();
+  }
+};
+
+TEST_F(CLASSNAME(test_timeout_subscriber, RMW_IMPLEMENTATION), timeout_subscriber) {
   auto start = std::chrono::steady_clock::now();
 
   auto node = rclcpp::Node::make_shared("test_timeout_subscriber");
+  // Add subscription to its own callback group to avoid interference from other things in the node
+  auto cg = node->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+  rclcpp::SubscriptionOptions options;
+  options.callback_group = cg;
 
   auto subscriber = node->create_subscription<test_rclcpp::msg::UInt32>(
-    "test_message_timeout_uint32", 10, callback);
+    "test_message_timeout_uint32", 10, callback, options);
 
   rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_callback_group(cg, node->get_node_base_interface());
 
   size_t num_cycles = 5;
 
@@ -52,7 +69,7 @@ TEST(CLASSNAME(test_timeout_subscriber, RMW_IMPLEMENTATION), timeout_subscriber)
 
     // ensure that the non-blocking spin does return immediately
     auto nonblocking_start = std::chrono::steady_clock::now();
-    executor.spin_node_once(node, std::chrono::milliseconds::zero());
+    executor.spin_once(std::chrono::milliseconds::zero());
     auto nonblocking_end = std::chrono::steady_clock::now();
     auto nonblocking_diff = nonblocking_end - nonblocking_start;
     EXPECT_LT(
@@ -62,7 +79,7 @@ TEST(CLASSNAME(test_timeout_subscriber, RMW_IMPLEMENTATION), timeout_subscriber)
     // ensure that the blocking spin does return after the specified timeout
     auto blocking_timeout = std::chrono::milliseconds(100);
     auto blocking_start = std::chrono::steady_clock::now();
-    executor.spin_node_once(node, blocking_timeout);
+    executor.spin_once(blocking_timeout);
     auto blocking_end = std::chrono::steady_clock::now();
     auto blocking_diff = blocking_end - blocking_start;
     EXPECT_GT(
@@ -73,7 +90,6 @@ TEST(CLASSNAME(test_timeout_subscriber, RMW_IMPLEMENTATION), timeout_subscriber)
       std::chrono::duration_cast<std::chrono::nanoseconds>(blocking_timeout + tolerance).count());
   }
 
-  rclcpp::shutdown();
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);
   printf("subscribed for %f seconds\n", diff.count());

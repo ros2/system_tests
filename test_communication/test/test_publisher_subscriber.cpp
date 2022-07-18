@@ -19,7 +19,13 @@
 
 #include "rclcpp/rclcpp.hpp"
 
+#include "rcpputils/scope_exit.hpp"
+
 #include "test_msgs/message_fixtures.hpp"
+
+#include "subscribe_array_types.hpp"
+#include "subscribe_basic_types.hpp"
+#include "subscribe_string_types.hpp"
 
 template<typename T>
 void publish(
@@ -30,7 +36,7 @@ void publish(
 {
   auto qos = rclcpp::QoS(rclcpp::KeepLast(messages.size()));
 
-  auto publisher = node->create_publisher<T>(std::string("test_message_") + message_type, qos);
+  auto publisher = node->create_publisher<T>(std::string("test/message/") + message_type, qos);
 
   rclcpp::WallRate cycle_rate(10);
   rclcpp::WallRate message_rate(100);
@@ -50,57 +56,13 @@ void publish(
   }
 }
 
-template<typename T>
-rclcpp::SubscriptionBase::SharedPtr subscribe(
-  rclcpp::Node::SharedPtr node,
-  const std::string & message_type,
-  std::vector<typename T::SharedPtr> & expected_messages,
-  std::vector<bool> & received_messages)
-{
-  received_messages.assign(expected_messages.size(), false);
-
-  auto callback =
-    [&expected_messages, &received_messages](const typename T::SharedPtr received_message) -> void
-    {
-      // find received message in vector of expected messages
-      auto received = received_messages.begin();
-      bool known_message = false;
-      size_t index = 0;
-      for (auto expected_message : expected_messages) {
-        if (*received_message == *expected_message) {
-          *received = true;
-          printf("received message #%zu of %zu\n", index + 1, expected_messages.size());
-          known_message = true;
-          break;
-        }
-        ++received;
-        ++index;
-      }
-      if (!known_message) {
-        fprintf(stderr, "received message does not match any expected message\n");
-        rclcpp::shutdown();
-        throw std::runtime_error("received message does not match any expected message");
-      }
-
-      // shutdown node when all expected messages have been received
-      for (auto received_msg : received_messages) {
-        if (!received_msg) {
-          return;
-        }
-      }
-      rclcpp::shutdown();
-    };
-
-  auto qos = rclcpp::QoS(rclcpp::KeepLast(expected_messages.size()));
-
-  auto subscriber =
-    node->create_subscription<T>(std::string("test_message_") + message_type, qos, callback);
-  return subscriber;
-}
-
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
+  RCPPUTILS_SCOPE_EXIT(
+  {
+    rclcpp::shutdown();
+  });
   if (argc != 2) {
     fprintf(stderr, "Wrong number of arguments, pass one message type\n");
     return 1;
@@ -117,6 +79,7 @@ int main(int argc, char ** argv)
   auto messages_empty = get_messages_empty();
   auto messages_basic_types = get_messages_basic_types();
   auto messages_arrays = get_messages_arrays();
+  auto messages_bounded_plain_sequences = get_messages_bounded_plain_sequences();
   auto messages_bounded_sequences = get_messages_bounded_sequences();
   auto messages_unbounded_sequences = get_messages_unbounded_sequences();
   auto messages_multi_nested = get_messages_multi_nested();
@@ -132,54 +95,49 @@ int main(int argc, char ** argv)
     });
 
   if (message == "Empty") {
-    subscriber = subscribe<test_msgs::msg::Empty>(
-      node, message, messages_empty, received_messages);
+    subscriber = subscribe_empty(node, message, messages_empty, received_messages);
     publish<test_msgs::msg::Empty>(node, message, messages_empty);
   } else if (message == "BasicTypes") {
-    subscriber = subscribe<test_msgs::msg::BasicTypes>(
-      node, message, messages_basic_types, received_messages);
+    subscriber = subscribe_basic_types(node, message, messages_basic_types, received_messages);
     publish<test_msgs::msg::BasicTypes>(node, message, messages_basic_types);
   } else if (message == "Arrays") {
-    subscriber = subscribe<test_msgs::msg::Arrays>(
-      node, message, messages_arrays, received_messages);
+    subscriber = subscribe_arrays(node, message, messages_arrays, received_messages);
     publish<test_msgs::msg::Arrays>(node, message, messages_arrays);
   } else if (message == "UnboundedSequences") {
-    subscriber = subscribe<test_msgs::msg::UnboundedSequences>(
+    subscriber = subscribe_unbounded_sequences(
       node, message, messages_unbounded_sequences, received_messages);
     publish<test_msgs::msg::UnboundedSequences>(
       node, message, messages_unbounded_sequences);
+  } else if (message == "BoundedPlainSequences") {
+    subscriber = subscribe_bounded_plain_sequences(
+      node, message, messages_bounded_plain_sequences, received_messages);
+    publish<test_msgs::msg::BoundedPlainSequences>(
+      node, message, messages_bounded_plain_sequences);
   } else if (message == "BoundedSequences") {
-    subscriber = subscribe<test_msgs::msg::BoundedSequences>(
+    subscriber = subscribe_bounded_sequences(
       node, message, messages_bounded_sequences, received_messages);
     publish<test_msgs::msg::BoundedSequences>(
       node, message, messages_bounded_sequences);
   } else if (message == "MultiNested") {
-    subscriber = subscribe<test_msgs::msg::MultiNested>(
-      node, message, messages_multi_nested, received_messages);
+    subscriber = subscribe_multi_nested(node, message, messages_multi_nested, received_messages);
     publish<test_msgs::msg::MultiNested>(node, message, messages_multi_nested);
   } else if (message == "Nested") {
-    subscriber = subscribe<test_msgs::msg::Nested>(
-      node, message, messages_nested, received_messages);
+    subscriber = subscribe_nested(node, message, messages_nested, received_messages);
     publish<test_msgs::msg::Nested>(node, message, messages_nested);
   } else if (message == "Builtins") {
-    subscriber = subscribe<test_msgs::msg::Builtins>(
-      node, message, messages_builtins, received_messages);
+    subscriber = subscribe_builtins(node, message, messages_builtins, received_messages);
     publish<test_msgs::msg::Builtins>(node, message, messages_builtins);
   } else if (message == "Constants") {
-    subscriber = subscribe<test_msgs::msg::Constants>(
-      node, message, messages_constants, received_messages);
+    subscriber = subscribe_constants(node, message, messages_constants, received_messages);
     publish<test_msgs::msg::Constants>(node, message, messages_constants);
   } else if (message == "Defaults") {
-    subscriber = subscribe<test_msgs::msg::Defaults>(
-      node, message, messages_defaults, received_messages);
+    subscriber = subscribe_defaults(node, message, messages_defaults, received_messages);
     publish<test_msgs::msg::Defaults>(node, message, messages_defaults);
   } else if (message == "Strings") {
-    subscriber = subscribe<test_msgs::msg::Strings>(
-      node, message, messages_strings, received_messages);
+    subscriber = subscribe_strings(node, message, messages_strings, received_messages);
     publish<test_msgs::msg::Strings>(node, message, messages_strings);
   } else if (message == "WStrings") {
-    subscriber = subscribe<test_msgs::msg::WStrings>(
-      node, message, messages_wstrings, received_messages);
+    subscriber = subscribe_wstrings(node, message, messages_wstrings, received_messages);
     publish<test_msgs::msg::WStrings>(node, message, messages_wstrings);
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());

@@ -34,7 +34,9 @@ rclcpp::SubscriptionBase::SharedPtr attempt_subscribe(
   received_messages.assign(expected_messages.size(), false);
 
   auto callback =
-    [&expected_messages, &received_messages](const typename T::SharedPtr received_message) -> void
+    [&expected_messages, &received_messages](
+    const typename T::ConstSharedPtr received_message
+    ) -> void
     {
       // find received message in vector of expected messages
       auto received = received_messages.begin();
@@ -77,7 +79,7 @@ rclcpp::SubscriptionBase::SharedPtr attempt_subscribe(
   rclcpp::executors::SingleThreadedExecutor & exec)
 {
   auto subscription_callback =
-    [&sub_callback_called, &exec](const typename T::SharedPtr) -> void
+    [&sub_callback_called, &exec](const typename T::ConstSharedPtr) -> void
     {
       printf("***SUB_CALLBACK***\n");
       sub_callback_called = true;
@@ -150,36 +152,9 @@ int main(int argc, char ** argv)
     if (message == "Empty") {
       subscriber = attempt_subscribe<test_msgs::msg::Empty>(
         node, topic_name, messages_empty, received_messages);
-    } else if (message == "BasicTypes") {
-      subscriber = attempt_subscribe<test_msgs::msg::BasicTypes>(
-        node, topic_name, messages_basic_types, received_messages);
-    } else if (message == "Arrays") {
-      subscriber = attempt_subscribe<test_msgs::msg::Arrays>(
-        node, topic_name, messages_arrays, received_messages);
     } else if (message == "UnboundedSequences") {
       subscriber = attempt_subscribe<test_msgs::msg::UnboundedSequences>(
         node, topic_name, messages_unbounded_sequences, received_messages);
-    } else if (message == "BoundedSequences") {
-      subscriber = attempt_subscribe<test_msgs::msg::BoundedSequences>(
-        node, topic_name, messages_bounded_sequences, received_messages);
-    } else if (message == "Nested") {
-      subscriber = attempt_subscribe<test_msgs::msg::Nested>(
-        node, topic_name, messages_nested, received_messages);
-    } else if (message == "MultiNested") {
-      subscriber = attempt_subscribe<test_msgs::msg::MultiNested>(
-        node, topic_name, messages_multi_nested, received_messages);
-    } else if (message == "Strings") {
-      subscriber = attempt_subscribe<test_msgs::msg::Strings>(
-        node, topic_name, messages_strings, received_messages);
-    } else if (message == "Constants") {
-      subscriber = attempt_subscribe<test_msgs::msg::Constants>(
-        node, topic_name, messages_constants, received_messages);
-    } else if (message == "Defaults") {
-      subscriber = attempt_subscribe<test_msgs::msg::Defaults>(
-        node, topic_name, messages_defaults, received_messages);
-    } else if (message == "Builtins") {
-      subscriber = attempt_subscribe<test_msgs::msg::Builtins>(
-        node, topic_name, messages_builtins, received_messages);
     } else {
       fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
       rclcpp::shutdown();
@@ -195,35 +170,8 @@ int main(int argc, char ** argv)
     if (message == "Empty") {
       subscriber = attempt_subscribe<test_msgs::msg::Empty>(
         node, topic_name, sub_callback_called, executor);
-    } else if (message == "BasicTypes") {
-      subscriber = attempt_subscribe<test_msgs::msg::BasicTypes>(
-        node, topic_name, sub_callback_called, executor);
-    } else if (message == "Arrays") {
-      subscriber = attempt_subscribe<test_msgs::msg::Arrays>(
-        node, topic_name, sub_callback_called, executor);
     } else if (message == "UnboundedSequences") {
       subscriber = attempt_subscribe<test_msgs::msg::UnboundedSequences>(
-        node, topic_name, sub_callback_called, executor);
-    } else if (message == "BoundedSequences") {
-      subscriber = attempt_subscribe<test_msgs::msg::BoundedSequences>(
-        node, topic_name, sub_callback_called, executor);
-    } else if (message == "Nested") {
-      subscriber = attempt_subscribe<test_msgs::msg::Nested>(
-        node, topic_name, sub_callback_called, executor);
-    } else if (message == "MultiNested") {
-      subscriber = attempt_subscribe<test_msgs::msg::MultiNested>(
-        node, topic_name, sub_callback_called, executor);
-    } else if (message == "Strings") {
-      subscriber = attempt_subscribe<test_msgs::msg::Strings>(
-        node, topic_name, sub_callback_called, executor);
-    } else if (message == "Constants") {
-      subscriber = attempt_subscribe<test_msgs::msg::Constants>(
-        node, topic_name, sub_callback_called, executor);
-    } else if (message == "Defaults") {
-      subscriber = attempt_subscribe<test_msgs::msg::Defaults>(
-        node, topic_name, sub_callback_called, executor);
-    } else if (message == "Builtins") {
-      subscriber = attempt_subscribe<test_msgs::msg::Builtins>(
         node, topic_name, sub_callback_called, executor);
     } else {
       fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());

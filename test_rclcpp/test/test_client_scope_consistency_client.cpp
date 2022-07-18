@@ -32,14 +32,27 @@
 
 using namespace std::chrono_literals;
 
+class CLASSNAME (service_client, RMW_IMPLEMENTATION) : public ::testing::Test
+{
+public:
+  static void SetUpTestCase()
+  {
+    rclcpp::init(0, nullptr);
+  }
+
+  static void TearDownTestCase()
+  {
+    rclcpp::shutdown();
+  }
+};
+
 // This test is concerned with the consistency of the two clients' behavior, not necessarily whether
 // or not they are successful.
-TEST(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_consistency_regression_test) {
-  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+TEST_F(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_consistency_regression_test) {
   auto node = rclcpp::Node::make_shared("client_scope_consistency_regression_test");
 
   // Replicate the settings that caused https://github.com/ros2/system_tests/issues/153
-  rmw_qos_profile_t rmw_qos_profile = rmw_qos_profile_default;
+  rclcpp::QoS rmw_qos_profile(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
   rclcpp::FutureReturnCode ret1;
 
   // Extra scope so the first client will be deleted afterwards

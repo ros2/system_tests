@@ -78,6 +78,9 @@ int main(int argc, char ** argv)
   } else if (message == "UnboundedSequences") {
     publish<test_msgs::msg::UnboundedSequences>(
       node, message, get_messages_unbounded_sequences());
+  } else if (message == "BoundedPlainSequences") {
+    publish<test_msgs::msg::BoundedPlainSequences>(
+      node, message, get_messages_bounded_plain_sequences());
   } else if (message == "BoundedSequences") {
     publish<test_msgs::msg::BoundedSequences>(
       node, message, get_messages_bounded_sequences());

@@ -50,12 +50,12 @@ TEST_CASES = {
         '__node:=node_{random_string}'
     ),
     'topic_and_service_replacement': (
-        '/remapped/s{random_string}',
-        '/fully/qualified/name:=/remapped/s{random_string}'
+        '/remapped/ts{random_string}',
+        '/fully/qualified/name:=/remapped/ts{random_string}'
     ),
     'topic_replacement': (
-        '/remapped/s{random_string}',
-        'rostopic://~/private/name:=/remapped/s{random_string}'
+        '/remapped/t{random_string}',
+        'rostopic://~/private/name:=/remapped/t{random_string}'
     ),
     'service_replacement': (
         '/remapped/s{random_string}',
@@ -85,7 +85,7 @@ def generate_test_description(executable):
                 name='name_maker_' + replacement_name, env=env
             )
         )
-        test_context[replacement_name] = replacement_value.format(**locals())
+        test_context[replacement_name] = replacement_value.format(random_string=random_string)
 
     launch_description.add_action(
         launch_testing.actions.ReadyToTest()

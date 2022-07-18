@@ -28,7 +28,7 @@
 #include "rcl/rcl.h"
 #include "rcl/error_handling.h"
 
-#include "rcutils/get_env.h"
+#include "rcutils/env.h"
 #include "rcutils/strdup.h"
 
 #ifdef RMW_IMPLEMENTATION
@@ -170,7 +170,7 @@ std::vector<TestConfig> test_configs {
   },
 };
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
   TestInitializationFails,
   TestSecureNodes,
   ::testing::ValuesIn(test_configs),

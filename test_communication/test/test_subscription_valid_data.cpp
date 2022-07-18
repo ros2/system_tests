@@ -29,7 +29,7 @@ int main(int argc, char ** argv)
   auto node = rclcpp::Node::make_shared("test_subscription_valid_data");
 
   auto callback =
-    [](const test_communication::msg::UInt32::SharedPtr received_message) -> void
+    [](const test_communication::msg::UInt32::ConstSharedPtr received_message) -> void
     {
       printf("received message #%u\n", received_message->data);
       if (received_message->data == 0) {

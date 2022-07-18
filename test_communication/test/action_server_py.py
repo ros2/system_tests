@@ -16,6 +16,8 @@ import argparse
 import sys
 import time
 
+from rclpy.executors import ExternalShutdownException
+
 from test_msgs.action import Fibonacci
 from test_msgs.action import NestedMessage
 
@@ -177,9 +179,11 @@ if __name__ == '__main__':
         rclpy.spin(node)
     except KeyboardInterrupt:
         print('Action server stopped cleanly')
+    except ExternalShutdownException:
+        sys.exit(1)
     except BaseException:
         print('Exception in action server:', file=sys.stderr)
         raise
     finally:
+        rclpy.try_shutdown()
         node.destroy_node()
-        rclpy.shutdown()

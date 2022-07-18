@@ -118,11 +118,12 @@ if(BUILD_TESTING)
 
   function(custom_executable target)
     add_executable(${target} ${ARGN})
-    rosidl_target_interfaces(${target}
-      ${PROJECT_NAME} "rosidl_typesupport_cpp")
+    rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
+    target_link_libraries(${target} "${cpp_typesupport_target}")
     ament_target_dependencies(${target}
       "rclcpp"
       "rclcpp_action"
+      "test_msgs"
     )
   endfunction()
 
@@ -135,9 +136,8 @@ if(BUILD_TESTING)
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation})
     if(TARGET ${target}${target_suffix})
-      add_dependencies(${target}${target_suffix} ${PROJECT_NAME})
-      rosidl_target_interfaces(${target}${target_suffix}
-        ${PROJECT_NAME} "rosidl_typesupport_c")
+      rosidl_get_typesupport_target(c_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_c")
+      target_link_libraries(${target}${target_suffix} "${c_typesupport_target}")
       ament_target_dependencies(${target}${target_suffix}
         "osrf_testing_tools_cpp" "rcl")
       set_tests_properties(
@@ -182,6 +182,32 @@ if(BUILD_TESTING)
       set(rmw_implementation2_is_connext TRUE)
     endif()
 
+    # TODO(asorbini) Skip tests between rmw_connext_cpp and rmw_connextdds
+    # since they are not meant to coexist (and used incompatible typecodes by default).
+    set(rmw_implementation1_is_connextdds FALSE)
+    if(rmw_implementation1 MATCHES "(.*)connextdds")
+      set(rmw_implementation1_is_connextdds TRUE)
+    endif()
+    set(rmw_implementation2_is_connextdds FALSE)
+    if(rmw_implementation2 MATCHES "(.*)connextdds")
+      set(rmw_implementation2_is_connextdds TRUE)
+    endif()
+
+    set(rmw_implementation1_is_connext_cpp FALSE)
+    if(rmw_implementation1 MATCHES "(.*)connext(.*)_cpp")
+      set(rmw_implementation1_is_connext_cpp TRUE)
+    endif()
+    set(rmw_implementation2_is_connext_cpp FALSE)
+    if(rmw_implementation2 MATCHES "(.*)connext(.*)_cpp")
+      set(rmw_implementation2_is_connext_cpp TRUE)
+    endif()
+
+    if((rmw_implementation1_is_connextdds AND rmw_implementation2_is_connext_cpp) OR
+      (rmw_implementation1_is_connext_cpp AND rmw_implementation2_is_connextdds)
+    )
+      set(SKIP_TEST "SKIP_TEST")
+    endif()
+
     set(rmw_implementation1_is_cyclonedds FALSE)
     set(rmw_implementation2_is_cyclonedds FALSE)
     if(rmw_implementation1 MATCHES "(.*)cyclonedds(.*)")
@@ -189,15 +215,6 @@ if(BUILD_TESTING)
     endif()
     if(rmw_implementation2 MATCHES "(.*)cyclonedds(.*)")
       set(rmw_implementation2_is_cyclonedds TRUE)
-    endif()
-
-    set(rmw_implementation1_is_opensplice FALSE)
-    set(rmw_implementation2_is_opensplice FALSE)
-    if(rmw_implementation1 MATCHES "(.*)opensplice(.*)")
-      set(rmw_implementation1_is_opensplice TRUE)
-    endif()
-    if(rmw_implementation2 MATCHES "(.*)opensplice(.*)")
-      set(rmw_implementation2_is_opensplice TRUE)
     endif()
 
     set(PUBLISHER_RMW ${rmw_implementation1})
@@ -212,15 +229,6 @@ if(BUILD_TESTING)
         rmw_implementation1_is_fastrtps AND
         rmw_implementation2_is_connext AND
         APPLE
-      )
-        continue()
-      endif()
-      # TODO(dirk-thomas) OpenSplice doesn't support WString and the rmw impl.
-      # maps it to string which has a different wire representation
-      if(
-        "${message_type}" STREQUAL "WStrings" AND
-        (rmw_implementation1_is_opensplice OR rmw_implementation2_is_opensplice) AND
-        NOT "${rmw_implementation1_is_opensplice}" STREQUAL "${rmw_implementation2_is_opensplice}"
       )
         continue()
       endif()
@@ -267,14 +275,9 @@ if(BUILD_TESTING)
 
     # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)
     # TODO different vendors can't talk to each other right now
-    if(NOT rmw_implementation1 STREQUAL rmw_implementation2 AND
-      (NOT(rmw_implementation1 MATCHES "(.*)connext(.*)" AND rmw_implementation2 MATCHES "(.*)connext(.*)"))
-    )
-      set(SKIP_TEST "SKIP_TEST")
-    endif()
-
-    # TODO(mikaelarguedas) connext_dynamic doesn't support C services for now
-    if((client_library1 STREQUAL "rclpy" AND rmw_implementation1 MATCHES "rmw_connext_dynamic_cpp") OR
+    # TODO(asorbini): Remove Connext exceptions once ros2/rmw_connext is deprecated.
+    if(NOT rmw_implementation1 STREQUAL rmw_implementation2 OR
+      (client_library1 STREQUAL "rclpy" AND rmw_implementation1 MATCHES "rmw_connext_dynamic_cpp") OR
       (client_library2 STREQUAL "rclpy" AND rmw_implementation2 MATCHES "rmw_connext_dynamic_cpp")
     )
       set(SKIP_TEST "SKIP_TEST")
@@ -413,9 +416,18 @@ if(BUILD_TESTING)
     endforeach()
   endmacro()
 
+  add_library(subscribe_types STATIC
+    "test/subscribe_array_types.cpp"
+    "test/subscribe_basic_types.cpp"
+    "test/subscribe_string_types.cpp")
+  ament_target_dependencies(subscribe_types
+    "rclcpp"
+    "test_msgs")
+
   # publisher combined with a subscriber
   custom_executable(test_publisher_subscriber_cpp
     "test/test_publisher_subscriber.cpp")
+  target_link_libraries(test_publisher_subscriber_cpp subscribe_types)
   # subcription valid data
   custom_executable(test_subscription_valid_data_cpp
     "test/test_subscription_valid_data.cpp")
@@ -424,6 +436,7 @@ if(BUILD_TESTING)
     "test/test_publisher.cpp")
   custom_executable(test_subscriber_cpp
     "test/test_subscriber.cpp")
+  target_link_libraries(test_subscriber_cpp subscribe_types)
   # executables requester / replier
   custom_executable(test_requester_cpp
     "test/test_requester.cpp")
@@ -467,8 +480,9 @@ if(BUILD_TESTING)
   endif()
 
   macro(serialize)
+    # TODO(asorbini): Remove this exception once ros2/rmw_connext is deprecated.
     set(SKIP_TEST "")
-    if(${rmw_implementation} STREQUAL "rmw_connext_dynamic_cpp" OR ${rmw_implementation} STREQUAL "rmw_opensplice_cpp")
+    if(${rmw_implementation} STREQUAL "rmw_connext_dynamic_cpp")
       message(STATUS "skipping serialize tests for ${rmw_implementation}")
       set(SKIP_TEST "SKIP_TEST")
     endif()
@@ -499,11 +513,13 @@ if(BUILD_TESTING)
   endmacro()
 
   macro(pub_sub_serialized)
+    # TODO(asorbini): Remove this exception once ros2/rmw_connext is deprecated.
     set(SKIP_TEST "")
-    if(${rmw_implementation} STREQUAL "rmw_connext_dynamic_cpp" OR ${rmw_implementation} STREQUAL "rmw_opensplice_cpp")
+    if(${rmw_implementation} STREQUAL "rmw_connext_dynamic_cpp")
       message(STATUS "skipping serialize tests for ${rmw_implementation}")
       set(SKIP_TEST "SKIP_TEST")
     endif()
+
     set(target_name "test_publisher_subscriber_serialized${target}${target_suffix}")
     ament_add_gtest(
       ${target_name} test/test_publisher_subscriber_serialized.cpp
