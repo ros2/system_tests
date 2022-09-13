@@ -2,6 +2,12 @@
 Changelog for package test_communication
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Revert "Replace deprecated spin_until_future_complete with spin_until_complete (`#499 <https://github.com/ros2/system_tests/issues/499>`_)" (`#504 <https://github.com/ros2/system_tests/issues/504>`_)
+* Replace deprecated spin_until_future_complete with spin_until_complete (`#499 <https://github.com/ros2/system_tests/issues/499>`_)
+* Contributors: Hubert Liberacki, William Woodall
+
 0.13.0 (2022-05-04)
 -------------------
 
