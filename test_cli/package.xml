@@ -6,12 +6,14 @@
   <description>
     Test command line arguments passed to ros2 executables.
   </description>
-  <maintainer email="aditya.pande@openrobotics.org">Aditya Pande</maintainer>
-  <maintainer email="shane@openrobotics.org">Shane Loretz</maintainer>
+
+  <maintainer email="brandon@openrobotics.org">Brandon Ong</maintainer>
+
   <license>Apache License 2.0</license>
 
-  <author email="sloretz@openrobotics.org">Shane Loretz</author>
+  <author email="aditya.pande@openrobotics.org">Aditya Pande</author>
   <author email="jacob@openrobotics.org">Jacob Perron</author>
+  <author email="sloretz@openrobotics.org">Shane Loretz</author>
   <author email="william@openrobotics.org">William Woodall</author>
 
   <buildtool_depend>ament_cmake_auto</buildtool_depend>

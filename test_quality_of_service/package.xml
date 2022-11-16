@@ -7,14 +7,15 @@
         Test quality of service features, specifically liveliness, deadline, and lifespan.
     </description>
 
-    <maintainer email="aditya.pande@openrobotics.org">Aditya Pande</maintainer>
-    <maintainer email="shane@openrobotics.org">Shane Loretz</maintainer>
+    <maintainer email="brandon@openrobotics.org">Brandon Ong</maintainer>
 
     <license>Apache License 2.0</license>
     
 
+    <author email="aditya.pande@openrobotics.org">Aditya Pande</author>
     <author email="ros-contributions@amazon.com">Amazon ROS Contributions</author>
     <author email="jacob@openrobotics.org">Jacob Perron</author>
+    <author email="shane@openrobotics.org">Shane Loretz</author>
     <author email="william@openrobotics.org">William Woodall</author>
 
     <buildtool_depend>ament_cmake</buildtool_depend>
