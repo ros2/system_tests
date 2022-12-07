@@ -2,6 +2,12 @@
 Changelog for package test_security
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.11.2 (2022-12-06)
+-------------------
+* Simplify the test_secure_subscriber code. (`#475 <https://github.com/ros2/system_tests/issues/475>`_)
+* Add changelogs (`#474 <https://github.com/ros2/system_tests/issues/474>`_)
+* Contributors: Chris Lalancette, Ivan Santiago Paunovic
+
 0.11.1 (2021-04-26)
 -------------------
 

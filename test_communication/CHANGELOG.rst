@@ -2,6 +2,11 @@
 Changelog for package test_communication
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.11.2 (2022-12-06)
+-------------------
+* Add changelogs (`#474 <https://github.com/ros2/system_tests/issues/474>`_)
+* Contributors: Ivan Santiago Paunovic
+
 0.11.1 (2021-04-26)
 -------------------
 
