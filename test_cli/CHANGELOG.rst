@@ -2,8 +2,8 @@
 Changelog for package test_cli
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.15.0 (2023-02-13)
+-------------------
 * Update the system tests to C++17. (`#510 <https://github.com/ros2/system_tests/issues/510>`_)
 * [rolling] Update maintainers - 2022-11-07 (`#509 <https://github.com/ros2/system_tests/issues/509>`_)
 * Contributors: Audrow Nash, Chris Lalancette
