@@ -2,6 +2,12 @@
 Changelog for package test_cli_remapping
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Update the system tests to C++17. (`#510 <https://github.com/ros2/system_tests/issues/510>`_)
+* [rolling] Update maintainers - 2022-11-07 (`#509 <https://github.com/ros2/system_tests/issues/509>`_)
+* Contributors: Audrow Nash, Chris Lalancette
+
 0.14.0 (2022-09-13)
 -------------------
 

@@ -2,6 +2,11 @@
 Changelog for package test_security
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* [rolling] Update maintainers - 2022-11-07 (`#509 <https://github.com/ros2/system_tests/issues/509>`_)
+* Contributors: Audrow Nash
+
 0.14.0 (2022-09-13)
 -------------------
 
