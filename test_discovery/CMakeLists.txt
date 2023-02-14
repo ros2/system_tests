@@ -28,7 +28,7 @@ install(FILES
     DESTINATION share/${PROJECT_NAME}/roottests/)
 
 install(PROGRAMS
-    scripts/run_tests.py
+    scripts/run_root_tests.py
     DESTINATION lib/${PROJECT_NAME}/)
 
 if(BUILD_TESTING)
