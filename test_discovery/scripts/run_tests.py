@@ -33,7 +33,7 @@ def get_rmw_implementations():
 
 def get_tests_dir():
     pkg_path = get_package_share_path('test_discovery')
-    return pkg_path / "tests"
+    return pkg_path / "roottests"
 
 
 def get_workspaces():

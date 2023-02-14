@@ -23,9 +23,9 @@ install(TARGETS publish_once subscribe_once
     DESTINATION lib/${PROJECT_NAME})
 
 install(FILES
-        scripts/test_discovery.py
-        scripts/conftest.py
-    DESTINATION share/${PROJECT_NAME}/tests/)
+        roottests/test_discovery.py
+        roottests/conftest.py
+    DESTINATION share/${PROJECT_NAME}/roottests/)
 
 install(PROGRAMS
     scripts/run_tests.py
