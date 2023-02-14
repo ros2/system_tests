@@ -34,6 +34,8 @@ install(PROGRAMS
 if(BUILD_TESTING)
     find_package(ament_lint_auto REQUIRED)
     ament_lint_auto_find_test_dependencies()
+
+    ament_add_pytest_test(test_discovery tests/test_discovery.py TIMEOUT 600)
 endif()
 
 ament_package()
