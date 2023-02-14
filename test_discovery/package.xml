@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="2">
+  <name>test_discovery</name>
+  <version>0.14.0</version>
+  <description>
+    Test discovery behaviors in ROS 2 using semiautomated tests.
+  </description>
+
+  <maintainer email="brandon@openrobotics.org">Brandon Ong</maintainer>
+
+  <license>Apache License 2.0</license>
+
+  <author email="sloretz@openrobotics.org">Shane Loretz</author>
+
+  <buildtool_depend>ament_cmake_ros</buildtool_depend>
+
+  <!-- <depend>mininet</depend> TODO this rosdep key -->
+  <depend>rclcpp</depend>
+  <depend>test_msgs</depend>
+  <depend>pytest</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+  <test_depend>test_msgs</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
