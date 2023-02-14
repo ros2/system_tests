@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright 2015 Open Source Robotics Foundation, Inc.
+# Copyright 2023 Open Source Robotics Foundation, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 import argparse
 import os
-import shlex
 import sys
 
 from ament_index_python import get_package_share_path
@@ -32,7 +31,7 @@ def get_rmw_implementations():
 
 def get_tests_dir():
     pkg_path = get_package_share_path('test_discovery')
-    return pkg_path / "roottests"
+    return pkg_path / 'roottests'
 
 
 def get_workspaces():
@@ -47,7 +46,7 @@ def get_workspaces():
             continue
         # If there exists a parent folder containing a setup.bash
         # then assume this is an isolated colcon workspace
-        if os.path.exists(os.path.join(prefix, "../setup.bash")):
+        if os.path.exists(os.path.join(prefix, '../setup.bash')):
             workspaces.add(os.path.dirname(prefix))
         else:
             # Assume a merged ament/colcon workspace
@@ -73,21 +72,21 @@ def main():
     cmd.append('-m')
     cmd.append('pytest')
     cmd.append('-c')
-    cmd.append(str(get_tests_dir() / "conftest.py"))
+    cmd.append(str(get_tests_dir() / 'conftest.py'))
     if args.select:
         cmd.append('-k')
         cmd.append(args.select)
     cmd.append(f'--rmws={":".join(rmw_implementations)}')
     cmd.append(f'--ros-workspaces={":".join(get_workspaces())}')
-    cmd.append(str(get_tests_dir() / "test_discovery.py"))
+    cmd.append(str(get_tests_dir() / 'test_discovery.py'))
 
-    # find path to test_discovery package, use that for location to conftest.py and test_discovery.py
-    print("Executing the following command:")
-    print("================================")
-    print("$", *cmd)
-    print("================================")
+    print('Executing the following command:')
+    print('================================')
+    print('$', *cmd)
+    print('================================')
 
     os.execvp(cmd[0], cmd)
+
 
 if __name__ == '__main__':
     main()

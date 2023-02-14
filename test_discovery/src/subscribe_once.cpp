@@ -20,7 +20,7 @@
 
 constexpr double kTimeout = 10;
 
-void topic_callback(const test_msgs::msg::Builtins & )
+void topic_callback(const test_msgs::msg::Builtins &)
 {
   std::cout << "test_discovery: message was received\n" << std::flush;
   std::exit(0);
@@ -35,7 +35,7 @@ int main(int argc, char * argv[])
 
   auto clock = node->get_clock();
   auto end_time = clock->now() + rclcpp::Duration::from_seconds(kTimeout);
-  while (rclcpp::ok() && clock->now() <= end_time ) {
+  while (rclcpp::ok() && clock->now() <= end_time) {
     rclcpp::spin_some(node);
     rclcpp::sleep_for(std::chrono::milliseconds(100));
   }
