@@ -23,7 +23,6 @@ from ament_index_python import get_package_share_path
 from ament_index_python import get_resources
 
 
-
 def get_rmw_implementations():
     resources = list(get_resources('rmw_typesupport').keys())
     if 'rmw_implementation' in resources:

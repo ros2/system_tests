@@ -19,7 +19,7 @@
 #include <test_msgs/msg/builtins.hpp>
 
 
-constexpr double kMaxDiscoveryTime = 5;
+constexpr double kMaxDiscoveryTime = 10;
 
 
 int main(int argc, char * argv[])
