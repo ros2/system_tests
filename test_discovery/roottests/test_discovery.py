@@ -100,14 +100,11 @@ def test_samehost(mn, ros_ws, rmw, pub_range, pub_peer, sub_range, sub_peer):
     result = mn.h1.cmd(sub_cmd)
     message_received = 'test_discovery: message was received' in result.strip()
 
-    if pub_peer or sub_peer:
-        # if either has a static peer set, discovery should succeed
-        assert message_received, result.strip()
-    elif 'OFF' in (pub_range, sub_range):
-        # With no static peer, if either has discovery off then it won't succeed
+    if 'OFF' in (pub_range, sub_range):
+        # If either has discovery off then it won't succeed
         assert not message_received, result.strip()
     else:
-        # All other cases discovery
+        # All other cases discover each other
         assert message_received, result.strip()
 
 
@@ -130,12 +127,15 @@ def test_differenthost(mn, ros_ws, rmw, pub_range, pub_peer, sub_range, sub_peer
     result = mn.h2.cmd(sub_cmd)
     message_received = 'test_discovery: message was received' in result.strip()
 
-    if pub_peer or sub_peer:
+    if 'OFF' in (pub_range, sub_range):
+        # If either has discovery off then it won't succeed
+        assert not message_received, result.strip()
+    elif pub_peer or sub_peer:
         # if either has a static peer set, discovery should succeed
         assert message_received, result.strip()
     elif 'SUBNET' == pub_range and 'SUBNET' == sub_range:
         # With no static peer, succeed only if both are set to SUBNET
         assert message_received, result.strip()
     else:
-        # All other cases discovery
+        # All other cases don't discover each other
         assert not message_received, result.strip()
