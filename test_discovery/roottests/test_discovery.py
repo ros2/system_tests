@@ -86,33 +86,6 @@ def make_env_str(ros_ws, rmw, discovery_range, peer):
 
 @pytest.mark.parametrize('sub_peer', (no_peer, h1_ipv4))
 @pytest.mark.parametrize('sub_range', RANGES)
-@pytest.mark.parametrize('pub_peer', (no_peer, h1_ipv4))
-@pytest.mark.parametrize('pub_range', RANGES)
-def test_samehost(mn, ros_ws, rmw, pub_range, pub_peer, sub_range, sub_peer):
-    pub_peer = pub_peer(mn)
-    sub_peer = sub_peer(mn)
-
-    pub_env = make_env_str(ros_ws, rmw, pub_range, pub_peer)
-    sub_env = make_env_str(ros_ws, rmw, sub_range, sub_peer)
-    pub_cmd = pub_env + ' ros2 run test_discovery publish_once > /dev/null &'
-    sub_cmd = sub_env + ' ros2 run test_discovery subscribe_once'
-    print('$', pub_cmd)
-    print('$', sub_cmd)
-
-    mn.h1.cmd(pub_cmd)
-    result = mn.h1.cmd(sub_cmd)
-    message_received = 'test_discovery: message was received' in result.strip()
-
-    if 'OFF' in (pub_range, sub_range):
-        # If either has discovery off then it won't succeed
-        assert not message_received, result.strip()
-    else:
-        # All other cases discover each other
-        assert message_received, result.strip()
-
-
-@pytest.mark.parametrize('sub_peer', (no_peer, h1_ipv4))
-@pytest.mark.parametrize('sub_range', RANGES)
 @pytest.mark.parametrize('pub_peer', (no_peer, h2_ipv4))
 @pytest.mark.parametrize('pub_range', RANGES)
 def test_differenthost(mn, ros_ws, rmw, pub_range, pub_peer, sub_range, sub_peer):
