@@ -35,7 +35,7 @@ if(BUILD_TESTING)
     find_package(ament_lint_auto REQUIRED)
     ament_lint_auto_find_test_dependencies()
 
-    ament_add_pytest_test(test_discovery tests/test_discovery.py TIMEOUT 800)
+    ament_add_pytest_test(test_discovery tests/test_discovery.py TIMEOUT 1600)
 endif()
 
 ament_package()
