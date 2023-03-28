@@ -72,12 +72,16 @@ def ros_ws(pytestconfig):
 def make_env_str(ros_ws, rmw, discovery_range, peer):
     cmd = []
     for ws in ros_ws:
-        cmd.append('.')
-        cmd.append(f'"{ws}/setup.bash"')
-        cmd.append('&&')
-    cmd.append(f'RMW_IMPLEMENTATION={rmw}')
-    cmd.append(f'ROS_AUTOMATIC_DISCOVERY_RANGE={discovery_range}')
-    cmd.append(f'ROS_STATIC_PEERS="{peer}"')
+        cmd.extend([
+            '.',
+            f'"{ws}/setup.bash"',
+            '&&',
+        ])
+    cmd.extend([
+        f'RMW_IMPLEMENTATION={rmw}',
+        f'ROS_AUTOMATIC_DISCOVERY_RANGE={discovery_range}',
+        f'ROS_STATIC_PEERS="{peer}"',
+    ])
     return ' '.join(cmd)
 
 

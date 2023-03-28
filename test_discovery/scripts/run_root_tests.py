@@ -66,19 +66,24 @@ def main():
             raise ValueError(f'{args.rmw} is not an installed rmw: {rmw_implementations}')
         rmw_implementations = [args.rmw]
 
-    cmd = []
-    cmd.append('sudo')
-    cmd.append(sys.executable)
-    cmd.append('-m')
-    cmd.append('pytest')
-    cmd.append('-c')
-    cmd.append(str(get_tests_dir() / 'conftest.py'))
+    cmd = [
+        'sudo',
+        sys.executable,
+        '-m',
+        'pytest',
+        '-c',
+        str(get_tests_dir() / 'conftest.py'),
+    ]
     if args.select:
-        cmd.append('-k')
-        cmd.append(args.select)
-    cmd.append(f'--rmws={":".join(rmw_implementations)}')
-    cmd.append(f'--ros-workspaces={":".join(get_workspaces())}')
-    cmd.append(str(get_tests_dir() / 'test_discovery.py'))
+        cmd.extend([
+            '-k',
+            args.select,
+        ])
+    cmd.extend([
+        f'--rmws={":".join(rmw_implementations)}',
+        f'--ros-workspaces={":".join(get_workspaces())}',
+        str(get_tests_dir() / 'test_discovery.py'),
+    ])
 
     print('Executing the following command:')
     print('================================')
