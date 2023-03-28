@@ -15,14 +15,18 @@
 
   <buildtool_depend>ament_cmake_ros</buildtool_depend>
 
-  <!-- <depend>mininet</depend> TODO this rosdep key -->
+  <!-- <depend>mininet</depend> TODO make this a rosdep key -->
   <depend>rclcpp</depend>
   <depend>test_msgs</depend>
   <depend>pytest</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
+  <test_depend>ament_cmake_pytest</test_depend>
+
   <test_depend>test_msgs</test_depend>
+
+  <exec_depend>ros2cli</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
