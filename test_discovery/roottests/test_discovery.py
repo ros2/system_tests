@@ -14,9 +14,8 @@
 
 # Run discovery tests
 # 1. Install dependencies
-#   sudo apt install iputils-ping iproute2 mininet
-#    TODO(sloretz) not needed? openvswitch-switch openvswitch-testcontroller
-# 2. TODO(sloretz) not needed? Start openvswitch service if not already running
+#   sudo apt install iputils-ping iproute2 mininet openvswitch-switch openvswitch-testcontroller
+# 2. Start openvswitch service if not already running
 #   sudo service openvswitch-switch start
 
 from mininet.net import Mininet
