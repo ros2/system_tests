@@ -23,6 +23,7 @@ import pytest
 
 
 RANGES = [
+    None,
     'OFF',
     'SUBNET',
     'LOCALHOST',
@@ -50,7 +51,10 @@ def get_executable(name):
 def make_env(rmw, discovery_range, peer):
     env = dict(os.environ)
     env['RMW_IMPLEMENTATION'] = rmw
-    env['ROS_AUTOMATIC_DISCOVERY_RANGE'] = discovery_range
+    if discovery_range is None:
+        del env['ROS_AUTOMATIC_DISCOVERY_RANGE']
+    else:
+        env['ROS_AUTOMATIC_DISCOVERY_RANGE'] = discovery_range
     if peer is None:
         peer = ''
     env['ROS_STATIC_PEERS'] = peer

@@ -24,6 +24,7 @@ import pytest
 
 
 RANGES = [
+    None,
     'OFF',
     'SUBNET',
     'LOCALHOST',
@@ -78,9 +79,10 @@ def make_env_str(ros_ws, rmw, discovery_range, peer):
         ])
     cmd.extend([
         f'RMW_IMPLEMENTATION={rmw}',
-        f'ROS_AUTOMATIC_DISCOVERY_RANGE={discovery_range}',
         f'ROS_STATIC_PEERS="{peer}"',
     ])
+    if discovery_range is not None:
+        cmd.append(f'ROS_AUTOMATIC_DISCOVERY_RANGE={discovery_range}')
     return ' '.join(cmd)
 
 
