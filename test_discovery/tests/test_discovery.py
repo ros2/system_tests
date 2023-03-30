@@ -93,8 +93,12 @@ def test_thishost(rmw, pub_range, pub_peer, sub_range, sub_peer):
         sub_cmd, env=sub_env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     stdout, _ = communicate('sub', sub_proc)
+    # Invalid node configuration could make OFF tests appear to succeed
+    assert "test_discovery: node successfully created" in stdout
+
     message_received = 'test_discovery: message was received' in stdout
     pub_proc.kill()
+
     communicate('pub', pub_proc)
 
     if 'OFF' in (pub_range, sub_range):

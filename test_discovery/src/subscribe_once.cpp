@@ -33,6 +33,8 @@ int main(int argc, char * argv[])
   auto subscription =
     node->create_subscription<test_msgs::msg::Builtins>("test_topic", 10, topic_callback);
 
+  std::cout << "test_discovery: node successfully created\n" << std::flush;
+
   auto clock = node->get_clock();
   auto end_time = clock->now() + rclcpp::Duration::from_seconds(kTimeout);
   while (rclcpp::ok() && clock->now() <= end_time) {

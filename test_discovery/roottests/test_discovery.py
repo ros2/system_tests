@@ -103,6 +103,10 @@ def test_differenthost(mn, ros_ws, rmw, pub_range, pub_peer, sub_range, sub_peer
 
     mn.h1.cmd(pub_cmd)
     result = mn.h2.cmd(sub_cmd)
+
+    # Invalid node configuration could make OFF tests appear to succeed
+    assert "test_discovery: node successfully created" in result.strip()
+
     message_received = 'test_discovery: message was received' in result.strip()
 
     if 'OFF' in (pub_range, sub_range):
