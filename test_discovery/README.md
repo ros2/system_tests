@@ -6,41 +6,35 @@ There are two sets of tests: automated tests that run when testing this package,
 # Automated tests
 
 The automated tests run when testing this package.
-They test only the cases taht apply when two processes are on the same host.
-
-The expected commication with two processes on the same host is:
-
-|Same host |||Node B setting ||||||
-|---|---|---|---|---|---|---|---|---|
-||||No static peer |||With static peer |||
-|||Range |OFF |LOCALHOST |SUBNET |OFF |LOCALHOST |SUBNET|
-|Node A setting |No static peer |OFF |:x: |:x: |:x: |:x: |:x: |:x:|
-|||LOCALHOST |:x: |:white_check_mark: |:white_check_mark: |:x: |:white_check_mark: |:white_check_mark:|
-|||SUBNET |:x: |:white_check_mark: |:white_check_mark: |:x: |:white_check_mark: |:white_check_mark:|
-||With static peer |OFF |:x: |:x: |:x: |:x: |:x: |:x:|
-|||LOCALHOST |:x: |:white_check_mark: |:white_check_mark: |:x: |:white_check_mark: |:white_check_mark:|
-|||SUBNET |:x: |:white_check_mark: |:white_check_mark: |:x: |:white_check_mark: |:white_check_mark:|
+They test only the cases that apply when two processes are on the same host.
 
 ## Semi-automated tests
 
 The semiautomated tests use `mininet` to test discovery behavior across two different (virtual) hosts.
-These tests require `root` access.
-
-The expected communication with two processes on different hosts is:
-
-|Different hosts |||Node B setting ||||||
-||||No static peer |||With static peer |||
-|||Range |OFF |LOCALHOST |SUBNET |OFF |LOCALHOST |SUBNET|
-|Node A setting |No static peer |OFF |:x: |:x: |:x: |:x: |:x: |:x:|
-|||LOCALHOST |:x: |:x: |:x: |:x: |:white_check_mark: |:white_check_mark:|
-|||SUBNET |:x: |:x: |:white_check_mark: |:x: |:white_check_mark: |:white_check_mark:|
-||With static peer |OFF |:x: |:x: |:x: |:x: |:x: |:x:|
-|||LOCALHOST |:white_check_mark: |:white_check_mark: |:white_check_mark: |:x: |:white_check_mark: |:white_check_mark:|
-|||SUBNET |:white_check_mark: |:white_check_mark: |:white_check_mark: |:x: |:white_check_mark: |:white_check_mark:|
-|||LOCALHOST |:x: |:white_check_mark: |:white_check_mark: |:x: |:white_check_mark: |:white_check_mark:|
-|||SUBNET |:x: |:white_check_mark: |:white_check_mark: |:x: |:white_check_mark: |:white_check_mark:|
-
+These tests require `root` access, and a working `mininet` install.
 
 ### Installing prerequisites
 
-### Running the semi-automated tests.
+A working `mininet` install has only been tested on an Ubuntu based machine.
+If you're running in a container, that container will need root priviledges.
+
+First install the necessary dependencies:
+
+```bash
+sudo apt install \
+    iputils-ping \
+    iproute2 \
+    mininet \
+    openvswitch-switch \
+    openvswitch-testcontroller
+```
+
+Next, make sure the openvswitch service is running
+
+```bash
+sudo service openvswitch-switch start
+```
+
+You're now ready to run the tests.
+
+### Running the semi-automated tests
