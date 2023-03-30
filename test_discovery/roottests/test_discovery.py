@@ -24,7 +24,7 @@ import pytest
 
 
 RANGES = [
-    None,
+#    None,  # idential to LOCALHOST, but takes too long to test here
     'OFF',
     'SUBNET',
     'LOCALHOST',
