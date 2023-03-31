@@ -82,6 +82,20 @@ def communicate(name, proc):
 @pytest.mark.parametrize('pub_range', RANGES)
 @pytest.mark.parametrize('rmw', get_rmw_implementations())
 def test_thishost(rmw, pub_range, pub_peer, sub_range, sub_peer):
+    # For same host tests, setting a static peer while using SUBNET
+    # doesn't make a lot of sense.
+    # Further, it cause test failures with rmw_fastrtps_*
+    # When there's an initial peer to localhost, Fast-DDS will try to discover
+    # peers on localhost using unicast discovery, but that uses the
+    # default maxInitialPeersRange value of 4, which is a very small number of
+    # peers.
+    # Any other ROS nodes on a system (such as daemons, or test processes that
+    # weren't cleaned up) will cause this test to fail.
+    if 'SUBNET' == sub_range and sub_peer is not None:
+        pytest.skip("Skipping samehost SUBNET with static peer")
+    if 'SUBNET' == pub_range and pub_peer is not None:
+        pytest.skip("Skipping samehost SUBNET with static peer")
+
     pub_env = make_env(rmw, pub_range, pub_peer)
     sub_env = make_env(rmw, sub_range, sub_peer)
     pub_cmd = [get_executable('publish_once')]
