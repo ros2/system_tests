@@ -24,7 +24,7 @@ import pytest
 
 
 RANGES = [
-#    None,  # idential to LOCALHOST, but takes too long to test here
+    # None,  # idential to LOCALHOST, but takes too long to test here
     'OFF',
     'SUBNET',
     'LOCALHOST',
@@ -105,7 +105,7 @@ def test_differenthost(mn, ros_ws, rmw, pub_range, pub_peer, sub_range, sub_peer
     result = mn.h2.cmd(sub_cmd)
 
     # Invalid node configuration could make OFF tests appear to succeed
-    assert "test_discovery: node successfully created" in result.strip()
+    assert 'test_discovery: node successfully created' in result.strip()
 
     message_received = 'test_discovery: message was received' in result.strip()
 

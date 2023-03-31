@@ -23,7 +23,7 @@ import pytest
 
 
 RANGES = [
-#    None,  # idential to LOCALHOST, but takes too long to test here
+    # None,  # idential to LOCALHOST, but takes too long to test here
     'OFF',
     'SUBNET',
     'LOCALHOST',
@@ -94,7 +94,7 @@ def test_thishost(rmw, pub_range, pub_peer, sub_range, sub_peer):
 
     stdout, _ = communicate('sub', sub_proc)
     # Invalid node configuration could make OFF tests appear to succeed
-    assert "test_discovery: node successfully created" in stdout
+    assert 'test_discovery: node successfully created' in stdout
 
     message_received = 'test_discovery: message was received' in stdout
     pub_proc.kill()
