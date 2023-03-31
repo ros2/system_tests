@@ -92,9 +92,9 @@ def test_thishost(rmw, pub_range, pub_peer, sub_range, sub_peer):
     # Any other ROS nodes on a system (such as daemons, or test processes that
     # weren't cleaned up) will cause this test to fail.
     if 'SUBNET' == sub_range and sub_peer is not None:
-        pytest.skip("Skipping samehost SUBNET with static peer")
+        pytest.skip('Skipping samehost SUBNET with static peer')
     if 'SUBNET' == pub_range and pub_peer is not None:
-        pytest.skip("Skipping samehost SUBNET with static peer")
+        pytest.skip('Skipping samehost SUBNET with static peer')
 
     pub_env = make_env(rmw, pub_range, pub_peer)
     sub_env = make_env(rmw, sub_range, sub_peer)
