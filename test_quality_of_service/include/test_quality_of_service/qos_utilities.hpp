@@ -42,6 +42,26 @@
 std::tuple<size_t, size_t> convert_chrono_milliseconds_to_size_t(
   const std::chrono::milliseconds & milliseconds);
 
+/// Helper wait for a predicate funtor to be true by a timeout
+template<
+  typename Predicate,
+  typename TimeOutR, typename TimeOutP,
+  typename PeriodR = int64_t, typename PeriodP = std::milli>
+bool wait_for(
+  Predicate predicate,
+  const std::chrono::duration<TimeOutR, TimeOutP> & timeout,
+  const std::chrono::duration<PeriodR, PeriodP> & period = std::chrono::milliseconds(100))
+{
+  auto end_time = std::chrono::steady_clock::now() + timeout;
+  while (!predicate()) {
+    if (std::chrono::steady_clock::now() > end_time) {
+      return predicate();
+    }
+    std::this_thread::sleep_for(period);
+  }
+  return true;
+}
+
 class BaseQosRclcppTestFixture : public ::testing::Test
 {
 protected:

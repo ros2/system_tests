@@ -29,6 +29,8 @@
 #include "test_quality_of_service/qos_test_subscriber.hpp"
 #include "test_quality_of_service/qos_utilities.hpp"
 
+using namespace std::chrono_literals;
+
 TEST_F(QosRclcppTestFixture, test_best_available_policies_subscription) {
   const std::string topic = "/test_best_available_subscription";
   const std::chrono::milliseconds publish_period{5000};
@@ -69,8 +71,13 @@ TEST_F(QosRclcppTestFixture, test_best_available_policies_subscription) {
 
   // Check actual subscription QoS
   // We expect it to have exactly the same policies as the publisher for some subset of policies
-  std::vector<rclcpp::TopicEndpointInfo> subscriptions_info =
-    subscriber->get_subscriptions_info_by_topic(topic);
+  std::vector<rclcpp::TopicEndpointInfo> subscriptions_info;
+  bool wait_ret = ::wait_for(
+    [this, &topic, &subscriptions_info]() {
+      subscriptions_info = subscriber->get_subscriptions_info_by_topic(topic);
+      return subscriptions_info.size() == 1u;
+    }, 5s);
+  ASSERT_TRUE(wait_ret);
   ASSERT_EQ(subscriptions_info.size(), 1u);
   const auto & actual_qos = subscriptions_info[0].qos_profile();
   EXPECT_EQ(actual_qos.reliability(), publisher_qos_profile.reliability());
@@ -122,9 +129,13 @@ TEST_F(QosRclcppTestFixture, test_best_available_policies_publisher) {
   // Check actual publisher QoS
   // We expect it to have exactly the same policies as the publisher for some subset of policies
   // However, it should always be reliable and transient local (for DDS middlewares)
-  std::vector<rclcpp::TopicEndpointInfo> publishers_info =
-    publisher->get_publishers_info_by_topic(topic);
-
+  std::vector<rclcpp::TopicEndpointInfo> publishers_info;
+  bool wait_ret = ::wait_for(
+    [this, &topic, &publishers_info]() {
+      publishers_info = publisher->get_publishers_info_by_topic(topic);
+      return publishers_info.size() == 1u ? true : false;
+    }, 5s);
+  ASSERT_TRUE(wait_ret);
   ASSERT_EQ(publishers_info.size(), 1u);
   const auto & actual_qos = publishers_info[0].qos_profile();
   EXPECT_EQ(actual_qos.reliability(), rclcpp::ReliabilityPolicy::Reliable);
