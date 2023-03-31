@@ -133,7 +133,7 @@ TEST_F(QosRclcppTestFixture, test_best_available_policies_publisher) {
   bool wait_ret = ::wait_for(
     [this, &topic, &publishers_info]() {
       publishers_info = publisher->get_publishers_info_by_topic(topic);
-      return publishers_info.size() == 1u ? true : false;
+      return publishers_info.size() == 1u;
     }, 5s);
   ASSERT_TRUE(wait_ret);
   ASSERT_EQ(publishers_info.size(), 1u);
