@@ -42,7 +42,7 @@
 std::tuple<size_t, size_t> convert_chrono_milliseconds_to_size_t(
   const std::chrono::milliseconds & milliseconds);
 
-/// Helper wait for a predicate funtor to be true by a timeout
+/// Helper wait for a predicate to evaluate to true
 template<
   typename Predicate,
   typename TimeOutR, typename TimeOutP,
