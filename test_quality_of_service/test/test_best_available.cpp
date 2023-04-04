@@ -72,6 +72,8 @@ TEST_F(QosRclcppTestFixture, test_best_available_policies_subscription) {
   // Check actual subscription QoS
   // We expect it to have exactly the same policies as the publisher for some subset of policies
   std::vector<rclcpp::TopicEndpointInfo> subscriptions_info;
+  // Here we wait for the subscription created during the "toggle" above to appear, which may take
+  // some time.
   bool wait_ret = ::wait_for(
     [this, &topic, &subscriptions_info]() {
       subscriptions_info = subscriber->get_subscriptions_info_by_topic(topic);
@@ -130,6 +132,8 @@ TEST_F(QosRclcppTestFixture, test_best_available_policies_publisher) {
   // We expect it to have exactly the same policies as the publisher for some subset of policies
   // However, it should always be reliable and transient local (for DDS middlewares)
   std::vector<rclcpp::TopicEndpointInfo> publishers_info;
+  // Here we wait for the publisher created during the "toggle" above to appear, which may take
+  // some time.
   bool wait_ret = ::wait_for(
     [this, &topic, &publishers_info]() {
       publishers_info = publisher->get_publishers_info_by_topic(topic);
