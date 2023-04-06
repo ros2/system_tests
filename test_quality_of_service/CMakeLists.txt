@@ -44,7 +44,6 @@ if(BUILD_TESTING)
 
   ament_find_gtest()
   target_include_directories(${PROJECT_NAME}_support PUBLIC "${GTEST_INCLUDE_DIRS}")
-  target_link_libraries(${PROJECT_NAME}_support ${GTEST_LIBRARIES})
   ament_target_dependencies(${PROJECT_NAME}_support rclcpp rcutils std_msgs)
 
   function(add_custom_gtest target)
