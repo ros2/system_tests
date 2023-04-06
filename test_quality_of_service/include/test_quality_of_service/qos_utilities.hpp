@@ -26,6 +26,7 @@
 #include "rcutils/macros.h"
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
+#include "test_quality_of_service/visibility_control.hpp"
 
 #ifdef RMW_IMPLEMENTATION
 # define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
@@ -39,6 +40,7 @@
  * @param milliseconds
  * @return tuple of milliseconds converted to <seconds, nanoseconds>
  */
+TEST_QUALITY_OF_SERVICE_PUBLIC
 std::tuple<size_t, size_t> convert_chrono_milliseconds_to_size_t(
   const std::chrono::milliseconds & milliseconds);
 
@@ -65,7 +67,9 @@ bool wait_for(
 class BaseQosRclcppTestFixture : public ::testing::Test
 {
 protected:
+  TEST_QUALITY_OF_SERVICE_PUBLIC
   void SetUp() override;
+  TEST_QUALITY_OF_SERVICE_PUBLIC
   void TearDown() override;
   // executor used to submit work
   std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> executor;

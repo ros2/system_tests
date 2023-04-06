@@ -22,22 +22,28 @@
 #include "std_msgs/msg/string.hpp"
 
 #include "test_quality_of_service/qos_test_node.hpp"
+#include "test_quality_of_service/visibility_control.hpp"
 
 /// Simple subscriber node used for system tests
 class QosTestSubscriber : public QosTestNode
 {
 public:
+  TEST_QUALITY_OF_SERVICE_PUBLIC
   QosTestSubscriber(
     const std::string & name,
     const std::string & topic,
     const rclcpp::QoS & qos_options);
 
+  TEST_QUALITY_OF_SERVICE_PUBLIC
   virtual ~QosTestSubscriber() = default;
+
   QosTestSubscriber(QosTestSubscriber const &) = delete;
   QosTestSubscriber & operator=(QosTestSubscriber const &) = delete;
 
+  TEST_QUALITY_OF_SERVICE_PUBLIC
   rclcpp::SubscriptionOptions & options() {return sub_options_;}
 
+  TEST_QUALITY_OF_SERVICE_PUBLIC
   void teardown() override;
 
 private:

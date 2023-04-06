@@ -20,43 +20,55 @@
 #include <string>
 
 #include "rclcpp/rclcpp.hpp"
+#include "test_quality_of_service/visibility_control.hpp"
 
 /// Base class used for QoS system test nodes
 class QosTestNode : public rclcpp::Node
 {
 public:
+  TEST_QUALITY_OF_SERVICE_PUBLIC
   QosTestNode(
     const std::string & name,
     const std::string & topic,
     const rclcpp::QoS & qos_options);
 
+  TEST_QUALITY_OF_SERVICE_PUBLIC
   virtual ~QosTestNode();
 
   /// start working
+  TEST_QUALITY_OF_SERVICE_PUBLIC
   void start();
   /// stop working
+  TEST_QUALITY_OF_SERVICE_PUBLIC
   void stop();
   /// toggle between start and stop
+  TEST_QUALITY_OF_SERVICE_PUBLIC
   void toggle();
   /// stop all work, should be called before destructor
+  TEST_QUALITY_OF_SERVICE_PUBLIC
   virtual void teardown() = 0;
   /// return the number of measurements counted
   /**
    * \return the current count
    */
+  TEST_QUALITY_OF_SERVICE_PUBLIC
   int get_count() const;
 
 protected:
+  TEST_QUALITY_OF_SERVICE_PUBLIC
   bool get_started() const;
 
+  TEST_QUALITY_OF_SERVICE_PUBLIC
   virtual void setup_start() = 0;
 
+  TEST_QUALITY_OF_SERVICE_PUBLIC
   virtual void setup_stop() = 0;
 
   /// a measurement was taken, increment the count
   /**
    * \return the incremented count
    */
+  TEST_QUALITY_OF_SERVICE_PUBLIC
   int increment_count();
 
   /// name of this publisher (Node)

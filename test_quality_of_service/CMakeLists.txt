@@ -12,7 +12,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_ros REQUIRED)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -44,6 +44,8 @@ if(BUILD_TESTING)
 
   ament_find_gtest()
   target_include_directories(${PROJECT_NAME}_support PUBLIC "${GTEST_INCLUDE_DIRS}")
+  target_compile_definitions(${PROJECT_NAME}_support PRIVATE
+    "TEST_QUALITY_OF_SERVICE_BUILDING_LIBRARY")
   ament_target_dependencies(${PROJECT_NAME}_support rclcpp rcutils std_msgs)
 
   function(add_custom_gtest target)
