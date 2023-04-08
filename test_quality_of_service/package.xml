@@ -10,7 +10,7 @@
     <maintainer email="brandon@openrobotics.org">Brandon Ong</maintainer>
 
     <license>Apache License 2.0</license>
-    
+
 
     <author email="aditya.pande@openrobotics.org">Aditya Pande</author>
     <author email="ros-contributions@amazon.com">Amazon ROS Contributions</author>
@@ -18,9 +18,9 @@
     <author email="shane@openrobotics.org">Shane Loretz</author>
     <author email="william@openrobotics.org">William Woodall</author>
 
-    <buildtool_depend>ament_cmake</buildtool_depend>
+    <buildtool_depend>ament_cmake_ros</buildtool_depend>
 
-    <test_depend>ament_cmake</test_depend>
+    <test_depend>ament_cmake_ros</test_depend>
     <test_depend>ament_cmake_gtest</test_depend>
     <test_depend>ament_lint_auto</test_depend>
     <test_depend>ament_lint_common</test_depend>
