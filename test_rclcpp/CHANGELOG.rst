@@ -2,6 +2,9 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.15.1 (2023-04-11)
+-------------------
+
 0.15.0 (2023-02-13)
 -------------------
 * Update the system tests to C++17. (`#510 <https://github.com/ros2/system_tests/issues/510>`_)

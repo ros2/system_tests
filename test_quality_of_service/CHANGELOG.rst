@@ -2,6 +2,12 @@
 Changelog for package test_quality_of_service
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.15.1 (2023-04-11)
+-------------------
+* Fix ODR errors with gtest (`#514 <https://github.com/ros2/system_tests/issues/514>`_)
+* Avoid flaky test (`#513 <https://github.com/ros2/system_tests/issues/513>`_)
+* Contributors: Chen Lihui, Chris Lalancette, methylDragon
+
 0.15.0 (2023-02-13)
 -------------------
 * Update the system tests to C++17. (`#510 <https://github.com/ros2/system_tests/issues/510>`_)
