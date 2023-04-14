@@ -345,8 +345,8 @@ static inline void multi_access_publisher(bool intra_process)
   std::atomic_uint timer_counter(0);
   auto timer_callback =
     [&executor, &pub, &timer_counter, &subscription_counter, &num_messages](
-    rclcpp::TimerBase & timer
-    ) {
+    rclcpp::TimerBase & timer)
+    {
       auto msg = std::make_unique<test_rclcpp::msg::UInt32>();
       auto next_timer_count = timer_counter.fetch_add(1);
       if (next_timer_count >= num_messages) {
@@ -370,7 +370,7 @@ static inline void multi_access_publisher(bool intra_process)
   executor.add_node(node);
   std::thread executor_thread([&executor]() {executor.spin();});
 
-  // wait order or magnitude longer than technically required to allow for system hiccups
+  // wait order of magnitude longer than technically required to allow for system hiccups
   auto time_to_wait = std::chrono::milliseconds(number_of_messages_per_timer * timer_period * 10);
   auto time_between_checks = time_to_wait / 100;
   auto start = std::chrono::steady_clock::now();
