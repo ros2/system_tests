@@ -268,6 +268,29 @@ TEST_F(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients
   }
 }
 
+/**
+ * The goal of this test is to exercise publishing from many concurrent timers
+ * in a multi-threaded executor, while taking the published data from
+ * subscriptions in the same executor, also concurrently.
+ *
+ * The general goal is to check for any issues publishing or subscribing from
+ * multiple threads simultaneously.
+ *
+ * The process is as follows:
+ *   - create a node
+ *   - create a multi-threaded executor
+ *   - determine a number of concurrent entities, N
+ *   - create a publisher that publishes an uint32
+ *   - create a subscription that increments a count when receiving a message
+ *   - create N timers that increment a counter and publish a message each time
+ *     they fire, on the aforementioned publisher, until enough messages have
+ *     been published and then they cancel themselves
+ *   - spin the executor in a thread
+ *   - wait until all the messages have been sent and received, or a timeout,
+ *     and then cancel the executor
+ *   - wait for the executor thread to join, then assert the messages were
+ *     sent and received
+ */
 static inline void multi_access_publisher(bool intra_process)
 {
   // Try to access the same publisher simultaneously
@@ -284,15 +307,20 @@ static inline void multi_access_publisher(bool intra_process)
   auto node = rclcpp::Node::make_shared(node_topic_name, options);
   auto timer_callback_group = node->create_callback_group(
     rclcpp::CallbackGroupType::Reentrant);
-  auto sub_callback_group = node->create_callback_group(
-    rclcpp::CallbackGroupType::Reentrant);
 
   rclcpp::executors::MultiThreadedExecutor executor;
 
-  const size_t num_messages = 5 * std::min<size_t>(executor.get_number_of_threads(), 16);
-  auto pub = node->create_publisher<test_rclcpp::msg::UInt32>(node_topic_name, num_messages);
-  // callback groups?
+  // Limit the number of concurrent entities to 16, otherwise go for the number
+  // of threads in the multi-threaded executor, which defaults to the number of
+  // CPU cores on the host machine.
+  const size_t number_of_concurrent_timers = std::min<size_t>(executor.get_number_of_threads(), 16);
 
+  // publisher
+  const size_t number_of_messages_per_timer = 5;
+  const size_t num_messages = number_of_messages_per_timer * number_of_concurrent_timers;
+  auto pub = node->create_publisher<test_rclcpp::msg::UInt32>(node_topic_name, num_messages);
+
+  // subscriptions
   std::atomic_uint subscription_counter(0);
   auto sub_callback = [&subscription_counter](const test_rclcpp::msg::UInt32::ConstSharedPtr msg)
     {
@@ -300,6 +328,8 @@ static inline void multi_access_publisher(bool intra_process)
       printf("Subscription callback %u\n", subscription_counter.load());
       printf("callback() %d with message data %u\n", subscription_counter.load(), msg->data);
     };
+  auto sub_callback_group = node->create_callback_group(
+    rclcpp::CallbackGroupType::Reentrant);
   rclcpp::SubscriptionOptions subscription_options;
   subscription_options.callback_group = sub_callback_group;
   auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(
@@ -308,40 +338,55 @@ static inline void multi_access_publisher(bool intra_process)
     sub_callback,
     subscription_options);
 
-  // wait a moment for everything to initialize
+  // wait a moment for everything to initialize (pub/subs matching)
   test_rclcpp::wait_for_subscriber(node, node_topic_name);
 
-  // use atomic
+  // timers
   std::atomic_uint timer_counter(0);
-
   auto timer_callback =
     [&executor, &pub, &timer_counter, &subscription_counter, &num_messages](
-    rclcpp::TimerBase & timer)
-    {
+    rclcpp::TimerBase & timer
+    ) {
       auto msg = std::make_unique<test_rclcpp::msg::UInt32>();
-      if (timer_counter.load() >= num_messages) {
+      auto next_timer_count = timer_counter.fetch_add(1);
+      if (next_timer_count >= num_messages) {
+        // enough messages have been sent, step counter back and cancel timer
+        timer_counter--;
         timer.cancel();
-        // Wait for pending subscription callbacks to trigger.
-        while (subscription_counter < timer_counter) {
-          rclcpp::sleep_for(1ms);
-        }
-        executor.cancel();
         return;
       }
-      msg->data = ++timer_counter;
+      // publish a new message
+      msg->data = next_timer_count;
       printf("Publishing message %u\n", timer_counter.load());
       pub->publish(std::move(msg));
     };
   std::vector<rclcpp::TimerBase::SharedPtr> timers;
   // timers will fire simultaneously in each thread
-  for (uint32_t i = 0; i < std::min<size_t>(executor.get_number_of_threads(), 16); ++i) {
-    timers.push_back(node->create_wall_timer(std::chrono::milliseconds(1), timer_callback));
+  auto timer_period = std::chrono::milliseconds(1);
+  for (size_t i = 0; i < number_of_concurrent_timers; ++i) {
+    timers.push_back(node->create_wall_timer(timer_period, timer_callback));
   }
 
   executor.add_node(node);
-  executor.spin();
+  std::thread executor_thread([&executor]() {executor.spin();});
+
+  // wait order or magnitude longer than technically required to allow for system hiccups
+  auto time_to_wait = std::chrono::milliseconds(number_of_messages_per_timer * timer_period * 10);
+  auto time_between_checks = time_to_wait / 100;
+  auto start = std::chrono::steady_clock::now();
+  while (start - std::chrono::steady_clock::now() < time_to_wait) {
+    if (timer_counter.load() == num_messages && subscription_counter.load() == num_messages) {
+      break;
+    }
+  }
+
+  executor.cancel();
+  executor_thread.join();
+
+  // assert the right number of publishes
   ASSERT_EQ(num_messages, timer_counter.load());
-  ASSERT_EQ(subscription_counter, timer_counter.load());
+  // assert the right number of received messages
+  ASSERT_EQ(num_messages, subscription_counter.load());
 }
 
 TEST_F(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_access_publisher) {
