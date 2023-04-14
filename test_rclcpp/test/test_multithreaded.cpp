@@ -378,6 +378,7 @@ static inline void multi_access_publisher(bool intra_process)
     if (timer_counter.load() == num_messages && subscription_counter.load() == num_messages) {
       break;
     }
+    std::this_thread::sleep_for(time_between_checks);
   }
 
   executor.cancel();
