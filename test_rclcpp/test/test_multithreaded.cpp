@@ -324,9 +324,9 @@ static inline void multi_access_publisher(bool intra_process)
   std::atomic_uint subscription_counter(0);
   auto sub_callback = [&subscription_counter](const test_rclcpp::msg::UInt32::ConstSharedPtr msg)
     {
-      ++subscription_counter;
-      printf("Subscription callback %u\n", subscription_counter.load());
-      printf("callback() %d with message data %u\n", subscription_counter.load(), msg->data);
+      auto this_subscription_count = subscription_counter++;
+      printf("Subscription callback %u\n", this_subscription_count);
+      printf("callback() %d with message data %u\n", this_subscription_count, msg->data);
     };
   auto sub_callback_group = node->create_callback_group(
     rclcpp::CallbackGroupType::Reentrant);
@@ -342,22 +342,22 @@ static inline void multi_access_publisher(bool intra_process)
   test_rclcpp::wait_for_subscriber(node, node_topic_name);
 
   // timers
-  std::atomic_uint timer_counter(0);
+  std::atomic_uint publish_counter(0);
   auto timer_callback =
-    [&executor, &pub, &timer_counter, &subscription_counter, &num_messages](
+    [&executor, &pub, &publish_counter, &subscription_counter, &num_messages](
     rclcpp::TimerBase & timer)
     {
       auto msg = std::make_unique<test_rclcpp::msg::UInt32>();
-      auto next_timer_count = timer_counter.fetch_add(1);
-      if (next_timer_count >= num_messages) {
-        // enough messages have been sent, step counter back and cancel timer
-        timer_counter--;
+      auto next_publish_count = ++publish_counter;
+      if (next_publish_count > num_messages) {
+        // enough messages have been sent, step the counter back, and cancel timer
+        publish_counter--;
         timer.cancel();
         return;
       }
       // publish a new message
-      msg->data = next_timer_count;
-      printf("Publishing message %u\n", timer_counter.load());
+      msg->data = next_publish_count;
+      printf("Publishing message %u\n", msg->data);
       pub->publish(std::move(msg));
     };
   std::vector<rclcpp::TimerBase::SharedPtr> timers;
@@ -370,12 +370,26 @@ static inline void multi_access_publisher(bool intra_process)
   executor.add_node(node);
   std::thread executor_thread([&executor]() {executor.spin();});
 
+  auto all_timers_canceled =
+    [&timers]() {
+      for (const auto & timer : timers) {
+        if (!timer->is_canceled()) {
+          return false;
+        }
+      }
+      return true;
+    };
+
   // wait order of magnitude longer than technically required to allow for system hiccups
   auto time_to_wait = std::chrono::milliseconds(number_of_messages_per_timer * timer_period * 10);
   auto time_between_checks = time_to_wait / 100;
   auto start = std::chrono::steady_clock::now();
-  while (start - std::chrono::steady_clock::now() < time_to_wait) {
-    if (timer_counter.load() == num_messages && subscription_counter.load() == num_messages) {
+  while (context->is_valid() && std::chrono::steady_clock::now() - start < time_to_wait) {
+    if (
+      all_timers_canceled() &&
+      publish_counter.load() == num_messages &&
+      subscription_counter.load() == num_messages)
+    {
       break;
     }
     std::this_thread::sleep_for(time_between_checks);
@@ -384,8 +398,10 @@ static inline void multi_access_publisher(bool intra_process)
   executor.cancel();
   executor_thread.join();
 
+  // assert all the timers were canceled
+  ASSERT_TRUE(all_timers_canceled());
   // assert the right number of publishes
-  ASSERT_EQ(num_messages, timer_counter.load());
+  ASSERT_EQ(num_messages, publish_counter.load());
   // assert the right number of received messages
   ASSERT_EQ(num_messages, subscription_counter.load());
 }
