@@ -54,7 +54,7 @@ bool QosTestNode::get_started() const
 void QosTestNode::toggle()
 {
   std::unique_lock<std::recursive_mutex> ulock(toggle_mutex_);
-  printf("QosTestNode::toggle()\n");
+  fprintf(stderr, "QosTestNode::toggle()\n");
   if (get_started()) {
     stop();
   } else {
@@ -65,7 +65,7 @@ void QosTestNode::toggle()
 void QosTestNode::start()
 {
   std::unique_lock<std::recursive_mutex> ulock(toggle_mutex_);
-  printf("QosTestNode::start()\n");
+  fprintf(stderr, "QosTestNode::start()\n");
   if (started_) {
     return;
   }
@@ -76,7 +76,7 @@ void QosTestNode::start()
 void QosTestNode::stop()
 {
   std::unique_lock<std::recursive_mutex> ulock(toggle_mutex_);
-  printf("QosTestNode::stop()\n");
+  fprintf(stderr, "QosTestNode::stop()\n");
   if (!started_) {
     return;
   }

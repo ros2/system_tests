@@ -87,7 +87,7 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
     publisher_toggling_period,
     [this]() -> void {
       // start / stop publishing to trigger deadline
-      printf("toggle_publisher_timer: toggling publisher\n");
+      fprintf(stderr, "toggle_publisher_timer: toggling publisher\n");
       publisher->toggle();
     });
 
