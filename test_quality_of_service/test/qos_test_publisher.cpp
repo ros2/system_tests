@@ -52,9 +52,16 @@ void QosTestPublisher::setup_start()
       publisher_options_);
   }
   if (!timer_) {
+    auto weak_node_ptr = std::weak_ptr<QosTestPublisher>(
+      std::dynamic_pointer_cast<QosTestPublisher>(this->shared_from_this()));
     timer_ = this->create_wall_timer(
       publish_period_,
-      std::bind(&QosTestPublisher::publish_message, this));
+      [weak_node_ptr]() {
+        auto node_ptr = weak_node_ptr.lock();
+        if (node_ptr) {
+          node_ptr->publish_message();
+        }
+      });
   }
 }
 
