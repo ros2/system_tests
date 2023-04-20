@@ -16,6 +16,7 @@
 #include <chrono>
 #include <limits>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <utility>
 #include <vector>
@@ -320,14 +321,24 @@ static inline void multi_access_publisher(bool intra_process)
   const size_t num_messages = number_of_messages_per_timer * number_of_concurrent_timers;
   auto pub = node->create_publisher<test_rclcpp::msg::UInt32>(node_topic_name, num_messages);
 
+  std::mutex counters_mutex;
+
   // subscriptions
-  std::atomic_uint subscription_counter(0);
-  auto sub_callback = [&subscription_counter](const test_rclcpp::msg::UInt32::ConstSharedPtr msg)
-    {
-      auto this_subscription_count = subscription_counter++;
-      printf("Subscription callback %u\n", this_subscription_count);
-      printf("callback() %d with message data %u\n", this_subscription_count, msg->data);
+  size_t subscription_counter = 0;
+
+  auto sub_callback =
+    [&subscription_counter, &counters_mutex](
+    const test_rclcpp::msg::UInt32::ConstSharedPtr msg
+    ) {
+      size_t this_subscription_count = 0;
+      {
+        std::lock_guard<std::mutex> lock(counters_mutex);
+        this_subscription_count = subscription_counter++;
+      }
+      printf("Subscription callback %zu\n", this_subscription_count);
+      printf("callback() %zu with message data %u\n", this_subscription_count, msg->data);
     };
+
   auto sub_callback_group = node->create_callback_group(
     rclcpp::CallbackGroupType::Reentrant);
   rclcpp::SubscriptionOptions subscription_options;
@@ -342,18 +353,21 @@ static inline void multi_access_publisher(bool intra_process)
   test_rclcpp::wait_for_subscriber(node, node_topic_name);
 
   // timers
-  std::atomic_uint publish_counter(0);
+  size_t publish_counter = 0;
   auto timer_callback =
-    [&executor, &pub, &publish_counter, &subscription_counter, &num_messages](
+    [&executor, &pub, &publish_counter, &counters_mutex, &num_messages](
     rclcpp::TimerBase & timer)
     {
       auto msg = std::make_unique<test_rclcpp::msg::UInt32>();
-      auto next_publish_count = ++publish_counter;
-      if (next_publish_count > num_messages) {
-        // enough messages have been sent, step the counter back, and cancel timer
-        publish_counter--;
-        timer.cancel();
-        return;
+      size_t next_publish_count = 0;
+      {
+        std::lock_guard<std::mutex> lock(counters_mutex);
+        if (publish_counter == num_messages) {
+          // enough messages have been sent, cancel the timers
+          timer.cancel();
+          return;
+        }
+        next_publish_count = publish_counter++;
       }
       // publish a new message
       msg->data = next_publish_count;
@@ -380,17 +394,21 @@ static inline void multi_access_publisher(bool intra_process)
       return true;
     };
 
-  // wait order of magnitude longer than technically required to allow for system hiccups
-  auto time_to_wait = std::chrono::milliseconds(number_of_messages_per_timer * timer_period * 10);
+  // wait orders of magnitude longer than technically required to allow for system hiccups
+  auto time_to_wait = std::chrono::milliseconds(number_of_messages_per_timer * timer_period * 100);
   auto time_between_checks = time_to_wait / 100;
   auto start = std::chrono::steady_clock::now();
   while (context->is_valid() && std::chrono::steady_clock::now() - start < time_to_wait) {
-    if (
-      all_timers_canceled() &&
-      publish_counter.load() == num_messages &&
-      subscription_counter.load() == num_messages)
+    bool all_timers_canceled_bool = all_timers_canceled();
     {
-      break;
+      std::lock_guard<std::mutex> lock(counters_mutex);
+      if (
+        all_timers_canceled_bool &&
+        publish_counter == num_messages &&
+        subscription_counter == num_messages)
+      {
+        break;
+      }
     }
     std::this_thread::sleep_for(time_between_checks);
   }
@@ -401,9 +419,9 @@ static inline void multi_access_publisher(bool intra_process)
   // assert all the timers were canceled
   ASSERT_TRUE(all_timers_canceled());
   // assert the right number of publishes
-  ASSERT_EQ(num_messages, publish_counter.load());
+  ASSERT_EQ(num_messages, publish_counter);
   // assert the right number of received messages
-  ASSERT_EQ(num_messages, subscription_counter.load());
+  ASSERT_EQ(num_messages, subscription_counter);
 }
 
 TEST_F(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_access_publisher) {
