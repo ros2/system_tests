@@ -43,8 +43,10 @@ if(BUILD_TESTING)
 
   function(custom_executable target)
     add_executable(${target} ${ARGN})
-    ament_target_dependencies(${target}
-      "rclcpp" "test_msgs")
+    target_link_libraries(${target}
+      rclcpp::rclcpp
+      ${test_msgs_TARGETS}
+    )
   endfunction()
 
   function(custom_security_test_c target)
@@ -61,9 +63,10 @@ if(BUILD_TESTING)
     if(TARGET ${target}${target_suffix})
       target_link_libraries(${target}${target_suffix}
         ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-        ${_AMENT_EXPORT_LIBRARY_TARGETS})
-      ament_target_dependencies(${target}${target_suffix}
-        "rcl" "osrf_testing_tools_cpp")
+        ${_AMENT_EXPORT_LIBRARY_TARGETS}
+        rcl::rcl
+        osrf_testing_tools_cpp::memory_tools
+      )
       set_tests_properties(
         ${target}${target_suffix}
         PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}${target_suffix}>"

@@ -34,9 +34,10 @@ if(BUILD_TESTING)
 
   add_executable(name_maker_rclcpp
     test/name_maker.cpp)
-  ament_target_dependencies(name_maker_rclcpp
-    "rclcpp"
-    "test_msgs")
+  target_link_libraries(name_maker_rclcpp
+    rclcpp::rclcpp
+    ${test_msgs_TARGETS}
+  )
 
   add_launch_test(
     test/test_cli_remapping.py

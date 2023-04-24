@@ -125,11 +125,11 @@ if(BUILD_TESTING)
   function(custom_executable target)
     add_executable(${target} ${ARGN})
     rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
-    target_link_libraries(${target} "${cpp_typesupport_target}")
-    ament_target_dependencies(${target}
-      "rclcpp"
-      "rclcpp_action"
-      "test_msgs"
+    target_link_libraries(${target}
+      "${cpp_typesupport_target}"
+      rclcpp::rclcpp
+      rclcpp_action::rclcpp_action
+      ${test_msgs_TARGETS}
     )
   endfunction()
 
@@ -143,9 +143,11 @@ if(BUILD_TESTING)
       RMW_IMPLEMENTATION=${rmw_implementation})
     if(TARGET ${target}${target_suffix})
       rosidl_get_typesupport_target(c_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_c")
-      target_link_libraries(${target}${target_suffix} "${c_typesupport_target}")
-      ament_target_dependencies(${target}${target_suffix}
-        "osrf_testing_tools_cpp" "rcl")
+      target_link_libraries(${target}${target_suffix}
+        "${c_typesupport_target}"
+        osrf_testing_tools_cpp::memory_tools
+        rcl::rcl
+      )
       set_tests_properties(
         ${target}${target_suffix}
         PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}${target_suffix}>"
@@ -186,32 +188,6 @@ if(BUILD_TESTING)
     set(rmw_implementation2_is_connext FALSE)
     if(rmw_implementation2 MATCHES "(.*)connext(.*)")
       set(rmw_implementation2_is_connext TRUE)
-    endif()
-
-    # TODO(asorbini) Skip tests between rmw_connext_cpp and rmw_connextdds
-    # since they are not meant to coexist (and used incompatible typecodes by default).
-    set(rmw_implementation1_is_connextdds FALSE)
-    if(rmw_implementation1 MATCHES "(.*)connextdds")
-      set(rmw_implementation1_is_connextdds TRUE)
-    endif()
-    set(rmw_implementation2_is_connextdds FALSE)
-    if(rmw_implementation2 MATCHES "(.*)connextdds")
-      set(rmw_implementation2_is_connextdds TRUE)
-    endif()
-
-    set(rmw_implementation1_is_connext_cpp FALSE)
-    if(rmw_implementation1 MATCHES "(.*)connext(.*)_cpp")
-      set(rmw_implementation1_is_connext_cpp TRUE)
-    endif()
-    set(rmw_implementation2_is_connext_cpp FALSE)
-    if(rmw_implementation2 MATCHES "(.*)connext(.*)_cpp")
-      set(rmw_implementation2_is_connext_cpp TRUE)
-    endif()
-
-    if((rmw_implementation1_is_connextdds AND rmw_implementation2_is_connext_cpp) OR
-      (rmw_implementation1_is_connext_cpp AND rmw_implementation2_is_connextdds)
-    )
-      set(SKIP_TEST "SKIP_TEST")
     endif()
 
     set(rmw_implementation1_is_cyclonedds FALSE)
@@ -281,11 +257,7 @@ if(BUILD_TESTING)
 
     # TODO(mikaelarguedas) Simpler way to blacklist specific tests (e.g. regex matching)
     # TODO different vendors can't talk to each other right now
-    # TODO(asorbini): Remove Connext exceptions once ros2/rmw_connext is deprecated.
-    if(NOT rmw_implementation1 STREQUAL rmw_implementation2 OR
-      (client_library1 STREQUAL "rclpy" AND rmw_implementation1 MATCHES "rmw_connext_dynamic_cpp") OR
-      (client_library2 STREQUAL "rclpy" AND rmw_implementation2 MATCHES "rmw_connext_dynamic_cpp")
-    )
+    if(NOT rmw_implementation1 STREQUAL rmw_implementation2)
       set(SKIP_TEST "SKIP_TEST")
     endif()
 
@@ -426,9 +398,10 @@ if(BUILD_TESTING)
     "test/subscribe_array_types.cpp"
     "test/subscribe_basic_types.cpp"
     "test/subscribe_string_types.cpp")
-  ament_target_dependencies(subscribe_types
-    "rclcpp"
-    "test_msgs")
+  target_link_libraries(subscribe_types
+    rclcpp::rclcpp
+    ${test_msgs_TARGETS}
+  )
 
   # publisher combined with a subscriber
   custom_executable(test_publisher_subscriber_cpp
@@ -493,13 +466,6 @@ if(BUILD_TESTING)
   endif()
 
   macro(serialize)
-    # TODO(asorbini): Remove this exception once ros2/rmw_connext is deprecated.
-    set(SKIP_TEST "")
-    if(${rmw_implementation} STREQUAL "rmw_connext_dynamic_cpp")
-      message(STATUS "skipping serialize tests for ${rmw_implementation}")
-      set(SKIP_TEST "SKIP_TEST")
-    endif()
-
     set(serialize_target_name "test_serialize${target}${target_suffix}")
     ament_add_gtest(
       ${serialize_target_name} test/test_message_serialization.cpp
@@ -507,15 +473,16 @@ if(BUILD_TESTING)
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation}
-      ${SKIP_TEST}
     )
     if(TARGET ${serialize_target_name})
       add_dependencies(${serialize_target_name} ${PROJECT_NAME})
+      target_link_libraries(${serialize_target_name}
+        rmw::rmw
+        rosidl_typesupport_c::rosidl_typesupport_c
+        rosidl_typesupport_cpp::rosidl_typesupport_cpp
+        ${test_msgs_TARGETS}
+      )
       ament_target_dependencies(${serialize_target_name}
-        "rmw"
-        "rosidl_typesupport_c"
-        "rosidl_typesupport_cpp"
-        "test_msgs"
         ${rmw_implementation}
       )
       set_tests_properties(
@@ -526,13 +493,6 @@ if(BUILD_TESTING)
   endmacro()
 
   macro(pub_sub_serialized)
-    # TODO(asorbini): Remove this exception once ros2/rmw_connext is deprecated.
-    set(SKIP_TEST "")
-    if(${rmw_implementation} STREQUAL "rmw_connext_dynamic_cpp")
-      message(STATUS "skipping serialize tests for ${rmw_implementation}")
-      set(SKIP_TEST "SKIP_TEST")
-    endif()
-
     set(target_name "test_publisher_subscriber_serialized${target}${target_suffix}")
     ament_add_gtest(
       ${target_name} test/test_publisher_subscriber_serialized.cpp
@@ -540,17 +500,18 @@ if(BUILD_TESTING)
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation}
-      ${SKIP_TEST}
     )
     if(TARGET ${target_name})
       add_dependencies(${target_name} ${PROJECT_NAME})
+      target_link_libraries(${target_name}
+        rclcpp::rclcpp
+        rclcpp_action::rclcpp_action
+        rmw::rmw
+        rosidl_typesupport_c::rosidl_typesupport_c
+        rosidl_typesupport_cpp::rosidl_typesupport_cpp
+        ${test_msgs_TARGETS}
+      )
       ament_target_dependencies(${target_name}
-        "rclcpp"
-        "rclcpp_action"
-        "rmw"
-        "rosidl_typesupport_c"
-        "rosidl_typesupport_cpp"
-        "test_msgs"
         ${rmw_implementation}
       )
       set_tests_properties(

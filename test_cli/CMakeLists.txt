@@ -33,8 +33,9 @@ if(BUILD_TESTING)
 
   add_executable(initial_params_rclcpp
     test/initial_params.cpp)
-  ament_target_dependencies(initial_params_rclcpp
-    "rclcpp")
+  target_link_libraries(initial_params_rclcpp
+    rclcpp::rclcpp
+  )
 
   ament_add_pytest_test(test_params_yaml
     test/test_params_yaml.py
