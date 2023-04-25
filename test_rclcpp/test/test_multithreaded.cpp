@@ -370,7 +370,9 @@ static inline void multi_access_publisher(bool intra_process)
         next_publish_count = publish_counter++;
       }
       // publish a new message
-      msg->data = next_publish_count;
+      using DataT = decltype(msg->data);
+      assert(next_publish_count <= std::numeric_limits<DataT>::max);
+      msg->data = static_cast<DataT>(next_publish_count);
       printf("Publishing message %u\n", msg->data);
       pub->publish(std::move(msg));
     };
