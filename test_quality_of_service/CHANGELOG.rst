@@ -2,6 +2,9 @@
 Changelog for package test_quality_of_service
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.16.0 (2023-04-28)
+-------------------
+
 0.15.1 (2023-04-11)
 -------------------
 * Fix ODR errors with gtest (`#514 <https://github.com/ros2/system_tests/issues/514>`_)

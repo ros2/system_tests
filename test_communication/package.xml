@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>test_communication</name>
-  <version>0.15.1</version>
+  <version>0.16.0</version>
   <description>
     Test publish / subscribe and request / response communication with all primitive as well as builtin types.
     Also exchange dynamic and static arrays and nested message structures.
