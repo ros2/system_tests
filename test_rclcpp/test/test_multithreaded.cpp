@@ -353,13 +353,13 @@ static inline void multi_access_publisher(bool intra_process)
   test_rclcpp::wait_for_subscriber(node, node_topic_name);
 
   // timers
-  size_t publish_counter = 0;
+  uint32_t publish_counter = 0;
   auto timer_callback =
     [&executor, &pub, &publish_counter, &counters_mutex, &num_messages](
     rclcpp::TimerBase & timer)
     {
       auto msg = std::make_unique<test_rclcpp::msg::UInt32>();
-      size_t next_publish_count = 0;
+      uint32_t next_publish_count = 0;
       {
         std::lock_guard<std::mutex> lock(counters_mutex);
         if (publish_counter == num_messages) {
@@ -370,9 +370,8 @@ static inline void multi_access_publisher(bool intra_process)
         next_publish_count = publish_counter++;
       }
       // publish a new message
-      using DataT = decltype(msg->data);
-      assert(next_publish_count <= std::numeric_limits<DataT>::max);
-      msg->data = static_cast<DataT>(next_publish_count);
+      ASSERT_LE(next_publish_count, std::numeric_limits<uint32_t>::max());
+      msg->data = next_publish_count;
       printf("Publishing message %u\n", msg->data);
       pub->publish(std::move(msg));
     };
