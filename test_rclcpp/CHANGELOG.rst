@@ -2,6 +2,11 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* refactor the multi_access_publisher test to avoid dead locks (`#515 <https://github.com/ros2/system_tests/issues/515>`_)
+* Contributors: William Woodall
+
 0.16.0 (2023-04-28)
 -------------------
 
