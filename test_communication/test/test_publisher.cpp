@@ -33,21 +33,30 @@ void publish(
 
   auto publisher = node->create_publisher<T>(std::string("test/message/") + message_type, qos);
 
-  rclcpp::WallRate cycle_rate(10);
-  rclcpp::WallRate message_rate(100);
-  size_t cycle_index = 0;
-  // publish all messages up to number_of_cycles times, longer sleep between each cycle
-  while (rclcpp::ok() && cycle_index < number_of_cycles) {
-    size_t message_index = 0;
-    // publish all messages one by one, shorter sleep between each message
-    while (rclcpp::ok() && message_index < messages.size()) {
-      printf("publishing message #%zu\n", message_index + 1);
-      publisher->publish(*messages[message_index]);
-      ++message_index;
-      message_rate.sleep();
+  try {
+    rclcpp::WallRate cycle_rate(10);
+    rclcpp::WallRate message_rate(100);
+    size_t cycle_index = 0;
+    // publish all messages up to number_of_cycles times, longer sleep between each cycle
+    while (rclcpp::ok() && cycle_index < number_of_cycles) {
+      size_t message_index = 0;
+      // publish all messages one by one, shorter sleep between each message
+      while (rclcpp::ok() && message_index < messages.size()) {
+        printf("publishing message #%zu\n", message_index + 1);
+        publisher->publish(*messages[message_index]);
+        ++message_index;
+        message_rate.sleep();
+      }
+      ++cycle_index;
+      cycle_rate.sleep();
     }
-    ++cycle_index;
-    cycle_rate.sleep();
+  } catch (const std::exception & ex) {
+    // It is expected to get into invalid context during the sleep, since rclcpp::shutdown()
+    // might be called earlier (e.g. when running *AfterShutdown case)
+    if (ex.what() != std::string("context cannot be slept with because it's invalid")) {
+      printf("ERROR: got unexpected exception: %s\n", ex.what());
+      throw ex;
+    }
   }
 
   auto end = std::chrono::steady_clock::now();
