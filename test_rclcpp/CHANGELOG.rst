@@ -2,6 +2,31 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.16.1 (2023-05-11)
+-------------------
+* refactor the multi_access_publisher test to avoid dead locks (`#515 <https://github.com/ros2/system_tests/issues/515>`_)
+* Contributors: William Woodall
+
+0.16.0 (2023-04-28)
+-------------------
+
+0.15.1 (2023-04-11)
+-------------------
+
+0.15.0 (2023-02-13)
+-------------------
+* Update the system tests to C++17. (`#510 <https://github.com/ros2/system_tests/issues/510>`_)
+* [rolling] Update maintainers - 2022-11-07 (`#509 <https://github.com/ros2/system_tests/issues/509>`_)
+* Contributors: Audrow Nash, Chris Lalancette
+
+0.14.0 (2022-09-13)
+-------------------
+* Pass rclcpp::QoS to create_service (`#507 <https://github.com/ros2/system_tests/issues/507>`_)
+* Pass rclcpp::QoS to create_client (`#506 <https://github.com/ros2/system_tests/issues/506>`_)
+* Revert "Replace deprecated spin_until_future_complete with spin_until_complete (`#499 <https://github.com/ros2/system_tests/issues/499>`_)" (`#504 <https://github.com/ros2/system_tests/issues/504>`_)
+* Replace deprecated spin_until_future_complete with spin_until_complete (`#499 <https://github.com/ros2/system_tests/issues/499>`_)
+* Contributors: Hubert Liberacki, Shane Loretz, William Woodall
+
 0.13.0 (2022-05-04)
 -------------------
 

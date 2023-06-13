@@ -23,23 +23,29 @@
 #include "std_msgs/msg/string.hpp"
 
 #include "test_quality_of_service/qos_test_node.hpp"
+#include "test_quality_of_service/visibility_control.hpp"
 
 /// Simple publishing node used for system tests
 class QosTestPublisher : public QosTestNode
 {
 public:
+  TEST_QUALITY_OF_SERVICE_PUBLIC
   QosTestPublisher(
     const std::string & name,
     const std::string & topic,
     const rclcpp::QoS & qos_options,
     const std::chrono::milliseconds & publish_period);
 
+  TEST_QUALITY_OF_SERVICE_PUBLIC
   virtual ~QosTestPublisher() = default;
+
   QosTestPublisher(QosTestPublisher const &) = delete;
   QosTestPublisher & operator=(QosTestPublisher const &) = delete;
 
+  TEST_QUALITY_OF_SERVICE_PUBLIC
   rclcpp::PublisherOptions & options() {return publisher_options_;}
 
+  TEST_QUALITY_OF_SERVICE_PUBLIC
   void teardown() override;
 
 private:

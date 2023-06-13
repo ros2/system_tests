@@ -26,6 +26,7 @@
 #include "rcutils/macros.h"
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
+#include "test_quality_of_service/visibility_control.hpp"
 
 #ifdef RMW_IMPLEMENTATION
 # define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
@@ -39,13 +40,36 @@
  * @param milliseconds
  * @return tuple of milliseconds converted to <seconds, nanoseconds>
  */
+TEST_QUALITY_OF_SERVICE_PUBLIC
 std::tuple<size_t, size_t> convert_chrono_milliseconds_to_size_t(
   const std::chrono::milliseconds & milliseconds);
+
+/// Helper wait for a predicate to evaluate to true
+template<
+  typename Predicate,
+  typename TimeOutR, typename TimeOutP,
+  typename PeriodR = int64_t, typename PeriodP = std::milli>
+bool wait_for(
+  Predicate predicate,
+  const std::chrono::duration<TimeOutR, TimeOutP> & timeout,
+  const std::chrono::duration<PeriodR, PeriodP> & period = std::chrono::milliseconds(100))
+{
+  auto end_time = std::chrono::steady_clock::now() + timeout;
+  while (!predicate()) {
+    if (std::chrono::steady_clock::now() > end_time) {
+      return predicate();
+    }
+    std::this_thread::sleep_for(period);
+  }
+  return true;
+}
 
 class BaseQosRclcppTestFixture : public ::testing::Test
 {
 protected:
+  TEST_QUALITY_OF_SERVICE_PUBLIC
   void SetUp() override;
+  TEST_QUALITY_OF_SERVICE_PUBLIC
   void TearDown() override;
   // executor used to submit work
   std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> executor;
