@@ -15,7 +15,6 @@ find_package(ament_cmake REQUIRED)
 
 if(BUILD_TESTING)
   find_package(rclcpp REQUIRED)
-  set(ament_cmake_cppcheck_ADDITIONAL_INCLUDE_DIRS ${rclcpp_INCLUDE_DIRS})
 
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
@@ -43,6 +42,8 @@ if(BUILD_TESTING)
     find_package("${rmw_implementation}" REQUIRED)
   endforeach()
 
+  rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
+
   macro(custom_gtest target)
     ament_add_gtest(${target}${target_suffix} ${ARGN}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
@@ -52,10 +53,7 @@ if(BUILD_TESTING)
     if(TARGET ${target}${target_suffix})
       target_compile_definitions(${target}${target_suffix}
         PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
-      rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
-      target_link_libraries(${target}${target_suffix} "${cpp_typesupport_target}")
-      ament_target_dependencies(${target}${target_suffix}
-        "rclcpp")
+      target_link_libraries(${target}${target_suffix} "${cpp_typesupport_target}" rclcpp::rclcpp)
       target_include_directories(${target}${target_suffix} PUBLIC include)
     endif()
   endmacro()
@@ -64,20 +62,14 @@ if(BUILD_TESTING)
     add_executable(${target} ${ARGN})
     target_compile_definitions(${target}
       PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
-    rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
-    target_link_libraries(${target} "${cpp_typesupport_target}")
-    ament_target_dependencies(${target}
-      "rclcpp")
+    target_link_libraries(${target} "${cpp_typesupport_target}" rclcpp::rclcpp)
   endfunction()
 
   function(custom_gtest_executable target)
     ament_add_gtest_executable(${target} ${ARGN})
     target_compile_definitions(${target}
       PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
-    rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
-    target_link_libraries(${target} "${cpp_typesupport_target}")
-    ament_target_dependencies(${target}
-      "rclcpp")
+    target_link_libraries(${target} "${cpp_typesupport_target}" rclcpp::rclcpp)
   endfunction()
 
   macro(custom_launch_test_two_executables test_name executable1 executable2)
@@ -374,14 +366,11 @@ if(BUILD_TESTING)
 
   # Test node names
   add_executable(node_with_name "test/node_with_name.cpp")
-  ament_target_dependencies(node_with_name
-    "rclcpp")
+  target_link_libraries(node_with_name rclcpp::rclcpp)
   add_executable(node_name_list "test/node_name_list.cpp")
-  ament_target_dependencies(node_name_list
-    "rclcpp")
+  target_link_libraries(node_name_list rclcpp::rclcpp)
   add_executable(node_check_names "test/node_check_names.cpp")
-  ament_target_dependencies(node_check_names
-    "rclcpp")
+  target_link_libraries(node_check_names rclcpp::rclcpp)
 
   call_for_each_rmw_implementation(targets)
 
@@ -405,8 +394,3 @@ endif()  # BUILD_TESTING
 
 # TODO should not install anything
 ament_package()
-
-if(TEST cppcheck)
-  # cppcheck test is created in hook in ament_package()
-  set_tests_properties(cppcheck PROPERTIES TIMEOUT 400)
-endif()
