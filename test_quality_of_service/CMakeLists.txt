@@ -39,11 +39,9 @@ if(BUILD_TESTING)
     test/qos_test_node.cpp
     test/qos_test_publisher.cpp
     test/qos_test_subscriber.cpp
-    test/qos_utilities.cpp
   )
 
   ament_find_gtest()
-  target_include_directories(${PROJECT_NAME}_support PUBLIC "${GTEST_INCLUDE_DIRS}")
   target_compile_definitions(${PROJECT_NAME}_support PRIVATE
     "TEST_QUALITY_OF_SERVICE_BUILDING_LIBRARY")
   ament_target_dependencies(${PROJECT_NAME}_support rclcpp rcutils std_msgs)
@@ -61,10 +59,10 @@ if(BUILD_TESTING)
   endfunction()
 
   macro(tests)
-    add_custom_gtest(test_deadline test/test_deadline.cpp)
-    add_custom_gtest(test_lifespan test/test_lifespan.cpp)
-    add_custom_gtest(test_liveliness test/test_liveliness.cpp)
-    add_custom_gtest(test_best_available test/test_best_available.cpp)
+    add_custom_gtest(test_deadline test/test_deadline.cpp test/qos_utilities.cpp)
+    add_custom_gtest(test_lifespan test/test_lifespan.cpp test/qos_utilities.cpp)
+    add_custom_gtest(test_liveliness test/test_liveliness.cpp test/qos_utilities.cpp)
+    add_custom_gtest(test_best_available test/test_best_available.cpp test/qos_utilities.cpp)
   endmacro()
 
   call_for_each_rmw_implementation(tests)
