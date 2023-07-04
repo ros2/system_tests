@@ -57,6 +57,12 @@ void declare_test_parameters(std::shared_ptr<rclcpp::Node> node, int declare_up_
   }
 }
 
+void add_builtin_parameter_names(std::vector<std::string> & param_names)
+{
+  param_names.push_back("start_type_description_service");
+  param_names.push_back("use_sim_time");
+}
+
 void test_set_parameters_sync(
   std::shared_ptr<rclcpp::SyncParametersClient> parameters_client,
   int successful_up_to = -1)
@@ -208,8 +214,9 @@ void test_get_parameters_sync(
   parameters_and_prefixes = parameters_client->list_parameters(
     {}, rcl_interfaces::srv::ListParameters::Request::DEPTH_RECURSIVE, std::chrono::seconds(1));
   std::vector<std::string> all_names = {
-    "foo", "bar", "barstr", "baz", "foo.first", "foo.second", "foobar", "use_sim_time"
+    "foo", "bar", "barstr", "baz", "foo.first", "foo.second", "foobar"
   };
+  add_builtin_parameter_names(all_names);
   size_t filtered_size = 0u;
   for (const auto & item : parameters_and_prefixes.names) {
     const char prefix_not_to_count[] = "qos_overrides.";
@@ -249,8 +256,9 @@ void test_get_parameters_sync(
   // List most of the parameters, using an empty prefix list and depth=1
   parameters_and_prefixes = parameters_client->list_parameters({}, 1u, std::chrono::seconds(1));
   std::vector<std::string> depth_one_names = {
-    "foo", "bar", "barstr", "baz", "foobar", "use_sim_time"
+    "foo", "bar", "barstr", "baz", "foobar"
   };
+  add_builtin_parameter_names(depth_one_names);
   EXPECT_EQ(parameters_and_prefixes.names.size(), depth_one_names.size());
   for (auto & name : depth_one_names) {
     EXPECT_NE(
@@ -353,8 +361,9 @@ void test_get_parameters_async(
   rclcpp::spin_until_future_complete(node, result5);
   parameters_and_prefixes = result5.get();
   std::vector<std::string> all_names = {
-    "foo", "bar", "barstr", "baz", "foo.first", "foo.second", "foobar", "use_sim_time"
+    "foo", "bar", "barstr", "baz", "foo.first", "foo.second", "foobar"
   };
+  add_builtin_parameter_names(all_names);
   size_t filtered_size = 0u;
   for (const auto & item : parameters_and_prefixes.names) {
     const char prefix_not_to_count[] = "qos_overrides.";
