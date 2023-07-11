@@ -2,6 +2,11 @@
 Changelog for package test_quality_of_service
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix test QoS on macOS by moving qos_utilities.cpp to the four tests; fixes `#517 <https://github.com/ros2/system_tests/issues/517>`_ (`#518 <https://github.com/ros2/system_tests/issues/518>`_)
+* Contributors: PhDittmann
+
 0.16.1 (2023-05-11)
 -------------------
 

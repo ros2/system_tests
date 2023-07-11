@@ -2,6 +2,12 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add a fix for the tests given the new type description parameter (`#520 <https://github.com/ros2/system_tests/issues/520>`_)
+* Changes ros_timer_init for ros_timer_init2 (`#508 <https://github.com/ros2/system_tests/issues/508>`_)
+* Contributors: Eloy Briceno, Emerson Knapp
+
 0.16.1 (2023-05-11)
 -------------------
 * refactor the multi_access_publisher test to avoid dead locks (`#515 <https://github.com/ros2/system_tests/issues/515>`_)
