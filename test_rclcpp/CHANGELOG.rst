@@ -2,8 +2,8 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.17.0 (2023-07-11)
+-------------------
 * Add a fix for the tests given the new type description parameter (`#520 <https://github.com/ros2/system_tests/issues/520>`_)
 * Changes ros_timer_init for ros_timer_init2 (`#508 <https://github.com/ros2/system_tests/issues/508>`_)
 * Contributors: Eloy Briceno, Emerson Knapp
