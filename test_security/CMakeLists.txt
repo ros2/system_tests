@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.7)
 
 project(test_security)
 
@@ -67,6 +67,7 @@ if(BUILD_TESTING)
       set_tests_properties(
         ${target}${target_suffix}
         PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}${target_suffix}>"
+        FIXTURES_REQUIRED "sros_artifacts"
       )
     endif()
   endfunction()
@@ -144,6 +145,7 @@ if(BUILD_TESTING)
           set_tests_properties(
             test_secure_publisher_subscriber${test_suffix}
             PROPERTIES DEPENDS "test_secure_publisher_cpp__${rmw_implementation};test_secure_subscriber_cpp__${rmw_implementation}"
+            FIXTURES_REQUIRED "sros_artifacts"
           )
         endif()
       endwhile()
@@ -184,6 +186,7 @@ if(BUILD_TESTING)
           set_tests_properties(
             test_secure_publisher_subscriber${test_suffix}
             PROPERTIES DEPENDS "test_secure_publisher_cpp__${rmw_implementation};test_secure_subscriber_cpp__${rmw_implementation}"
+            FIXTURES_REQUIRED "sros_artifacts"
           )
         endif()
       endwhile()
@@ -224,6 +227,7 @@ if(BUILD_TESTING)
           set_tests_properties(
             test_secure_publisher_subscriber${test_suffix}
             PROPERTIES DEPENDS "test_secure_publisher_cpp__${rmw_implementation};test_secure_subscriber_cpp__${rmw_implementation}"
+            FIXTURES_REQUIRED "sros_artifacts"
           )
         endif()
       endwhile()
@@ -312,24 +316,44 @@ if(BUILD_TESTING)
     find_program(PROGRAM ros2)
 
     set(node_names_list "/publisher;/subscriber;/publisher_missing_key;/publisher_invalid_cert")
-    file(REMOVE_RECURSE "${KEYSTORE_DIRECTORY}/enclaves/publisher_invalid_cert")
-    set(generate_artifacts_command ${PROGRAM} security generate_artifacts -k ${KEYSTORE_DIRECTORY_NATIVE_PATH} -e ${node_names_list})
-    execute_process(
-      COMMAND ${generate_artifacts_command}
-      RESULT_VARIABLE GENERATE_ARTIFACTS_RESULT
-      ERROR_VARIABLE GENERATE_ARTIFACTS_ERROR
-    )
-    if(NOT ${GENERATE_ARTIFACTS_RESULT} EQUAL 0)
-      message(FATAL_ERROR "Failed to generate security artifacts: ${GENERATE_ARTIFACTS_ERROR}")
-    endif()
 
-    # deleting key of /publisher_missing_key
-    file(REMOVE "${KEYSTORE_DIRECTORY}/enclaves/publisher_missing_key/key.pem")
-
-    # copy invalid certificate from source tree
-    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/publisher_invalid_cert/cert.pem
-      DESTINATION ${KEYSTORE_DIRECTORY}/enclaves/publisher_invalid_cert/
+    ament_add_test(pre_clean_artifacts
+      COMMAND ${CMAKE_COMMAND} -E rm -rf "${KEYSTORE_DIRECTORY}/enclaves/"
+      GENERATE_RESULT_FOR_RETURN_CODE_ZERO
     )
+    set_tests_properties(pre_clean_artifacts PROPERTIES
+      FIXTURES_SETUP sros_artifacts
+    )
+
+    ament_add_test(generate_artifacts
+      COMMAND ${PROGRAM} security generate_artifacts -k "${KEYSTORE_DIRECTORY_NATIVE_PATH}" -e ${node_names_list}
+      GENERATE_RESULT_FOR_RETURN_CODE_ZERO
+    )
+    set_tests_properties(generate_artifacts PROPERTIES
+      DEPENDS pre_clean_artifacts
+      FIXTURES_SETUP sros_artifacts
+    )
+
+    ament_add_test(remove_key
+      COMMAND ${CMAKE_COMMAND} -E rm "${KEYSTORE_DIRECTORY}/enclaves/publisher_missing_key/key.pem"
+      GENERATE_RESULT_FOR_RETURN_CODE_ZERO
+    )
+    set_tests_properties(remove_key PROPERTIES
+      DEPENDS generate_artifacts
+      FIXTURES_SETUP sros_artifacts
+    )
+
+    ament_add_test(copy_invalid_cert
+      COMMAND ${CMAKE_COMMAND} -E copy
+        "${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/publisher_invalid_cert/cert.pem"
+        "${KEYSTORE_DIRECTORY}/enclaves/publisher_invalid_cert/cert.pem"
+      GENERATE_RESULT_FOR_RETURN_CODE_ZERO
+    )
+    set_tests_properties(copy_invalid_cert PROPERTIES
+      DEPENDS generate_artifacts
+      FIXTURES_SETUP sros_artifacts
+    )
+
     call_for_each_rmw_implementation(targets)
   endif()
 endif()  # BUILD_TESTING
