@@ -322,44 +322,16 @@ if(BUILD_TESTING)
     #   for the tests in this package.
     #
 
-    # remove previously generated enclaves
-    add_test(NAME pre_clean_artifacts
-      COMMAND ${CMAKE_COMMAND} -E rm -rf "${KEYSTORE_DIRECTORY}/enclaves/"
-    )
-    set_tests_properties(pre_clean_artifacts PROPERTIES
-      FIXTURES_SETUP sros_artifacts
-    )
+    find_program(ROS2_EXECUTABLE ros2)
 
-    # generate security artifacts using sros2
-    find_program(PROGRAM ros2)
-
-    set(node_names_list "/publisher;/subscriber;/publisher_missing_key;/publisher_invalid_cert")
-    set(generate_artifacts_command ${PROGRAM} security generate_artifacts -k ${KEYSTORE_DIRECTORY_NATIVE_PATH} -e ${node_names_list})
-    add_test(NAME generate_artifacts
-      COMMAND ${generate_artifacts_command}
+    add_test(NAME sros_artifacts
+      COMMAND ${CMAKE_COMMAND}
+        "-DROS2_EXECUTABLE=${ROS2_EXECUTABLE}"
+        "-DKEYSTORE_DIRECTORY=${KEYSTORE_DIRECTORY}"
+        "-DKEYSTORE_DIRECTORY_NATIVE_PATH=${KEYSTORE_DIRECTORY_NATIVE_PATH}"
+        "-P${CMAKE_CURRENT_SOURCE_DIR}/test/sros_artifacts.cmake"
     )
-    set_tests_properties(generate_artifacts PROPERTIES
-      DEPENDS pre_clean_artifacts
-      FIXTURES_SETUP sros_artifacts
-    )
-
-    # deleting key of /publisher_missing_key
-    add_test(NAME remove_missing_key
-      COMMAND ${CMAKE_COMMAND} -E rm "${KEYSTORE_DIRECTORY}/enclaves/publisher_missing_key/key.pem"
-    )
-    set_tests_properties(remove_missing_key PROPERTIES
-      DEPENDS generate_artifacts
-      FIXTURES_SETUP sros_artifacts
-    )
-
-    # copy invalid certificate from source tree
-    add_test(NAME copy_invalid_cert
-      COMMAND ${CMAKE_COMMAND} -E copy
-        "${CMAKE_CURRENT_SOURCE_DIR}/test/test_security_files/publisher_invalid_cert/cert.pem"
-        "${KEYSTORE_DIRECTORY}/enclaves/publisher_invalid_cert/cert.pem"
-    )
-    set_tests_properties(copy_invalid_cert PROPERTIES
-      DEPENDS generate_artifacts
+    set_tests_properties(sros_artifacts PROPERTIES
       FIXTURES_SETUP sros_artifacts
     )
 
