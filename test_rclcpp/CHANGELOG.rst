@@ -2,6 +2,9 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.17.0 (2023-07-11)
 -------------------
 * Add a fix for the tests given the new type description parameter (`#520 <https://github.com/ros2/system_tests/issues/520>`_)
