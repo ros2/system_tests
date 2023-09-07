@@ -2,8 +2,8 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.18.0 (2023-09-07)
+-------------------
 * Cleanup of the CMakeLists.txt for test_rclcpp. (`#526 <https://github.com/ros2/system_tests/issues/526>`_)
 * Contributors: Chris Lalancette
 

@@ -2,8 +2,8 @@
 Changelog for package test_security
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.18.0 (2023-09-07)
+-------------------
 * Adjust for new rclcpp::Rate API (`#516 <https://github.com/ros2/system_tests/issues/516>`_)
 * Contributors: Alexey Merzlyakov
 
