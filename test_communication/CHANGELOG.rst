@@ -2,6 +2,11 @@
 Changelog for package test_communication
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Adjust for new rclcpp::Rate API (`#516 <https://github.com/ros2/system_tests/issues/516>`_)
+* Contributors: Alexey Merzlyakov
+
 0.17.1 (2023-08-21)
 -------------------
 

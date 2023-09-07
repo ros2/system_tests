@@ -2,6 +2,11 @@
 Changelog for package test_security
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Adjust for new rclcpp::Rate API (`#516 <https://github.com/ros2/system_tests/issues/516>`_)
+* Contributors: Alexey Merzlyakov
+
 0.17.1 (2023-08-21)
 -------------------
 * Extract sros_artifacts fixture into a CMake script (`#525 <https://github.com/ros2/system_tests/issues/525>`_)
