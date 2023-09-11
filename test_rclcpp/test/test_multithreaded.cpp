@@ -355,7 +355,7 @@ static inline void multi_access_publisher(bool intra_process)
   // timers
   uint32_t publish_counter = 0;
   auto timer_callback =
-    [&executor, &pub, &publish_counter, &counters_mutex, &num_messages](
+    [&pub, &publish_counter, &counters_mutex, &num_messages](
     rclcpp::TimerBase & timer)
     {
       auto msg = std::make_unique<test_rclcpp::msg::UInt32>();
