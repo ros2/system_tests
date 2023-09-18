@@ -147,25 +147,14 @@ void test_get_parameters_sync(
     EXPECT_STREQ("foo", prefix.c_str());
   }
 
-  printf("Listing parameters with depth of 1\n");
-  // Test different depth
+  printf("Listing parameters with depth 1 and a prefix 'foo'\n");
+  // Test relative depth to the given prefixes
   auto parameters_and_prefixes4 =
     parameters_client->list_parameters({"foo"}, 1, std::chrono::seconds(1));
   for (auto & name : parameters_and_prefixes4.names) {
-    EXPECT_EQ(name, "foo");
-  }
-  for (auto & prefix : parameters_and_prefixes4.prefixes) {
-    EXPECT_STREQ("foo", prefix.c_str());
-  }
-
-  printf("Listing parameters with depth of 2\n");
-  // Test different depth
-  auto parameters_and_prefixes5 =
-    parameters_client->list_parameters({"foo"}, 2, std::chrono::seconds(1));
-  for (auto & name : parameters_and_prefixes5.names) {
     EXPECT_TRUE(name == "foo" || name == "foo.first" || name == "foo.second");
   }
-  for (auto & prefix : parameters_and_prefixes5.prefixes) {
+  for (auto & prefix : parameters_and_prefixes4.prefixes) {
     EXPECT_STREQ("foo", prefix.c_str());
   }
 
@@ -288,30 +277,17 @@ void test_get_parameters_async(
     EXPECT_STREQ("foo", prefix.c_str());
   }
 
-  printf("Listing parameters with depth 1\n");
-  // Test different depth
+  printf("Listing parameters with depth 1 and a prefix 'foo'\n");
+  // Test relative depth to the given prefixes
   auto result4 = parameters_client->list_parameters({"foo"}, 1);
   rclcpp::spin_until_future_complete(node, result4);
   auto parameters_and_prefixes4 = result4.get();
   for (auto & name : parameters_and_prefixes4.names) {
-    EXPECT_EQ(name, "foo");
+    EXPECT_TRUE(name == "foo" || name == "foo.first" || name == "foo.second");
   }
   for (auto & prefix : parameters_and_prefixes4.prefixes) {
     EXPECT_STREQ("foo", prefix.c_str());
   }
-
-  // Test different depth
-  printf("Listing parameters with depth 2\n");
-  auto result4a = parameters_client->list_parameters({"foo"}, 2);
-  rclcpp::spin_until_future_complete(node, result4a);
-  auto parameters_and_prefixes4a = result4a.get();
-  for (auto & name : parameters_and_prefixes4a.names) {
-    EXPECT_TRUE(name == "foo" || name == "foo.first" || name == "foo.second");
-  }
-  for (auto & prefix : parameters_and_prefixes4a.prefixes) {
-    EXPECT_STREQ("foo", prefix.c_str());
-  }
-
 
   printf("Getting parameters\n");
   // Get a few of the parameters just set.
