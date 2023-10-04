@@ -2,8 +2,8 @@
 Changelog for package test_communication
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.19.0 (2023-10-04)
+-------------------
 * Add integration test for nested messages. (`#530 <https://github.com/ros2/system_tests/issues/530>`_)
 * Contributors: Chris Lalancette
 
