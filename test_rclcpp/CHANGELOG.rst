@@ -2,6 +2,12 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* refactor corrected depth check for prefix in parameter_fixtures.hpp (`#529 <https://github.com/ros2/system_tests/issues/529>`_)
+* Remove an unnecessary capture in test_rclcpp. (`#527 <https://github.com/ros2/system_tests/issues/527>`_)
+* Contributors: Chris Lalancette, Minju, Lee
+
 0.18.0 (2023-09-07)
 -------------------
 * Cleanup of the CMakeLists.txt for test_rclcpp. (`#526 <https://github.com/ros2/system_tests/issues/526>`_)

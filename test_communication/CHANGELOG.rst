@@ -2,6 +2,11 @@
 Changelog for package test_communication
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add integration test for nested messages. (`#530 <https://github.com/ros2/system_tests/issues/530>`_)
+* Contributors: Chris Lalancette
+
 0.18.0 (2023-09-07)
 -------------------
 * Adjust for new rclcpp::Rate API (`#516 <https://github.com/ros2/system_tests/issues/516>`_)
