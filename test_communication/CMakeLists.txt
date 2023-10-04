@@ -26,8 +26,11 @@ ament_auto_find_build_dependencies()
 
 if(BUILD_TESTING)
   find_package(ament_cmake REQUIRED)
-  find_package(test_msgs REQUIRED)
   find_package(osrf_testing_tools_cpp REQUIRED)
+  find_package(rcpputils REQUIRED)
+  find_package(rcl REQUIRED)
+  find_package(rclcpp REQUIRED)
+  find_package(test_msgs REQUIRED)
 
   ament_index_get_resource(interface_files "rosidl_interfaces" "test_msgs")
   string(REPLACE "\n" ";" interface_files "${interface_files}")
@@ -57,6 +60,8 @@ if(BUILD_TESTING)
 
   set(other_message_files
     "msg/FieldsWithSameType.msg"
+    "msg/Inner.msg"
+    "msg/Outer.msg"
     "msg/UInt32.msg"
   )
   rosidl_generate_interfaces(${PROJECT_NAME}
@@ -428,7 +433,7 @@ if(BUILD_TESTING)
   # publisher combined with a subscriber
   custom_executable(test_publisher_subscriber_cpp
     "test/test_publisher_subscriber.cpp")
-  target_link_libraries(test_publisher_subscriber_cpp subscribe_types)
+  target_link_libraries(test_publisher_subscriber_cpp subscribe_types rcpputils::rcpputils)
   # subcription valid data
   custom_executable(test_subscription_valid_data_cpp
     "test/test_subscription_valid_data.cpp")
@@ -449,6 +454,11 @@ if(BUILD_TESTING)
   custom_executable(test_action_server_cpp
     "test/test_action_server.cpp")
 
+  # Regression test for https://github.com/ros2/rmw_fastrtps/issues/715
+  custom_executable(test_nested_types
+    "test/test_nested_types.cpp")
+  target_link_libraries(test_nested_types rcpputils::rcpputils)
+
   macro(targets)
     if(NOT SKIP_SINGLE_RMW_TESTS)
       custom_test_c(test_messages_c
@@ -458,6 +468,8 @@ if(BUILD_TESTING)
       custom_test(test_publisher_subscriber_cpp TRUE)
       # subcription valid data
       custom_test(test_subscription_valid_data_cpp FALSE)
+      # Regression test for https://github.com/ros2/rmw_fastrtps/issues/715
+      custom_test(test_nested_types FALSE)
     endif()
 
     set(rmw_implementation1 "${rmw_implementation}")
