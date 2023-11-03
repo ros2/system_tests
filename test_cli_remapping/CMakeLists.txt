@@ -5,13 +5,14 @@ project(test_cli_remapping)
 find_package(ament_cmake_auto REQUIRED)
 
 if(BUILD_TESTING)
-  # Provides PYTHON_EXECUTABLE_DEBUG
+  # Provides PythonExtra_EXECUTABLE
   find_package(python_cmake_module REQUIRED)
   find_package(PythonExtra REQUIRED)
-  set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE}")
+
+  set(_PYTHON_EXECUTABLE "${PythonExtra_EXECUTABLE}")
   if(WIN32)
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-      set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE_DEBUG}")
+      set(_PYTHON_EXECUTABLE "${PythonExtra_EXECUTABLE_DEBUG}")
     endif()
   endif()
 
@@ -34,9 +35,10 @@ if(BUILD_TESTING)
 
   add_executable(name_maker_rclcpp
     test/name_maker.cpp)
-  ament_target_dependencies(name_maker_rclcpp
-    "rclcpp"
-    "test_msgs")
+  target_link_libraries(name_maker_rclcpp PRIVATE
+    rclcpp::rclcpp
+    ${test_msgs_TARGETS}
+  )
 
   add_launch_test(
     test/test_cli_remapping.py

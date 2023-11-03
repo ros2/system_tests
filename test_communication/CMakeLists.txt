@@ -75,7 +75,7 @@ if(BUILD_TESTING)
 
   find_package(launch_testing_ament_cmake REQUIRED)
 
-  # Provides PYTHON_EXECUTABLE_DEBUG
+  # Provides PythonExtra_EXECUTABLE
   find_package(python_cmake_module REQUIRED)
   find_package(PythonExtra REQUIRED)
 
@@ -363,7 +363,7 @@ if(BUILD_TESTING)
   endmacro()
 
   macro(configure_template _client_library1 _client_library2)
-    set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE}")
+    set(_PYTHON_EXECUTABLE "${PythonExtra_EXECUTABLE}")
     set(_client_library1 "${_client_library1}")
     set(_client_library2 "${_client_library2}")
     set(TEST_PUBLISHER_RCL "${_client_library1}")
@@ -382,7 +382,7 @@ if(BUILD_TESTING)
     if(_client_library1 STREQUAL "rclpy" OR _client_library2 STREQUAL "rclpy")
       if(WIN32)
         if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-          set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE_DEBUG}")
+          set(_PYTHON_EXECUTABLE "${PythonExtra_EXECUTABLE_DEBUG}")
         endif()
       endif()
     endif()
