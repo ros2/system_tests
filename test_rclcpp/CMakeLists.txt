@@ -390,6 +390,13 @@ if(BUILD_TESTING)
 
   custom_executable(test_client_scope_consistency_server_cpp "test/test_client_scope_consistency_server.cpp")
   custom_gtest_executable(test_client_scope_consistency_client_cpp "test/test_client_scope_consistency_client.cpp")
+
+  # TODO(clalancette): Under load, the gtest_subscription__rmw_connextdds test fails deep in the
+  # bowels of Connext; see https://github.com/ros2/rmw_connextdds/issues/136 for details.  Mark it
+  # as xfail for now so we can keep CI green.
+  if(TARGET gtest_subscription__rmw_connextdds)
+    ament_add_test_label(gtest_subscription__rmw_connextdds xfail)
+  endif()
 endif()  # BUILD_TESTING
 
 # TODO should not install anything
