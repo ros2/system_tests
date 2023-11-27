@@ -44,7 +44,11 @@ if(BUILD_TESTING)
   ament_find_gtest()
   target_compile_definitions(${PROJECT_NAME}_support PRIVATE
     "TEST_QUALITY_OF_SERVICE_BUILDING_LIBRARY")
-  ament_target_dependencies(${PROJECT_NAME}_support rclcpp rcutils std_msgs)
+  target_link_libraries(${PROJECT_NAME}_support
+    rclcpp::rclcpp
+    rcutils::rcutils
+    ${std_msgs_TARGETS}
+  )
 
   function(add_custom_gtest target)
     ament_add_gtest(${target}${target_suffix} ${ARGN}
@@ -54,8 +58,14 @@ if(BUILD_TESTING)
     )
     target_compile_definitions(${target}${target_suffix}
       PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
-    target_link_libraries(${target}${target_suffix} ${PROJECT_NAME}_support)
-    ament_target_dependencies(${target}${target_suffix} rcl rclcpp rcutils std_msgs test_msgs)
+    target_link_libraries(${target}${target_suffix}
+      ${PROJECT_NAME}_support
+      rcl::rcl
+      rclcpp::rclcpp
+      rcutils::rcutils
+      ${std_msgs_TARGETS}
+      ${test_msgs_TARGETS}
+    )
   endfunction()
 
   macro(tests)
