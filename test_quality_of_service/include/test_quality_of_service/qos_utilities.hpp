@@ -16,17 +16,16 @@
 #define TEST_QUALITY_OF_SERVICE__QOS_UTILITIES_HPP_
 
 #include <chrono>
+#include <future>
 #include <memory>
-#include <mutex>
 #include <string>
+#include <thread>
 #include <tuple>
 
 #include "gtest/gtest.h"
 
 #include "rcutils/macros.h"
 #include "rclcpp/rclcpp.hpp"
-#include "std_msgs/msg/string.hpp"
-#include "test_quality_of_service/visibility_control.hpp"
 
 #ifdef RMW_IMPLEMENTATION
 # define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX

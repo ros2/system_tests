@@ -12,7 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <chrono>
+#include <sstream>
 #include <string>
+
+#include "rclcpp/rclcpp.hpp"
+#include "std_msgs/msg/string.hpp"
 
 #include "test_quality_of_service/qos_test_publisher.hpp"
 #include "test_quality_of_service/qos_test_node.hpp"
