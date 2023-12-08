@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <mutex>
+#include <functional>
 #include <memory>
 #include <string>
 
@@ -21,8 +21,6 @@
 
 #include "test_quality_of_service/qos_test_node.hpp"
 #include "test_quality_of_service/qos_test_subscriber.hpp"
-
-using std::placeholders::_1;
 
 QosTestSubscriber::QosTestSubscriber(
   const std::string & name,
@@ -49,7 +47,7 @@ void QosTestSubscriber::setup_start()
     subscription_ = create_subscription<std_msgs::msg::String>(
       topic_,
       qos_options_,
-      std::bind(&QosTestSubscriber::listen_to_message, this, _1),
+      std::bind(&QosTestSubscriber::listen_to_message, this, std::placeholders::_1),
       sub_options_);
   }
 }

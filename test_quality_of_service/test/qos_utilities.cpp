@@ -12,11 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <iostream>
+#include <future>
 #include <memory>
 #include <sstream>
 #include <string>
 #include <tuple>
+#include <utility>
+
+#include "rclcpp/rclcpp.hpp"
 
 #include "test_quality_of_service/qos_test_publisher.hpp"
 #include "test_quality_of_service/qos_test_subscriber.hpp"
