@@ -2,6 +2,12 @@
 Changelog for package test_security
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Update to C++17 (`#528 <https://github.com/ros2/system_tests/issues/528>`_)
+* Switch to target_link_libraries everywhere. (`#532 <https://github.com/ros2/system_tests/issues/532>`_)
+* Contributors: Chris Lalancette
+
 0.19.0 (2023-10-04)
 -------------------
 

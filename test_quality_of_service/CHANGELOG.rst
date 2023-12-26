@@ -2,6 +2,12 @@
 Changelog for package test_quality_of_service
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Cleanup header includes in test_quality_of_service. (`#533 <https://github.com/ros2/system_tests/issues/533>`_)
+* Switch to target_link_libraries everywhere. (`#532 <https://github.com/ros2/system_tests/issues/532>`_)
+* Contributors: Chris Lalancette
+
 0.19.0 (2023-10-04)
 -------------------
 

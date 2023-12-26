@@ -2,6 +2,11 @@
 Changelog for package test_communication
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Switch to target_link_libraries everywhere. (`#532 <https://github.com/ros2/system_tests/issues/532>`_)
+* Contributors: Chris Lalancette
+
 0.19.0 (2023-10-04)
 -------------------
 * Add integration test for nested messages. (`#530 <https://github.com/ros2/system_tests/issues/530>`_)

@@ -2,6 +2,11 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Mark gtest_subscription__rmw_connextdds xfail. (`#531 <https://github.com/ros2/system_tests/issues/531>`_)
+* Contributors: Chris Lalancette
+
 0.19.0 (2023-10-04)
 -------------------
 * refactor corrected depth check for prefix in parameter_fixtures.hpp (`#529 <https://github.com/ros2/system_tests/issues/529>`_)
