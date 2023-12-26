@@ -2,8 +2,8 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.20.0 (2023-12-26)
+-------------------
 * Mark gtest_subscription__rmw_connextdds xfail. (`#531 <https://github.com/ros2/system_tests/issues/531>`_)
 * Contributors: Chris Lalancette
 
