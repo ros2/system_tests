@@ -2,8 +2,8 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.15.3 (2024-02-07)
+-------------------
 * Add a fix for the tests given the new type description parameter (`#521 <https://github.com/ros2/system_tests/issues/521>`_)
 * Contributors: Emerson Knapp
 
