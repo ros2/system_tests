@@ -2,6 +2,12 @@
 Changelog for package test_security
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Extract sros_artifacts fixture into a CMake script (`#523 <https://github.com/ros2/system_tests/issues/523>`_)
+* Use test fixtures to create SROS artifacts (`#523 <https://github.com/ros2/system_tests/issues/523>`_)
+* Contributors: Scott K Logan
+
 0.15.2 (2023-07-14)
 -------------------
 
