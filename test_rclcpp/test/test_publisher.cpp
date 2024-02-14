@@ -25,14 +25,7 @@
 
 #include "./pub_sub_fixtures.hpp"
 
-#ifdef RMW_IMPLEMENTATION
-# define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
-# define CLASSNAME(NAME, SUFFIX) CLASSNAME_(NAME, SUFFIX)
-#else
-# define CLASSNAME(NAME, SUFFIX) NAME
-#endif
-
-class CLASSNAME (test_publisher, RMW_IMPLEMENTATION) : public ::testing::Test
+class test_publisher : public ::testing::Test
 {
 public:
   static void SetUpTestCase()
@@ -47,7 +40,8 @@ public:
 };
 
 // Short test for the const reference publish signature.
-TEST_F(CLASSNAME(test_publisher, RMW_IMPLEMENTATION), publish_with_const_reference) {
+TEST_F(test_publisher, publish_with_const_reference)
+{
   // topic name
   std::string topic_name = "test_publish_with_const_reference";
   // code to create the callback and subscription

@@ -25,15 +25,7 @@
 
 #include "./pub_sub_fixtures.hpp"
 
-#ifdef RMW_IMPLEMENTATION
-# define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
-# define CLASSNAME(NAME, SUFFIX) CLASSNAME_(NAME, SUFFIX)
-#else
-# define CLASSNAME(NAME, SUFFIX) NAME
-#endif
-
-class CLASSNAME (test_avoid_ros_namespace_conventions_qos, RMW_IMPLEMENTATION)
-  : public ::testing::Test
+class test_avoid_ros_namespace_conventions_qos : public ::testing::Test
 {
 public:
   static void SetUpTestCase()
@@ -48,10 +40,8 @@ public:
 };
 
 // Test communciation works with the avoid_ros_namespace_conventions QoS enabled.
-TEST_F(
-  CLASSNAME(test_avoid_ros_namespace_conventions_qos, RMW_IMPLEMENTATION),
-  pub_sub_works
-) {
+TEST_F(test_avoid_ros_namespace_conventions_qos, pub_sub_works)
+{
   // topic name
   std::string topic_name = "test_avoid_ros_namespace_conventions_qos";
   // code to create the callback and subscription

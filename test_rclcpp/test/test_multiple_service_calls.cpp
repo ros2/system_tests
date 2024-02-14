@@ -27,13 +27,6 @@
 
 #include "test_rclcpp/srv/add_two_ints.hpp"
 
-#ifdef RMW_IMPLEMENTATION
-# define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
-# define CLASSNAME(NAME, SUFFIX) CLASSNAME_(NAME, SUFFIX)
-#else
-# define CLASSNAME(NAME, SUFFIX) NAME
-#endif
-
 using namespace std::chrono_literals;
 
 void handle_add_two_ints(
@@ -43,7 +36,7 @@ void handle_add_two_ints(
   response->sum = request->a + request->b;
 }
 
-class CLASSNAME (test_two_service_calls, RMW_IMPLEMENTATION) : public ::testing::Test
+class test_two_service_calls : public ::testing::Test
 {
 public:
   static void SetUpTestCase()
@@ -57,7 +50,8 @@ public:
   }
 };
 
-TEST_F(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), two_service_calls) {
+TEST_F(test_two_service_calls, two_service_calls)
+{
   auto node = rclcpp::Node::make_shared("test_two_service_calls");
 
   auto service = node->create_service<test_rclcpp::srv::AddTwoInts>(
@@ -97,7 +91,8 @@ TEST_F(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), two_service_calls)
 
 // Regression test for async client not being able to queue another request in a response callback.
 // See https://github.com/ros2/rclcpp/pull/415
-TEST_F(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), recursive_service_call) {
+TEST_F(test_two_service_calls, recursive_service_call)
+{
   auto node = rclcpp::Node::make_shared("test_recursive_service_call");
 
   auto service = node->create_service<test_rclcpp::srv::AddTwoInts>(
@@ -144,7 +139,7 @@ TEST_F(CLASSNAME(test_two_service_calls, RMW_IMPLEMENTATION), recursive_service_
   EXPECT_TRUE(second_result_received);
 }
 
-class CLASSNAME (test_multiple_service_calls, RMW_IMPLEMENTATION) : public ::testing::Test
+class test_multiple_service_calls : public ::testing::Test
 {
 public:
   static void SetUpTestCase()
@@ -158,7 +153,8 @@ public:
   }
 };
 
-TEST_F(CLASSNAME(test_multiple_service_calls, RMW_IMPLEMENTATION), multiple_clients) {
+TEST_F(test_multiple_service_calls, multiple_clients)
+{
   const uint32_t n = 5;
 
   auto node = rclcpp::Node::make_shared("test_multiple_clients");

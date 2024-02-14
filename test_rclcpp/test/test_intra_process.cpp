@@ -22,18 +22,10 @@
 
 #include "test_rclcpp/msg/u_int32.hpp"
 
-#ifdef RMW_IMPLEMENTATION
-# define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
-# define CLASSNAME(NAME, SUFFIX) CLASSNAME_(NAME, SUFFIX)
-#else
-# define CLASSNAME(NAME, SUFFIX) NAME
-#endif
-
-
 static const std::chrono::milliseconds sleep_per_loop(10);
 static const int max_loops = 200;
 
-class CLASSNAME (test_intra_process_within_one_node, RMW_IMPLEMENTATION) : public ::testing::Test
+class test_intra_process_within_one_node : public ::testing::Test
 {
 public:
   static void SetUpTestCase()
@@ -47,7 +39,8 @@ public:
   }
 };
 
-TEST_F(CLASSNAME(test_intra_process_within_one_node, RMW_IMPLEMENTATION), nominal_usage) {
+TEST_F(test_intra_process_within_one_node, nominal_usage)
+{
   // use intra process = true
   auto node = rclcpp::Node::make_shared(
     "test_intra_process",

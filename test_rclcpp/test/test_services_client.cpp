@@ -22,16 +22,9 @@
 
 #include "test_rclcpp/srv/add_two_ints.hpp"
 
-#ifdef RMW_IMPLEMENTATION
-# define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
-# define CLASSNAME(NAME, SUFFIX) CLASSNAME_(NAME, SUFFIX)
-#else
-# define CLASSNAME(NAME, SUFFIX) NAME
-#endif
-
 using namespace std::chrono_literals;
 
-class CLASSNAME (test_services_client, RMW_IMPLEMENTATION) : public ::testing::Test
+class test_services_client : public ::testing::Test
 {
 public:
   static void SetUpTestCase()
@@ -45,7 +38,8 @@ public:
   }
 };
 
-TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_noreqid) {
+TEST_F(test_services_client, test_add_noreqid)
+{
   auto node = rclcpp::Node::make_shared("test_services_client_no_reqid");
 
   auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("add_two_ints_noreqid");
@@ -65,7 +59,8 @@ TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_noreqid) {
   EXPECT_EQ(3, result.get()->sum);
 }
 
-TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_reqid) {
+TEST_F(test_services_client, test_add_reqid)
+{
   auto node = rclcpp::Node::make_shared("test_services_client_add_reqid");
 
   auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("add_two_ints_reqid");
@@ -85,7 +80,8 @@ TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_reqid) {
   EXPECT_EQ(9, result.get()->sum);
 }
 
-TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_return_request) {
+TEST_F(test_services_client, test_return_request)
+{
   auto node = rclcpp::Node::make_shared("test_services_client_return_request");
 
   auto client = node->create_client<test_rclcpp::srv::AddTwoInts>(
@@ -110,7 +106,8 @@ TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_return_request)
   ASSERT_EQ(ret, rclcpp::FutureReturnCode::SUCCESS);
 }
 
-TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_two_ints_defered_cb) {
+TEST_F(test_services_client, test_add_two_ints_defered_cb)
+{
   auto node = rclcpp::Node::make_shared("test_services_client_add_two_ints_defered_cb");
 
   auto client = node->create_client<test_rclcpp::srv::AddTwoInts>(
@@ -135,7 +132,8 @@ TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_two_ints_de
   ASSERT_EQ(ret, rclcpp::FutureReturnCode::SUCCESS);
 }
 
-TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_two_ints_defcb_with_handle) {
+TEST_F(test_services_client, test_add_two_ints_defcb_with_handle)
+{
   auto node = rclcpp::Node::make_shared("test_services_client_add_two_ints_defered_cb_with_handle");
 
   auto client = node->create_client<test_rclcpp::srv::AddTwoInts>(

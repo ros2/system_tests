@@ -21,19 +21,12 @@
 #include "rclcpp/rclcpp.hpp"
 #include "test_rclcpp/msg/u_int32.hpp"
 
-#ifdef RMW_IMPLEMENTATION
-# define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
-# define CLASSNAME(NAME, SUFFIX) CLASSNAME_(NAME, SUFFIX)
-#else
-# define CLASSNAME(NAME, SUFFIX) NAME
-#endif
-
 void callback(const test_rclcpp::msg::UInt32::ConstSharedPtr /*msg*/)
 {
   throw std::runtime_error("The subscriber received a message but there should be no publisher!");
 }
 
-class CLASSNAME (test_timeout_subscriber, RMW_IMPLEMENTATION) : public ::testing::Test
+class test_timeout_subscriber : public ::testing::Test
 {
 public:
   static void SetUpTestCase()
@@ -47,7 +40,8 @@ public:
   }
 };
 
-TEST_F(CLASSNAME(test_timeout_subscriber, RMW_IMPLEMENTATION), timeout_subscriber) {
+TEST_F(test_timeout_subscriber, timeout_subscriber)
+{
   auto start = std::chrono::steady_clock::now();
 
   auto node = rclcpp::Node::make_shared("test_timeout_subscriber");
