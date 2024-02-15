@@ -20,16 +20,9 @@
 #include "rcpputils/scope_exit.hpp"
 #include "test_rclcpp/srv/add_two_ints.hpp"
 
-#ifdef RMW_IMPLEMENTATION
-# define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
-# define CLASSNAME(NAME, SUFFIX) CLASSNAME_(NAME, SUFFIX)
-#else
-# define CLASSNAME(NAME, SUFFIX) NAME
-#endif
-
 using namespace std::chrono_literals;
 
-class CLASSNAME (service_client, RMW_IMPLEMENTATION) : public ::testing::Test
+class service_client : public ::testing::Test
 {
 public:
   static void SetUpTestCase()
@@ -44,7 +37,8 @@ public:
 };
 
 // rclcpp::shutdown() should wake up wait_for_service, even without spin.
-TEST_F(CLASSNAME(service_client, RMW_IMPLEMENTATION), wait_for_service_shutdown) {
+TEST_F(service_client, wait_for_service_shutdown)
+{
   auto node = rclcpp::Node::make_shared("wait_for_service_shutdown");
 
   auto client = node->create_client<test_rclcpp::srv::AddTwoInts>("wait_for_service_shutdown");

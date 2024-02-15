@@ -24,16 +24,9 @@
 
 #include "test_rclcpp/msg/u_int32.hpp"
 
-#ifdef RMW_IMPLEMENTATION
-# define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
-# define CLASSNAME(NAME, SUFFIX) CLASSNAME_(NAME, SUFFIX)
-#else
-# define CLASSNAME(NAME, SUFFIX) NAME
-#endif
-
 using namespace std::chrono_literals;
 
-class CLASSNAME (test_spin, RMW_IMPLEMENTATION) : public ::testing::Test
+class test_spin : public ::testing::Test
 {
 public:
   void SetUp()
@@ -52,7 +45,8 @@ public:
 /*
    Ensures that the timeout behavior of spin_until_future_complete is correct.
  */
-TEST_F(CLASSNAME(test_spin, RMW_IMPLEMENTATION), test_spin_until_future_complete_timeout) {
+TEST_F(test_spin, test_spin_until_future_complete_timeout)
+{
   using rclcpp::FutureReturnCode;
   rclcpp::executors::SingleThreadedExecutor executor;
 
@@ -139,7 +133,8 @@ TEST_F(CLASSNAME(test_spin, RMW_IMPLEMENTATION), test_spin_until_future_complete
   }
 }
 
-TEST_F(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete) {
+TEST_F(test_spin, spin_until_future_complete)
+{
   auto node = rclcpp::Node::make_shared("test_spin");
 
   // Construct a fake future to wait on
@@ -161,7 +156,8 @@ TEST_F(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete) {
   EXPECT_EQ(future.get(), true);
 }
 
-TEST_F(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete_timeout) {
+TEST_F(test_spin, spin_until_future_complete_timeout)
+{
   auto node = rclcpp::Node::make_shared("test_spin");
 
   // Construct a fake future to wait on
@@ -186,7 +182,8 @@ TEST_F(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete_time
   EXPECT_EQ(future.get(), true);
 }
 
-TEST_F(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete_interrupted) {
+TEST_F(test_spin, spin_until_future_complete_interrupted)
+{
   auto node = rclcpp::Node::make_shared("test_spin");
 
   // Construct a fake future to wait on
@@ -210,7 +207,8 @@ TEST_F(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete_inte
     rclcpp::FutureReturnCode::INTERRUPTED);
 }
 
-TEST_F(CLASSNAME(test_spin, RMW_IMPLEMENTATION), cancel) {
+TEST_F(test_spin, cancel)
+{
   auto node = rclcpp::Node::make_shared("cancel");
   rclcpp::executors::SingleThreadedExecutor executor;
   auto pub = node->create_publisher<test_rclcpp::msg::UInt32>("cancel", 10);

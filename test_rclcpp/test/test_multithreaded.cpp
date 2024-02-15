@@ -31,16 +31,9 @@
 #include "test_rclcpp/msg/u_int32.hpp"
 #include "test_rclcpp/srv/add_two_ints.hpp"
 
-#ifdef RMW_IMPLEMENTATION
-# define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
-# define CLASSNAME(NAME, SUFFIX) CLASSNAME_(NAME, SUFFIX)
-#else
-# define CLASSNAME(NAME, SUFFIX) NAME
-#endif
-
 using namespace std::chrono_literals;
 
-class CLASSNAME (test_multithreaded, RMW_IMPLEMENTATION) : public ::testing::Test
+class test_multithreaded : public ::testing::Test
 {
 public:
   void SetUp()
@@ -154,12 +147,14 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   EXPECT_EQ(expected_count, counter.load());
 }
 
-TEST_F(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_single_producer) {
+TEST_F(test_multithreaded, multi_consumer_single_producer)
+{
   // multiple subscriptions, single publisher
   multi_consumer_pub_sub_test(false);
 }
 
-TEST_F(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_intra_process) {
+TEST_F(test_multithreaded, multi_consumer_intra_process)
+{
   // multiple subscriptions, single publisher, intra-process
   multi_consumer_pub_sub_test(true);
 }
@@ -167,7 +162,8 @@ TEST_F(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_intra_p
 // TODO(brawner) On high core-count machines, this test fails with rmw_cyclonedds_cpp because
 // cyclonedds hard codes the maximum allowed threads.
 // For potential resolution, see https://github.com/ros2/rmw_cyclonedds/issues/268
-TEST_F(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_consumer_clients) {
+TEST_F(test_multithreaded, multi_consumer_clients)
+{
   // multiple clients, single server
   auto node = rclcpp::Node::make_shared("multi_consumer_clients");
   rclcpp::executors::MultiThreadedExecutor executor;
@@ -425,10 +421,12 @@ static inline void multi_access_publisher(bool intra_process)
   ASSERT_EQ(num_messages, subscription_counter);
 }
 
-TEST_F(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_access_publisher) {
+TEST_F(test_multithreaded, multi_access_publisher)
+{
   multi_access_publisher(false);
 }
 
-TEST_F(CLASSNAME(test_multithreaded, RMW_IMPLEMENTATION), multi_access_publisher_intra_process) {
+TEST_F(test_multithreaded, multi_access_publisher_intra_process)
+{
   multi_access_publisher(true);
 }

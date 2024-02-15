@@ -22,15 +22,7 @@
 
 #include "test_rclcpp/msg/u_int32.hpp"
 
-#ifdef RMW_IMPLEMENTATION
-# define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
-# define CLASSNAME(NAME, SUFFIX) CLASSNAME_(NAME, SUFFIX)
-#else
-# define CLASSNAME(NAME, SUFFIX) NAME
-#endif
-
-class CLASSNAME (test_repeated_publisher_subscriber, RMW_IMPLEMENTATION)
-  : public ::testing::Test
+class test_repeated_publisher_subscriber : public ::testing::Test
 {
 public:
   static void SetUpTestCase()
@@ -44,9 +36,7 @@ public:
   }
 };
 
-TEST_F(
-  CLASSNAME(test_repeated_publisher_subscriber, RMW_IMPLEMENTATION),
-  subscription_and_spinning)
+TEST_F(test_repeated_publisher_subscriber, subscription_and_spinning)
 {
   auto node = rclcpp::Node::make_shared("test_repeated_publisher_subscriber");
 
@@ -110,5 +100,4 @@ TEST_F(
     printf("Destroying publisher and subscriber...\n");
     fflush(stdout);
   }
-  rclcpp::shutdown();
 }

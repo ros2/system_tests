@@ -12,9 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <inttypes.h>
-
 #include <chrono>
+#include <cinttypes>
 #include <iostream>
 #include <memory>
 
@@ -23,16 +22,9 @@
 #include "rclcpp/rclcpp.hpp"
 #include "test_rclcpp/srv/add_two_ints.hpp"
 
-#ifdef RMW_IMPLEMENTATION
-# define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
-# define CLASSNAME(NAME, SUFFIX) CLASSNAME_(NAME, SUFFIX)
-#else
-# define CLASSNAME(NAME, SUFFIX) NAME
-#endif
-
 using namespace std::chrono_literals;
 
-class CLASSNAME (service_client, RMW_IMPLEMENTATION) : public ::testing::Test
+class service_client : public ::testing::Test
 {
 public:
   static void SetUpTestCase()
@@ -48,7 +40,8 @@ public:
 
 // This test is concerned with the consistency of the two clients' behavior, not necessarily whether
 // or not they are successful.
-TEST_F(CLASSNAME(service_client, RMW_IMPLEMENTATION), client_scope_consistency_regression_test) {
+TEST_F(service_client, client_scope_consistency_regression_test)
+{
   auto node = rclcpp::Node::make_shared("client_scope_consistency_regression_test");
 
   // Replicate the settings that caused https://github.com/ros2/system_tests/issues/153

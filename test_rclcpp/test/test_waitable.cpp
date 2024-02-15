@@ -20,14 +20,6 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#ifdef RMW_IMPLEMENTATION
-# define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
-# define CLASSNAME(NAME, SUFFIX) CLASSNAME_(NAME, SUFFIX)
-#else
-# define CLASSNAME(NAME, SUFFIX) NAME
-#endif
-
-
 class WaitableWithTimer : public rclcpp::Waitable
 {
 public:
@@ -99,7 +91,7 @@ public:
   std::promise<bool> execute_promise_;
 };  // class WaitableWithTimer
 
-class CLASSNAME (test_waitable, RMW_IMPLEMENTATION) : public ::testing::Test
+class test_waitable : public ::testing::Test
 {
 public:
   static void SetUpTestCase()
@@ -113,7 +105,8 @@ public:
   }
 };
 
-TEST_F(CLASSNAME(test_waitable, RMW_IMPLEMENTATION), waitable_with_timer) {
+TEST_F(test_waitable, waitable_with_timer)
+{
   auto node = rclcpp::Node::make_shared("waitable_with_timer");
   auto waitable = WaitableWithTimer::make_shared(node->get_clock());
   auto group = node->create_callback_group(rclcpp::CallbackGroupType::Reentrant);

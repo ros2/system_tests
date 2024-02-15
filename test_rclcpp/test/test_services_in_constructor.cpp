@@ -20,13 +20,6 @@
 
 #include "test_rclcpp/srv/add_two_ints.hpp"
 
-#ifdef RMW_IMPLEMENTATION
-# define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
-# define CLASSNAME(NAME, SUFFIX) CLASSNAME_(NAME, SUFFIX)
-#else
-# define CLASSNAME(NAME, SUFFIX) NAME
-#endif
-
 /* The purpose of these tests is to ensure that Services and Clients can be
  * created within the constructor of a class which inherits from Node.
  * This is important as it is a common thing users will try to do and was not
@@ -53,7 +46,7 @@ private:
   rclcpp::ServiceBase::SharedPtr service_;
 };
 
-class CLASSNAME (test_services_in_constructor, RMW_IMPLEMENTATION) : public ::testing::Test
+class test_services_in_constructor : public ::testing::Test
 {
 public:
   static void SetUpTestCase()
@@ -67,7 +60,8 @@ public:
   }
 };
 
-TEST_F(CLASSNAME(test_services_in_constructor, RMW_IMPLEMENTATION), service_in_constructor) {
+TEST_F(test_services_in_constructor, service_in_constructor)
+{
   auto n = std::make_shared<MyNodeWithService>();
 }
 
@@ -84,6 +78,7 @@ private:
   rclcpp::ClientBase::SharedPtr client_;
 };
 
-TEST_F(CLASSNAME(test_services_in_constructor, RMW_IMPLEMENTATION), client_in_constructor) {
+TEST_F(test_services_in_constructor, client_in_constructor)
+{
   auto n = std::make_shared<MyNodeWithClient>();
 }

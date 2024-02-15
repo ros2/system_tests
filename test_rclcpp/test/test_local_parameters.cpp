@@ -27,14 +27,7 @@
 
 using namespace std::chrono_literals;
 
-#ifdef RMW_IMPLEMENTATION
-# define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
-# define CLASSNAME(NAME, SUFFIX) CLASSNAME_(NAME, SUFFIX)
-#else
-# define CLASSNAME(NAME, SUFFIX) NAME
-#endif
-
-class CLASSNAME (test_local_parameters, RMW_IMPLEMENTATION) : public ::testing::Test
+class test_local_parameters : public ::testing::Test
 {
 public:
   static void SetUpTestCase()
@@ -48,7 +41,8 @@ public:
   }
 };
 
-TEST_F(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), to_string) {
+TEST_F(test_local_parameters, to_string)
+{
   rclcpp::Parameter pv("foo", "bar");
   rclcpp::Parameter pv2("foo2", "bar2");
   std::string json_dict = std::to_string(pv);
@@ -79,7 +73,8 @@ TEST_F(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), to_string) {
     std::to_string(pv).c_str());
 }
 
-TEST_F(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous) {
+TEST_F(test_local_parameters, local_synchronous)
+{
   auto node = rclcpp::Node::make_shared("test_parameters_local_synchronous");
   declare_test_parameters(node);
   auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(node);
@@ -90,7 +85,8 @@ TEST_F(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous) 
   test_get_parameters_sync(parameters_client);
 }
 
-TEST_F(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous_repeated) {
+TEST_F(test_local_parameters, local_synchronous_repeated)
+{
   auto node = rclcpp::Node::make_shared("test_parameters_local_synchronous_repeated");
   declare_test_parameters(node);
   auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(node);
@@ -104,7 +100,8 @@ TEST_F(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_synchronous_r
   }
 }
 
-TEST_F(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_asynchronous) {
+TEST_F(test_local_parameters, local_asynchronous)
+{
   auto node = rclcpp::Node::make_shared(std::string("test_parameters_local_asynchronous"));
   declare_test_parameters(node);
   auto parameters_client = std::make_shared<rclcpp::AsyncParametersClient>(node);
@@ -164,7 +161,8 @@ public:
 
 // Regression test for calling parameter client async services, but having the specified callback
 // go out of scope before it gets called: see https://github.com/ros2/rclcpp/pull/414
-TEST_F(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_async_with_callback) {
+TEST_F(test_local_parameters, local_async_with_callback)
+{
   auto node = std::make_shared<ParametersAsyncNode>();
   if (!node->parameters_client_->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
@@ -176,7 +174,8 @@ TEST_F(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), local_async_with_ca
   executor.spin();
 }
 
-TEST_F(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
+TEST_F(test_local_parameters, helpers)
+{
   auto node = rclcpp::Node::make_shared("test_parameters_local_helpers");
   node->declare_parameter("foo", 0);
   node->declare_parameter("bar", "");
@@ -299,7 +298,8 @@ TEST_F(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), helpers) {
   EXPECT_EQ(barfoo[2], 5);
 }
 
-TEST_F(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_primitive_type) {
+TEST_F(test_local_parameters, get_from_node_primitive_type)
+{
   auto node = rclcpp::Node::make_shared("test_parameters_local_helpers");
   node->declare_parameter("foo", 0);
   node->declare_parameter("bar", "");
@@ -372,7 +372,8 @@ TEST_F(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_primi
   EXPECT_EQ(barfoo[2], 5);
 }
 
-TEST_F(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_variant_type) {
+TEST_F(test_local_parameters, get_from_node_variant_type)
+{
   using rclcpp::Parameter;
 
   auto node = rclcpp::Node::make_shared("test_parameters_local_helpers");
@@ -436,12 +437,4 @@ TEST_F(CLASSNAME(test_local_parameters, RMW_IMPLEMENTATION), get_from_node_varia
 
   EXPECT_NO_THROW(got_param = node->get_parameter("barfoo", barfoo));
   EXPECT_EQ(true, got_param);
-}
-
-int main(int argc, char ** argv)
-{
-  setvbuf(stdout, NULL, _IONBF, BUFSIZ);
-  ::testing::InitGoogleTest(&argc, argv);
-  int ret = RUN_ALL_TESTS();
-  return ret;
 }
