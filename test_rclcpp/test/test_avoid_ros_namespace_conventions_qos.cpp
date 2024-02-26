@@ -47,8 +47,7 @@ TEST_F(test_avoid_ros_namespace_conventions_qos, pub_sub_works)
   // code to create the callback and subscription
   int counter = 0;
   auto callback =
-    [&counter](test_rclcpp::msg::UInt32::ConstSharedPtr msg,
-      const rclcpp::MessageInfo & info) -> void
+    [&counter](test_rclcpp::msg::UInt32::ConstSharedPtr msg, const rclcpp::MessageInfo & info)
     {
       ++counter;
       printf("  callback() %d with message data %u\n", counter, msg->data);

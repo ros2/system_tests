@@ -66,9 +66,9 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   std::vector<rclcpp::Subscription<test_rclcpp::msg::UInt32>::SharedPtr> subscriptions;
   std::atomic_int counter(0);
 
+  using MsgType = test_rclcpp::msg::UInt32;
   auto callback =
-    [&counter, &intra_process](test_rclcpp::msg::UInt32::ConstSharedPtr msg,
-      const rclcpp::MessageInfo & info) -> void
+    [&counter, &intra_process](MsgType::ConstSharedPtr msg, const rclcpp::MessageInfo & info)
     {
       counter.fetch_add(1);
       printf("callback() %d with message data %u\n", counter.load(), msg->data);
@@ -79,7 +79,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   rclcpp::SubscriptionOptions subscription_options;
   subscription_options.callback_group = callback_group;
   for (uint32_t i = 0; i < num_messages; ++i) {
-    auto sub = node->create_subscription<test_rclcpp::msg::UInt32>(
+    auto sub = node->create_subscription<MsgType>(
       node_topic_name, 5 * num_messages, callback, subscription_options);
     subscriptions.push_back(sub);
   }
@@ -87,7 +87,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
   int subscriptions_size = static_cast<int>(subscriptions.size());
 
   executor.add_node(node);
-  test_rclcpp::msg::UInt32 msg;
+  MsgType msg;
   msg.data = 0;
 
   // wait a moment for everything to initialize
@@ -169,8 +169,9 @@ TEST_F(test_multithreaded, multi_consumer_clients)
   rclcpp::executors::MultiThreadedExecutor executor;
 
   std::atomic_int counter(0);
-  auto callback = [&counter](const std::shared_ptr<test_rclcpp::srv::AddTwoInts::Request> request,
-      std::shared_ptr<test_rclcpp::srv::AddTwoInts::Response> response)
+  using SrvType = test_rclcpp::srv::AddTwoInts;
+  auto callback =
+    [&counter](const SrvType::Request::SharedPtr request, SrvType::Response::SharedPtr response)
     {
       printf("Called service callback: %d\n", counter.load());
       ++counter;
@@ -185,16 +186,15 @@ TEST_F(test_multithreaded, multi_consumer_clients)
     "multi_consumer_clients", callback, qos_profile, callback_group);
 
   using ClientRequestPair = std::pair<
-    rclcpp::Client<test_rclcpp::srv::AddTwoInts>::SharedPtr,
-    test_rclcpp::srv::AddTwoInts::Request::SharedPtr>;
-  using SharedFuture = rclcpp::Client<test_rclcpp::srv::AddTwoInts>::SharedFuture;
-
+    rclcpp::Client<SrvType>::SharedPtr,
+    SrvType::Request::SharedPtr>;
+  using SharedFuture = rclcpp::Client<SrvType>::SharedFuture;
 
   std::vector<ClientRequestPair> client_request_pairs;
   for (uint32_t i = 0; i < 2 * std::min<size_t>(executor.get_number_of_threads(), 16); ++i) {
-    auto client = node->create_client<test_rclcpp::srv::AddTwoInts>(
+    auto client = node->create_client<SrvType>(
       "multi_consumer_clients", qos_profile, callback_group);
-    auto request = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
+    auto request = std::make_shared<SrvType::Request>();
     request->a = i;
     request->b = i + 1;
     client_request_pairs.push_back(ClientRequestPair(client, request));
