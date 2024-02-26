@@ -47,8 +47,7 @@ TEST_F(test_publisher, publish_with_const_reference)
   // code to create the callback and subscription
   int counter = 0;
   auto callback =
-    [&counter](test_rclcpp::msg::UInt32::ConstSharedPtr msg,
-      const rclcpp::MessageInfo & info) -> void
+    [&counter](test_rclcpp::msg::UInt32::ConstSharedPtr msg, const rclcpp::MessageInfo & info)
     {
       ++counter;
       printf("  callback() %d with message data %u\n", counter, msg->data);
