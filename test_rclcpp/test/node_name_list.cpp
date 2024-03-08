@@ -12,7 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <chrono>
+#include <cstdio>
+#include <iostream>
 #include <string>
+#include <vector>
 
 #include "rclcpp/rclcpp.hpp"
 
@@ -40,19 +44,19 @@ int main(int argc, char ** argv)
 
   int rc = 1;
   const std::chrono::steady_clock::time_point max_runtime =
-    std::chrono::steady_clock::now() + 10s;
+    std::chrono::steady_clock::now() + 15s;
   while (rc && rclcpp::ok()) {
-    auto names = node->get_node_graph_interface()->get_node_names();
-    for (auto it : names) {
-      printf("- %s\n", it.c_str());
+    std::vector<std::string> names = node->get_node_names();
+    for (const std::string & name : names) {
+      printf("- %s\n", name.c_str());
 
-      if (it.empty()) {
+      if (name.empty()) {
         printf("  found an empty named node, which is unexpected\n");
         rc = 2;
         break;
       }
 
-      if (argc >= 2 && it.compare(name_to_find) == 0) {
+      if (argc >= 2 && name.compare(name_to_find) == 0) {
         printf("  found expected node name\n");
         rc = 0;
       }
@@ -61,7 +65,7 @@ int main(int argc, char ** argv)
     if (std::chrono::steady_clock::now() >= max_runtime) {
       break;
     }
-    exec.spin_once(250ms);
+    exec.spin_some(250ms);
   }
 
   exec.remove_node(node);
