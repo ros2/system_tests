@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <cstdio>
+#include <iostream>
 #include <string>
 
 #include "rclcpp/rclcpp.hpp"
@@ -30,15 +32,13 @@ int main(int argc, char ** argv)
 
   rclcpp::Node::SharedPtr node;
   try {
-    node = rclcpp::Node::make_shared(node_name);
-  } catch (rclcpp::exceptions::RCLError & e) {
+    rclcpp::Node::SharedPtr node = rclcpp::Node::make_shared(node_name);
+    rclcpp::spin(node);
+  } catch (const rclcpp::exceptions::RCLError & e) {
     // test may pass and send SIGINT before node finishes initializing ros2/build_cop#153
     printf("Ignoring RCLError: %s\n", e.what());
   }
 
-  if (node) {
-    rclcpp::spin(node);
-  }
   rclcpp::shutdown();
   return 0;
 }
