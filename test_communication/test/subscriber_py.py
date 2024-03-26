@@ -68,7 +68,7 @@ def listener(message_name, namespace):
     node.destroy_node()
     rclpy.shutdown()
 
-    assert len(received_messages) == len(expected_msgs),\
+    assert len(received_messages) == len(expected_msgs), \
         'Should have received {} {} messages from talker'.format(len(expected_msgs), message_name)
 
 
