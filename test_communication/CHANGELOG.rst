@@ -2,8 +2,8 @@
 Changelog for package test_communication
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.20.1 (2024-03-27)
+-------------------
 * Small fix for modern flake8. (`#539 <https://github.com/ros2/system_tests/issues/539>`_)
 * Contributors: Chris Lalancette
 
