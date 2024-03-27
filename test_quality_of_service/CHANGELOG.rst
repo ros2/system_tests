@@ -2,6 +2,9 @@
 Changelog for package test_quality_of_service
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.20.0 (2023-12-26)
 -------------------
 * Cleanup header includes in test_quality_of_service. (`#533 <https://github.com/ros2/system_tests/issues/533>`_)

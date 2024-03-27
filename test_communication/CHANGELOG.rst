@@ -2,6 +2,11 @@
 Changelog for package test_communication
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Small fix for modern flake8. (`#539 <https://github.com/ros2/system_tests/issues/539>`_)
+* Contributors: Chris Lalancette
+
 0.20.0 (2023-12-26)
 -------------------
 * Switch to target_link_libraries everywhere. (`#532 <https://github.com/ros2/system_tests/issues/532>`_)
