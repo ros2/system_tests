@@ -2,6 +2,9 @@
 Changelog for package test_security
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.20.0 (2023-12-26)
 -------------------
 * Update to C++17 (`#528 <https://github.com/ros2/system_tests/issues/528>`_)

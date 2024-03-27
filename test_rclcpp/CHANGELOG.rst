@@ -2,6 +2,13 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Improve the node_name test. (`#538 <https://github.com/ros2/system_tests/issues/538>`_)
+* Change up the formatting in the test_rclcpp tests. (`#537 <https://github.com/ros2/system_tests/issues/537>`_)
+* Revamp test_rclcpp to compile far few files. (`#535 <https://github.com/ros2/system_tests/issues/535>`_)
+* Contributors: Chris Lalancette
+
 0.20.0 (2023-12-26)
 -------------------
 * Mark gtest_subscription__rmw_connextdds xfail. (`#531 <https://github.com/ros2/system_tests/issues/531>`_)
