@@ -2,8 +2,8 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.20.1 (2024-03-27)
+-------------------
 * Improve the node_name test. (`#538 <https://github.com/ros2/system_tests/issues/538>`_)
 * Change up the formatting in the test_rclcpp tests. (`#537 <https://github.com/ros2/system_tests/issues/537>`_)
 * Revamp test_rclcpp to compile far few files. (`#535 <https://github.com/ros2/system_tests/issues/535>`_)
