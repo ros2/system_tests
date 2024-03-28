@@ -242,12 +242,43 @@ if(BUILD_TESTING)
     set(ENV_PATH "$ENV{PATH}")
     file(TO_CMAKE_PATH "${ENV_PATH}" ENV_PATH)
     set(TEST_PATH "${ENV_PATH}")
+    set(append_library_dirs "${CMAKE_CURRENT_BINARY_DIR}")
+    if(WIN32)
+      set(append_library_dirs "${append_library_dirs}/$<CONFIG>")
+    endif()
     if(rmw_implementation MATCHES "rmw_connext(.*)")
       # Connext 5.3.1 needs RTI's OpenSSL binaries (based on EOL 1.0.2) to be
       # on the PATH at runtime as the system version of OpenSSL is not supported
       set(RTI_BIN_PATH "$ENV{RTI_OPENSSL_BIN}")
       file(TO_CMAKE_PATH "${RTI_BIN_PATH}" RTI_BIN_PATH)
       set(TEST_PATH "${RTI_BIN_PATH};${ENV_PATH}")
+      if(WIN32)
+        string(REPLACE "\\" "\\\\" RTI_OPENSSL_LIBS "$ENV{RTI_OPENSSL_LIBS}")
+        set(append_library_dirs "${append_library_dirs};${RTI_OPENSSL_LIBS}")
+      else()
+        set(append_library_dirs "${append_library_dirs}:$ENV{RTI_OPENSSL_LIBS}")
+      endif()
+
+    else()
+      # TODO(mikaelarguedas) Move this outside the 'if not connext' block once Connext supports OpenSSL 1.1.1
+      if(APPLE)
+        # connext need the openssl libraries to be on the DYLD_LIBRARY_PATH at runtime
+        # as SIP strips these variables on recent MacOS we populate them here
+        # see https://github.com/ros2/ros2/issues/409
+        execute_process(
+          COMMAND "brew" "--prefix" "openssl"
+          RESULT_VARIABLE _retcode
+          OUTPUT_VARIABLE _out_var
+          ERROR_VARIABLE _error_var
+        )
+        if(NOT _retcode EQUAL 0)
+          message(FATAL_ERROR "command 'brew --prefix openssl' failed with error code '${_retcode}' and error message '${_error_var}'")
+        endif()
+        string(STRIP "${_out_var}" _out_var)
+        set(openssl_lib_path "${_out_var}/lib")
+        file(TO_NATIVE_PATH "${openssl_lib_path}" openssl_lib_path)
+        set(append_library_dirs "${append_library_dirs};${openssl_lib_path}")
+      endif()
     endif()
 
     if(NOT WIN32)
@@ -276,34 +307,6 @@ if(BUILD_TESTING)
       "test/test_secure_publisher.cpp")
     custom_executable(test_secure_subscriber_cpp
       "test/test_secure_subscriber.cpp")
-
-    set(append_library_dirs "${CMAKE_CURRENT_BINARY_DIR}")
-    if(WIN32)
-      set(append_library_dirs "${append_library_dirs}/$<CONFIG>")
-      string(REPLACE "\\" "\\\\" RTI_OPENSSL_LIBS "$ENV{RTI_OPENSSL_LIBS}")
-      set(append_library_dirs "${append_library_dirs};${RTI_OPENSSL_LIBS}")
-    # TODO(mikaelarguedas) uncomment this once Connext supports OpenSSL 1.1.1
-    # in the meantime use RTI_OPENSSL_LIBS
-    # elseif(APPLE)
-    #   # connext need the openssl libraries to be on the DYLD_LIBRARY_PATH at runtime
-    #   # as SIP strips these variables on recent MacOS we populate them here
-    #   # see https://github.com/ros2/ros2/issues/409
-    #   execute_process(
-    #     COMMAND "brew" "--prefix" "openssl"
-    #     RESULT_VARIABLE _retcode
-    #     OUTPUT_VARIABLE _out_var
-    #     ERROR_VARIABLE _error_var
-    #   )
-    #   if(NOT _retcode EQUAL 0)
-    #     message(FATAL_ERROR "command 'brew --prefix openssl' failed with error code '${_retcode}' and error message '${_error_var}'")
-    #   endif()
-    #   string(STRIP "${_out_var}" _out_var)
-    #   set(openssl_lib_path "${_out_var}/lib")
-    #   file(TO_NATIVE_PATH "${openssl_lib_path}" openssl_lib_path)
-    #   set(append_library_dirs "${append_library_dirs};${openssl_lib_path}")
-    else()
-      set(append_library_dirs "${append_library_dirs}:$ENV{RTI_OPENSSL_LIBS}")
-    endif()
 
     # finding gtest once in the highest scope
     # prevents finding it repeatedly in each local scope
