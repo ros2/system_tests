@@ -665,7 +665,7 @@ void get_message(test_msgs__msg__Arrays * msg, size_t msg_num)
     msg->byte_values[1] = 0xff;
     msg->byte_values[2] = 0;
     msg->char_values[0] = 0;
-    msg->char_values[1] = 255;
+    msg->char_values[1] = 127;
     msg->char_values[2] = 0;
     msg->float32_values[0] = 0.0f;
     msg->float32_values[1] = 1.125f;
@@ -770,7 +770,7 @@ void get_message(test_msgs__msg__UnboundedSequences * msg, size_t msg_num)
     case 0:
       rosidl_runtime_c__bool__Sequence__init(&msg->bool_values, 0);
       rosidl_runtime_c__byte__Sequence__init(&msg->byte_values, 0);
-      rosidl_runtime_c__uint8__Sequence__init(&msg->char_values, 0);
+      rosidl_runtime_c__char__Sequence__init(&msg->char_values, 0);
       rosidl_runtime_c__float32__Sequence__init(&msg->float32_values, 0);
       rosidl_runtime_c__float64__Sequence__init(&msg->float64_values, 0);
       rosidl_runtime_c__int8__Sequence__init(&msg->int8_values, 0);
@@ -787,7 +787,7 @@ void get_message(test_msgs__msg__UnboundedSequences * msg, size_t msg_num)
     case 1:
       rosidl_runtime_c__bool__Sequence__init(&msg->bool_values, 1);
       rosidl_runtime_c__byte__Sequence__init(&msg->byte_values, 1);
-      rosidl_runtime_c__uint8__Sequence__init(&msg->char_values, 1);
+      rosidl_runtime_c__char__Sequence__init(&msg->char_values, 1);
       rosidl_runtime_c__float32__Sequence__init(&msg->float32_values, 1);
       rosidl_runtime_c__float64__Sequence__init(&msg->float64_values, 1);
       rosidl_runtime_c__int8__Sequence__init(&msg->int8_values, 1);
@@ -802,7 +802,7 @@ void get_message(test_msgs__msg__UnboundedSequences * msg, size_t msg_num)
 
       msg->bool_values.data[0] = true;
       msg->byte_values.data[0] = 0xff;
-      msg->char_values.data[0] = 255;
+      msg->char_values.data[0] = -1;
       msg->float32_values.data[0] = 1.125f;
       msg->float64_values.data[0] = 1.125;
       msg->int8_values.data[0] = (std::numeric_limits<int8_t>::max)();
@@ -819,7 +819,7 @@ void get_message(test_msgs__msg__UnboundedSequences * msg, size_t msg_num)
     case 2:
       rosidl_runtime_c__bool__Sequence__init(&msg->bool_values, 2);
       rosidl_runtime_c__byte__Sequence__init(&msg->byte_values, 2);
-      rosidl_runtime_c__uint8__Sequence__init(&msg->char_values, 2);
+      rosidl_runtime_c__char__Sequence__init(&msg->char_values, 2);
       rosidl_runtime_c__float32__Sequence__init(&msg->float32_values, 3);
       rosidl_runtime_c__float64__Sequence__init(&msg->float64_values, 3);
       rosidl_runtime_c__int8__Sequence__init(&msg->int8_values, 3);
@@ -837,7 +837,7 @@ void get_message(test_msgs__msg__UnboundedSequences * msg, size_t msg_num)
       msg->byte_values.data[0] = 0x00;
       msg->byte_values.data[1] = 0xff;
       msg->char_values.data[0] = 0;
-      msg->char_values.data[1] = 255;
+      msg->char_values.data[1] = 127;
       msg->float32_values.data[0] = 0.0f;
       msg->float32_values.data[1] = 1.125f;
       msg->float32_values.data[2] = -2.125f;
@@ -872,7 +872,7 @@ void get_message(test_msgs__msg__UnboundedSequences * msg, size_t msg_num)
     case 3:
       rosidl_runtime_c__bool__Sequence__init(&msg->bool_values, size);
       rosidl_runtime_c__byte__Sequence__init(&msg->byte_values, size);
-      rosidl_runtime_c__uint8__Sequence__init(&msg->char_values, size);
+      rosidl_runtime_c__char__Sequence__init(&msg->char_values, size);
       rosidl_runtime_c__float32__Sequence__init(&msg->float32_values, size);
       rosidl_runtime_c__float64__Sequence__init(&msg->float64_values, size);
       rosidl_runtime_c__int8__Sequence__init(&msg->int8_values, size);
@@ -911,7 +911,7 @@ void get_message(test_msgs__msg__UnboundedSequences * msg, size_t msg_num)
     case 4:
       rosidl_runtime_c__bool__Sequence__init(&msg->bool_values, 0);
       rosidl_runtime_c__byte__Sequence__init(&msg->byte_values, 0);
-      rosidl_runtime_c__uint8__Sequence__init(&msg->char_values, 0);
+      rosidl_runtime_c__char__Sequence__init(&msg->char_values, 0);
       rosidl_runtime_c__float32__Sequence__init(&msg->float32_values, 0);
       rosidl_runtime_c__float64__Sequence__init(&msg->float64_values, 0);
       rosidl_runtime_c__int8__Sequence__init(&msg->int8_values, 0);
@@ -1020,7 +1020,7 @@ void get_message(test_msgs__msg__BoundedSequences * msg, size_t msg_num)
     case 0:
       rosidl_runtime_c__bool__Sequence__init(&msg->bool_values, 3);
       rosidl_runtime_c__byte__Sequence__init(&msg->byte_values, 3);
-      rosidl_runtime_c__uint8__Sequence__init(&msg->char_values, 3);
+      rosidl_runtime_c__char__Sequence__init(&msg->char_values, 3);
       rosidl_runtime_c__float32__Sequence__init(&msg->float32_values, 3);
       rosidl_runtime_c__float64__Sequence__init(&msg->float64_values, 3);
       rosidl_runtime_c__int8__Sequence__init(&msg->int8_values, 3);
@@ -1041,7 +1041,7 @@ void get_message(test_msgs__msg__BoundedSequences * msg, size_t msg_num)
       msg->byte_values.data[2] = 0xff;
       msg->char_values.data[0] = 0;
       msg->char_values.data[1] = 1;
-      msg->char_values.data[2] = 255;
+      msg->char_values.data[2] = 127;
       msg->float32_values.data[0] = 0.0f;
       msg->float32_values.data[1] = 1.125f;
       msg->float32_values.data[2] = -2.125f;
@@ -1080,7 +1080,7 @@ void get_message(test_msgs__msg__BoundedSequences * msg, size_t msg_num)
     case 1:
       rosidl_runtime_c__bool__Sequence__init(&msg->bool_values, 0);
       rosidl_runtime_c__byte__Sequence__init(&msg->byte_values, 0);
-      rosidl_runtime_c__uint8__Sequence__init(&msg->char_values, 0);
+      rosidl_runtime_c__char__Sequence__init(&msg->char_values, 0);
       rosidl_runtime_c__float32__Sequence__init(&msg->float32_values, 0);
       rosidl_runtime_c__float64__Sequence__init(&msg->float64_values, 0);
       rosidl_runtime_c__int8__Sequence__init(&msg->int8_values, 0);
