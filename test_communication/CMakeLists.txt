@@ -203,6 +203,26 @@ if(BUILD_TESTING)
     set(TEST_MESSAGE_TYPES "")
     foreach(message_file ${message_files})
       get_filename_component(message_type "${message_file}" NAME_WE)
+      set(message_has_keys FALSE)
+      if(
+          "${message_type}" STREQUAL "KeyedString" OR
+          "${message_type}" STREQUAL "ComplexNestedKey"
+      )
+        set(message_has_keys TRUE)
+      endif()
+
+      # TODO(MiguelCompany): Only fastrtps RMWs interoperate for keyed messages
+      if(
+        message_has_keys AND
+        (NOT "${rmw_implementation1}" STREQUAL "${rmw_implementation2}") AND
+        (
+          (NOT rmw_implementation1_is_fastrtps) OR
+          (NOT rmw_implementation2_is_fastrtps)
+        )
+      )
+        continue()
+      endif()
+
       # TODO(dirk-thomas) WStrings published by FastRTPS can't be received
       # correctly by Connext on macOS
       if(
