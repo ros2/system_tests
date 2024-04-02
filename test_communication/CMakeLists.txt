@@ -397,6 +397,7 @@ if(BUILD_TESTING)
   add_library(subscribe_types STATIC
     "test/subscribe_array_types.cpp"
     "test/subscribe_basic_types.cpp"
+    "test/subscribe_key_types.cpp"
     "test/subscribe_string_types.cpp")
   target_link_libraries(subscribe_types
     rclcpp::rclcpp
