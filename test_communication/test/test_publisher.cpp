@@ -107,6 +107,8 @@ int main(int argc, char ** argv)
     publish<test_msgs::msg::Strings>(node, message, get_messages_strings());
   } else if (message == "WStrings") {
     publish<test_msgs::msg::WStrings>(node, message, get_messages_wstrings());
+  } else if (message == "KeyedString") {
+    publish<test_msgs::msg::KeyedString>(node, message, get_messages_keyed_string());
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
     rclcpp::shutdown();

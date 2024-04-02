@@ -25,6 +25,7 @@
 
 #include "subscribe_array_types.hpp"
 #include "subscribe_basic_types.hpp"
+#include "subscribe_key_types.hpp"
 #include "subscribe_string_types.hpp"
 
 template<typename T>
@@ -98,6 +99,7 @@ int main(int argc, char ** argv)
   auto messages_defaults = get_messages_defaults();
   auto messages_strings = get_messages_strings();
   auto messages_wstrings = get_messages_wstrings();
+  auto messages_keyed_string = get_messages_keyed_string();
 
   std::thread spin_thread([node]() {
       rclcpp::spin(node);
@@ -148,6 +150,9 @@ int main(int argc, char ** argv)
   } else if (message == "WStrings") {
     subscriber = subscribe_wstrings(node, message, messages_wstrings, received_messages);
     publish<test_msgs::msg::WStrings>(node, message, messages_wstrings);
+  } else if (message == "KeyedString") {
+    subscriber = subscribe_keyed_string(node, message, messages_keyed_string, received_messages);
+    publish<test_msgs::msg::KeyedString>(node, message, messages_keyed_string);
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
     return 1;
