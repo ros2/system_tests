@@ -113,7 +113,7 @@ TEST_F(test_waitable, waitable_with_timer)
   node->get_node_waitables_interface()->add_waitable(waitable, group);
 
   std::shared_future<bool> fut(waitable->execute_promise_.get_future());
-  rclcpp::spin_until_future_complete(node, fut);
+  rclcpp::spin_until_complete(node, fut);
 
   EXPECT_TRUE(fut.get());
 }

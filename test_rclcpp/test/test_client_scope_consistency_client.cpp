@@ -65,7 +65,7 @@ TEST_F(service_client, client_scope_consistency_regression_test)
     std::cout.flush();
     auto result1 = client1->async_send_request(request1);
 
-    ret1 = rclcpp::spin_until_future_complete(node, result1, 5s);
+    ret1 = rclcpp::spin_until_complete(node, result1, 5s);
     if (ret1 == rclcpp::FutureReturnCode::SUCCESS) {
       printf("received first result\n");
       std::cout.flush();
@@ -101,7 +101,7 @@ TEST_F(service_client, client_scope_consistency_regression_test)
     std::cout.flush();
     auto result2 = client2->async_send_request(request2);
 
-    auto ret2 = rclcpp::spin_until_future_complete(node, result2, 5s);
+    auto ret2 = rclcpp::spin_until_complete(node, result2, 5s);
     if (ret2 == rclcpp::FutureReturnCode::SUCCESS) {
       printf("received second result\n");
       std::cout.flush();

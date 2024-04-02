@@ -76,7 +76,7 @@ TEST_F(QosRclcppTestFixture, test_lifespan) {
   subscriber->start();
 
   // the future will never be resolved, so simply time out to force the experiment to stop
-  executor->spin_until_future_complete(dummy_future, max_test_length);
+  executor->spin_until_complete(dummy_future, max_test_length);
   toggle_subscriber_timer->cancel();
 
   EXPECT_GT(timer_fired_count, 0);

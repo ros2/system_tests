@@ -57,7 +57,7 @@ TEST_F(service_client, client_scope_regression_test)
     std::cout.flush();
     auto result1 = client1->async_send_request(request1);
     if (
-      rclcpp::spin_until_future_complete(node, result1) !=
+      rclcpp::spin_until_complete(node, result1) !=
       rclcpp::FutureReturnCode::SUCCESS)
     {
       FAIL();
@@ -84,7 +84,7 @@ TEST_F(service_client, client_scope_regression_test)
     printf("sending second request\n");
     std::cout.flush();
     auto result2 = client2->async_send_request(request2);
-    if (rclcpp::spin_until_future_complete(node, result2) !=
+    if (rclcpp::spin_until_complete(node, result2) !=
       rclcpp::FutureReturnCode::SUCCESS)
     {
       FAIL();

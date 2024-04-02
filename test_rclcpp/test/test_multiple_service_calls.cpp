@@ -78,13 +78,13 @@ TEST_F(test_two_service_calls, two_service_calls)
 
   printf("Waiting for first reply...\n");
   fflush(stdout);
-  rclcpp::spin_until_future_complete(node, result1);
+  rclcpp::spin_until_complete(node, result1);
   printf("Received first reply\n");
   EXPECT_EQ(1, result1.get()->sum);
 
   printf("Waiting for second reply...\n");
   fflush(stdout);
-  rclcpp::spin_until_future_complete(node, result2);
+  rclcpp::spin_until_complete(node, result2);
   printf("Received second reply\n");
   EXPECT_EQ(2, result2.get()->sum);
 }

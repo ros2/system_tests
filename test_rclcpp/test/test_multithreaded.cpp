@@ -220,7 +220,7 @@ TEST_F(test_multithreaded, multi_consumer_clients)
     }
     // Wait on each future
     for (uint32_t i = 0; i < results.size(); ++i) {
-      auto result = executor.spin_until_future_complete(results[i]);
+      auto result = executor.spin_until_complete(results[i]);
       ASSERT_EQ(rclcpp::FutureReturnCode::SUCCESS, result);
     }
 

@@ -43,9 +43,9 @@ public:
 };
 
 /*
-   Ensures that the timeout behavior of spin_until_future_complete is correct.
+   Ensures that the timeout behavior of spin_until_complete is correct.
  */
-TEST_F(test_spin, test_spin_until_future_complete_timeout)
+TEST_F(CLASSNAME(test_spin, RMW_IMPLEMENTATION), test_spin_until_complete_timeout)
 {
   using rclcpp::FutureReturnCode;
   rclcpp::executors::SingleThreadedExecutor executor;
@@ -55,10 +55,10 @@ TEST_F(test_spin, test_spin_until_future_complete_timeout)
     std::promise<void> already_set_promise;
     std::shared_future<void> already_complete_future = already_set_promise.get_future();
     already_set_promise.set_value();
-    auto ret = executor.spin_until_future_complete(already_complete_future, 1s);
+    auto ret = executor.spin_until_complete(already_complete_future, 1s);
     EXPECT_EQ(FutureReturnCode::SUCCESS, ret);
     // Also try blocking with no timeout (default timeout of -1).
-    ret = executor.spin_until_future_complete(already_complete_future);
+    ret = executor.spin_until_complete(already_complete_future);
     EXPECT_EQ(FutureReturnCode::SUCCESS, ret);
   }
 
@@ -67,10 +67,10 @@ TEST_F(test_spin, test_spin_until_future_complete_timeout)
     std::promise<void> never_set_promise;
     std::shared_future<void> never_complete_future = never_set_promise.get_future();
     // Set the timeout just long enough to make sure it isn't incorrectly set.
-    auto ret = executor.spin_until_future_complete(never_complete_future, 50ms);
+    auto ret = executor.spin_until_complete(never_complete_future, 50ms);
     EXPECT_EQ(FutureReturnCode::TIMEOUT, ret);
     // Also try with zero timeout.
-    ret = executor.spin_until_future_complete(never_complete_future, 0s);
+    ret = executor.spin_until_complete(never_complete_future, 0s);
     EXPECT_EQ(FutureReturnCode::TIMEOUT, ret);
   }
 
@@ -81,7 +81,7 @@ TEST_F(test_spin, test_spin_until_future_complete_timeout)
       []() {
         std::this_thread::sleep_for(50ms);
       });
-    auto ret = executor.spin_until_future_complete(async_future, 100ms);
+    auto ret = executor.spin_until_complete(async_future, 100ms);
     EXPECT_EQ(FutureReturnCode::SUCCESS, ret);
   }
 
@@ -102,10 +102,10 @@ TEST_F(test_spin, test_spin_until_future_complete_timeout)
       });
     std::shared_future<void> never_completed_future = never_set_promise.get_future();
     // Try with a timeout long enough for both timers to fire at least once.
-    auto ret = executor.spin_until_future_complete(never_completed_future, 75ms);
+    auto ret = executor.spin_until_complete(never_completed_future, 75ms);
     EXPECT_EQ(FutureReturnCode::TIMEOUT, ret);
     // Also try with a timeout of zero (nonblocking).
-    ret = executor.spin_until_future_complete(never_completed_future, 0s);
+    ret = executor.spin_until_complete(never_completed_future, 0s);
     EXPECT_EQ(FutureReturnCode::TIMEOUT, ret);
   }
 
@@ -123,17 +123,17 @@ TEST_F(test_spin, test_spin_until_future_complete_timeout)
         // Do nothing.
       });
     std::shared_future<void> timer_fired_future = timer_fired_promise.get_future();
-    auto ret = executor.spin_until_future_complete(timer_fired_future, 100ms);
+    auto ret = executor.spin_until_complete(timer_fired_future, 100ms);
     EXPECT_EQ(FutureReturnCode::SUCCESS, ret);
-    // Also try again with blocking spin_until_future_complete.
+    // Also try again with blocking spin_until_complete.
     timer_fired_promise = std::promise<void>();
     timer_fired_future = timer_fired_promise.get_future();
-    ret = executor.spin_until_future_complete(timer_fired_future);
+    ret = executor.spin_until_complete(timer_fired_future);
     EXPECT_EQ(FutureReturnCode::SUCCESS, ret);
   }
 }
 
-TEST_F(test_spin, spin_until_future_complete)
+TEST_F(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_complete)
 {
   auto node = rclcpp::Node::make_shared("test_spin");
 
@@ -151,12 +151,12 @@ TEST_F(test_spin, spin_until_future_complete)
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(node);
   ASSERT_EQ(
-    executor.spin_until_future_complete(future),
+    executor.spin_until_complete(future),
     rclcpp::FutureReturnCode::SUCCESS);
   EXPECT_EQ(future.get(), true);
 }
 
-TEST_F(test_spin, spin_until_future_complete_timeout)
+TEST_F(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_complete_timeout)
 {
   auto node = rclcpp::Node::make_shared("test_spin");
 
@@ -171,18 +171,18 @@ TEST_F(test_spin, spin_until_future_complete_timeout)
   auto timer = node->create_wall_timer(std::chrono::milliseconds(50), callback);
 
   ASSERT_EQ(
-    rclcpp::spin_until_future_complete(node, future, std::chrono::milliseconds(25)),
+    rclcpp::spin_until_complete(node, future, std::chrono::milliseconds(25)),
     rclcpp::FutureReturnCode::TIMEOUT);
 
   // If we wait a little longer, we should complete the future
   ASSERT_EQ(
-    rclcpp::spin_until_future_complete(node, future, std::chrono::milliseconds(50)),
+    rclcpp::spin_until_complete(node, future, std::chrono::milliseconds(50)),
     rclcpp::FutureReturnCode::SUCCESS);
 
   EXPECT_EQ(future.get(), true);
 }
 
-TEST_F(test_spin, spin_until_future_complete_interrupted)
+TEST_F(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_complete_interrupted)
 {
   auto node = rclcpp::Node::make_shared("test_spin");
 
@@ -203,7 +203,7 @@ TEST_F(test_spin, spin_until_future_complete_interrupted)
   auto shutdown_timer = node->create_wall_timer(std::chrono::milliseconds(25), shutdown_callback);
 
   ASSERT_EQ(
-    rclcpp::spin_until_future_complete(node, future, std::chrono::milliseconds(50)),
+    rclcpp::spin_until_complete(node, future, std::chrono::milliseconds(50)),
     rclcpp::FutureReturnCode::INTERRUPTED);
 }
 

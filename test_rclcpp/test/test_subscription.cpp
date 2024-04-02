@@ -39,7 +39,7 @@ void wait_for_future(
   using rclcpp::FutureReturnCode;
   rclcpp::FutureReturnCode future_ret;
   auto start_time = std::chrono::steady_clock::now();
-  future_ret = executor.spin_until_future_complete(future, timeout);
+  future_ret = executor.spin_until_complete(future, timeout);
   auto elapsed_time = std::chrono::steady_clock::now() - start_time;
   EXPECT_EQ(FutureReturnCode::SUCCESS, future_ret) <<
     "future failed to be set after: " <<
@@ -110,7 +110,7 @@ TEST_F(test_subscription, subscription_and_spinning)
     ASSERT_EQ(0, counter);
 
     // spin until the subscription is called or a timeout occurs
-    printf("spin_until_future_complete(sub_called_future) - callback (1) expected\n");
+    printf("spin_until_complete(sub_called_future) - callback (1) expected\n");
     wait_for_future(executor, sub_called_future, fail_after_timeout);
     ASSERT_EQ(1, counter);
 
@@ -133,28 +133,28 @@ TEST_F(test_subscription, subscription_and_spinning)
     ASSERT_EQ(1, counter);
 
     // while four messages have been published one callback should be triggered here
-    printf("spin_until_future_complete(short timeout) - callback (2) expected\n");
+    printf("spin_until_complete(short timeout) - callback (2) expected\n");
     sub_called = std::promise<void>();
     sub_called_future = sub_called.get_future();
     wait_for_future(executor, sub_called_future, 10ms);
     ASSERT_EQ(2, counter);
 
     // check for next pending call
-    printf("spin_until_future_complete(short timeout) - callback (3) expected\n");
+    printf("spin_until_complete(short timeout) - callback (3) expected\n");
     sub_called = std::promise<void>();
     sub_called_future = sub_called.get_future();
     wait_for_future(executor, sub_called_future, 10ms);
     ASSERT_EQ(3, counter);
 
     // check for next pending call
-    printf("spin_until_future_complete(short timeout) - callback (4) expected\n");
+    printf("spin_until_complete(short timeout) - callback (4) expected\n");
     sub_called = std::promise<void>();
     sub_called_future = sub_called.get_future();
     wait_for_future(executor, sub_called_future, 10ms);
     ASSERT_EQ(4, counter);
 
     // check for last pending call (blocking)
-    printf("spin_until_future_complete() - callback (5) expected\n");
+    printf("spin_until_complete() - callback (5) expected\n");
     sub_called = std::promise<void>();
     sub_called_future = sub_called.get_future();
     wait_for_future(executor, sub_called_future, fail_after_timeout);
@@ -166,11 +166,11 @@ TEST_F(test_subscription, subscription_and_spinning)
   publisher->publish(msg);
 
   // check that no further callbacks have been invoked
-  printf("spin_until_future_complete(short timeout) - no callbacks expected\n");
+  printf("spin_until_complete(short timeout) - no callbacks expected\n");
   sub_called = std::promise<void>();
   sub_called_future = sub_called.get_future();
   using rclcpp::FutureReturnCode;
-  FutureReturnCode future_ret = executor.spin_until_future_complete(sub_called_future, 100ms);
+  FutureReturnCode future_ret = executor.spin_until_complete(sub_called_future, 100ms);
   EXPECT_EQ(FutureReturnCode::TIMEOUT, future_ret);
   ASSERT_EQ(5, counter);
 }
