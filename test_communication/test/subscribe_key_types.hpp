@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "rclcpp/rclcpp.hpp"
+#include "test_msgs/msg/complex_nested_key.hpp"
 #include "test_msgs/msg/keyed_string.hpp"
 #include "test_msgs/msg/non_keyed_with_nested_key.hpp"
 
@@ -32,6 +33,12 @@ rclcpp::SubscriptionBase::SharedPtr subscribe_non_keyed_with_nested_key(
   rclcpp::Node::SharedPtr node,
   const std::string & message_type,
   const std::vector<test_msgs::msg::NonKeyedWithNestedKey::SharedPtr> & expected_messages,
+  std::vector<bool> & received_messages);
+
+rclcpp::SubscriptionBase::SharedPtr subscribe_complex_nested_key(
+  rclcpp::Node::SharedPtr node,
+  const std::string & message_type,
+  const std::vector<test_msgs::msg::ComplexNestedKey::SharedPtr> & expected_messages,
   std::vector<bool> & received_messages);
 
 #endif  // SUBSCRIBE_KEY_TYPES_HPP_

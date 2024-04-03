@@ -41,3 +41,13 @@ rclcpp::SubscriptionBase::SharedPtr subscribe_non_keyed_with_nested_key(
   return subscribe<test_msgs::msg::NonKeyedWithNestedKey>(
     node, message_type, expected_messages, received_messages);
 }
+
+rclcpp::SubscriptionBase::SharedPtr subscribe_complex_nested_key(
+  rclcpp::Node::SharedPtr node,
+  const std::string & message_type,
+  const std::vector<test_msgs::msg::ComplexNestedKey::SharedPtr> & expected_messages,
+  std::vector<bool> & received_messages)
+{
+  return subscribe<test_msgs::msg::ComplexNestedKey>(
+    node, message_type, expected_messages, received_messages);
+}

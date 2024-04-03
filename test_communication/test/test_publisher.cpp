@@ -112,6 +112,8 @@ int main(int argc, char ** argv)
   } else if (message == "NonKeyedWithNestedKey") {
     publish<test_msgs::msg::NonKeyedWithNestedKey>(
       node, message, get_messages_non_keyed_with_nested_key());
+  } else if (message == "ComplexNestedKey") {
+    publish<test_msgs::msg::ComplexNestedKey>(node, message, get_messages_complex_nested_key());
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
     rclcpp::shutdown();
