@@ -55,6 +55,7 @@ int main(int argc, char ** argv)
   auto messages_strings = get_messages_strings();
   auto messages_wstrings = get_messages_wstrings();
   auto messages_keyed_string = get_messages_keyed_string();
+  auto messages_non_keyed_with_nested_key = get_messages_non_keyed_with_nested_key();
 
   rclcpp::SubscriptionBase::SharedPtr subscriber;
   std::vector<bool> received_messages;  // collect flags about received messages
@@ -89,6 +90,9 @@ int main(int argc, char ** argv)
     subscriber = subscribe_wstrings(node, message, messages_wstrings, received_messages);
   } else if (message == "KeyedString") {
     subscriber = subscribe_keyed_string(node, message, messages_keyed_string, received_messages);
+  } else if (message == "NonKeyedWithNestedKey") {
+    subscriber = subscribe_non_keyed_with_nested_key(
+      node, message, messages_non_keyed_with_nested_key, received_messages);
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
     rclcpp::shutdown();
