@@ -100,6 +100,7 @@ int main(int argc, char ** argv)
   auto messages_strings = get_messages_strings();
   auto messages_wstrings = get_messages_wstrings();
   auto messages_keyed_string = get_messages_keyed_string();
+  auto messages_non_keyed_with_nested_key = get_messages_non_keyed_with_nested_key();
 
   std::thread spin_thread([node]() {
       rclcpp::spin(node);
@@ -153,6 +154,11 @@ int main(int argc, char ** argv)
   } else if (message == "KeyedString") {
     subscriber = subscribe_keyed_string(node, message, messages_keyed_string, received_messages);
     publish<test_msgs::msg::KeyedString>(node, message, messages_keyed_string);
+  } else if (message == "NonKeyedWithNestedKey") {
+    subscriber = subscribe_non_keyed_with_nested_key(
+      node, message, messages_non_keyed_with_nested_key, received_messages);
+    publish<test_msgs::msg::NonKeyedWithNestedKey>(
+      node, message, messages_non_keyed_with_nested_key);
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
     return 1;
