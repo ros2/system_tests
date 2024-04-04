@@ -392,8 +392,8 @@ static inline void multi_access_publisher(bool intra_process)
     };
 
   // wait orders of magnitude longer than technically required to allow for system hiccups
-  auto time_to_wait = std::chrono::milliseconds(number_of_messages_per_timer * timer_period * 100);
-  auto time_between_checks = time_to_wait / 100;
+  auto time_to_wait = std::chrono::milliseconds(number_of_messages_per_timer * timer_period * 1000);
+  auto time_between_checks = time_to_wait / 1000;
   auto start = std::chrono::steady_clock::now();
   while (context->is_valid() && std::chrono::steady_clock::now() - start < time_to_wait) {
     bool all_timers_canceled_bool = all_timers_canceled();
