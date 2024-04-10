@@ -366,6 +366,9 @@ if(BUILD_TESTING)
         ${rmw_implementation_env_var}
     )
 
+    # TODO(clalancette): Under load, the gtest_subscription__rmw_connextdds test fails deep in the
+    # bowels of Connext; see https://github.com/ros2/rmw_connextdds/issues/136 for details.  Skip it
+    # for now so we can keep CI green.
     ament_add_gtest_test(gtest_subscription
       TEST_NAME gtest_subscription${target_suffix}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
@@ -373,6 +376,9 @@ if(BUILD_TESTING)
       ENV
         ${rmw_implementation_env_var}
     )
+    if("${rmw_implementation}" STREQUAL "rmw_connextdds")
+      ament_add_test_label(gtest_subscription${target_suffix} xfail)
+    endif()
 
     ament_add_gtest_test(gtest_multiple_service_calls
       TEST_NAME gtest_multiple_service_calls${target_suffix}
@@ -517,13 +523,6 @@ if(BUILD_TESTING)
 
   get_available_rmw_implementations(rmw_implementations)
   call_for_each_rmw_implementation(test_target)
-
-  # TODO(clalancette): Under load, the gtest_subscription__rmw_connextdds test fails deep in the
-  # bowels of Connext; see https://github.com/ros2/rmw_connextdds/issues/136 for details.  Mark it
-  # as xfail for now so we can keep CI green.
-  if(TARGET gtest_subscription__rmw_connextdds)
-    ament_add_test_label(gtest_subscription__rmw_connextdds xfail)
-  endif()
 endif()  # BUILD_TESTING
 
 # TODO should not install anything
