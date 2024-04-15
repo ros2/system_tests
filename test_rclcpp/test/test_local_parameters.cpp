@@ -63,14 +63,15 @@ TEST_F(test_local_parameters, to_string)
     json_dict.c_str());
 
   pv = rclcpp::Parameter("foo", 2.1);
-  // TODO(tfoote) convert the value to a float and use epsilon test.
   EXPECT_STREQ(
     "{\"name\": \"foo\", \"type\": \"double\", \"value\": \"2.100000\"}",
     std::to_string(pv).c_str());
+  EXPECT_NEAR(pv.as_double(), 2.1, 1e-6f);
   pv = rclcpp::Parameter("foo", 8);
   EXPECT_STREQ(
     "{\"name\": \"foo\", \"type\": \"integer\", \"value\": \"8\"}",
     std::to_string(pv).c_str());
+  EXPECT_EQ(pv.as_int(), 8);
 }
 
 TEST_F(test_local_parameters, local_synchronous)
