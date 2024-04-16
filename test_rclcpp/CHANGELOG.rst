@@ -2,6 +2,13 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Addressed TODO in test_local_parameters (`#545 <https://github.com/ros2/system_tests/issues/545>`_)
+* Actually skip the gtest_subscription test on Connext. (`#544 <https://github.com/ros2/system_tests/issues/544>`_)
+* Increased time in test_multithreaded (`#543 <https://github.com/ros2/system_tests/issues/543>`_)
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette
+
 0.20.1 (2024-03-27)
 -------------------
 * Improve the node_name test. (`#538 <https://github.com/ros2/system_tests/issues/538>`_)
