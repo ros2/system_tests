@@ -2,6 +2,9 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.20.2 (2024-04-16)
 -------------------
 * Addressed TODO in test_local_parameters (`#545 <https://github.com/ros2/system_tests/issues/545>`_)
