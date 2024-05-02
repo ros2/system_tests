@@ -107,6 +107,13 @@ int main(int argc, char ** argv)
     publish<test_msgs::msg::Strings>(node, message, get_messages_strings());
   } else if (message == "WStrings") {
     publish<test_msgs::msg::WStrings>(node, message, get_messages_wstrings());
+  } else if (message == "KeyedString") {
+    publish<test_msgs::msg::KeyedString>(node, message, get_messages_keyed_string());
+  } else if (message == "NonKeyedWithNestedKey") {
+    publish<test_msgs::msg::NonKeyedWithNestedKey>(
+      node, message, get_messages_non_keyed_with_nested_key());
+  } else if (message == "ComplexNestedKey") {
+    publish<test_msgs::msg::ComplexNestedKey>(node, message, get_messages_complex_nested_key());
   } else {
     fprintf(stderr, "Unknown message argument '%s'\n", message.c_str());
     rclcpp::shutdown();
