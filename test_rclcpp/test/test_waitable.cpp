@@ -55,19 +55,20 @@ public:
   }
 
   void
-  add_to_wait_set(rcl_wait_set_t * wait_set) override
+  add_to_wait_set(rcl_wait_set_t & wait_set) override
   {
-    rcl_ret_t ret = rcl_wait_set_add_timer(wait_set, timer_.get(), &timer_idx_);
+    rcl_ret_t ret = rcl_wait_set_add_timer(&const_cast<rcl_wait_set_t &>(wait_set),
+      timer_.get(), &timer_idx_);
     if (RCL_RET_OK != ret) {
       throw std::runtime_error("failed to add timer to wait set");
     }
   }
 
   bool
-  is_ready(rcl_wait_set_t * wait_set) override
+  is_ready(const rcl_wait_set_t & wait_set) override
   {
-    if (timer_idx_ < wait_set->size_of_timers) {
-      return nullptr != wait_set->timers[timer_idx_];
+    if (timer_idx_ < wait_set.size_of_timers) {
+      return nullptr != wait_set.timers[timer_idx_];
     }
     return false;
   }
@@ -79,7 +80,7 @@ public:
   }
 
   void
-  execute(std::shared_ptr<void> & data) override
+  execute(const std::shared_ptr<void> & data) override
   {
     (void)data;
     rcl_ret_t ret = rcl_timer_call(timer_.get());
