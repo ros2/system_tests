@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import rclpy
+from rclpy.executors import ExternalShutdownException
 import rclpy.node
 from test_msgs.msg import Empty as EmptyMsg
 from test_msgs.srv import Empty as EmptySrv
@@ -35,15 +36,9 @@ class NameMaker(rclpy.node.Node):
 
 
 if __name__ == '__main__':
-    rclpy.init()
-
-    node = NameMaker()
-
     try:
-        rclpy.spin(node)
-    except KeyboardInterrupt:
+        with rclpy.init():
+            node = NameMaker()
+            rclpy.spin(node)
+    except (KeyboardInterrupt, ExternalShutdownException):
         print('Shutting down name_maker.py')
-    else:
-        rclpy.shutdown()
-    finally:
-        node.destroy_node()

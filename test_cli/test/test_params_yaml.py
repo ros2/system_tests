@@ -31,19 +31,15 @@ CLIENT_LIBRARY_EXECUTABLES = (
 @pytest.fixture(scope='module', params=CLIENT_LIBRARY_EXECUTABLES)
 def node_fixture(request):
     """Create a fixture with a node and helper executable."""
-    rclpy.init()
-    node = rclpy.create_node(
-        'tests_yaml',
-        allow_undeclared_parameters=True,
-        automatically_declare_parameters_from_overrides=True)
-    try:
+    with rclpy.init():
+        node = rclpy.create_node(
+            'tests_yaml',
+            allow_undeclared_parameters=True,
+            automatically_declare_parameters_from_overrides=True)
         yield {
             'node': node,
             'executable': request.param,
         }
-    finally:
-        node.destroy_node()
-        rclpy.shutdown()
 
 
 def get_params(node, node_name, param_names, wfs_timeout=5.0):

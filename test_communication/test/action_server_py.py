@@ -16,6 +16,8 @@ import argparse
 import sys
 import time
 
+import rclpy
+from rclpy.action import ActionServer
 from rclpy.executors import ExternalShutdownException
 
 from test_msgs.action import Fibonacci
@@ -32,8 +34,6 @@ class ExpectedGoal:
 
 
 def receive_goals(node, action_type, expected_goals):
-    from rclpy.action import ActionServer
-
     def execute_callback(goal_handle):
         for expected_goal in expected_goals:
             if expected_goal.is_goal_expected(goal_handle.request):
@@ -48,8 +48,6 @@ def receive_goals(node, action_type, expected_goals):
 
 
 def generate_expected_fibonacci_goals():
-    import rclpy
-
     expected_goals = []
 
     def is_goal_expected(goal):
@@ -101,8 +99,6 @@ def generate_expected_fibonacci_goals():
 
 
 def generate_expected_nested_message_goals():
-    import rclpy
-
     expected_goals = []
 
     def is_goal_expected(goal):
@@ -151,39 +147,27 @@ def generate_expected_nested_message_goals():
 
 
 if __name__ == '__main__':
-    import rclpy
-
-    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('action_type', help='type of the ROS action')
-    parser.add_argument('namespace', help='namespace of the ROS node')
-    args = parser.parse_args()
-
-    rclpy.init(args=[])
-    node = rclpy.create_node('action_server', namespace=args.namespace)
-
-    if 'Fibonacci' == args.action_type:
-        action_server = receive_goals(node, Fibonacci, generate_expected_fibonacci_goals())
-    elif 'NestedMessage' == args.action_type:
-        action_server = receive_goals(
-            node,
-            NestedMessage,
-            generate_expected_nested_message_goals(),
-        )
-    else:
-        print('Unknown action type {!r}'.format(args.action_type), file=sys.stderr)
-        node.destroy_node()
-        rclpy.shutdown()
-        sys.exit(1)
-
     try:
-        rclpy.spin(node)
-    except KeyboardInterrupt:
+        parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+        parser.add_argument('action_type', help='type of the ROS action')
+        parser.add_argument('namespace', help='namespace of the ROS node')
+        args = parser.parse_args()
+
+        with rclpy.init(args=[]):
+            node = rclpy.create_node('action_server', namespace=args.namespace)
+
+            if 'Fibonacci' == args.action_type:
+                action_server = receive_goals(node, Fibonacci, generate_expected_fibonacci_goals())
+            elif 'NestedMessage' == args.action_type:
+                action_server = receive_goals(
+                    node,
+                    NestedMessage,
+                    generate_expected_nested_message_goals(),
+                )
+            else:
+                print('Unknown action type {!r}'.format(args.action_type), file=sys.stderr)
+                sys.exit(1)
+
+            rclpy.spin(node)
+    except (KeyboardInterrupt, ExternalShutdownException):
         print('Action server stopped cleanly')
-    except ExternalShutdownException:
-        sys.exit(1)
-    except BaseException:
-        print('Exception in action server:', file=sys.stderr)
-        raise
-    finally:
-        rclpy.try_shutdown()
-        node.destroy_node()

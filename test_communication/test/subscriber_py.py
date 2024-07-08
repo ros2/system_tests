@@ -15,7 +15,11 @@
 import argparse
 import functools
 import importlib
-import sys
+
+import rclpy
+from rclpy.executors import ExternalShutdownException
+
+from test_msgs.message_fixtures import get_test_msg
 
 
 def listener_cb(msg, received_messages, expected_msgs):
@@ -38,38 +42,32 @@ def listener_cb(msg, received_messages, expected_msgs):
         raise RuntimeError('received unexpected message %r' % msg)
 
 
-def listener(message_name, namespace):
-    from test_msgs.message_fixtures import get_test_msg
-    import rclpy
-
+def listener(msg_name, namespace):
     message_pkg = 'test_msgs'
     module = importlib.import_module(message_pkg + '.msg')
-    msg_mod = getattr(module, message_name)
+    msg_mod = getattr(module, msg_name)
 
-    rclpy.init(args=[])
+    with rclpy.init(args=[]):
+        node = rclpy.create_node('listener', namespace=namespace)
 
-    node = rclpy.create_node('listener', namespace=namespace)
+        received_messages = []
+        expected_msgs = [(i, repr(msg)) for i, msg in enumerate(get_test_msg(msg_name))]
 
-    received_messages = []
-    expected_msgs = [(i, repr(msg)) for i, msg in enumerate(get_test_msg(message_name))]
+        chatter_callback = functools.partial(
+            listener_cb, received_messages=received_messages, expected_msgs=expected_msgs)
 
-    chatter_callback = functools.partial(
-        listener_cb, received_messages=received_messages, expected_msgs=expected_msgs)
+        node.create_subscription(
+            msg_mod, 'test/message/' + msg_name, chatter_callback, 10)
 
-    node.create_subscription(
-        msg_mod, 'test/message/' + message_name, chatter_callback, 10)
+        spin_count = 1
+        print('subscriber: beginning loop')
+        while (rclpy.ok() and len(received_messages) != len(expected_msgs)):
+            rclpy.spin_once(node)
+            spin_count += 1
+            print('spin_count: ' + str(spin_count))
 
-    spin_count = 1
-    print('subscriber: beginning loop')
-    while (rclpy.ok() and len(received_messages) != len(expected_msgs)):
-        rclpy.spin_once(node)
-        spin_count += 1
-        print('spin_count: ' + str(spin_count))
-    node.destroy_node()
-    rclpy.shutdown()
-
-    assert len(received_messages) == len(expected_msgs), \
-        'Should have received {} {} messages from talker'.format(len(expected_msgs), message_name)
+        assert len(received_messages) == len(expected_msgs), \
+            'Should have received {} {} messages from talker'.format(len(expected_msgs), msg_name)
 
 
 if __name__ == '__main__':
@@ -78,9 +76,6 @@ if __name__ == '__main__':
     parser.add_argument('namespace', help='namespace of the ROS node')
     args = parser.parse_args()
     try:
-        listener(message_name=args.message_name, namespace=args.namespace)
-    except KeyboardInterrupt:
+        listener(msg_name=args.message_name, namespace=args.namespace)
+    except (KeyboardInterrupt, ExternalShutdownException):
         print('subscriber stopped cleanly')
-    except BaseException:
-        print('exception in subscriber:', file=sys.stderr)
-        raise

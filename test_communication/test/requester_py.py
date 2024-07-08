@@ -14,13 +14,14 @@
 
 import argparse
 import importlib
-import sys
+
+import rclpy
+from rclpy.executors import ExternalShutdownException
+
+from test_msgs.service_fixtures import get_test_srv
 
 
 def requester(service_name, namespace):
-    import rclpy
-    from test_msgs.service_fixtures import get_test_srv
-
     # Import the service
     service_pkg = 'test_msgs'
     module = importlib.import_module(service_pkg + '.srv')
@@ -29,31 +30,25 @@ def requester(service_name, namespace):
     srv_fixtures = get_test_srv(service_name)
     service_name = 'test/service/' + service_name
 
-    rclpy.init(args=[])
-    try:
+    with rclpy.init(args=[]):
         node = rclpy.create_node('requester', namespace=namespace)
-        try:
-            # wait for the service to be available
-            client = node.create_client(srv_mod, service_name)
-            tries = 15
-            while rclpy.ok() and not client.wait_for_service(timeout_sec=1.0) and tries > 0:
-                print('service not available, waiting again...')
-                tries -= 1
-            assert tries > 0, 'service still not available, aborting test'
+        # wait for the service to be available
+        client = node.create_client(srv_mod, service_name)
+        tries = 15
+        while rclpy.ok() and not client.wait_for_service(timeout_sec=1.0) and tries > 0:
+            print('service not available, waiting again...')
+            tries -= 1
+        assert tries > 0, 'service still not available, aborting test'
 
-            print('requester: beginning request')
-            # Make one call to that service
-            for req, resp in srv_fixtures:
-                future = client.call_async(req)
-                rclpy.spin_until_future_complete(node, future)
-                assert repr(future.result()) == repr(resp), \
-                    'unexpected response %r\n\nwas expecting %r' % (future.result(), resp)
-                print('received reply #%d of %d' % (
-                    srv_fixtures.index([req, resp]) + 1, len(srv_fixtures)))
-        finally:
-            node.destroy_node()
-    finally:
-        rclpy.shutdown()
+        print('requester: beginning request')
+        # Make one call to that service
+        for req, resp in srv_fixtures:
+            future = client.call_async(req)
+            rclpy.spin_until_future_complete(node, future)
+            assert repr(future.result()) == repr(resp), \
+                'unexpected response %r\n\nwas expecting %r' % (future.result(), resp)
+            print('received reply #%d of %d' % (
+                srv_fixtures.index([req, resp]) + 1, len(srv_fixtures)))
 
 
 if __name__ == '__main__':
@@ -63,8 +58,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
     try:
         requester(service_name=args.service_name, namespace=args.namespace)
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, ExternalShutdownException):
         print('requester stopped cleanly')
-    except BaseException:
-        print('exception in requester:', file=sys.stderr)
-        raise

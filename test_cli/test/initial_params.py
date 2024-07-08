@@ -15,19 +15,21 @@
 import sys
 
 import rclpy
+from rclpy.executors import ExternalShutdownException
 
 
 def main(argv=sys.argv):
-    rclpy.init(args=argv)
+    try:
+        with rclpy.init(args=argv):
+            node = rclpy.create_node(
+                'initial_params_node',
+                namespace='/',
+                allow_undeclared_parameters=True,
+                automatically_declare_parameters_from_overrides=True)
+            rclpy.spin(node)
+    except (KeyboardInterrupt, ExternalShutdownException):
+        pass
 
-    node = rclpy.create_node(
-        'initial_params_node',
-        namespace='/',
-        allow_undeclared_parameters=True,
-        automatically_declare_parameters_from_overrides=True)
-    rclpy.spin(node)
-
-    rclpy.shutdown()
     return 0
 
 
