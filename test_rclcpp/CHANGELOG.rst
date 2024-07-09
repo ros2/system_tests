@@ -2,6 +2,11 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.21.1 (2024-07-09)
+-------------------
+* Update deprecated methods (`#546 <https://github.com/ros2/system_tests/issues/546>`_)
+* Contributors: Alejandro Hernández Cordero
+
 0.21.0 (2024-04-29)
 -------------------
 

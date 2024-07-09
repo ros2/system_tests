@@ -2,6 +2,13 @@
 Changelog for package test_communication
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.21.1 (2024-07-09)
+-------------------
+* Use rclpy.init context manager where we can. (`#547 <https://github.com/ros2/system_tests/issues/547>`_)
+  This allows us to cleanup, while using a lot less code
+  to try and track it.
+* Contributors: Chris Lalancette
+
 0.21.0 (2024-04-29)
 -------------------
 
