@@ -57,7 +57,7 @@ public:
   void
   add_to_wait_set(rcl_wait_set_t & wait_set) override
   {
-    rcl_ret_t ret = rcl_wait_set_add_timer(&const_cast<rcl_wait_set_t &>(wait_set),
+    rcl_ret_t ret = rcl_wait_set_add_timer(&wait_set,
       timer_.get(), &timer_idx_);
     if (RCL_RET_OK != ret) {
       throw std::runtime_error("failed to add timer to wait set");
