@@ -13,12 +13,24 @@
 // limitations under the License.
 
 #include <chrono>
+#include <cstddef>
+#include <functional>
 #include <future>
 #include <memory>
+#include <stdexcept>
 
 #include "gtest/gtest.h"
 
-#include "rclcpp/rclcpp.hpp"
+#include "rcl/allocator.h"
+#include "rcl/time.h"
+#include "rcl/timer.h"
+
+#include "rclcpp/callback_group.hpp"
+#include "rclcpp/clock.hpp"
+#include "rclcpp/contexts/default_context.hpp"
+#include "rclcpp/executors.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/waitable.hpp"
 
 class WaitableWithTimer : public rclcpp::Waitable
 {
