@@ -87,6 +87,11 @@ public:
     execute_promise_.set_value(RCL_RET_OK == ret);
   }
 
+  void set_on_ready_callback(std::function<void(size_t, int)>) override {}
+  void clear_on_ready_callback() override {}
+
+  std::shared_ptr<void> take_data_by_entity_id(size_t) override {return nullptr;}
+
   std::shared_ptr<rcl_timer_t> timer_;
   size_t timer_idx_;
   std::promise<bool> execute_promise_;
