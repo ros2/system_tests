@@ -13,12 +13,24 @@
 // limitations under the License.
 
 #include <chrono>
+#include <cstddef>
+#include <functional>
 #include <future>
 #include <memory>
+#include <stdexcept>
 
 #include "gtest/gtest.h"
 
-#include "rclcpp/rclcpp.hpp"
+#include "rcl/allocator.h"
+#include "rcl/time.h"
+#include "rcl/timer.h"
+
+#include "rclcpp/callback_group.hpp"
+#include "rclcpp/clock.hpp"
+#include "rclcpp/contexts/default_context.hpp"
+#include "rclcpp/executors.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/waitable.hpp"
 
 class WaitableWithTimer : public rclcpp::Waitable
 {
@@ -86,6 +98,11 @@ public:
     rcl_ret_t ret = rcl_timer_call(timer_.get());
     execute_promise_.set_value(RCL_RET_OK == ret);
   }
+
+  void set_on_ready_callback(std::function<void(size_t, int)>) override {}
+  void clear_on_ready_callback() override {}
+
+  std::shared_ptr<void> take_data_by_entity_id(size_t) override {return nullptr;}
 
   std::shared_ptr<rcl_timer_t> timer_;
   size_t timer_idx_;
