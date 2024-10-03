@@ -2,6 +2,11 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Implement the pure-virtual functions in the Waitable class. (`#548 <https://github.com/ros2/system_tests/issues/548>`_)
+* Contributors: Chris Lalancette
+
 0.21.1 (2024-07-09)
 -------------------
 * Update deprecated methods (`#546 <https://github.com/ros2/system_tests/issues/546>`_)

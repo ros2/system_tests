@@ -2,6 +2,9 @@
 Changelog for package test_cli_remapping
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.21.1 (2024-07-09)
 -------------------
 * Use rclpy.init context manager where we can. (`#547 <https://github.com/ros2/system_tests/issues/547>`_)
