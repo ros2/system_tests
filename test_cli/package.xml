@@ -17,7 +17,6 @@
   <author email="william@openrobotics.org">William Woodall</author>
 
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
-  <buildtool_depend>python_cmake_module</buildtool_depend>
 
   <build_depend>ament_cmake</build_depend>
 

@@ -75,10 +75,6 @@ if(BUILD_TESTING)
 
   find_package(launch_testing_ament_cmake REQUIRED)
 
-  # Provides PYTHON_EXECUTABLE_DEBUG
-  find_package(python_cmake_module REQUIRED)
-  find_package(PythonExtra REQUIRED)
-
   # get the rmw implementations ahead of time
   find_package(rmw_implementation_cmake REQUIRED)
   get_available_rmw_implementations(rmw_implementations2)
@@ -241,7 +237,6 @@ if(BUILD_TESTING)
     add_launch_test(
       "${CMAKE_CURRENT_BINARY_DIR}/test_publisher_subscriber${suffix}_$<CONFIG>.py"
       TARGET test_publisher_subscriber${suffix}
-      PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       TIMEOUT ${timeout}
       ${SKIP_TEST})
@@ -283,7 +278,6 @@ if(BUILD_TESTING)
     add_launch_test(
       "${CMAKE_CURRENT_BINARY_DIR}/test_requester_replier${suffix}_$<CONFIG>.py"
       TARGET test_requester_replier${suffix}
-      PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       TIMEOUT ${timeout}
       ${SKIP_TEST})
@@ -321,7 +315,6 @@ if(BUILD_TESTING)
     add_launch_test(
       "${CMAKE_CURRENT_BINARY_DIR}/test_action_client_server${suffix}_$<CONFIG>.py"
       TARGET test_action_client_server${suffix}
-      PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}"
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       TIMEOUT ${timeout}
       ${SKIP_TEST})
@@ -335,7 +328,6 @@ if(BUILD_TESTING)
   endmacro()
 
   macro(configure_template _client_library1 _client_library2)
-    set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE}")
     set(_client_library1 "${_client_library1}")
     set(_client_library2 "${_client_library2}")
     set(TEST_PUBLISHER_RCL "${_client_library1}")
@@ -349,14 +341,6 @@ if(BUILD_TESTING)
       set(suffix "__${_client_library1}")
     else()
       set(suffix "__${_client_library1}__${_client_library2}")
-    endif()
-
-    if(_client_library1 STREQUAL "rclpy" OR _client_library2 STREQUAL "rclpy")
-      if(WIN32)
-        if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-          set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE_DEBUG}")
-        endif()
-      endif()
     endif()
 
     if(_client_library1 STREQUAL "rclpy")
