@@ -41,8 +41,8 @@ if(BUILD_TESTING)
   foreach(interface_file ${interface_files})
     get_filename_component(interface_ns "${interface_file}" DIRECTORY)
     get_filename_component(interface_ns "${interface_ns}" NAME)
-    string_ends_with("${interface_file}" ".msg" is_message)
-    if(is_message AND interface_ns STREQUAL "msg")
+    string_ends_with("${interface_file}" ".idl" is_idl)
+    if(is_idl AND interface_ns STREQUAL "msg")
       list(APPEND message_files "${interface_file}")
       continue()
     endif()
@@ -51,8 +51,7 @@ if(BUILD_TESTING)
       list(APPEND service_files "${interface_file}")
       continue()
     endif()
-    string_ends_with("${interface_file}" ".idl" is_action)
-    if(is_action AND interface_ns STREQUAL "action")
+    if(is_idl AND interface_ns STREQUAL "action")
       list(APPEND action_files "${interface_file}")
       continue()
     endif()
@@ -200,6 +199,26 @@ if(BUILD_TESTING)
     set(TEST_MESSAGE_TYPES "")
     foreach(message_file ${message_files})
       get_filename_component(message_type "${message_file}" NAME_WE)
+      set(message_has_keys FALSE)
+      if(
+          "${message_type}" STREQUAL "KeyedString" OR
+          "${message_type}" STREQUAL "ComplexNestedKey"
+      )
+        set(message_has_keys TRUE)
+      endif()
+
+      # TODO(MiguelCompany): Only fastrtps RMWs interoperate for keyed messages
+      if(
+        message_has_keys AND
+        (NOT "${rmw_implementation1}" STREQUAL "${rmw_implementation2}") AND
+        (
+          (NOT rmw_implementation1_is_fastrtps) OR
+          (NOT rmw_implementation2_is_fastrtps)
+        )
+      )
+        continue()
+      endif()
+
       # TODO(dirk-thomas) WStrings published by FastRTPS can't be received
       # correctly by Connext on macOS
       if(
@@ -381,6 +400,7 @@ if(BUILD_TESTING)
   add_library(subscribe_types STATIC
     "test/subscribe_array_types.cpp"
     "test/subscribe_basic_types.cpp"
+    "test/subscribe_key_types.cpp"
     "test/subscribe_string_types.cpp")
   target_link_libraries(subscribe_types
     rclcpp::rclcpp

@@ -1,0 +1,44 @@
+// Copyright 2024 Open Source Robotics Foundation, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#ifndef SUBSCRIBE_KEY_TYPES_HPP_
+#define SUBSCRIBE_KEY_TYPES_HPP_
+
+#include <string>
+#include <vector>
+
+#include "rclcpp/rclcpp.hpp"
+#include "test_msgs/msg/complex_nested_key.hpp"
+#include "test_msgs/msg/keyed_string.hpp"
+#include "test_msgs/msg/non_keyed_with_nested_key.hpp"
+
+rclcpp::SubscriptionBase::SharedPtr subscribe_keyed_string(
+  rclcpp::Node::SharedPtr node,
+  const std::string & message_type,
+  const std::vector<test_msgs::msg::KeyedString::SharedPtr> & expected_messages,
+  std::vector<bool> & received_messages);
+
+rclcpp::SubscriptionBase::SharedPtr subscribe_non_keyed_with_nested_key(
+  rclcpp::Node::SharedPtr node,
+  const std::string & message_type,
+  const std::vector<test_msgs::msg::NonKeyedWithNestedKey::SharedPtr> & expected_messages,
+  std::vector<bool> & received_messages);
+
+rclcpp::SubscriptionBase::SharedPtr subscribe_complex_nested_key(
+  rclcpp::Node::SharedPtr node,
+  const std::string & message_type,
+  const std::vector<test_msgs::msg::ComplexNestedKey::SharedPtr> & expected_messages,
+  std::vector<bool> & received_messages);
+
+#endif  // SUBSCRIBE_KEY_TYPES_HPP_
