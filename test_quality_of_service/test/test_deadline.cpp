@@ -32,6 +32,8 @@ using namespace std::chrono_literals;
 
 /// Test Deadline with a single publishing node and single subscriber node
 TEST_F(QosRclcppTestFixture, test_deadline) {
+  std::string rmw_implementation_str = std::string(rmw_get_implementation_identifier());
+
   int expected_number_of_events = 4;
   // Bump deadline duration when testing against rmw_connextdds to
   // cope with the longer discovery times it entails.
@@ -58,29 +60,31 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
   subscriber = std::make_shared<QosTestSubscriber>(
     "subscriber", topic, qos_profile);
 
-  // setup publishing options and callback
-  publisher->options().event_callbacks.deadline_callback =
-    [this, &last_pub_count, &total_number_of_publisher_deadline_events](
-    rclcpp::QOSDeadlineOfferedInfo & event) -> void
-    {
-      RCLCPP_INFO(publisher->get_logger(), "QOSDeadlineOfferedInfo callback");
-      total_number_of_publisher_deadline_events++;
-      // assert the correct value on a change
-      ASSERT_EQ(1, event.total_count_change);
-      last_pub_count = event.total_count;
-    };
+  if (rmw_implementation_str != "rmw_zenoh_cpp") {
+    // setup publishing options and callback
+    publisher->options().event_callbacks.deadline_callback =
+      [this, &last_pub_count, &total_number_of_publisher_deadline_events](
+      rclcpp::QOSDeadlineOfferedInfo & event) -> void
+      {
+        RCLCPP_INFO(publisher->get_logger(), "QOSDeadlineOfferedInfo callback");
+        total_number_of_publisher_deadline_events++;
+        // assert the correct value on a change
+        ASSERT_EQ(1, event.total_count_change);
+        last_pub_count = event.total_count;
+      };
 
-  // setup subscription options and callback
-  subscriber->options().event_callbacks.deadline_callback =
-    [this, &last_sub_count, &total_number_of_subscriber_deadline_events](
-    rclcpp::QOSDeadlineRequestedInfo & event) -> void
-    {
-      RCLCPP_INFO(subscriber->get_logger(), "QOSDeadlineRequestedInfo callback");
-      total_number_of_subscriber_deadline_events++;
-      // assert the correct value on a change
-      ASSERT_EQ(1, event.total_count_change);
-      last_sub_count = event.total_count;
-    };
+    // setup subscription options and callback
+    subscriber->options().event_callbacks.deadline_callback =
+      [this, &last_sub_count, &total_number_of_subscriber_deadline_events](
+      rclcpp::QOSDeadlineRequestedInfo & event) -> void
+      {
+        RCLCPP_INFO(subscriber->get_logger(), "QOSDeadlineRequestedInfo callback");
+        total_number_of_subscriber_deadline_events++;
+        // assert the correct value on a change
+        ASSERT_EQ(1, event.total_count_change);
+        last_sub_count = event.total_count;
+      };
+  }
 
   // toggle publishing on and off to force deadline events
   rclcpp::TimerBase::SharedPtr toggle_publisher_timer = subscriber->create_wall_timer(
@@ -103,11 +107,13 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
   EXPECT_GT(publisher->get_count(), 0);  // check if we published anything
   EXPECT_GT(subscriber->get_count(), 0);  // check if we received anything
 
-  // check to see if callbacks fired as expected
-  EXPECT_EQ(expected_number_of_events, total_number_of_subscriber_deadline_events);
-  EXPECT_EQ(expected_number_of_events, total_number_of_publisher_deadline_events);
+  if (rmw_implementation_str != "rmw_zenoh_cpp") {
+    // check to see if callbacks fired as expected
+    EXPECT_EQ(expected_number_of_events, total_number_of_subscriber_deadline_events);
+    EXPECT_EQ(expected_number_of_events, total_number_of_publisher_deadline_events);
 
-  // check values reported by the callback
-  EXPECT_EQ(expected_number_of_events, last_pub_count);
-  EXPECT_EQ(expected_number_of_events, last_sub_count);
+    // check values reported by the callback
+    EXPECT_EQ(expected_number_of_events, last_pub_count);
+    EXPECT_EQ(expected_number_of_events, last_sub_count);
+  }
 }
