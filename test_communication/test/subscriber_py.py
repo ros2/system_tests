@@ -70,6 +70,7 @@ def listener(msg_name, namespace):
         'Should have received {} {} messages from talker'.format(len(expected_msgs), msg_name)
     rclpy.shutdown()
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('message_name', help='name of the ROS message')
