@@ -37,8 +37,9 @@ class NameMaker(rclpy.node.Node):
 
 if __name__ == '__main__':
     try:
-        with rclpy.init():
-            node = NameMaker()
-            rclpy.spin(node)
+        rclpy.init()
+        node = NameMaker()
+        rclpy.spin(node)
+        rclpy.shutdown()
     except (KeyboardInterrupt, ExternalShutdownException):
         print('Shutting down name_maker.py')
