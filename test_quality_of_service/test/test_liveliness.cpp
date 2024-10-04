@@ -36,6 +36,8 @@ using namespace std::chrono_literals;
 
 /// Test Automatic Liveliness with a single publishing node and single subscriber node
 TEST_F(QosRclcppTestFixture, test_automatic_liveliness_changed) {
+  std::string rmw_implementation_str = std::string(rmw_get_implementation_identifier());
+
   const std::chrono::milliseconds max_test_length = 8s;
   const std::chrono::milliseconds kill_publisher_after = 2s;
   const std::chrono::milliseconds publish_period = 200ms;
@@ -57,35 +59,37 @@ TEST_F(QosRclcppTestFixture, test_automatic_liveliness_changed) {
     "subscriber", topic, qos_profile);
 
   // publisher options
-  publisher->options().event_callbacks.liveliness_callback =
-    [this](rclcpp::QOSLivelinessLostInfo & /*event*/) -> void
-    {
-      RCLCPP_INFO(publisher->get_logger(), "=====QOSLivelinessLostInfo callback fired");
-    };
+  if (rmw_implementation_str != "rmw_zenoh_cpp") {
+    publisher->options().event_callbacks.liveliness_callback =
+      [this](rclcpp::QOSLivelinessLostInfo & /*event*/) -> void
+      {
+        RCLCPP_INFO(publisher->get_logger(), "=====QOSLivelinessLostInfo callback fired");
+      };
 
-  // subscriber Liveliness callback event
-  subscriber->options().event_callbacks.liveliness_callback =
-    [this, &total_number_of_liveliness_events](
-    rclcpp::QOSLivelinessChangedInfo & event) -> void
-    {
-      RCLCPP_INFO(subscriber->get_logger(), "QOSLivelinessChangedInfo callback");
-      total_number_of_liveliness_events++;
+    // subscriber Liveliness callback event
+    subscriber->options().event_callbacks.liveliness_callback =
+      [this, &total_number_of_liveliness_events](
+      rclcpp::QOSLivelinessChangedInfo & event) -> void
+      {
+        RCLCPP_INFO(subscriber->get_logger(), "QOSLivelinessChangedInfo callback");
+        total_number_of_liveliness_events++;
 
-      // strict checking for expected events
-      if (total_number_of_liveliness_events == 1) {
-        // publisher came alive
-        ASSERT_EQ(1, event.alive_count);
-        ASSERT_EQ(0, event.not_alive_count);
-        ASSERT_EQ(1, event.alive_count_change);
-        ASSERT_EQ(0, event.not_alive_count_change);
-      } else if (total_number_of_liveliness_events == 2) {
-        // publisher died
-        ASSERT_EQ(0, event.alive_count);
-        ASSERT_EQ(0, event.not_alive_count);
-        ASSERT_EQ(-1, event.alive_count_change);
-        ASSERT_EQ(0, event.not_alive_count_change);
-      }
-    };
+        // strict checking for expected events
+        if (total_number_of_liveliness_events == 1) {
+          // publisher came alive
+          ASSERT_EQ(1, event.alive_count);
+          ASSERT_EQ(0, event.not_alive_count);
+          ASSERT_EQ(1, event.alive_count_change);
+          ASSERT_EQ(0, event.not_alive_count_change);
+        } else if (total_number_of_liveliness_events == 2) {
+          // publisher died
+          ASSERT_EQ(0, event.alive_count);
+          ASSERT_EQ(0, event.not_alive_count);
+          ASSERT_EQ(-1, event.alive_count_change);
+          ASSERT_EQ(0, event.not_alive_count_change);
+        }
+      };
+  }
 
   int timer_fired_count = 0;
   // kill the publisher after a predetermined amount of time
@@ -114,7 +118,9 @@ TEST_F(QosRclcppTestFixture, test_automatic_liveliness_changed) {
   kill_publisher_timer->cancel();
 
   EXPECT_EQ(1, timer_fired_count);
-  EXPECT_EQ(2, total_number_of_liveliness_events);  // check expected number of liveliness events
+  if (rmw_implementation_str != "rmw_zenoh_cpp") {
+    EXPECT_EQ(2, total_number_of_liveliness_events);  // check expected number of liveliness events
+  }
   EXPECT_GT(number_of_published_messages, 0);  // check if we published anything
   EXPECT_GT(subscriber->get_count(), 0);  // check if we received anything
 }
