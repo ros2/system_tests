@@ -47,27 +47,28 @@ def listener(msg_name, namespace):
     module = importlib.import_module(message_pkg + '.msg')
     msg_mod = getattr(module, msg_name)
 
-    with rclpy.init(args=[]):
-        node = rclpy.create_node('listener', namespace=namespace)
+    rclpy.init(args=[])
+    node = rclpy.create_node('listener', namespace=namespace)
 
-        received_messages = []
-        expected_msgs = [(i, repr(msg)) for i, msg in enumerate(get_test_msg(msg_name))]
+    received_messages = []
+    expected_msgs = [(i, repr(msg)) for i, msg in enumerate(get_test_msg(msg_name))]
 
-        chatter_callback = functools.partial(
-            listener_cb, received_messages=received_messages, expected_msgs=expected_msgs)
+    chatter_callback = functools.partial(
+        listener_cb, received_messages=received_messages, expected_msgs=expected_msgs)
 
-        node.create_subscription(
-            msg_mod, 'test/message/' + msg_name, chatter_callback, 10)
+    node.create_subscription(
+        msg_mod, 'test/message/' + msg_name, chatter_callback, 10)
 
-        spin_count = 1
-        print('subscriber: beginning loop')
-        while (rclpy.ok() and len(received_messages) != len(expected_msgs)):
-            rclpy.spin_once(node)
-            spin_count += 1
-            print('spin_count: ' + str(spin_count))
+    spin_count = 1
+    print('subscriber: beginning loop')
+    while (rclpy.ok() and len(received_messages) != len(expected_msgs)):
+        rclpy.spin_once(node)
+        spin_count += 1
+        print('spin_count: ' + str(spin_count))
 
-        assert len(received_messages) == len(expected_msgs), \
-            'Should have received {} {} messages from talker'.format(len(expected_msgs), msg_name)
+    assert len(received_messages) == len(expected_msgs), \
+        'Should have received {} {} messages from talker'.format(len(expected_msgs), msg_name)
+    rclpy.shutdown()
 
 
 if __name__ == '__main__':
