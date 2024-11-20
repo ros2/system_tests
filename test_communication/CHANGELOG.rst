@@ -2,6 +2,11 @@
 Changelog for package test_communication
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Stop using python_cmake_module. (`#536 <https://github.com/ros2/system_tests/issues/536>`_)
+* Contributors: Chris Lalancette
+
 0.22.0 (2024-10-03)
 -------------------
 
