@@ -103,11 +103,16 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
   EXPECT_GT(publisher->get_count(), 0);  // check if we published anything
   EXPECT_GT(subscriber->get_count(), 0);  // check if we received anything
 
-  // check to see if callbacks fired as expected
-  EXPECT_EQ(expected_number_of_events, total_number_of_subscriber_deadline_events);
-  EXPECT_EQ(expected_number_of_events, total_number_of_publisher_deadline_events);
+  // rmw_zenoh does not support Deadline/LivelinessChanged,
+  std::string rmw_implementation_str = std::string(rmw_get_implementation_identifier());
 
-  // check values reported by the callback
-  EXPECT_EQ(expected_number_of_events, last_pub_count);
-  EXPECT_EQ(expected_number_of_events, last_sub_count);
+  if (rmw_implementation_str != "rmw_zenoh_cpp") {
+    // check to see if callbacks fired as expected
+    EXPECT_EQ(expected_number_of_events, total_number_of_subscriber_deadline_events);
+    EXPECT_EQ(expected_number_of_events, total_number_of_publisher_deadline_events);
+
+    // check values reported by the callback
+    EXPECT_EQ(expected_number_of_events, last_pub_count);
+    EXPECT_EQ(expected_number_of_events, last_sub_count);
+  }
 }

@@ -114,7 +114,13 @@ TEST_F(QosRclcppTestFixture, test_automatic_liveliness_changed) {
   kill_publisher_timer->cancel();
 
   EXPECT_EQ(1, timer_fired_count);
-  EXPECT_EQ(2, total_number_of_liveliness_events);  // check expected number of liveliness events
+
+  // rmw_zenoh does not support Deadline/LivelinessChanged,
+  std::string rmw_implementation_str = std::string(rmw_get_implementation_identifier());
+  if (rmw_implementation_str != "rmw_zenoh_cpp") {
+    EXPECT_EQ(2, total_number_of_liveliness_events);  // check expected number of liveliness events
+  }
+
   EXPECT_GT(number_of_published_messages, 0);  // check if we published anything
   EXPECT_GT(subscriber->get_count(), 0);  // check if we received anything
 }
