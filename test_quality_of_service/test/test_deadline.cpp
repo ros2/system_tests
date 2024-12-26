@@ -32,9 +32,9 @@ using namespace std::chrono_literals;
 
 /// Test Deadline with a single publishing node and single subscriber node
 TEST_F(QosRclcppTestFixture, test_deadline) {
-  std::string rmw_implementation_str = std::string(rmw_get_implementation_identifier());
+  std::string this_rmw_implementation = std::string(rmw_get_implementation_identifier());
 
-  if (rmw_implementation_str == "rmw_zenoh_cpp") {
+  if (this_rmw_implementation == "rmw_zenoh_cpp") {
     GTEST_SKIP();
   }
 

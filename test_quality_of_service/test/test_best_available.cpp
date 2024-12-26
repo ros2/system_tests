@@ -32,7 +32,7 @@
 using namespace std::chrono_literals;
 
 TEST_F(QosRclcppTestFixture, test_best_available_policies_subscription) {
-  if (rmw_implementation_str == "rmw_zenoh_cpp") {
+  if (this_rmw_implementation == "rmw_zenoh_cpp") {
     GTEST_SKIP();
   }
 
@@ -95,7 +95,7 @@ TEST_F(QosRclcppTestFixture, test_best_available_policies_subscription) {
 }
 
 TEST_F(QosRclcppTestFixture, test_best_available_policies_publisher) {
-  if (rmw_implementation_str == "rmw_zenoh_cpp") {
+  if (this_rmw_implementation == "rmw_zenoh_cpp") {
     GTEST_SKIP();
   }
 
@@ -159,7 +159,7 @@ TEST_F(QosRclcppTestFixture, test_best_available_policies_publisher) {
 }
 
 TEST_F(QosRclcppTestFixture, test_best_available_policies_services) {
-  if (rmw_implementation_str == "rmw_zenoh_cpp") {
+  if (this_rmw_implementation == "rmw_zenoh_cpp") {
     GTEST_SKIP();
   }
 

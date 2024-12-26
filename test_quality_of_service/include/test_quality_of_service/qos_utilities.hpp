@@ -86,12 +86,10 @@ class QosRclcppTestFixture : public BaseQosRclcppTestFixture
 public:
   QosRclcppTestFixture()
   {
-    rmw_implementation_str = std::string(rmw_get_implementation_identifier());
   }
 
 protected:
   const std::string this_rmw_implementation{RCUTILS_STRINGIFY(RMW_IMPLEMENTATION)};
-  std::string rmw_implementation_str;
 };
 
 #endif  // TEST_QUALITY_OF_SERVICE__QOS_UTILITIES_HPP_
