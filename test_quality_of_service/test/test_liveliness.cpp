@@ -36,6 +36,12 @@ using namespace std::chrono_literals;
 
 /// Test Automatic Liveliness with a single publishing node and single subscriber node
 TEST_F(QosRclcppTestFixture, test_automatic_liveliness_changed) {
+  std::string this_rmw_implementation = std::string(rmw_get_implementation_identifier());
+
+  if (this_rmw_implementation == "rmw_zenoh_cpp") {
+    GTEST_SKIP();
+  }
+
   const std::chrono::milliseconds max_test_length = 8s;
   const std::chrono::milliseconds kill_publisher_after = 2s;
   const std::chrono::milliseconds publish_period = 200ms;

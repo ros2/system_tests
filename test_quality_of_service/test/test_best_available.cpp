@@ -32,6 +32,10 @@
 using namespace std::chrono_literals;
 
 TEST_F(QosRclcppTestFixture, test_best_available_policies_subscription) {
+  if (this_rmw_implementation == "rmw_zenoh_cpp") {
+    GTEST_SKIP();
+  }
+
   const std::string topic = "/test_best_available_subscription";
   const std::chrono::milliseconds publish_period{5000};
   const std::chrono::milliseconds publisher_deadline{2};
@@ -91,6 +95,10 @@ TEST_F(QosRclcppTestFixture, test_best_available_policies_subscription) {
 }
 
 TEST_F(QosRclcppTestFixture, test_best_available_policies_publisher) {
+  if (this_rmw_implementation == "rmw_zenoh_cpp") {
+    GTEST_SKIP();
+  }
+
   const std::string topic = "/test_best_available_publisher";
   const std::chrono::milliseconds publish_period{5000};
   const std::chrono::milliseconds subscription_deadline{2};
@@ -151,6 +159,10 @@ TEST_F(QosRclcppTestFixture, test_best_available_policies_publisher) {
 }
 
 TEST_F(QosRclcppTestFixture, test_best_available_policies_services) {
+  if (this_rmw_implementation == "rmw_zenoh_cpp") {
+    GTEST_SKIP();
+  }
+
   // Test no errors occur when creating a service with best available policies
   rclcpp::Node node("test_create_service_with_best_available_policies");
   node.create_service<test_msgs::srv::Empty>(

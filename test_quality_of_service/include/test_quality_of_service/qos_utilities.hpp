@@ -83,6 +83,11 @@ protected:
 
 class QosRclcppTestFixture : public BaseQosRclcppTestFixture
 {
+public:
+  QosRclcppTestFixture()
+  {
+  }
+
 protected:
   const std::string this_rmw_implementation{RCUTILS_STRINGIFY(RMW_IMPLEMENTATION)};
 };
