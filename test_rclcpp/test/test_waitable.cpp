@@ -18,6 +18,7 @@
 #include <future>
 #include <memory>
 #include <stdexcept>
+#include <vector>
 
 #include "gtest/gtest.h"
 
@@ -101,6 +102,8 @@ public:
 
   void set_on_ready_callback(std::function<void(size_t, int)>) override {}
   void clear_on_ready_callback() override {}
+
+  std::vector<std::shared_ptr<rclcpp::TimerBase>> get_timers() const override {return {};}
 
   std::shared_ptr<void> take_data_by_entity_id(size_t) override {return nullptr;}
 
