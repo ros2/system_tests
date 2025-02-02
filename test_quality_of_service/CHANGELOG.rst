@@ -2,8 +2,8 @@
 Changelog for package test_quality_of_service
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.23.0 (2025-02-02)
+-------------------
 * Fixed some qos test related with Zenoh (`#551 <https://github.com/ros2/system_tests/issues/551>`_)
 * Contributors: Alejandro Hernández Cordero
 

@@ -2,8 +2,8 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.23.0 (2025-02-02)
+-------------------
 * chore: Adopted to API changes in rclcpp (`#556 <https://github.com/ros2/system_tests/issues/556>`_)
 * Contributors: Janosch Machowinski
 
