@@ -2,6 +2,9 @@
 Changelog for package test_cli
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.22.1 (2024-11-20)
 -------------------
 * Stop using python_cmake_module. (`#536 <https://github.com/ros2/system_tests/issues/536>`_)
