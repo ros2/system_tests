@@ -195,6 +195,15 @@ if(BUILD_TESTING)
       set(rmw_implementation2_is_cyclonedds TRUE)
     endif()
 
+    set(rmw_implementation1_is_zenoh FALSE)
+    set(rmw_implementation2_is_zenoh FALSE)
+    if(rmw_implementation1 MATCHES "(.*)zenoh(.*)")
+      set(rmw_implementation1_is_zenoh TRUE)
+    endif()
+    if(rmw_implementation2 MATCHES "(.*)zenoh(.*)")
+      set(rmw_implementation2_is_zenoh TRUE)
+    endif()
+
     set(PUBLISHER_RMW ${rmw_implementation1})
     set(SUBSCRIBER_RMW ${rmw_implementation2})
     set(TEST_MESSAGE_TYPES "")
@@ -217,6 +226,14 @@ if(BUILD_TESTING)
           (rmw_implementation1_is_connext AND rmw_implementation2_is_cyclonedds) OR
           (rmw_implementation1_is_cyclonedds AND rmw_implementation2_is_connext)
         )
+      )
+        continue()
+      endif()
+      # Zenoh will not interoperate with any DDS based middlewares so we skip
+      # all multi-vendor pub/sub tests.
+      if(
+        (rmw_implementation1_is_zenoh AND NOT rmw_implementation2_is_zenoh) OR
+        (rmw_implementation2_is_zenoh AND NOT rmw_implementation1_is_zenoh)
       )
         continue()
       endif()
