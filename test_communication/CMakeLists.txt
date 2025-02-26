@@ -235,7 +235,7 @@ if(BUILD_TESTING)
         (rmw_implementation1_is_zenoh AND NOT rmw_implementation2_is_zenoh) OR
         (rmw_implementation2_is_zenoh AND NOT rmw_implementation1_is_zenoh)
       )
-        continue()
+        set(SKIP_TEST "SKIP_TEST")
       endif()
       list(APPEND TEST_MESSAGE_TYPES "${message_type}")
     endforeach()
