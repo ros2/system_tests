@@ -28,7 +28,7 @@ int main(int argc, char ** argv)
   }
 
   int num_nodes = ::strtol(argv[1], nullptr, 10);
-  std::string node_to_look_for("/node_with_name");
+  std::string node_to_look_for("/node_with_name_");
   printf("Waiting for %d nodes with name: node_with_name_N\n", num_nodes);
   std::cout.flush();
 
@@ -42,11 +42,21 @@ int main(int argc, char ** argv)
   const std::chrono::steady_clock::time_point max_runtime =
     std::chrono::steady_clock::now() + std::chrono::seconds(10);
 
+  std::vector<bool> found(num_nodes);
+
   while (rclcpp::ok()) {
     auto names = node->get_node_graph_interface()->get_node_names();
     for (auto it : names) {
       if (it.compare(0, node_to_look_for.length(), node_to_look_for) == 0) {
-        counter++;
+        try {
+          int idx = std::stoi(it.substr(node_to_look_for.length()));
+          if (!found[idx]) {
+            found[idx] = true;
+            counter++;
+          }
+        } catch (const std::invalid_argument &) {
+          fprintf(stderr, "The name suffix of the node %s isn't a valid number.\n", it.c_str());
+        }
       }
     }
     if (counter >= num_nodes) {
