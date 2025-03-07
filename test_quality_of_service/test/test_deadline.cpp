@@ -35,8 +35,9 @@ TEST_F(QosRclcppTestFixture, test_deadline) {
   std::string this_rmw_implementation = std::string(rmw_get_implementation_identifier());
 
   if (!rmw_event_type_is_supported(RMW_EVENT_OFFERED_DEADLINE_MISSED) ||
-    !rmw_event_type_is_supported(RMW_EVENT_REQUESTED_DEADLINE_MISSED)) {
-      GTEST_SKIP();
+    !rmw_event_type_is_supported(RMW_EVENT_REQUESTED_DEADLINE_MISSED))
+  {
+    GTEST_SKIP();
   }
 
   int expected_number_of_events = 4;

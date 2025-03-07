@@ -39,8 +39,9 @@ TEST_F(QosRclcppTestFixture, test_automatic_liveliness_changed) {
   std::string this_rmw_implementation = std::string(rmw_get_implementation_identifier());
 
   if (!rmw_event_type_is_supported(RMW_EVENT_LIVELINESS_CHANGED) ||
-    !rmw_event_type_is_supported(RMW_EVENT_LIVELINESS_LOST)) {
-      GTEST_SKIP();
+    !rmw_event_type_is_supported(RMW_EVENT_LIVELINESS_LOST))
+  {
+    GTEST_SKIP();
   }
 
   const std::chrono::milliseconds max_test_length = 8s;
