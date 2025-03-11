@@ -34,7 +34,9 @@ using namespace std::chrono_literals;
 TEST_F(QosRclcppTestFixture, test_deadline) {
   std::string this_rmw_implementation = std::string(rmw_get_implementation_identifier());
 
-  if (this_rmw_implementation == "rmw_zenoh_cpp") {
+  if (!rmw_event_type_is_supported(RMW_EVENT_OFFERED_DEADLINE_MISSED) ||
+    !rmw_event_type_is_supported(RMW_EVENT_REQUESTED_DEADLINE_MISSED))
+  {
     GTEST_SKIP();
   }
 
