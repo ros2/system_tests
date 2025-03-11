@@ -32,6 +32,17 @@ using namespace std::chrono_literals;
 
 /// Test Deadline with a single publishing node and single subscriber node
 TEST_F(QosRclcppTestFixture, test_deadline) {
+<<<<<<< HEAD
+=======
+  std::string this_rmw_implementation = std::string(rmw_get_implementation_identifier());
+
+  if (!rmw_event_type_is_supported(RMW_EVENT_OFFERED_DEADLINE_MISSED) ||
+    !rmw_event_type_is_supported(RMW_EVENT_REQUESTED_DEADLINE_MISSED))
+  {
+    GTEST_SKIP();
+  }
+
+>>>>>>> 8d0b7de (Use rmw_event_type_is_supported to skip tests (#563))
   int expected_number_of_events = 4;
   // Bump deadline duration when testing against rmw_connextdds to
   // cope with the longer discovery times it entails.
