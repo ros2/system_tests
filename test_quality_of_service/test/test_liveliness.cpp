@@ -36,17 +36,12 @@ using namespace std::chrono_literals;
 
 /// Test Automatic Liveliness with a single publishing node and single subscriber node
 TEST_F(QosRclcppTestFixture, test_automatic_liveliness_changed) {
-<<<<<<< HEAD
-=======
-  std::string this_rmw_implementation = std::string(rmw_get_implementation_identifier());
-
   if (!rmw_event_type_is_supported(RMW_EVENT_LIVELINESS_CHANGED) ||
     !rmw_event_type_is_supported(RMW_EVENT_LIVELINESS_LOST))
   {
     GTEST_SKIP();
   }
 
->>>>>>> 8d0b7de (Use rmw_event_type_is_supported to skip tests (#563))
   const std::chrono::milliseconds max_test_length = 8s;
   const std::chrono::milliseconds kill_publisher_after = 2s;
   const std::chrono::milliseconds publish_period = 200ms;
