@@ -203,6 +203,14 @@ if(BUILD_TESTING)
     if(rmw_implementation2 MATCHES "(.*)zenoh(.*)")
       set(rmw_implementation2_is_zenoh TRUE)
     endif()
+      # Zenoh will not interoperate with any DDS based middlewares so we skip
+      # all multi-vendor tests.
+    if(
+      (rmw_implementation1_is_zenoh AND NOT rmw_implementation2_is_zenoh) OR
+      (rmw_implementation2_is_zenoh AND NOT rmw_implementation1_is_zenoh)
+    )
+      set(SKIP_TEST "SKIP_TEST")
+    endif()
 
     set(PUBLISHER_RMW ${rmw_implementation1})
     set(SUBSCRIBER_RMW ${rmw_implementation2})
@@ -228,14 +236,6 @@ if(BUILD_TESTING)
         )
       )
         continue()
-      endif()
-      # Zenoh will not interoperate with any DDS based middlewares so we skip
-      # all multi-vendor pub/sub tests.
-      if(
-        (rmw_implementation1_is_zenoh AND NOT rmw_implementation2_is_zenoh) OR
-        (rmw_implementation2_is_zenoh AND NOT rmw_implementation1_is_zenoh)
-      )
-        set(SKIP_TEST "SKIP_TEST")
       endif()
       list(APPEND TEST_MESSAGE_TYPES "${message_type}")
     endforeach()
