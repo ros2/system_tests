@@ -482,9 +482,7 @@ if(BUILD_TESTING)
         rosidl_typesupport_c::rosidl_typesupport_c
         rosidl_typesupport_cpp::rosidl_typesupport_cpp
         ${test_msgs_TARGETS}
-      )
-      ament_target_dependencies(${serialize_target_name}
-        ${rmw_implementation}
+        ${${rmw_implementation}_TARGETS}
       )
       set_tests_properties(
         ${serialize_target_name}
@@ -511,9 +509,7 @@ if(BUILD_TESTING)
         rosidl_typesupport_c::rosidl_typesupport_c
         rosidl_typesupport_cpp::rosidl_typesupport_cpp
         ${test_msgs_TARGETS}
-      )
-      ament_target_dependencies(${target_name}
-        ${rmw_implementation}
+        ${${rmw_implementation}_TARGETS}
       )
       set_tests_properties(
         ${target_name}
