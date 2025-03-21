@@ -130,6 +130,15 @@ if(BUILD_TESTING)
   endfunction()
 
   function(custom_test_c target)
+    # If the rmw_implementation is rmw_zenoh_cpp, run the tests with multicast discovery enabled.
+    if(rmw_implementation STREQUAL "rmw_zenoh_cpp")
+      list(APPEND rmw_implementation_env_var
+        ZENOH_ROUTER_CHECK_ATTEMPTS=-1
+        ZENOH_CONFIG_OVERRIDE=scouting/multicast/enabled=true
+        RUST_LOG=z=error
+      )
+    endif()
+
     ament_add_gtest(
       "${target}${target_suffix}" ${ARGN}
       TIMEOUT 90
@@ -137,6 +146,7 @@ if(BUILD_TESTING)
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation})
+      ${rmw_implementation_env_var}
     if(TARGET ${target}${target_suffix})
       rosidl_get_typesupport_target(c_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_c")
       target_link_libraries(${target}${target_suffix}
@@ -468,6 +478,16 @@ if(BUILD_TESTING)
 
   macro(serialize)
     set(serialize_target_name "test_serialize${target}${target_suffix}")
+
+    # If the rmw_implementation is rmw_zenoh_cpp, run the tests with multicast discovery enabled.
+    if(rmw_implementation STREQUAL "rmw_zenoh_cpp")
+      list(APPEND rmw_implementation_env_var
+        ZENOH_ROUTER_CHECK_ATTEMPTS=-1
+        ZENOH_CONFIG_OVERRIDE=scouting/multicast/enabled=true
+        RUST_LOG=z=error
+      )
+    endif()
+
     ament_add_gtest(
       ${serialize_target_name} test/test_message_serialization.cpp
       TIMEOUT 30
@@ -493,12 +513,23 @@ if(BUILD_TESTING)
 
   macro(pub_sub_serialized)
     set(target_name "test_publisher_subscriber_serialized${target}${target_suffix}")
+
+    # If the rmw_implementation is rmw_zenoh_cpp, run the tests with multicast discovery enabled.
+    if(rmw_implementation STREQUAL "rmw_zenoh_cpp")
+      list(APPEND rmw_implementation_env_var
+        ZENOH_ROUTER_CHECK_ATTEMPTS=-1
+        ZENOH_CONFIG_OVERRIDE=scouting/multicast/enabled=true
+        RUST_LOG=z=error
+      )
+    endif()
+
     ament_add_gtest(
       ${target_name} test/test_publisher_subscriber_serialized.cpp
       TIMEOUT 30
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
       RMW_IMPLEMENTATION=${rmw_implementation}
+      ${rmw_implementation_env_var}
     )
     if(TARGET ${target_name})
       add_dependencies(${target_name} ${PROJECT_NAME})
