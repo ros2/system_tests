@@ -130,6 +130,9 @@ if(BUILD_TESTING)
   endfunction()
 
   function(custom_test_c target)
+    message(STATUS "Creating tests for '${rmw_implementation}'")
+    set(rmw_implementation_env_var RMW_IMPLEMENTATION=${rmw_implementation})
+
     # If the rmw_implementation is rmw_zenoh_cpp, run the tests with multicast discovery enabled.
     if(rmw_implementation STREQUAL "rmw_zenoh_cpp")
       list(APPEND rmw_implementation_env_var
@@ -144,9 +147,8 @@ if(BUILD_TESTING)
       TIMEOUT 90
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       ENV
-      RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
-      RMW_IMPLEMENTATION=${rmw_implementation})
-      ${rmw_implementation_env_var}
+        RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
+        ${rmw_implementation_env_var})
     if(TARGET ${target}${target_suffix})
       rosidl_get_typesupport_target(c_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_c")
       target_link_libraries(${target}${target_suffix}
@@ -477,8 +479,8 @@ if(BUILD_TESTING)
   endif()
 
   macro(serialize)
-    set(serialize_target_name "test_serialize${target}${target_suffix}")
-
+    message(STATUS "Creating tests for '${rmw_implementation}'")
+    set(rmw_implementation_env_var RMW_IMPLEMENTATION=${rmw_implementation})
     # If the rmw_implementation is rmw_zenoh_cpp, run the tests with multicast discovery enabled.
     if(rmw_implementation STREQUAL "rmw_zenoh_cpp")
       list(APPEND rmw_implementation_env_var
@@ -487,13 +489,14 @@ if(BUILD_TESTING)
         RUST_LOG=z=error
       )
     endif()
+    set(serialize_target_name "test_serialize${target}${target_suffix}")
 
     ament_add_gtest(
       ${serialize_target_name} test/test_message_serialization.cpp
       TIMEOUT 30
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
-      RMW_IMPLEMENTATION=${rmw_implementation}
+      ${rmw_implementation_env_var}
     )
     if(TARGET ${serialize_target_name})
       add_dependencies(${serialize_target_name} ${PROJECT_NAME})
@@ -512,8 +515,8 @@ if(BUILD_TESTING)
   endmacro()
 
   macro(pub_sub_serialized)
-    set(target_name "test_publisher_subscriber_serialized${target}${target_suffix}")
-
+    message(STATUS "Creating tests for '${rmw_implementation}'")
+    set(rmw_implementation_env_var RMW_IMPLEMENTATION=${rmw_implementation})
     # If the rmw_implementation is rmw_zenoh_cpp, run the tests with multicast discovery enabled.
     if(rmw_implementation STREQUAL "rmw_zenoh_cpp")
       list(APPEND rmw_implementation_env_var
@@ -522,14 +525,14 @@ if(BUILD_TESTING)
         RUST_LOG=z=error
       )
     endif()
+    set(target_name "test_publisher_subscriber_serialized${target}${target_suffix}")
 
     ament_add_gtest(
       ${target_name} test/test_publisher_subscriber_serialized.cpp
       TIMEOUT 30
       ENV
-      RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
-      RMW_IMPLEMENTATION=${rmw_implementation}
-      ${rmw_implementation_env_var}
+        RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
+        ${rmw_implementation_env_var}
     )
     if(TARGET ${target_name})
       add_dependencies(${target_name} ${PROJECT_NAME})

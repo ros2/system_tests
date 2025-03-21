@@ -331,6 +331,7 @@ if(BUILD_TESTING)
   endmacro()
 
   function(test_target)
+    message(STATUS "Creating tests for '${rmw_implementation}'")
     set(rmw_implementation_env_var RMW_IMPLEMENTATION=${rmw_implementation})
 
     # If the rmw_implementation is rmw_zenoh_cpp, run the tests with multicast discovery enabled.
