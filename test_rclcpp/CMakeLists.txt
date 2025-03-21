@@ -164,6 +164,19 @@ if(BUILD_TESTING)
     set(TEST_EXECUTABLE2_ARGS "${_ARG_ARGS2}")
     set(TEST_EXECUTABLE2_NAME "${executable2}")
     set(TEST_RMW_IMPLEMENTATION2 "${_ARG_RMW2}")
+
+    set(rmw_implementation_env_var "")
+
+    if("${TEST_RMW_IMPLEMENTATION1}" STREQUAL "rmw_zenoh_cpp" OR
+      "${TEST_RMW_IMPLEMENTATION2}" STREQUAL "rmw_zenoh_cpp")
+
+      list(APPEND rmw_implementation_env_var
+        ZENOH_ROUTER_CHECK_ATTEMPTS=-1
+        ZENOH_CONFIG_OVERRIDE=scouting/multicast/enabled=true
+        RUST_LOG=z=error
+      )
+    endif()
+
     configure_file(
       test/test_two_executables.py.in
       ${test_name}${target_suffix}.py.configure
@@ -178,6 +191,7 @@ if(BUILD_TESTING)
       TARGET "${test_name}${target_suffix}"
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       ${_ARG_UNPARSED_ARGUMENTS}
+      ENV ${rmw_implementation_env_var}
     )
     if(TEST ${test_name}${target_suffix})
       set_tests_properties(${test_name}${target_suffix}
@@ -318,6 +332,15 @@ if(BUILD_TESTING)
 
   function(test_target)
     set(rmw_implementation_env_var RMW_IMPLEMENTATION=${rmw_implementation})
+
+    # If the rmw_implementation is rmw_zenoh_cpp, run the tests with multicast discovery enabled.
+    if(rmw_implementation STREQUAL "rmw_zenoh_cpp")
+      list(APPEND rmw_implementation_env_var
+        ZENOH_ROUTER_CHECK_ATTEMPTS=-1
+        ZENOH_CONFIG_OVERRIDE=scouting/multicast/enabled=true
+        RUST_LOG=z=error
+      )
+    endif()
 
     ament_add_gtest_test(gtest_avoid_ros_namespace_conventions_qos
       TEST_NAME gtest_avoid_ros_namespace_conventions_qos${target_suffix}
