@@ -471,6 +471,7 @@ if(BUILD_TESTING)
     # Parameter tests single implementation
     custom_launch_test_two_executables(test_parameter_server_cpp
       test_parameters_server_cpp test_remote_parameters_cpp
+      RMW1 ${rmw_implementation} RMW2 ${rmw_implementation}
       TIMEOUT 60
       ENV
         ${rmw_implementation_env_var}
@@ -479,6 +480,7 @@ if(BUILD_TESTING)
     # Service tests single implementation
     custom_launch_test_two_executables(test_services_cpp
       test_services_server_cpp test_services_client_cpp
+      RMW1 ${rmw_implementation} RMW2 ${rmw_implementation}
       TIMEOUT 60
       ENV
         ${rmw_implementation_env_var}
@@ -486,6 +488,7 @@ if(BUILD_TESTING)
 
     custom_launch_test_two_executables(test_client_scope_cpp
       test_client_scope_server_cpp test_client_scope_client_cpp
+      RMW1 ${rmw_implementation} RMW2 ${rmw_implementation}
       TIMEOUT 60
       ENV
         ${rmw_implementation_env_var}
@@ -493,6 +496,7 @@ if(BUILD_TESTING)
 
     custom_launch_test_two_executables(test_client_scope_consistency_cpp
       test_client_scope_consistency_server_cpp test_client_scope_consistency_client_cpp
+      RMW1 ${rmw_implementation} RMW2 ${rmw_implementation}
       TIMEOUT 60
       ENV
         ${rmw_implementation_env_var}
