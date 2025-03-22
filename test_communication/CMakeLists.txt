@@ -105,7 +105,7 @@ if(BUILD_TESTING)
           ENV
             RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
             ${rmw_implementation_env_var}
-          )
+        )
         set_tests_properties(
           "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
           PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}>"
@@ -121,7 +121,7 @@ if(BUILD_TESTING)
         ENV
           RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
           ${rmw_implementation_env_var}
-        )
+      )
       set_tests_properties(
         "${target}${target_suffix}"
         PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}>"
