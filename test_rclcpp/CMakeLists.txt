@@ -166,14 +166,10 @@ if(BUILD_TESTING)
     set(TEST_RMW_IMPLEMENTATION2 "${_ARG_RMW2}")
 
     set(rmw_implementation_env_var "")
-
     if("${TEST_RMW_IMPLEMENTATION1}" STREQUAL "rmw_zenoh_cpp" OR
       "${TEST_RMW_IMPLEMENTATION2}" STREQUAL "rmw_zenoh_cpp")
-
       list(APPEND rmw_implementation_env_var
-        ZENOH_ROUTER_CHECK_ATTEMPTS=-1
         ZENOH_CONFIG_OVERRIDE=scouting/multicast/enabled=true
-        RUST_LOG=z=error
       )
     endif()
 
@@ -331,15 +327,12 @@ if(BUILD_TESTING)
   endmacro()
 
   function(test_target)
-    message(STATUS "Creating tests for '${rmw_implementation}'")
     set(rmw_implementation_env_var RMW_IMPLEMENTATION=${rmw_implementation})
-
     # If the rmw_implementation is rmw_zenoh_cpp, run the tests with multicast discovery enabled.
+    # Note: This is a temporary change that will be reverted before we branch into Kilted.
     if(rmw_implementation STREQUAL "rmw_zenoh_cpp")
       list(APPEND rmw_implementation_env_var
-        ZENOH_ROUTER_CHECK_ATTEMPTS=-1
         ZENOH_CONFIG_OVERRIDE=scouting/multicast/enabled=true
-        RUST_LOG=z=error
       )
     endif()
 
