@@ -83,6 +83,14 @@ if(BUILD_TESTING)
   endforeach()
 
   function(custom_test target with_message_argument)
+    set(rmw_implementation_env_var RMW_IMPLEMENTATION=${rmw_implementation})
+    # If the rmw_implementation is rmw_zenoh_cpp, run the tests with multicast discovery enabled.
+    # Note: This is a temporary change that will be reverted before we branch into Kilted.
+    if(rmw_implementation STREQUAL "rmw_zenoh_cpp")
+      list(APPEND rmw_implementation_env_var
+        ZENOH_CONFIG_OVERRIDE=scouting/multicast/enabled=true
+      )
+    endif()
     if(with_message_argument)
       # adding test for each message type
       foreach(message_file ${message_files})
@@ -95,7 +103,7 @@ if(BUILD_TESTING)
           APPEND_LIBRARY_DIRS "${append_library_dirs}"
           ENV
           RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
-          RMW_IMPLEMENTATION=${rmw_implementation})
+          ${rmw_implementation_env_var})
         set_tests_properties(
           "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
           PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}>"
@@ -110,7 +118,7 @@ if(BUILD_TESTING)
         APPEND_LIBRARY_DIRS "${append_library_dirs}"
         ENV
         RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
-        RMW_IMPLEMENTATION=${rmw_implementation})
+        ${rmw_implementation_env_var})
       set_tests_properties(
         "${target}${target_suffix}"
         PROPERTIES REQUIRED_FILES "$<TARGET_FILE:${target}>"
@@ -130,13 +138,21 @@ if(BUILD_TESTING)
   endfunction()
 
   function(custom_test_c target)
+    set(rmw_implementation_env_var RMW_IMPLEMENTATION=${rmw_implementation})
+    # If the rmw_implementation is rmw_zenoh_cpp, run the tests with multicast discovery enabled.
+    # Note: This is a temporary change that will be reverted before we branch into Kilted.
+    if(rmw_implementation STREQUAL "rmw_zenoh_cpp")
+      list(APPEND rmw_implementation_env_var
+        ZENOH_CONFIG_OVERRIDE=scouting/multicast/enabled=true
+      )
+    endif()
     ament_add_gtest(
       "${target}${target_suffix}" ${ARGN}
       TIMEOUT 90
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
-      RMW_IMPLEMENTATION=${rmw_implementation})
+      ${rmw_implementation_env_var})
     if(TARGET ${target}${target_suffix})
       rosidl_get_typesupport_target(c_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_c")
       target_link_libraries(${target}${target_suffix}
@@ -212,6 +228,15 @@ if(BUILD_TESTING)
       set(SKIP_TEST "SKIP_TEST")
     endif()
 
+    set(rmw_implementation_env_var "")
+    if(rmw_implementation1_is_zenoh OR rmw_implementation2_is_zenoh)
+      list(APPEND rmw_implementation_env_var
+        ZENOH_ROUTER_CHECK_ATTEMPTS=-1
+        ZENOH_CONFIG_OVERRIDE=scouting/multicast/enabled=true
+        RUST_LOG=z=error
+      )
+    endif()
+
     set(PUBLISHER_RMW ${rmw_implementation1})
     set(SUBSCRIBER_RMW ${rmw_implementation2})
     set(TEST_MESSAGE_TYPES "")
@@ -256,6 +281,7 @@ if(BUILD_TESTING)
       TARGET test_publisher_subscriber${suffix}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       TIMEOUT ${timeout}
+      ENV ${rmw_implementation_env_var}
       ${SKIP_TEST})
     if(TEST test_publisher_subscriber${suffix})
       set_tests_properties(
@@ -297,6 +323,7 @@ if(BUILD_TESTING)
       TARGET test_requester_replier${suffix}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       TIMEOUT ${timeout}
+      ENV ${rmw_implementation_env_var}
       ${SKIP_TEST})
     if(TEST test_requester_replier${suffix})
       set_tests_properties(
@@ -334,6 +361,7 @@ if(BUILD_TESTING)
       TARGET test_action_client_server${suffix}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       TIMEOUT ${timeout}
+      ENV ${rmw_implementation_env_var}
       ${SKIP_TEST})
     if(TEST test_action_client_server${suffix})
       set_tests_properties(
@@ -467,13 +495,21 @@ if(BUILD_TESTING)
   endif()
 
   macro(serialize)
+    set(rmw_implementation_env_var RMW_IMPLEMENTATION=${rmw_implementation})
+    # If the rmw_implementation is rmw_zenoh_cpp, run the tests with multicast discovery enabled.
+    # Note: This is a temporary change that will be reverted before we branch into Kilted.
+    if(rmw_implementation STREQUAL "rmw_zenoh_cpp")
+      list(APPEND rmw_implementation_env_var
+        ZENOH_CONFIG_OVERRIDE=scouting/multicast/enabled=true
+      )
+    endif()
     set(serialize_target_name "test_serialize${target}${target_suffix}")
     ament_add_gtest(
       ${serialize_target_name} test/test_message_serialization.cpp
       TIMEOUT 30
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
-      RMW_IMPLEMENTATION=${rmw_implementation}
+      ${rmw_implementation_env_var}
     )
     if(TARGET ${serialize_target_name})
       add_dependencies(${serialize_target_name} ${PROJECT_NAME})
@@ -492,13 +528,21 @@ if(BUILD_TESTING)
   endmacro()
 
   macro(pub_sub_serialized)
+    set(rmw_implementation_env_var RMW_IMPLEMENTATION=${rmw_implementation})
+    # If the rmw_implementation is rmw_zenoh_cpp, run the tests with multicast discovery enabled.
+    # Note: This is a temporary change that will be reverted before we branch into Kilted.
+    if(rmw_implementation STREQUAL "rmw_zenoh_cpp")
+      list(APPEND rmw_implementation_env_var
+        ZENOH_CONFIG_OVERRIDE=scouting/multicast/enabled=true
+      )
+    endif()
     set(target_name "test_publisher_subscriber_serialized${target}${target_suffix}")
     ament_add_gtest(
       ${target_name} test/test_publisher_subscriber_serialized.cpp
       TIMEOUT 30
       ENV
       RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
-      RMW_IMPLEMENTATION=${rmw_implementation}
+      ${rmw_implementation_env_var}
     )
     if(TARGET ${target_name})
       add_dependencies(${target_name} ${PROJECT_NAME})
