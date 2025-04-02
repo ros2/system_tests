@@ -2,6 +2,13 @@
 Changelog for package test_quality_of_service
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Use rmw_event_type_is_supported to skip tests (backport `#563 <https://github.com/ros2/system_tests/issues/563>`_) (`#564 <https://github.com/ros2/system_tests/issues/564>`_)
+  * Use rmw_event_type_is_supported to skip tests (`#563 <https://github.com/ros2/system_tests/issues/563>`_)
+  (cherry picked from commit 8d0b7dea57044f14139e9354366f9c1871a47746)
+* Contributors: mergify[bot]
+
 0.20.2 (2024-04-16)
 -------------------
 

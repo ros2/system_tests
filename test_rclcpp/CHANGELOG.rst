@@ -2,6 +2,13 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix: ensure test verifies the existence of all spawning nodes (`#558 <https://github.com/ros2/system_tests/issues/558>`_) (`#562 <https://github.com/ros2/system_tests/issues/562>`_)
+  (cherry picked from commit 5866414a85cfe7faad45f3a3980ca7b0d0b5ce53)
+  Co-authored-by: Yuyuan Yuan <az6980522@gmail.com>
+* Contributors: mergify[bot]
+
 0.20.2 (2024-04-16)
 -------------------
 * Addressed TODO in test_local_parameters (`#545 <https://github.com/ros2/system_tests/issues/545>`_)
