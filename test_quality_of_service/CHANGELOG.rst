@@ -2,8 +2,8 @@
 Changelog for package test_quality_of_service
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.20.3 (2025-04-02)
+-------------------
 * Use rmw_event_type_is_supported to skip tests (backport `#563 <https://github.com/ros2/system_tests/issues/563>`_) (`#564 <https://github.com/ros2/system_tests/issues/564>`_)
   * Use rmw_event_type_is_supported to skip tests (`#563 <https://github.com/ros2/system_tests/issues/563>`_)
   (cherry picked from commit 8d0b7dea57044f14139e9354366f9c1871a47746)

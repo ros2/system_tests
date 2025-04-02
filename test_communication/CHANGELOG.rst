@@ -2,8 +2,8 @@
 Changelog for package test_communication
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.20.3 (2025-04-02)
+-------------------
 * Skip all multi-vendor pub/sub tests with zenoh (`#560 <https://github.com/ros2/system_tests/issues/560>`_) (`#565 <https://github.com/ros2/system_tests/issues/565>`_)
   (cherry picked from commit df98633b28ca9092e43f26783fd9939e4a68373b)
 * Contributors: mergify[bot]
