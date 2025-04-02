@@ -54,6 +54,7 @@ int main(int argc, char ** argv)
   auto messages_defaults = get_messages_defaults();
   auto messages_strings = get_messages_strings();
   auto messages_wstrings = get_messages_wstrings();
+  auto messages_keyed_long = get_messages_keyed_long();
   auto messages_keyed_string = get_messages_keyed_string();
   auto messages_non_keyed_with_nested_key = get_messages_non_keyed_with_nested_key();
   auto messages_complex_nested_key = get_messages_complex_nested_key();
@@ -89,6 +90,8 @@ int main(int argc, char ** argv)
     subscriber = subscribe_strings(node, message, messages_strings, received_messages);
   } else if (message == "WStrings") {
     subscriber = subscribe_wstrings(node, message, messages_wstrings, received_messages);
+  } else if (message == "KeyedLong") {
+    subscriber = subscribe_keyed_long(node, message, messages_keyed_long, received_messages);
   } else if (message == "KeyedString") {
     subscriber = subscribe_keyed_string(node, message, messages_keyed_string, received_messages);
   } else if (message == "NonKeyedWithNestedKey") {

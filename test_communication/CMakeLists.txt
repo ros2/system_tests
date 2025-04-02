@@ -243,19 +243,19 @@ if(BUILD_TESTING)
       get_filename_component(message_type "${message_file}" NAME_WE)
       set(message_has_keys FALSE)
       if(
+          "${message_type}" STREQUAL "KeyedLong" OR
           "${message_type}" STREQUAL "KeyedString" OR
           "${message_type}" STREQUAL "ComplexNestedKey"
       )
         set(message_has_keys TRUE)
       endif()
 
-      # TODO(MiguelCompany): Only fastrtps RMWs interoperate for keyed messages
+      # TODO(fgallegosalido): Only fastrtps and connext RMWs interoperate for keyed messages
       if(
         message_has_keys AND
-        (NOT "${rmw_implementation1}" STREQUAL "${rmw_implementation2}") AND
         (
-          (NOT rmw_implementation1_is_fastrtps) OR
-          (NOT rmw_implementation2_is_fastrtps)
+          (NOT (rmw_implementation1_is_fastrtps OR rmw_implementation1_is_connext)) OR
+          (NOT (rmw_implementation2_is_fastrtps OR rmw_implementation2_is_connext))
         )
       )
         continue()

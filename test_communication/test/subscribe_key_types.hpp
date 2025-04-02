@@ -20,8 +20,15 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "test_msgs/msg/complex_nested_key.hpp"
+#include "test_msgs/msg/keyed_long.hpp"
 #include "test_msgs/msg/keyed_string.hpp"
 #include "test_msgs/msg/non_keyed_with_nested_key.hpp"
+
+rclcpp::SubscriptionBase::SharedPtr subscribe_keyed_long(
+  rclcpp::Node::SharedPtr node,
+  const std::string & message_type,
+  const std::vector<test_msgs::msg::KeyedLong::SharedPtr> & expected_messages,
+  std::vector<bool> & received_messages);
 
 rclcpp::SubscriptionBase::SharedPtr subscribe_keyed_string(
   rclcpp::Node::SharedPtr node,

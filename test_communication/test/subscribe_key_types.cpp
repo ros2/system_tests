@@ -16,11 +16,19 @@
 #include <vector>
 
 #include "rclcpp/rclcpp.hpp"
-#include "test_msgs/msg/keyed_string.hpp"
-#include "test_msgs/msg/non_keyed_with_nested_key.hpp"
 
 #include "subscribe_helper.hpp"
 #include "subscribe_key_types.hpp"
+
+rclcpp::SubscriptionBase::SharedPtr subscribe_keyed_long(
+  rclcpp::Node::SharedPtr node,
+  const std::string & message_type,
+  const std::vector<test_msgs::msg::KeyedLong::SharedPtr> & expected_messages,
+  std::vector<bool> & received_messages)
+{
+  return subscribe<test_msgs::msg::KeyedLong>(
+    node, message_type, expected_messages, received_messages);
+}
 
 rclcpp::SubscriptionBase::SharedPtr subscribe_keyed_string(
   rclcpp::Node::SharedPtr node,
