@@ -51,18 +51,10 @@ if(BUILD_TESTING)
   )
 
   function(add_custom_gtest target)
-    set(rmw_implementation_env_var RMW_IMPLEMENTATION=${rmw_implementation})
-    # If the rmw_implementation is rmw_zenoh_cpp, run the tests with multicast discovery enabled.
-    # Note: This is a temporary change that will be reverted before we branch into Kilted.
-    if(rmw_implementation STREQUAL "rmw_zenoh_cpp")
-      list(APPEND rmw_implementation_env_var
-        ZENOH_CONFIG_OVERRIDE=scouting/multicast/enabled=true
-      )
-    endif()
     ament_add_gtest(${target}${target_suffix} ${ARGN}
       ENV
         RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
-        ${rmw_implementation_env_var}
+        RMW_IMPLEMENTATION=${rmw_implementation}
     )
     target_compile_definitions(${target}${target_suffix}
       PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")

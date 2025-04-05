@@ -164,15 +164,6 @@ if(BUILD_TESTING)
     set(TEST_EXECUTABLE2_ARGS "${_ARG_ARGS2}")
     set(TEST_EXECUTABLE2_NAME "${executable2}")
     set(TEST_RMW_IMPLEMENTATION2 "${_ARG_RMW2}")
-
-    set(rmw_implementation_env_var "")
-    if("${TEST_RMW_IMPLEMENTATION1}" STREQUAL "rmw_zenoh_cpp" OR
-      "${TEST_RMW_IMPLEMENTATION2}" STREQUAL "rmw_zenoh_cpp")
-      list(APPEND rmw_implementation_env_var
-        ZENOH_CONFIG_OVERRIDE=scouting/multicast/enabled=true
-      )
-    endif()
-
     configure_file(
       test/test_two_executables.py.in
       ${test_name}${target_suffix}.py.configure
@@ -187,7 +178,6 @@ if(BUILD_TESTING)
       TARGET "${test_name}${target_suffix}"
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       ${_ARG_UNPARSED_ARGUMENTS}
-      ENV ${rmw_implementation_env_var}
     )
     if(TEST ${test_name}${target_suffix})
       set_tests_properties(${test_name}${target_suffix}
@@ -328,13 +318,6 @@ if(BUILD_TESTING)
 
   function(test_target)
     set(rmw_implementation_env_var RMW_IMPLEMENTATION=${rmw_implementation})
-    # If the rmw_implementation is rmw_zenoh_cpp, run the tests with multicast discovery enabled.
-    # Note: This is a temporary change that will be reverted before we branch into Kilted.
-    if(rmw_implementation STREQUAL "rmw_zenoh_cpp")
-      list(APPEND rmw_implementation_env_var
-        ZENOH_CONFIG_OVERRIDE=scouting/multicast/enabled=true
-      )
-    endif()
 
     ament_add_gtest_test(gtest_avoid_ros_namespace_conventions_qos
       TEST_NAME gtest_avoid_ros_namespace_conventions_qos${target_suffix}
@@ -464,7 +447,6 @@ if(BUILD_TESTING)
     # Parameter tests single implementation
     custom_launch_test_two_executables(test_parameter_server_cpp
       test_parameters_server_cpp test_remote_parameters_cpp
-      RMW1 ${rmw_implementation} RMW2 ${rmw_implementation}
       TIMEOUT 60
       ENV
         ${rmw_implementation_env_var}
@@ -473,7 +455,6 @@ if(BUILD_TESTING)
     # Service tests single implementation
     custom_launch_test_two_executables(test_services_cpp
       test_services_server_cpp test_services_client_cpp
-      RMW1 ${rmw_implementation} RMW2 ${rmw_implementation}
       TIMEOUT 60
       ENV
         ${rmw_implementation_env_var}
@@ -481,7 +462,6 @@ if(BUILD_TESTING)
 
     custom_launch_test_two_executables(test_client_scope_cpp
       test_client_scope_server_cpp test_client_scope_client_cpp
-      RMW1 ${rmw_implementation} RMW2 ${rmw_implementation}
       TIMEOUT 60
       ENV
         ${rmw_implementation_env_var}
@@ -489,7 +469,6 @@ if(BUILD_TESTING)
 
     custom_launch_test_two_executables(test_client_scope_consistency_cpp
       test_client_scope_consistency_server_cpp test_client_scope_consistency_client_cpp
-      RMW1 ${rmw_implementation} RMW2 ${rmw_implementation}
       TIMEOUT 60
       ENV
         ${rmw_implementation_env_var}
