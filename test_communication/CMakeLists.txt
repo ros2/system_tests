@@ -26,6 +26,7 @@ ament_auto_find_build_dependencies()
 
 if(BUILD_TESTING)
   find_package(ament_cmake REQUIRED)
+  find_package(ament_cmake_ros REQUIRED)
   find_package(osrf_testing_tools_cpp REQUIRED)
   find_package(rcpputils REQUIRED)
   find_package(rcl REQUIRED)
@@ -86,7 +87,7 @@ if(BUILD_TESTING)
       # adding test for each message type
       foreach(message_file ${message_files})
         get_filename_component(TEST_MESSAGE_TYPE "${message_file}" NAME_WE)
-        ament_add_test(
+        ament_add_ros_isolated_test(
           "${target}${target_suffix}__${TEST_MESSAGE_TYPE}"
           COMMAND "$<TARGET_FILE:${target}>" "${TEST_MESSAGE_TYPE}"
           TIMEOUT 15
@@ -101,7 +102,7 @@ if(BUILD_TESTING)
         )
       endforeach()
     else()
-      ament_add_test(
+      ament_add_ros_isolated_test(
         "${target}${target_suffix}"
         COMMAND "$<TARGET_FILE:${target}>"
         TIMEOUT 15
@@ -129,7 +130,7 @@ if(BUILD_TESTING)
   endfunction()
 
   function(custom_test_c target)
-    ament_add_gtest(
+    ament_add_ros_isolated_gtest(
       "${target}${target_suffix}" ${ARGN}
       TIMEOUT 90
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
@@ -488,7 +489,7 @@ if(BUILD_TESTING)
 
   macro(serialize)
     set(serialize_target_name "test_serialize${target}${target_suffix}")
-    ament_add_gtest(
+    ament_add_ros_isolated_gtest(
       ${serialize_target_name} test/test_message_serialization.cpp
       TIMEOUT 30
       ENV
@@ -513,7 +514,7 @@ if(BUILD_TESTING)
 
   macro(pub_sub_serialized)
     set(target_name "test_publisher_subscriber_serialized${target}${target_suffix}")
-    ament_add_gtest(
+    ament_add_ros_isolated_gtest(
       ${target_name} test/test_publisher_subscriber_serialized.cpp
       TIMEOUT 30
       ENV
