@@ -59,7 +59,7 @@ if(BUILD_TESTING)
         ZENOH_CONFIG_OVERRIDE=scouting/multicast/enabled=true
       )
     endif()
-    ament_add_gtest(${target}${target_suffix} ${ARGN}
+    ament_add_ros_isolated_gtest(${target}${target_suffix} ${ARGN}
       ENV
         RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
         ${rmw_implementation_env_var}
