@@ -4,11 +4,14 @@ import os
 
 from launch import LaunchDescription
 from launch.actions import ExecuteProcess
+from launch.actions import SetEnvironmentVariable
 from launch.substitutions import LaunchConfiguration
 
 import launch_testing
 import launch_testing.actions
 import launch_testing.asserts
+
+from launch_testing_ros.actions import EnableRmwIsolation
 
 import unittest
 
@@ -16,17 +19,18 @@ import unittest
 def generate_test_description():
     launch_description = LaunchDescription()
 
+    if '@TEST_RMW_IMPLEMENTATION1@':
+        launch_description.add_action(SetEnvironmentVariable(
+            'RMW_IMPLEMENTATION',
+            '@TEST_RMW_IMPLEMENTATION1@'))
+    launch_description.add_action(EnableRmwIsolation())
+
     cmd = ['@TEST_EXECUTABLE1@']
     if '@TEST_EXECUTABLE1_ARGS@':
       cmd += '@TEST_EXECUTABLE1_ARGS@'.split(' ')
-    env = None
-    if '@TEST_RMW_IMPLEMENTATION1@':
-        env = dict(os.environ)
-        env['RMW_IMPLEMENTATION'] = '@TEST_RMW_IMPLEMENTATION1@'
     executable_1 = ExecuteProcess(
         cmd=cmd,
         name='@TEST_EXECUTABLE1_NAME@',
-        env=env,
         sigterm_timeout=LaunchConfiguration('sigterm_timeout', default=30),
         output='screen'
     )
@@ -35,14 +39,13 @@ def generate_test_description():
     cmd = ['@TEST_EXECUTABLE2@']
     if '@TEST_EXECUTABLE2_ARGS@':
       cmd += '@TEST_EXECUTABLE2_ARGS@'.split(' ')
-    env = None
+    env = {}
     if '@TEST_RMW_IMPLEMENTATION2@':
-        env = dict(os.environ)
         env['RMW_IMPLEMENTATION'] = '@TEST_RMW_IMPLEMENTATION2@'
     executable_2 = ExecuteProcess(
         cmd=cmd,
         name='@TEST_EXECUTABLE2_NAME@',
-        env=env,
+        additional_env=env,
         sigterm_timeout=LaunchConfiguration('sigterm_timeout', default=30),
         output='screen'
     )

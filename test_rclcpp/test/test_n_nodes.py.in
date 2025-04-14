@@ -4,11 +4,13 @@ import os
 
 from launch import LaunchDescription
 from launch.actions import ExecuteProcess
+from launch.actions import SetEnvironmentVariable
 
 import launch_testing
 import launch_testing.actions
 import launch_testing.asserts
 import launch_testing_ros
+from launch_testing_ros.actions import EnableRmwIsolation
 
 import unittest
 
@@ -16,24 +18,23 @@ import unittest
 def generate_test_description():
     launch_description = LaunchDescription()
 
-    env = None
     if '@TEST_RMW_IMPLEMENTATION@':
-        env = dict(os.environ)
-        env['RMW_IMPLEMENTATION'] = '@TEST_RMW_IMPLEMENTATION@'
+        launch_description.add_action(SetEnvironmentVariable(
+            'RMW_IMPLEMENTATION',
+            '@TEST_RMW_IMPLEMENTATION@'))
+    launch_description.add_action(EnableRmwIsolation())
 
     for i in range(@TEST_NUM_NODES@):
         launch_description.add_action(
             ExecuteProcess(
                 cmd=['@TEST_EXECUTABLE1@', str(i)],
                 name='node_with_name_' + str(i),
-                env=env,
             )
         )
 
     checking_process = ExecuteProcess(
         cmd=['@TEST_EXECUTABLE2@'] + '@TEST_NUM_NODES@'.split(' '),
         name='node_check_names',
-        env=env
     )
     launch_description.add_action(checking_process)
     launch_description.add_action(
