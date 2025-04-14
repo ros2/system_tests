@@ -6,9 +6,12 @@ import time
 
 from launch import LaunchDescription
 from launch.actions import ExecuteProcess
+from launch.actions import SetEnvironmentVariable
 
 import launch_testing
 import launch_testing.actions
+
+from launch_testing_ros.actions import EnableRmwIsolation
 
 import unittest
 
@@ -23,29 +26,30 @@ def generate_test_description(message_type):
     launch_description = LaunchDescription()
 
     publisher_cmd = ['@TEST_PUBLISHER_EXECUTABLE@', message_type, namespace]
-    publisher_env = dict(os.environ)
+    publisher_env = {
+        'RCL_ASSERT_RMW_ID_MATCHES': '@PUBLISHER_RMW@',
+    }
     if '@TEST_PUBLISHER_RCL@' == 'rclpy':
         publisher_cmd.insert(0, sys.executable)
         publisher_env['PYTHONUNBUFFERED'] = '1'
-    publisher_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@PUBLISHER_RMW@'
-    publisher_env['RMW_IMPLEMENTATION'] = '@PUBLISHER_RMW@'
     publisher_process = ExecuteProcess(
         cmd=publisher_cmd,
         name='test_publisher',
-        env=publisher_env,
+        additional_env=publisher_env,
     )
 
     subscriber_cmd = ['@TEST_SUBSCRIBER_EXECUTABLE@', message_type, namespace]
-    subscriber_env = dict(os.environ)
+    subscriber_env = {
+        'RCL_ASSERT_RMW_ID_MATCHES': '@SUBSCRIBER_RMW@',
+        'RMW_IMPLEMENTATION':  '@SUBSCRIBER_RMW@',
+    }
     if '@TEST_SUBSCRIBER_RCL@' == 'rclpy':
         subscriber_cmd.insert(0, sys.executable)
         subscriber_env['PYTHONUNBUFFERED'] = '1'
-    subscriber_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@SUBSCRIBER_RMW@'
-    subscriber_env['RMW_IMPLEMENTATION'] = '@SUBSCRIBER_RMW@'
     subscriber_process = ExecuteProcess(
         cmd=subscriber_cmd,
         name='test_subscriber',
-        env=subscriber_env,
+        additional_env=subscriber_env,
     )
 
     return LaunchDescription([
@@ -54,6 +58,8 @@ def generate_test_description(message_type):
             cmd=['ros2', 'daemon', 'stop'],
             name='daemon-stop',
             on_exit=[
+                SetEnvironmentVariable('RMW_IMPLEMENTATION', '@PUBLISHER_RMW@'),
+                EnableRmwIsolation(),
                 publisher_process,
                 subscriber_process,
                 launch_testing.actions.ReadyToTest()

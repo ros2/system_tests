@@ -6,9 +6,12 @@ import time
 
 from launch import LaunchDescription
 from launch.actions import ExecuteProcess
+from launch.actions import SetEnvironmentVariable
 
 import launch_testing
 import launch_testing.actions
+
+from launch_testing_ros.actions import EnableRmwIsolation
 
 import unittest
 
@@ -23,30 +26,30 @@ def generate_test_description(action_type):
     launch_description = LaunchDescription()
 
     action_client_cmd = ['@TEST_ACTION_CLIENT_EXECUTABLE@', action_type, namespace]
-    action_client_env = dict(os.environ)
+    action_client_env = {
+        'RCL_ASSERT_RMW_ID_MATCHES': '@ACTION_CLIENT_RMW@',
+    }
     if '@TEST_ACTION_CLIENT_RCL@' == 'rclpy':
         action_client_cmd.insert(0, sys.executable)
         action_client_env['PYTHONUNBUFFERED'] = '1'
-    action_client_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@ACTION_CLIENT_RMW@'
-    action_client_env['RMW_IMPLEMENTATION'] = '@ACTION_CLIENT_RMW@'
     action_client_process = ExecuteProcess(
         cmd=action_client_cmd,
         name='test_action_client',
-        env=action_client_env,
+        additional_env=action_client_env,
     )
 
     action_server_cmd = ['@TEST_ACTION_SERVER_EXECUTABLE@', action_type, namespace]
-    action_server_env = dict(os.environ)
+    action_server_env = {
+        'RCL_ASSERT_RMW_ID_MATCHES': '@ACTION_SERVER_RMW@',
+        'RMW_IMPLEMENTATION': '@ACTION_SERVER_RMW@',
+    }
     if '@TEST_ACTION_SERVER_RCL@' == 'rclpy':
         action_server_cmd.insert(0, sys.executable)
         action_server_env['PYTHONUNBUFFERED'] = '1'
-    action_server_env['RCL_ASSERT_RMW_ID_MATCHES'] = '@ACTION_SERVER_RMW@'
-    action_server_env['RMW_IMPLEMENTATION'] = '@ACTION_SERVER_RMW@'
-
     action_server_process = ExecuteProcess(
         cmd=action_server_cmd,
         name='test_action_server',
-        env=action_server_env,
+        additional_env=action_server_env,
     )
 
     return LaunchDescription([
@@ -55,6 +58,8 @@ def generate_test_description(action_type):
             cmd=['ros2', 'daemon', 'stop'],
             name='daemon-stop',
             on_exit=[
+                SetEnvironmentVariable('RMW_IMPLEMENTATION', '@ACTION_CLIENT_RMW@'),
+                EnableRmwIsolation(),
                 action_server_process,
                 action_client_process,
                 launch_testing.actions.ReadyToTest()
