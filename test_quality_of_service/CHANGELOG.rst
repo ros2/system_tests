@@ -2,6 +2,12 @@
 Changelog for package test_quality_of_service
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.24.0 (2025-04-28)
+-------------------
+* Switch to isolated test fixture macros (`#571 <https://github.com/ros2/system_tests/issues/571>`_)
+* Use rmw_event_type_is_supported to skip tests (`#563 <https://github.com/ros2/system_tests/issues/563>`_)
+* Contributors: Alejandro Hernández Cordero, Scott K Logan
+
 0.23.0 (2025-02-02)
 -------------------
 * Fixed some qos test related with Zenoh (`#551 <https://github.com/ros2/system_tests/issues/551>`_)

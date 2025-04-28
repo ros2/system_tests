@@ -2,6 +2,15 @@
 Changelog for package test_communication
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.24.0 (2025-04-28)
+-------------------
+* Use EnableRmwIsolation in launch tests (`#571 <https://github.com/ros2/system_tests/issues/571>`_)
+* Switch to isolated test fixture macros (`#571 <https://github.com/ros2/system_tests/issues/571>`_)
+* Add tests for Keyed types (`#568 <https://github.com/ros2/system_tests/issues/568>`_)
+* Remove use of ament_target_dependencies (`#566 <https://github.com/ros2/system_tests/issues/566>`_)
+* Skip all multi-vendor pub/sub tests with zenoh (`#560 <https://github.com/ros2/system_tests/issues/560>`_)
+* Contributors: Alejandro Hernández Cordero, Francisco Gallego Salido, Scott K Logan, Shane Loretz, yadunund
+
 0.23.0 (2025-02-02)
 -------------------
 

@@ -2,6 +2,12 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.24.0 (2025-04-28)
+-------------------
+* Use EnableRmwIsolation in launch tests (`#571 <https://github.com/ros2/system_tests/issues/571>`_)
+* Ensure test verifies the existence of all spawning nodes (`#558 <https://github.com/ros2/system_tests/issues/558>`_)
+* Contributors: Alejandro Hernández Cordero, Scott K Logan, Yuyuan Yuan
+
 0.23.0 (2025-02-02)
 -------------------
 * chore: Adopted to API changes in rclcpp (`#556 <https://github.com/ros2/system_tests/issues/556>`_)
