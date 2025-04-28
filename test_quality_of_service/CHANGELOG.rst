@@ -2,6 +2,9 @@
 Changelog for package test_quality_of_service
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.25.0 (2025-04-28)
+-------------------
+
 0.24.0 (2025-04-28)
 -------------------
 * Switch to isolated test fixture macros (`#571 <https://github.com/ros2/system_tests/issues/571>`_)
