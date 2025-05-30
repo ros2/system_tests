@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.20)
 
 set(node_names_list "/publisher;/subscriber;/publisher_missing_key;/publisher_invalid_cert")
 file(REMOVE_RECURSE "${KEYSTORE_DIRECTORY}/enclaves")
