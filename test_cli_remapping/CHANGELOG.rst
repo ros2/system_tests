@@ -2,6 +2,11 @@
 Changelog for package test_cli_remapping
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix CMAKE deprecation (`#572 <https://github.com/ros2/system_tests/issues/572>`_)
+* Contributors: mosfet80
+
 0.25.0 (2025-04-28)
 -------------------
 
