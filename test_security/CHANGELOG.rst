@@ -2,8 +2,8 @@
 Changelog for package test_security
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.25.1 (2025-07-01)
+-------------------
 * fix CMAKE deprecation (`#572 <https://github.com/ros2/system_tests/issues/572>`_)
 * Contributors: mosfet80
 
