@@ -102,6 +102,8 @@ TEST_F(test_two_service_calls, recursive_service_call)
   if (!client->wait_for_service(20s)) {
     ASSERT_TRUE(false) << "service not available after waiting";
   }
+  rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(node);
 
   auto request1 = std::make_shared<test_rclcpp::srv::AddTwoInts::Request>();
   request1->a = 1;
@@ -134,7 +136,7 @@ TEST_F(test_two_service_calls, recursive_service_call)
   printf("Waiting for reply...\n");
   fflush(stdout);
   while (!second_result_received) {
-    rclcpp::spin_some(node);
+    executor.spin_some();
   }
   EXPECT_TRUE(second_result_received);
 }

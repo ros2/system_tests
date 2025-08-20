@@ -36,10 +36,12 @@ int main(int argc, char ** argv)
   auto service = node->create_service<test_rclcpp::srv::AddTwoInts>(
     "client_scope", handle_add_two_ints);
 
+  rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(node);
   rclcpp::WallRate loop_rate(30);
   try {
     while (rclcpp::ok()) {
-      rclcpp::spin_some(node);
+      executor.spin_some();
       loop_rate.sleep();
     }
   } catch (const rclcpp::exceptions::RCLError & ex) {

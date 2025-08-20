@@ -42,6 +42,8 @@ int main(int argc, char ** argv)
   auto subscriber = node->create_subscription<test_communication::msg::UInt32>(
     "test_subscription_valid_data", 10, callback);
 
+  rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(node);
   rclcpp::WallRate message_rate(5);
   {
     auto publisher = node->create_publisher<test_communication::msg::UInt32>(
@@ -58,16 +60,16 @@ int main(int argc, char ** argv)
       publisher->publish(std::move(msg));
       ++index;
       message_rate.sleep();
-      rclcpp::spin_some(node);
+      executor.spin_some();
     }
 
     message_rate.sleep();
-    rclcpp::spin_some(node);
+    executor.spin_some();
   }
   // the publisher goes out of scope and the subscriber should be not receive any callbacks anymore
 
   message_rate.sleep();
-  rclcpp::spin_some(node);
+  executor.spin_some();
 
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> diff = (end - start);

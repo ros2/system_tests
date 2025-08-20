@@ -37,11 +37,13 @@ int main(int argc, char ** argv)
   rclcpp::QoS qos(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
   auto service = node->create_service<test_rclcpp::srv::AddTwoInts>(
     "client_scope", handle_add_two_ints, qos);
+  rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(node);
 
   rclcpp::WallRate loop_rate(30);
   try {
     while (rclcpp::ok()) {
-      rclcpp::spin_some(node);
+      executor.spin_some();
       loop_rate.sleep();
     }
   } catch (const rclcpp::exceptions::RCLError & ex) {
