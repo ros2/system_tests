@@ -144,6 +144,8 @@ TEST_F(test_time, timer_during_wait)
 TEST_F(test_time, finite_timer)
 {
   auto node = rclcpp::Node::make_shared("finite_timer");
+  rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(node);
 
   int counter = 0;
   auto callback =
@@ -168,7 +170,7 @@ TEST_F(test_time, finite_timer)
     // spin a few times
     for (uint32_t i = 0; i < 6; ++i) {
       std::this_thread::sleep_for(period);
-      rclcpp::spin_some(node);
+      executor.spin_some();
     }
 
     EXPECT_EQ(counter, 2);

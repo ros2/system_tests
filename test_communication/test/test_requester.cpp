@@ -50,6 +50,8 @@ int request(
   auto start = std::chrono::steady_clock::now();
   // publish the first request up to number_of_cycles times, longer sleep between each cycle
   // publish all requests one by one, shorter sleep between each request
+  rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(node);
   while (rclcpp::ok() && cycle_index < number_of_cycles && service_index < services.size()) {
     printf("publishing request #%zu\n", service_index + 1);
     auto f = requester->async_send_request(services[service_index].first);
@@ -57,7 +59,7 @@ int request(
     auto wait_for_response_until = std::chrono::steady_clock::now() + wait_between_services;
     std::future_status status;
     do {
-      rclcpp::spin_some(node);
+      executor.spin_some();
       status = f.wait_for(std::chrono::milliseconds(10));
     } while (
       status != std::future_status::ready && rclcpp::ok() &&

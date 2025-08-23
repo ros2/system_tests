@@ -75,6 +75,8 @@ TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), serialized_callb
     "test_publisher_subscriber_serialized_topic", 10, serialized_callback);
   auto publisher = node->create_publisher<test_msgs::msg::BasicTypes>(
     "test_publisher_subscriber_serialized_topic", 10);
+  rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(node);
 
   test_msgs::msg::BasicTypes msg;
 
@@ -82,7 +84,7 @@ TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), serialized_callb
   for (auto i = 0u; i < 10; ++i) {
     msg.uint8_value = i;
     publisher->publish(msg);
-    rclcpp::spin_some(node);
+    executor.spin_some();
     loop_rate.sleep();
   }
   EXPECT_GT(counter, 0u);
