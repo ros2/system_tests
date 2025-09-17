@@ -2,6 +2,11 @@
 Changelog for package test_communication
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.25.2 (2025-09-17)
+-------------------
+* get rid of deprecated rclcpp::spin_some(). (`#574 <https://github.com/ros2/system_tests//issues/574>`_)
+* Contributors: Tomoya Fujita
+
 0.25.1 (2025-07-01)
 -------------------
 * fix CMAKE deprecation (`#572 <https://github.com/ros2/system_tests/issues/572>`_)

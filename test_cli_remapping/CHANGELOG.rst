@@ -2,6 +2,9 @@
 Changelog for package test_cli_remapping
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.25.2 (2025-09-17)
+-------------------
+
 0.25.1 (2025-07-01)
 -------------------
 * fix CMAKE deprecation (`#572 <https://github.com/ros2/system_tests/issues/572>`_)
