@@ -48,7 +48,7 @@ TEST_F(CLASSNAME(TestMessageSerialization, RMW_IMPLEMENTATION), serialized_callb
   size_t counter = 0;
 
   auto serialized_callback =
-    [&got_first_msg, &counter](const std::shared_ptr<rclcpp::SerializedMessage> serialized_msg) {
+    [&got_first_msg, &counter](const std::shared_ptr<const rclcpp::SerializedMessage> serialized_msg) {
       using MessageT = test_msgs::msg::BasicTypes;
       rclcpp::Serialization<MessageT> serializer;
       MessageT basic_types_msg;
