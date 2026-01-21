@@ -2,8 +2,8 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.20.4 (2026-01-21)
+-------------------
 * No messages come from signal handler. (`#580 <https://github.com/ros2/system_tests/issues/580>`_) (`#581 <https://github.com/ros2/system_tests/issues/581>`_)
   (cherry picked from commit 6bb22d7f910958461b3faab179162b34cf76f939)
   Co-authored-by: Tomoya Fujita <Tomoya.Fujita@sony.com>
