@@ -23,6 +23,7 @@ if(BUILD_TESTING)
   find_package(launch_testing_ament_cmake REQUIRED)
 
   find_package(ament_cmake_gtest REQUIRED)
+  find_package(ament_cmake_ros REQUIRED)
 
   # finding gtest once in the highest scope
   # prevents finding it repeatedly in each local scope
@@ -319,7 +320,7 @@ if(BUILD_TESTING)
   function(test_target)
     set(rmw_implementation_env_var RMW_IMPLEMENTATION=${rmw_implementation})
 
-    ament_add_gtest_test(gtest_avoid_ros_namespace_conventions_qos
+    ament_add_ros_isolated_gtest_test(gtest_avoid_ros_namespace_conventions_qos
       TEST_NAME gtest_avoid_ros_namespace_conventions_qos${target_suffix}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       TIMEOUT 15
@@ -327,7 +328,7 @@ if(BUILD_TESTING)
         ${rmw_implementation_env_var}
     )
 
-    ament_add_gtest_test(gtest_publisher
+    ament_add_ros_isolated_gtest_test(gtest_publisher
       TEST_NAME gtest_publisher${target_suffix}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       TIMEOUT 15
@@ -335,14 +336,14 @@ if(BUILD_TESTING)
         ${rmw_implementation_env_var}
     )
 
-    ament_add_gtest_test(gtest_client_wait_for_service_shutdown
+    ament_add_ros_isolated_gtest_test(gtest_client_wait_for_service_shutdown
       TEST_NAME gtest_client_wait_for_service_shutdown${target_suffix}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       ENV
         ${rmw_implementation_env_var}
     )
 
-    ament_add_gtest_test(gtest_executor
+    ament_add_ros_isolated_gtest_test(gtest_executor
       TEST_NAME gtest_executor${target_suffix}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       TIMEOUT 60
@@ -350,7 +351,7 @@ if(BUILD_TESTING)
         ${rmw_implementation_env_var}
     )
 
-    ament_add_gtest_test(gtest_repeated_publisher_subscriber
+    ament_add_ros_isolated_gtest_test(gtest_repeated_publisher_subscriber
       TEST_NAME gtest_repeated_publisher_subscriber${target_suffix}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       TIMEOUT 15
@@ -358,7 +359,7 @@ if(BUILD_TESTING)
         ${rmw_implementation_env_var}
     )
 
-    ament_add_gtest_test(gtest_spin
+    ament_add_ros_isolated_gtest_test(gtest_spin
       TEST_NAME gtest_spin${target_suffix}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       TIMEOUT 30
@@ -369,7 +370,7 @@ if(BUILD_TESTING)
     # TODO(clalancette): Under load, the gtest_subscription__rmw_connextdds test fails deep in the
     # bowels of Connext; see https://github.com/ros2/rmw_connextdds/issues/136 for details.  Skip it
     # for now so we can keep CI green.
-    ament_add_gtest_test(gtest_subscription
+    ament_add_ros_isolated_gtest_test(gtest_subscription
       TEST_NAME gtest_subscription${target_suffix}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       TIMEOUT 60
@@ -380,7 +381,7 @@ if(BUILD_TESTING)
       ament_add_test_label(gtest_subscription${target_suffix} xfail)
     endif()
 
-    ament_add_gtest_test(gtest_multiple_service_calls
+    ament_add_ros_isolated_gtest_test(gtest_multiple_service_calls
       TEST_NAME gtest_multiple_service_calls${target_suffix}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       TIMEOUT 60
@@ -388,7 +389,7 @@ if(BUILD_TESTING)
         ${rmw_implementation_env_var}
     )
 
-    ament_add_gtest_test(gtest_timer
+    ament_add_ros_isolated_gtest_test(gtest_timer
       TEST_NAME gtest_timer${target_suffix}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       TIMEOUT 30
@@ -396,7 +397,7 @@ if(BUILD_TESTING)
         ${rmw_implementation_env_var}
     )
 
-    ament_add_gtest_test(gtest_timeout_subscriber
+    ament_add_ros_isolated_gtest_test(gtest_timeout_subscriber
       TEST_NAME gtest_timeout_subscriber${target_suffix}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       TIMEOUT 30
@@ -404,7 +405,7 @@ if(BUILD_TESTING)
         ${rmw_implementation_env_var}
     )
 
-    ament_add_gtest_test(gtest_intra_process
+    ament_add_ros_isolated_gtest_test(gtest_intra_process
       TEST_NAME gtest_intra_process${target_suffix}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       TIMEOUT 15
@@ -412,7 +413,7 @@ if(BUILD_TESTING)
         ${rmw_implementation_env_var}
     )
 
-    ament_add_gtest_test(gtest_multithreaded
+    ament_add_ros_isolated_gtest_test(gtest_multithreaded
       TEST_NAME gtest_multithreaded${target_suffix}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       TIMEOUT 90
@@ -420,7 +421,7 @@ if(BUILD_TESTING)
         ${rmw_implementation_env_var}
     )
 
-    ament_add_gtest_test(gtest_local_parameters
+    ament_add_ros_isolated_gtest_test(gtest_local_parameters
       TEST_NAME gtest_local_parameters${target_suffix}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       TIMEOUT 300
@@ -428,7 +429,7 @@ if(BUILD_TESTING)
         ${rmw_implementation_env_var}
     )
 
-    ament_add_gtest_test(gtest_services_in_constructor
+    ament_add_ros_isolated_gtest_test(gtest_services_in_constructor
       TEST_NAME gtest_services_in_constructor${target_suffix}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       TIMEOUT 30
@@ -436,7 +437,7 @@ if(BUILD_TESTING)
         ${rmw_implementation_env_var}
     )
 
-    ament_add_gtest_test(gtest_waitable
+    ament_add_ros_isolated_gtest_test(gtest_waitable
       TEST_NAME gtest_waitable${target_suffix}
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       TIMEOUT 300
