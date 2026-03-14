@@ -26,7 +26,7 @@ def replier_callback(request, response, srv_fixtures):
     for req, resp in srv_fixtures:
         if request.__repr__() == req.__repr__():
             print('received request #%d of %d' %
-                  (srv_fixtures.index([req, resp]) + 1, len(srv_fixtures)))
+                  (srv_fixtures.index((req, resp)) + 1, len(srv_fixtures)))
             return resp
 
 

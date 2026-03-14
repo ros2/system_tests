@@ -48,7 +48,7 @@ def requester(service_name, namespace):
             assert repr(future.result()) == repr(resp), \
                 'unexpected response %r\n\nwas expecting %r' % (future.result(), resp)
             print('received reply #%d of %d' % (
-                srv_fixtures.index([req, resp]) + 1, len(srv_fixtures)))
+                srv_fixtures.index((req, resp)) + 1, len(srv_fixtures)))
 
 
 if __name__ == '__main__':
