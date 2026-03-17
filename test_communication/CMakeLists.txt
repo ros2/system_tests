@@ -257,6 +257,16 @@ if(BUILD_TESTING)
       )
         continue()
       endif()
+      # CycloneDDS don't FastRTPS interoperate for WString
+      if(
+        "${message_type}" STREQUAL "WStrings" AND
+        (
+          (rmw_implementation1_is_fastrtps AND rmw_implementation2_is_cyclonedds) OR
+          (rmw_implementation1_is_cyclonedds AND rmw_implementation1_is_fastrtps)
+        )
+      )
+        continue()
+      endif()
       list(APPEND TEST_MESSAGE_TYPES "${message_type}")
     endforeach()
     configure_file(
