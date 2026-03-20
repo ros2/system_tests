@@ -125,7 +125,7 @@ if(BUILD_TESTING)
       "${cpp_typesupport_target}"
       rclcpp::rclcpp
       rclcpp_action::rclcpp_action
-      ${test_msgs_TARGETS}
+      test_msgs::test_msgs
     )
   endfunction()
 
@@ -432,7 +432,7 @@ if(BUILD_TESTING)
     "test/subscribe_string_types.cpp")
   target_link_libraries(subscribe_types
     rclcpp::rclcpp
-    ${test_msgs_TARGETS}
+    test_msgs::test_msgs
   )
 
   # publisher combined with a subscriber
@@ -512,7 +512,7 @@ if(BUILD_TESTING)
         rmw::rmw
         rosidl_typesupport_c::rosidl_typesupport_c
         rosidl_typesupport_cpp::rosidl_typesupport_cpp
-        ${test_msgs_TARGETS}
+        test_msgs::test_msgs
         ${${rmw_implementation}_TARGETS}
       )
       set_tests_properties(
@@ -539,7 +539,7 @@ if(BUILD_TESTING)
         rmw::rmw
         rosidl_typesupport_c::rosidl_typesupport_c
         rosidl_typesupport_cpp::rosidl_typesupport_cpp
-        ${test_msgs_TARGETS}
+        test_msgs::test_msgs
         ${${rmw_implementation}_TARGETS}
       )
       set_tests_properties(

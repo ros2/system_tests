@@ -47,7 +47,7 @@ if(BUILD_TESTING)
   target_link_libraries(${PROJECT_NAME}_support
     rclcpp::rclcpp
     rcutils::rcutils
-    ${std_msgs_TARGETS}
+    std_msgs::std_msgs
   )
 
   function(add_custom_gtest target)
@@ -63,8 +63,8 @@ if(BUILD_TESTING)
       rcl::rcl
       rclcpp::rclcpp
       rcutils::rcutils
-      ${std_msgs_TARGETS}
-      ${test_msgs_TARGETS}
+      std_msgs::std_msgs
+      test_msgs::test_msgs
     )
   endfunction()
 

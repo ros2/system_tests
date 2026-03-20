@@ -28,7 +28,7 @@ if(BUILD_TESTING)
     test/name_maker.cpp)
   target_link_libraries(name_maker_rclcpp
     rclcpp::rclcpp
-    ${test_msgs_TARGETS}
+    test_msgs::test_msgs
   )
 
   add_launch_test(

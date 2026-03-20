@@ -46,7 +46,7 @@ if(BUILD_TESTING)
     add_executable(${target} ${ARGN})
     target_link_libraries(${target}
       rclcpp::rclcpp
-      ${test_msgs_TARGETS}
+      test_msgs::test_msgs
     )
   endfunction()
 
