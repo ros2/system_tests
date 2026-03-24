@@ -2,6 +2,11 @@
 Changelog for package test_cli_remapping
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.25.3 (2026-03-24)
+-------------------
+* Use new ROSIDL aggregate CMake target (`#587 <https://github.com/ros2/system_tests/issues/587>`_)
+* Contributors: Emerson Knapp
+
 0.25.2 (2025-09-17)
 -------------------
 

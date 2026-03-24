@@ -2,6 +2,14 @@
 Changelog for package test_communication
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.25.3 (2026-03-24)
+-------------------
+* Use new ROSIDL aggregate CMake target (`#587 <https://github.com/ros2/system_tests/issues/587>`_)
+* disable interoperability check for CycloneDDS and FastRTPS for WString (`#586 <https://github.com/ros2/system_tests/issues/586>`_)
+* Fix index (`#585 <https://github.com/ros2/system_tests/issues/585>`_)
+* Update subscription callback signatures (`#575 <https://github.com/ros2/system_tests/issues/575>`_)
+* Contributors: Emerson Knapp, Janosch Machowinski, Michael Carlstrom, mini-1235
+
 0.25.2 (2025-09-17)
 -------------------
 * get rid of deprecated rclcpp::spin_some(). (`#574 <https://github.com/ros2/system_tests//issues/574>`_)

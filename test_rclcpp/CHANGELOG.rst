@@ -2,6 +2,12 @@
 Changelog for package test_rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.25.3 (2026-03-24)
+-------------------
+* Add tests isolation in test_rclcpp (`#583 <https://github.com/ros2/system_tests/issues/583>`_)
+* info message comes from deferred signal handler with another thread. (`#576 <https://github.com/ros2/system_tests/issues/576>`_)
+* Contributors: Julien Enoch, Tomoya Fujita
+
 0.25.2 (2025-09-17)
 -------------------
 * get rid of deprecated rclcpp::spin_some(). (`#574 <https://github.com/ros2/system_tests//issues/574>`_)
