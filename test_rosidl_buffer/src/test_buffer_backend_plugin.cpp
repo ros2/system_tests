@@ -46,7 +46,7 @@ std::shared_ptr<void> TestBufferBackend::create_empty_descriptor() const
 
 std::pair<bool, std::vector<std::set<std::uint32_t>>> TestBufferBackend::on_discovering_endpoint(
   const rmw_topic_endpoint_info_t & endpoint_info,
-  const std::vector<rmw_topic_endpoint_info_t> & existing_endpoints,
+  [[maybe_unused]] const std::vector<rmw_topic_endpoint_info_t> & existing_endpoints,
   const std::unordered_map<std::string, std::string> & endpoint_supported_backends)
 {
   (void)existing_endpoints;
@@ -83,7 +83,7 @@ std::shared_ptr<void> TestBufferBackend::create_descriptor_with_endpoint(
 
 std::unique_ptr<void, void (*)(void *)> TestBufferBackend::from_descriptor_with_endpoint(
   const void * descriptor,
-  const rmw_topic_endpoint_info_t & endpoint_info) const
+  [[maybe_unused]] const rmw_topic_endpoint_info_t & endpoint_info) const
 {
   (void)endpoint_info;
   const auto & desc = *static_cast<const msg::TestBufferDescriptor *>(descriptor);
