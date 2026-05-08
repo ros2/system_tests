@@ -1,0 +1,10 @@
+<!-- Plugin descriptor for the in-tree test buffer backend used by system tests. -->
+<library path="test_rosidl_buffer_backend_plugin">
+  <class name="test"
+         type="test_rosidl_buffer::TestBufferBackend"
+         base_class_type="rosidl::BufferBackend">
+    <description>
+      Minimal BufferBackend plugin used by system_tests/test_rosidl_buffer.
+    </description>
+  </class>
+</library>
