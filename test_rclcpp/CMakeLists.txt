@@ -2,11 +2,6 @@ cmake_minimum_required(VERSION 3.20)
 
 project(test_rclcpp)
 
-# Default to C++20
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 20)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-endif()
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
@@ -24,6 +19,7 @@ if(BUILD_TESTING)
 
   find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_cmake_ros REQUIRED)
+  find_package(ament_cmake_ros_core REQUIRED)
 
   # finding gtest once in the highest scope
   # prevents finding it repeatedly in each local scope
@@ -54,105 +50,105 @@ if(BUILD_TESTING)
     test/test_avoid_ros_namespace_conventions_qos.cpp
   )
   target_include_directories(gtest_avoid_ros_namespace_conventions_qos PRIVATE include)
-  target_link_libraries(gtest_avoid_ros_namespace_conventions_qos "${cpp_typesupport_target}" rclcpp::rclcpp)
+  target_link_libraries(gtest_avoid_ros_namespace_conventions_qos "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   ament_add_gtest_executable(gtest_publisher test/test_publisher.cpp)
   target_include_directories(gtest_publisher PRIVATE include)
-  target_link_libraries(gtest_publisher "${cpp_typesupport_target}" rclcpp::rclcpp)
+  target_link_libraries(gtest_publisher "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   ament_add_gtest_executable(gtest_client_wait_for_service_shutdown
     test/test_client_wait_for_service_shutdown.cpp
   )
   target_include_directories(gtest_client_wait_for_service_shutdown PRIVATE include)
-  target_link_libraries(gtest_client_wait_for_service_shutdown "${cpp_typesupport_target}" rclcpp::rclcpp rcpputils::rcpputils)
+  target_link_libraries(gtest_client_wait_for_service_shutdown "${cpp_typesupport_target}" rclcpp::rclcpp rcpputils::rcpputils ament_cmake_ros_core::ament_ros_defaults)
 
   ament_add_gtest_executable(gtest_executor test/test_executor.cpp)
   target_include_directories(gtest_executor PRIVATE include)
-  target_link_libraries(gtest_executor "${cpp_typesupport_target}" rclcpp::rclcpp)
+  target_link_libraries(gtest_executor "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   ament_add_gtest_executable(gtest_repeated_publisher_subscriber test/test_repeated_publisher_subscriber.cpp)
   target_include_directories(gtest_repeated_publisher_subscriber PRIVATE include)
-  target_link_libraries(gtest_repeated_publisher_subscriber "${cpp_typesupport_target}" rclcpp::rclcpp)
+  target_link_libraries(gtest_repeated_publisher_subscriber "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   ament_add_gtest_executable(gtest_spin test/test_spin.cpp)
   target_include_directories(gtest_spin PRIVATE include)
-  target_link_libraries(gtest_spin "${cpp_typesupport_target}" rclcpp::rclcpp)
+  target_link_libraries(gtest_spin "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   ament_add_gtest_executable(gtest_subscription test/test_subscription.cpp)
   target_include_directories(gtest_subscription PRIVATE include)
-  target_link_libraries(gtest_subscription "${cpp_typesupport_target}" rclcpp::rclcpp)
+  target_link_libraries(gtest_subscription "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   ament_add_gtest_executable(gtest_multiple_service_calls test/test_multiple_service_calls.cpp)
   target_include_directories(gtest_multiple_service_calls PRIVATE include)
-  target_link_libraries(gtest_multiple_service_calls "${cpp_typesupport_target}" rclcpp::rclcpp)
+  target_link_libraries(gtest_multiple_service_calls "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   ament_add_gtest_executable(gtest_timer test/test_timer.cpp)
   target_include_directories(gtest_timer PRIVATE include)
-  target_link_libraries(gtest_timer rclcpp::rclcpp)
+  target_link_libraries(gtest_timer rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   ament_add_gtest_executable(gtest_timeout_subscriber test/test_timeout_subscriber.cpp)
   target_include_directories(gtest_timeout_subscriber PRIVATE include)
-  target_link_libraries(gtest_timeout_subscriber "${cpp_typesupport_target}" rclcpp::rclcpp)
+  target_link_libraries(gtest_timeout_subscriber "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   ament_add_gtest_executable(gtest_intra_process test/test_intra_process.cpp)
   target_include_directories(gtest_intra_process PRIVATE include)
-  target_link_libraries(gtest_intra_process "${cpp_typesupport_target}" rclcpp::rclcpp)
+  target_link_libraries(gtest_intra_process "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   ament_add_gtest_executable(gtest_multithreaded test/test_multithreaded.cpp)
   target_include_directories(gtest_multithreaded PRIVATE include)
-  target_link_libraries(gtest_multithreaded "${cpp_typesupport_target}" rclcpp::rclcpp)
+  target_link_libraries(gtest_multithreaded "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   ament_add_gtest_executable(gtest_local_parameters test/test_local_parameters.cpp)
   target_include_directories(gtest_local_parameters PRIVATE include)
-  target_link_libraries(gtest_local_parameters rclcpp::rclcpp)
+  target_link_libraries(gtest_local_parameters rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   ament_add_gtest_executable(gtest_services_in_constructor test/test_services_in_constructor.cpp)
   target_include_directories(gtest_services_in_constructor PRIVATE include)
-  target_link_libraries(gtest_services_in_constructor "${cpp_typesupport_target}" rclcpp::rclcpp)
+  target_link_libraries(gtest_services_in_constructor "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   ament_add_gtest_executable(gtest_waitable test/test_waitable.cpp)
   target_include_directories(gtest_waitable PRIVATE include)
-  target_link_libraries(gtest_waitable rclcpp::rclcpp)
+  target_link_libraries(gtest_waitable rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   # Test node names
   add_executable(node_with_name test/node_with_name.cpp)
-  target_link_libraries(node_with_name rclcpp::rclcpp)
+  target_link_libraries(node_with_name rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
   add_executable(node_name_list test/node_name_list.cpp)
-  target_link_libraries(node_name_list rclcpp::rclcpp)
+  target_link_libraries(node_name_list rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
   add_executable(node_check_names test/node_check_names.cpp)
-  target_link_libraries(node_check_names rclcpp::rclcpp)
+  target_link_libraries(node_check_names rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   add_executable(test_sigint_handler test/test_sigint_handler.cpp)
-  target_link_libraries(test_sigint_handler rclcpp::rclcpp)
+  target_link_libraries(test_sigint_handler rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   add_executable(test_sigterm_handler test/test_sigterm_handler.cpp)
-  target_link_libraries(test_sigterm_handler rclcpp::rclcpp)
+  target_link_libraries(test_sigterm_handler rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   # Parameter tests single implementation
   add_executable(test_parameters_server_cpp test/test_parameters_server.cpp)
-  target_link_libraries(test_parameters_server_cpp rclcpp::rclcpp)
+  target_link_libraries(test_parameters_server_cpp rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   ament_add_gtest_executable(test_remote_parameters_cpp test/test_remote_parameters.cpp)
-  target_link_libraries(test_remote_parameters_cpp rclcpp::rclcpp)
+  target_link_libraries(test_remote_parameters_cpp rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   # Service tests single implementation
   add_executable(test_services_server_cpp test/test_services_server.cpp)
-  target_link_libraries(test_services_server_cpp "${cpp_typesupport_target}" rclcpp::rclcpp)
+  target_link_libraries(test_services_server_cpp "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   ament_add_gtest_executable(test_services_client_cpp test/test_services_client.cpp)
-  target_link_libraries(test_services_client_cpp "${cpp_typesupport_target}" rclcpp::rclcpp)
+  target_link_libraries(test_services_client_cpp "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   add_executable(test_client_scope_server_cpp test/test_client_scope_server.cpp)
-  target_link_libraries(test_client_scope_server_cpp "${cpp_typesupport_target}" rclcpp::rclcpp)
+  target_link_libraries(test_client_scope_server_cpp "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   ament_add_gtest_executable(test_client_scope_client_cpp test/test_client_scope_client.cpp)
-  target_link_libraries(test_client_scope_client_cpp "${cpp_typesupport_target}" rclcpp::rclcpp)
+  target_link_libraries(test_client_scope_client_cpp "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   add_executable(test_client_scope_consistency_server_cpp test/test_client_scope_consistency_server.cpp)
-  target_link_libraries(test_client_scope_consistency_server_cpp "${cpp_typesupport_target}" rclcpp::rclcpp)
+  target_link_libraries(test_client_scope_consistency_server_cpp "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   ament_add_gtest_executable(test_client_scope_consistency_client_cpp test/test_client_scope_consistency_client.cpp)
-  target_link_libraries(test_client_scope_consistency_client_cpp "${cpp_typesupport_target}" rclcpp::rclcpp)
+  target_link_libraries(test_client_scope_consistency_client_cpp "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   macro(custom_launch_test_two_executables test_name executable1 executable2)
     cmake_parse_arguments(_ARG "" "ARGS1;ARGS2;RMW1;RMW2" "" ${ARGN})

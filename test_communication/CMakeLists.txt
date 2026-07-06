@@ -2,11 +2,6 @@ cmake_minimum_required(VERSION 3.20)
 
 project(test_communication)
 
-# Default to C++20
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 20)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-endif()
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
@@ -27,6 +22,7 @@ ament_auto_find_build_dependencies()
 if(BUILD_TESTING)
   find_package(ament_cmake REQUIRED)
   find_package(ament_cmake_ros REQUIRED)
+  find_package(ament_cmake_ros_core REQUIRED)
   find_package(osrf_testing_tools_cpp REQUIRED)
   find_package(rcpputils REQUIRED)
   find_package(rcl REQUIRED)
@@ -123,6 +119,7 @@ if(BUILD_TESTING)
     rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
     target_link_libraries(${target}
       "${cpp_typesupport_target}"
+      ament_cmake_ros_core::ament_ros_defaults
       rclcpp::rclcpp
       rclcpp_action::rclcpp_action
       test_msgs::test_msgs
@@ -141,6 +138,7 @@ if(BUILD_TESTING)
       rosidl_get_typesupport_target(c_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_c")
       target_link_libraries(${target}${target_suffix}
         "${c_typesupport_target}"
+        ament_cmake_ros_core::ament_ros_defaults
         osrf_testing_tools_cpp::memory_tools
         rcl::rcl
       )
@@ -431,6 +429,7 @@ if(BUILD_TESTING)
     "test/subscribe_key_types.cpp"
     "test/subscribe_string_types.cpp")
   target_link_libraries(subscribe_types
+    ament_cmake_ros_core::ament_ros_defaults
     rclcpp::rclcpp
     test_msgs::test_msgs
   )
@@ -509,6 +508,7 @@ if(BUILD_TESTING)
     if(TARGET ${serialize_target_name})
       add_dependencies(${serialize_target_name} ${PROJECT_NAME})
       target_link_libraries(${serialize_target_name}
+        ament_cmake_ros_core::ament_ros_defaults
         rmw::rmw
         rosidl_typesupport_c::rosidl_typesupport_c
         rosidl_typesupport_cpp::rosidl_typesupport_cpp
@@ -534,6 +534,7 @@ if(BUILD_TESTING)
     if(TARGET ${target_name})
       add_dependencies(${target_name} ${PROJECT_NAME})
       target_link_libraries(${target_name}
+        ament_cmake_ros_core::ament_ros_defaults
         rclcpp::rclcpp
         rclcpp_action::rclcpp_action
         rmw::rmw

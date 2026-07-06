@@ -2,11 +2,6 @@ cmake_minimum_required(VERSION 3.20)
 
 project(test_security)
 
-# Default to C++20
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 20)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-endif()
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
@@ -24,6 +19,7 @@ option(SECURITY "Activate security" OFF)
 if(BUILD_TESTING)
   # No security test on services for now
   find_package(ament_cmake REQUIRED)
+  find_package(ament_cmake_ros_core REQUIRED)
   find_package(test_msgs REQUIRED)
 
   # Test only a couple of message types to avoid taking too much test time
@@ -45,6 +41,7 @@ if(BUILD_TESTING)
   function(custom_executable target)
     add_executable(${target} ${ARGN})
     target_link_libraries(${target}
+      ament_cmake_ros_core::ament_ros_defaults
       rclcpp::rclcpp
       test_msgs::test_msgs
     )
@@ -65,6 +62,7 @@ if(BUILD_TESTING)
       target_link_libraries(${target}${target_suffix}
         ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
         ${_AMENT_EXPORT_LIBRARY_TARGETS}
+        ament_cmake_ros_core::ament_ros_defaults
         rcl::rcl
         osrf_testing_tools_cpp::memory_tools
       )

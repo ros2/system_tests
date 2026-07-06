@@ -1,16 +1,12 @@
 cmake_minimum_required(VERSION 3.20)
 project(test_rosidl_buffer)
 
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 20)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-endif()
-
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_ros_core REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rmw REQUIRED)
@@ -57,6 +53,7 @@ target_include_directories(${PROJECT_NAME}_backend_plugin PUBLIC
 target_compile_definitions(${PROJECT_NAME}_backend_plugin
   PRIVATE "TEST_ROSIDL_BUFFER_BUILDING_DLL")
 target_link_libraries(${PROJECT_NAME}_backend_plugin PUBLIC
+  ament_cmake_ros_core::ament_ros_defaults
   ${_cpp_ts}
   ${_fastrtps_ts}
   pluginlib::pluginlib
@@ -97,6 +94,7 @@ if(BUILD_TESTING)
   ament_add_gtest(test_buffer_backend_unit test/test_buffer_backend_unit.cpp)
   if(TARGET test_buffer_backend_unit)
     target_link_libraries(test_buffer_backend_unit
+      ament_cmake_ros_core::ament_ros_defaults
       ${PROJECT_NAME}_backend_plugin
       ${PROJECT_NAME}_impl
       rosidl_buffer::rosidl_buffer
@@ -129,6 +127,7 @@ if(BUILD_TESTING)
     # generated cpp typesupport — NEVER the plugin SHARED lib (see note above).
     add_executable(test_backend_publisher src/test_backend_publisher.cpp)
     target_link_libraries(test_backend_publisher
+      ament_cmake_ros_core::ament_ros_defaults
       ${PROJECT_NAME}_impl
       rclcpp::rclcpp
       ${std_msgs_TARGETS}
@@ -136,6 +135,7 @@ if(BUILD_TESTING)
 
     add_executable(test_backend_subscriber src/test_backend_subscriber.cpp)
     target_link_libraries(test_backend_subscriber
+      ament_cmake_ros_core::ament_ros_defaults
       ${PROJECT_NAME}_impl
       rclcpp::rclcpp
       ${std_msgs_TARGETS}
@@ -144,6 +144,7 @@ if(BUILD_TESTING)
     add_executable(test_backend_nested_msgs_publisher
       src/test_backend_nested_msgs_publisher.cpp)
     target_link_libraries(test_backend_nested_msgs_publisher
+      ament_cmake_ros_core::ament_ros_defaults
       ${PROJECT_NAME}_impl
       rclcpp::rclcpp
       ${std_msgs_TARGETS}
@@ -152,6 +153,7 @@ if(BUILD_TESTING)
     add_executable(test_backend_nested_msgs_subscriber
       src/test_backend_nested_msgs_subscriber.cpp)
     target_link_libraries(test_backend_nested_msgs_subscriber
+      ament_cmake_ros_core::ament_ros_defaults
       ${PROJECT_NAME}_impl
       rclcpp::rclcpp
       ${std_msgs_TARGETS}

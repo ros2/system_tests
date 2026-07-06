@@ -2,12 +2,6 @@ cmake_minimum_required(VERSION 3.20)
 
 project(test_quality_of_service)
 
-# Default to C++20
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 20)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-endif()
-
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
@@ -19,6 +13,7 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 
   find_package(ament_cmake_gtest REQUIRED)
+  find_package(ament_cmake_ros_core REQUIRED)
   find_package(rcl REQUIRED)
   find_package(rclcpp REQUIRED)
   find_package(rcutils)
@@ -45,6 +40,7 @@ if(BUILD_TESTING)
   target_compile_definitions(${PROJECT_NAME}_support PRIVATE
     "TEST_QUALITY_OF_SERVICE_BUILDING_LIBRARY")
   target_link_libraries(${PROJECT_NAME}_support
+    ament_cmake_ros_core::ament_ros_defaults
     rclcpp::rclcpp
     rcutils::rcutils
     std_msgs::std_msgs
@@ -59,6 +55,7 @@ if(BUILD_TESTING)
     target_compile_definitions(${target}${target_suffix}
       PUBLIC "RMW_IMPLEMENTATION=${rmw_implementation}")
     target_link_libraries(${target}${target_suffix}
+      ament_cmake_ros_core::ament_ros_defaults
       ${PROJECT_NAME}_support
       rcl::rcl
       rclcpp::rclcpp
