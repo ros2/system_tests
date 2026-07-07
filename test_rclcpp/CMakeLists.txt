@@ -50,7 +50,8 @@ if(BUILD_TESTING)
     test/test_avoid_ros_namespace_conventions_qos.cpp
   )
   target_include_directories(gtest_avoid_ros_namespace_conventions_qos PRIVATE include)
-  target_link_libraries(gtest_avoid_ros_namespace_conventions_qos "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
+  target_link_libraries(gtest_avoid_ros_namespace_conventions_qos
+    "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   ament_add_gtest_executable(gtest_publisher test/test_publisher.cpp)
   target_include_directories(gtest_publisher PRIVATE include)
@@ -60,7 +61,8 @@ if(BUILD_TESTING)
     test/test_client_wait_for_service_shutdown.cpp
   )
   target_include_directories(gtest_client_wait_for_service_shutdown PRIVATE include)
-  target_link_libraries(gtest_client_wait_for_service_shutdown "${cpp_typesupport_target}" rclcpp::rclcpp rcpputils::rcpputils ament_cmake_ros_core::ament_ros_defaults)
+  target_link_libraries(gtest_client_wait_for_service_shutdown
+    "${cpp_typesupport_target}" rclcpp::rclcpp rcpputils::rcpputils ament_cmake_ros_core::ament_ros_defaults)
 
   ament_add_gtest_executable(gtest_executor test/test_executor.cpp)
   target_include_directories(gtest_executor PRIVATE include)
@@ -68,7 +70,8 @@ if(BUILD_TESTING)
 
   ament_add_gtest_executable(gtest_repeated_publisher_subscriber test/test_repeated_publisher_subscriber.cpp)
   target_include_directories(gtest_repeated_publisher_subscriber PRIVATE include)
-  target_link_libraries(gtest_repeated_publisher_subscriber "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
+  target_link_libraries(gtest_repeated_publisher_subscriber
+    "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   ament_add_gtest_executable(gtest_spin test/test_spin.cpp)
   target_include_directories(gtest_spin PRIVATE include)
@@ -145,10 +148,12 @@ if(BUILD_TESTING)
   target_link_libraries(test_client_scope_client_cpp "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   add_executable(test_client_scope_consistency_server_cpp test/test_client_scope_consistency_server.cpp)
-  target_link_libraries(test_client_scope_consistency_server_cpp "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
+  target_link_libraries(test_client_scope_consistency_server_cpp
+    "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   ament_add_gtest_executable(test_client_scope_consistency_client_cpp test/test_client_scope_consistency_client.cpp)
-  target_link_libraries(test_client_scope_consistency_client_cpp "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
+  target_link_libraries(test_client_scope_consistency_client_cpp
+    "${cpp_typesupport_target}" rclcpp::rclcpp ament_cmake_ros_core::ament_ros_defaults)
 
   macro(custom_launch_test_two_executables test_name executable1 executable2)
     cmake_parse_arguments(_ARG "" "ARGS1;ARGS2;RMW1;RMW2" "" ${ARGN})
