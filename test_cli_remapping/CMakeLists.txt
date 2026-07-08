@@ -5,16 +5,12 @@ project(test_cli_remapping)
 find_package(ament_cmake_auto REQUIRED)
 
 if(BUILD_TESTING)
-  # Default to C++17
-  if(NOT CMAKE_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD 17)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-  endif()
   if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-Wall -Wextra -Wpedantic)
   endif()
 
   find_package(ament_cmake REQUIRED)
+  find_package(ament_cmake_ros_core REQUIRED)
   find_package(ament_lint_auto REQUIRED)
   find_package(launch_testing_ament_cmake REQUIRED)
   find_package(rclcpp REQUIRED)
@@ -27,6 +23,7 @@ if(BUILD_TESTING)
   add_executable(name_maker_rclcpp
     test/name_maker.cpp)
   target_link_libraries(name_maker_rclcpp
+    ament_cmake_ros_core::ament_ros_defaults
     rclcpp::rclcpp
     test_msgs::test_msgs
   )

@@ -5,11 +5,6 @@ project(test_cli)
 find_package(ament_cmake_auto REQUIRED)
 
 if(BUILD_TESTING)
-  # Default to C++17
-  if(NOT CMAKE_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD 17)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-  endif()
   if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-Wall -Wextra -Wpedantic)
   endif()
@@ -18,6 +13,7 @@ if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   find_package(ament_cmake_pytest REQUIRED)
   find_package(rclcpp REQUIRED)
+  find_package(ament_cmake_ros_core REQUIRED)
 
   find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
@@ -27,6 +23,7 @@ if(BUILD_TESTING)
     test/initial_params.cpp)
   target_link_libraries(initial_params_rclcpp
     rclcpp::rclcpp
+    ament_cmake_ros_core::ament_ros_defaults
   )
 
   ament_add_pytest_test(test_params_yaml
