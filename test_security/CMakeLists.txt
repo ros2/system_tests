@@ -48,15 +48,22 @@ if(BUILD_TESTING)
   endfunction()
 
   function(custom_security_test_c target)
+    set(test_env
+      RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
+      RMW_IMPLEMENTATION=${rmw_implementation}
+      ROS_SECURITY_KEYSTORE=${KEYSTORE_DIRECTORY_NATIVE_PATH}
+      PATH="${TEST_PATH}"
+    )
+    if(rmw_implementation STREQUAL "rmw_connextdds")
+      list(APPEND test_env RTI_MONITORING2_ENABLE=false)
+    endif()
+
     ament_add_gtest(
       "${target}${target_suffix}" ${ARGN}
       TIMEOUT 10
       APPEND_LIBRARY_DIRS "${append_library_dirs}"
       ENV
-      RCL_ASSERT_RMW_ID_MATCHES=${rmw_implementation}
-      RMW_IMPLEMENTATION=${rmw_implementation}
-      ROS_SECURITY_KEYSTORE=${KEYSTORE_DIRECTORY_NATIVE_PATH}
-      PATH="${TEST_PATH}"
+      ${test_env}
     )
     if(TARGET ${target}${target_suffix})
       target_link_libraries(${target}${target_suffix}

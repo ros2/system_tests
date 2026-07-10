@@ -45,6 +45,8 @@ def generate_test_description():
     publisher_env['ROS_SECURITY_ENABLE'] = '@PUBLISHER_ROS_SECURITY_ENABLE@'
     publisher_env['ROS_SECURITY_STRATEGY'] = '@PUBLISHER_ROS_SECURITY_STRATEGY@'
     publisher_env['ROS_SECURITY_KEYSTORE'] = '@PUBLISHER_ROS_SECURITY_KEYSTORE@'
+    if '@PUBLISHER_RMW@' == 'rmw_connextdds':
+        publisher_env['RTI_MONITORING2_ENABLE'] = 'false'
 
     launch_description.add_action(ExecuteProcess(
         cmd=publisher_cmd,
@@ -57,6 +59,8 @@ def generate_test_description():
     subscriber_env['ROS_SECURITY_ENABLE'] = '@SUBSCRIBER_ROS_SECURITY_ENABLE@'
     subscriber_env['ROS_SECURITY_STRATEGY'] = '@SUBSCRIBER_ROS_SECURITY_STRATEGY@'
     subscriber_env['ROS_SECURITY_KEYSTORE'] = '@SUBSCRIBER_ROS_SECURITY_KEYSTORE@'
+    if '@SUBSCRIBER_RMW@' == 'rmw_connextdds':
+        subscriber_env['RTI_MONITORING2_ENABLE'] = 'false'
 
     subscriber_process = ExecuteProcess(
         cmd=subscriber_cmd,
