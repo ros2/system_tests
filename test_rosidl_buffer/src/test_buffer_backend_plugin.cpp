@@ -14,7 +14,6 @@
 
 #include "test_rosidl_buffer/test_buffer_backend.hpp"
 
-#include <cstring>
 #include <memory>
 #include <set>
 #include <string>

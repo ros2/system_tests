@@ -15,7 +15,6 @@
 #include <inttypes.h>
 
 #include <chrono>
-#include <iostream>
 #include <memory>
 #include <utility>
 #include <vector>

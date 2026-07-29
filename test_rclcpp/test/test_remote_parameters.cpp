@@ -14,7 +14,6 @@
 
 #include <chrono>
 #include <memory>
-#include <stdexcept>
 #include <string>
 
 #include "rclcpp/rclcpp.hpp"
