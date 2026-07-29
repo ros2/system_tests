@@ -19,7 +19,8 @@
 #include <mutex>
 #include <string>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/qos.hpp"
 #include "test_quality_of_service/visibility_control.hpp"
 
 /// Base class used for QoS system test nodes

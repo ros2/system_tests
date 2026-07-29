@@ -16,7 +16,10 @@
 #include <string>
 #include <vector>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/qos.hpp"
+#include "rclcpp/rate.hpp"
+#include "rclcpp/utilities.hpp"
 
 #include "test_msgs/message_fixtures.hpp"
 

@@ -20,7 +20,8 @@
 
 #include "rcl/graph.h"
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/qos.hpp"
 
 #include "test_msgs/srv/empty.hpp"
 

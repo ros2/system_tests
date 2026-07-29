@@ -17,7 +17,12 @@
 #include <string>
 #include <vector>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/executors.hpp"
+#include "rclcpp/logger.hpp"
+#include "rclcpp/logging.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/rate.hpp"
+#include "rclcpp/utilities.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 
 #include "rcpputils/scope_exit.hpp"

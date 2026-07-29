@@ -20,7 +20,10 @@
 #include <string>
 #include <vector>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/qos.hpp"
+#include "rclcpp/subscription_base.hpp"
+#include "rclcpp/utilities.hpp"
 
 template<typename T>
 rclcpp::SubscriptionBase::SharedPtr subscribe(

@@ -17,7 +17,11 @@
 #include <thread>
 #include <utility>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/executors.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/service.hpp"
+#include "rclcpp/timer.hpp"
+#include "rclcpp/utilities.hpp"
 
 #include "test_rclcpp/srv/add_two_ints.hpp"
 

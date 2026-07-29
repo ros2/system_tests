@@ -18,7 +18,9 @@
 #include <memory>
 #include <string>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/qos.hpp"
+#include "rclcpp/subscription.hpp"
+#include "rclcpp/subscription_options.hpp"
 #include "std_msgs/msg/string.hpp"
 
 #include "test_quality_of_service/qos_test_node.hpp"

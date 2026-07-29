@@ -33,7 +33,12 @@
 #include <string>
 #include <vector>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/executors.hpp"
+#include "rclcpp/logging.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/publisher.hpp"
+#include "rclcpp/timer.hpp"
+#include "rclcpp/utilities.hpp"
 #include "std_msgs/msg/u_int32.hpp"
 
 #include "rosidl_buffer/buffer.hpp"

@@ -17,7 +17,11 @@
 
 #include "gtest/gtest.h"
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/callback_group.hpp"
+#include "rclcpp/executors.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/subscription_options.hpp"
+#include "rclcpp/utilities.hpp"
 #include "test_rclcpp/msg/u_int32.hpp"
 
 void callback(const test_rclcpp::msg::UInt32::ConstSharedPtr /*msg*/)

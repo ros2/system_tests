@@ -19,7 +19,10 @@
 #include <memory>
 #include <string>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/publisher.hpp"
+#include "rclcpp/publisher_options.hpp"
+#include "rclcpp/qos.hpp"
+#include "rclcpp/timer.hpp"
 #include "std_msgs/msg/string.hpp"
 
 #include "test_quality_of_service/qos_test_node.hpp"

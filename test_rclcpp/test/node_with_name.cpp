@@ -16,7 +16,10 @@
 #include <iostream>
 #include <string>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/exceptions.hpp"
+#include "rclcpp/executors.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/utilities.hpp"
 
 int main(int argc, char ** argv)
 {

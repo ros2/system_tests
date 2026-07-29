@@ -16,7 +16,8 @@
 #include <memory>
 #include <tuple>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/executors.hpp"
+#include "rclcpp/utilities.hpp"
 
 #include "test_quality_of_service/qos_test_publisher.hpp"
 #include "test_quality_of_service/qos_test_subscriber.hpp"

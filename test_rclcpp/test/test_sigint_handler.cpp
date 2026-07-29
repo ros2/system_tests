@@ -13,9 +13,12 @@
 // limitations under the License.
 
 #include <chrono>
+#include <csignal>
 #include <thread>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/logger.hpp"
+#include "rclcpp/logging.hpp"
+#include "rclcpp/utilities.hpp"
 
 using namespace std::chrono_literals;
 

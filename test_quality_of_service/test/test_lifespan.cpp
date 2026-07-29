@@ -18,7 +18,8 @@
 
 #include "gtest/gtest.h"
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/qos.hpp"
+#include "rclcpp/timer.hpp"
 #include "rclcpp/executors/single_threaded_executor.hpp"
 
 #include "std_msgs/msg/string.hpp"

@@ -19,7 +19,11 @@
 
 #include "gtest/gtest.h"
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/executors.hpp"
+#include "rclcpp/future_return_code.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/timer.hpp"
+#include "rclcpp/utilities.hpp"
 
 #include "test_rclcpp/msg/u_int32.hpp"
 

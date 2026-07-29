@@ -25,7 +25,10 @@
 #include "gtest/gtest.h"
 
 #include "rcl_interfaces/srv/list_parameters.hpp"
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/executors.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/parameter.hpp"
+#include "rclcpp/parameter_client.hpp"
 
 const double test_epsilon = 1e-6;
 

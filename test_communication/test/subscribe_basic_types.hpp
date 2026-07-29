@@ -18,7 +18,8 @@
 #include <string>
 #include <vector>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/subscription_base.hpp"
 #include "test_msgs/msg/empty.hpp"
 #include "test_msgs/msg/basic_types.hpp"
 #include "test_msgs/msg/builtins.hpp"

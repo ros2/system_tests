@@ -17,7 +17,7 @@
 
 #include "test_quality_of_service/qos_test_node.hpp"
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/qos.hpp"
 
 QosTestNode::QosTestNode(
   const std::string & name,

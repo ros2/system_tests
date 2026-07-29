@@ -16,7 +16,12 @@
 
 #include "gtest/gtest.h"
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/message_info.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/publisher.hpp"
+#include "rclcpp/qos.hpp"
+#include "rclcpp/subscription.hpp"
+#include "rclcpp/utilities.hpp"
 
 #include "test_rclcpp/msg/u_int32.hpp"
 #include "test_rclcpp/utils.hpp"

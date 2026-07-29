@@ -18,7 +18,8 @@
 #include <string>
 #include <vector>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/subscription_base.hpp"
 #include "test_msgs/msg/complex_nested_key.hpp"
 #include "test_msgs/msg/keyed_long.hpp"
 #include "test_msgs/msg/keyed_string.hpp"
