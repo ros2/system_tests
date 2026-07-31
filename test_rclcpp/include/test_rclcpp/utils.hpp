@@ -15,9 +15,10 @@
 #ifndef TEST_RCLCPP__UTILS_HPP_
 #define TEST_RCLCPP__UTILS_HPP_
 
+#include <chrono>
 #include <cinttypes>
+#include <cstdio>
 #include <memory>
-#include <stdexcept>
 #include <string>
 
 #include "gtest/gtest.h"
