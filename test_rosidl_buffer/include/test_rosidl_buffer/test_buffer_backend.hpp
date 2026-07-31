@@ -15,8 +15,9 @@
 #ifndef TEST_ROSIDL_BUFFER__TEST_BUFFER_BACKEND_HPP_
 #define TEST_ROSIDL_BUFFER__TEST_BUFFER_BACKEND_HPP_
 
-#include <array>
+#include <cstddef>
 #include <cstdint>
+#include <functional>
 #include <memory>
 #include <mutex>
 #include <set>

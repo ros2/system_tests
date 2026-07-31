@@ -12,9 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <chrono>
+#include <cstdio>
 #include <functional>
 #include <memory>
 #include <string>
+#include <thread>
+
+#include "gtest/gtest.h"
 
 #include "rclcpp/rclcpp.hpp"
 

@@ -15,7 +15,6 @@
 #include <chrono>
 #include <memory>
 #include <string>
-#include <tuple>
 
 #include "gtest/gtest.h"
 
