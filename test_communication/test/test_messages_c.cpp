@@ -49,7 +49,6 @@
 #define SCOPE_EXIT_HPP_
 
 #include <algorithm>
-#include <functional>
 #include <limits>
 #include <memory>
 
