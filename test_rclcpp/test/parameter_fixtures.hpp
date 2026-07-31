@@ -17,10 +17,9 @@
 
 #include <algorithm>
 #include <chrono>
+#include <cstdio>
 #include <cstring>
-#include <iostream>
 #include <memory>
-#include <stdexcept>
 #include <string>
 #include <vector>
 #include "gtest/gtest.h"

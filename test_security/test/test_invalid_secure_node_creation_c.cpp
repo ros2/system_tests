@@ -17,10 +17,7 @@
 
 #include <gtest/gtest.h>
 
-#include <functional>
-#include <limits>
-#include <memory>
-#include <string>
+#include <ostream>
 #include <vector>
 
 #include "osrf_testing_tools_cpp/scope_exit.hpp"
