@@ -10,6 +10,8 @@ import launch_testing.actions
 import launch_testing.asserts
 import launch_testing_ros
 
+from launch_testing_ros.actions import EnableRmwIsolation
+
 import os
 import signal
 import sys
@@ -17,15 +19,14 @@ import unittest
 
 
 def generate_test_description():
-    env = os.environ.copy()
-    env['RCUTILS_CONSOLE_OUTPUT_FORMAT'] = '[{severity}] [{name}]: {message}'
     launch_description = LaunchDescription()
+    launch_description.add_action(EnableRmwIsolation())
     proc_under_test = ExecuteProcess(
         cmd=['@TEST_EXECUTABLE@'],
         name='@TEST_EXECUTABLE_NAME@',
         sigterm_timeout='15',
         output='screen',
-        env=env,
+        additional_env={'RCUTILS_CONSOLE_OUTPUT_FORMAT': '[{severity}] [{name}]: {message}'},
     )
     launch_description.add_action(proc_under_test)
     launch_description.add_action(launch_testing.util.KeepAliveProc())
