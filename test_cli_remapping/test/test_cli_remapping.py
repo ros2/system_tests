@@ -23,6 +23,7 @@ from launch import LaunchDescription
 from launch.actions import ExecuteProcess
 import launch_testing
 import launch_testing.actions
+from launch_testing_ros.actions import EnableRmwIsolation
 
 import rclpy
 
@@ -68,12 +69,11 @@ TEST_CASES = {
 def generate_test_description(executable):
     command = [executable]
     # Execute python files using same python used to start this test
-    env = dict(os.environ)
     if command[0][-3:] == '.py':
         command.insert(0, sys.executable)
-    env['PYTHONUNBUFFERED'] = '1'
 
     launch_description = LaunchDescription()
+    launch_description.add_action(EnableRmwIsolation())
 
     test_context = {}
     for replacement_name, (replacement_value, cli_argument) in TEST_CASES.items():
@@ -82,7 +82,8 @@ def generate_test_description(executable):
         launch_description.add_action(
             ExecuteProcess(
                 cmd=command + ['--ros-args', '--remap', cli_argument.format(**locals())],
-                name='name_maker_' + replacement_name, env=env
+                name='name_maker_' + replacement_name,
+                additional_env={'PYTHONUNBUFFERED': '1'},
             )
         )
         test_context[replacement_name] = replacement_value.format(random_string=random_string)
