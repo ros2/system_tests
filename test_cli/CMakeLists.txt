@@ -12,8 +12,10 @@ if(BUILD_TESTING)
   find_package(ament_cmake REQUIRED)
   find_package(ament_lint_auto REQUIRED)
   find_package(ament_cmake_pytest REQUIRED)
+  find_package(launch_testing_ament_cmake REQUIRED)
   find_package(rclcpp REQUIRED)
   find_package(ament_cmake_ros_core REQUIRED)
+  find_package(test_msgs REQUIRED)
 
   find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
@@ -39,6 +41,24 @@ if(BUILD_TESTING)
       PROPERTIES DEPENDS
         initial_params_rclcpp)
   endif()
+
+  add_executable(name_maker_rclcpp
+    test/name_maker.cpp)
+  target_link_libraries(name_maker_rclcpp
+    rclcpp::rclcpp
+    test_msgs::test_msgs
+  )
+
+  add_launch_test(
+    test/test_cli_remapping.py
+    TARGET test_cli_remapping
+    ENV
+      NAME_MAKER_RCLCPP=$<TARGET_FILE:name_maker_rclcpp>
+      NAME_MAKER_RCLPY=${CMAKE_CURRENT_SOURCE_DIR}/test/name_maker.py
+    TIMEOUT 120)
+  set_tests_properties(test_cli_remapping
+    PROPERTIES DEPENDS
+      name_maker_rclcpp)
 endif()
 
 ament_auto_package()

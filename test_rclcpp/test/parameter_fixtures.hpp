@@ -106,6 +106,23 @@ void test_set_parameters_atomically_sync(
   ASSERT_EQ(set_parameters_result.successful, expect_result_successful);
 }
 
+void test_set_parameters_atomically_async(
+  std::shared_ptr<rclcpp::Node> node,
+  std::shared_ptr<rclcpp::AsyncParametersClient> parameters_client,
+  bool expect_result_successful = true)
+{
+  printf("Setting parameters atomically\n");
+  std::vector<rclcpp::Parameter> parameters = get_test_parameters();
+  auto set_parameters_result = parameters_client->set_parameters_atomically(parameters);
+  rclcpp::spin_until_future_complete(node, set_parameters_result);  // Wait for the results.
+  printf("Got set_parameters_atomically result\n");
+
+  const auto result = set_parameters_result.get();
+
+  // Check to see if they were set.
+  ASSERT_EQ(result.successful, expect_result_successful);
+}
+
 void test_set_parameters_async(
   std::shared_ptr<rclcpp::Node> node,
   std::shared_ptr<rclcpp::AsyncParametersClient> parameters_client,

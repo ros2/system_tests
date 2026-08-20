@@ -106,6 +106,23 @@ TEST_F(test_local_parameters, local_synchronous_repeated)
   }
 }
 
+TEST_F(test_local_parameters, local_set_parameters_atomically)
+{
+  auto node = rclcpp::Node::make_shared("test_parameters_local_set_atomically");
+  declare_test_parameters(node);
+
+  auto parameters = get_test_parameters();
+  auto result = node->set_parameters_atomically(parameters);
+
+  ASSERT_TRUE(result.successful);
+
+  auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(node);
+  if (!parameters_client->wait_for_service(20s)) {
+    ASSERT_TRUE(false) << "service not available after waiting";
+  }
+  test_get_parameters_sync(parameters_client);
+}
+
 TEST_F(test_local_parameters, local_asynchronous)
 {
   auto node = rclcpp::Node::make_shared(std::string("test_parameters_local_asynchronous"));

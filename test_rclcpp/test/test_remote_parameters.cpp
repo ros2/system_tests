@@ -59,6 +59,23 @@ TEST_F(parameters, test_remote_parameters_async)
   test_get_parameters_async(node, parameters_client, true);
 }
 
+TEST_F(parameters, test_set_remote_parameters_atomically_async)
+{
+  std::string test_server_name = "test_parameters_server_allow_undeclared";
+
+  auto node = rclcpp::Node::make_shared(std::string("test_set_remote_parameters_atomically_async"));
+
+  auto parameters_client = std::make_shared<rclcpp::AsyncParametersClient>(
+    node, test_server_name);
+  if (!parameters_client->wait_for_service(20s)) {
+    ASSERT_TRUE(false) << "service not available after waiting";
+  }
+
+  test_set_parameters_atomically_async(node, parameters_client);
+
+  test_get_parameters_async(node, parameters_client, true);
+}
+
 TEST_F(parameters, test_remote_parameters_sync)
 {
   std::string test_server_name = "test_parameters_server_allow_undeclared";
@@ -121,6 +138,22 @@ TEST_F(parameters_must_declare, test_remote_parameters_async)
   }
 
   test_set_parameters_async(node, parameters_client, 0);
+}
+
+TEST_F(parameters_must_declare, test_set_remote_parameters_atomically_async)
+{
+  std::string test_server_name = "test_parameters_server_must_declare";
+
+  auto node = rclcpp::Node::make_shared(std::string("test_set_remote_parameters_atomically_async"));
+
+  auto parameters_client = std::make_shared<rclcpp::AsyncParametersClient>(
+    node,
+    test_server_name);
+  if (!parameters_client->wait_for_service(20s)) {
+    ASSERT_TRUE(false) << "service not available after waiting";
+  }
+
+  test_set_parameters_atomically_async(node, parameters_client, false);
 }
 
 TEST_F(parameters_must_declare, test_remote_parameters_sync)
