@@ -21,8 +21,6 @@
 
 #include "gtest/gtest.h"
 
-#include "gtest/gtest.h"
-
 #include "rclcpp/executors.hpp"
 #include "rclcpp/node.hpp"
 #include "rclcpp/publisher.hpp"
