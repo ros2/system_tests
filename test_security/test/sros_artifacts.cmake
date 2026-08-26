@@ -26,6 +26,34 @@ if(NOT ${GENERATE_ARTIFACTS_RESULT} EQUAL 0)
   message(FATAL_ERROR "Failed to generate security artifacts: ${GENERATE_ARTIFACTS_ERROR}")
 endif()
 
+# Generate access control artifacts for publisher denied
+set(generate_publisher_denied_command ${ROS2_EXECUTABLE} security generate_artifacts
+  -k ${KEYSTORE_DIRECTORY_NATIVE_PATH}
+  -e /publisher_denied
+  -p ${KEYSTORE_DIRECTORY_NATIVE_PATH}/policies/policy_publisher_denied.xml)
+execute_process(
+  COMMAND ${generate_publisher_denied_command}
+  RESULT_VARIABLE GENERATE_ARTIFACTS_RESULT
+  ERROR_VARIABLE GENERATE_ARTIFACTS_ERROR
+)
+if(NOT ${GENERATE_ARTIFACTS_RESULT} EQUAL 0)
+  message(FATAL_ERROR "Failed to generate publisher denied artifacts: ${GENERATE_ARTIFACTS_ERROR}")
+endif()
+
+# Generate access control artifacts for subscriber denied
+set(generate_subscriber_denied_command ${ROS2_EXECUTABLE} security generate_artifacts
+  -k ${KEYSTORE_DIRECTORY_NATIVE_PATH}
+  -e /subscriber_denied
+  -p ${KEYSTORE_DIRECTORY_NATIVE_PATH}/policies/policy_subscriber_denied.xml)
+execute_process(
+  COMMAND ${generate_subscriber_denied_command}
+  RESULT_VARIABLE GENERATE_ARTIFACTS_RESULT
+  ERROR_VARIABLE GENERATE_ARTIFACTS_ERROR
+)
+if(NOT ${GENERATE_ARTIFACTS_RESULT} EQUAL 0)
+  message(FATAL_ERROR "Failed to generate subscriber denied artifacts: ${GENERATE_ARTIFACTS_ERROR}")
+endif()
+
 # deleting key of /publisher_missing_key
 file(REMOVE "${KEYSTORE_DIRECTORY}/enclaves/publisher_missing_key/key.pem")
 
