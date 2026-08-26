@@ -16,7 +16,8 @@
 #include <sstream>
 #include <string>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/logging.hpp"
+#include "rclcpp/qos.hpp"
 #include "std_msgs/msg/string.hpp"
 
 #include "test_quality_of_service/qos_test_publisher.hpp"

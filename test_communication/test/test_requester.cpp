@@ -19,7 +19,10 @@
 #include <vector>
 
 #include "rclcpp/exceptions.hpp"
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/executors.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/rate.hpp"
+#include "rclcpp/utilities.hpp"
 
 #include "test_msgs/service_fixtures.hpp"
 

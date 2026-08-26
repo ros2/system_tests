@@ -18,7 +18,8 @@
 #include <string>
 #include <vector>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/subscription_base.hpp"
 #include "test_msgs/msg/arrays.hpp"
 #include "test_msgs/msg/unbounded_sequences.hpp"
 #include "test_msgs/msg/bounded_plain_sequences.hpp"

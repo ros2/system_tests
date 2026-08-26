@@ -17,7 +17,12 @@
 #include <thread>
 #include <vector>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/executors.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/qos.hpp"
+#include "rclcpp/rate.hpp"
+#include "rclcpp/subscription_base.hpp"
+#include "rclcpp/utilities.hpp"
 
 #include "rcpputils/scope_exit.hpp"
 

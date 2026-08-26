@@ -15,7 +15,8 @@
 #include <string>
 #include <vector>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/subscription_base.hpp"
 
 #include "subscribe_helper.hpp"
 #include "subscribe_key_types.hpp"

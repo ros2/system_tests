@@ -15,7 +15,8 @@
 #include <string>
 #include <vector>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/subscription_base.hpp"
 #include "test_msgs/msg/strings.hpp"
 #include "test_msgs/msg/w_strings.hpp"
 

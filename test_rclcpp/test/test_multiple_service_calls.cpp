@@ -22,7 +22,10 @@
 #include "gtest/gtest.h"
 
 #include "rclcpp/exceptions.hpp"
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/client.hpp"
+#include "rclcpp/executors.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/utilities.hpp"
 
 #include "test_rclcpp/srv/add_two_ints.hpp"
 

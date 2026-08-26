@@ -16,8 +16,12 @@
 #include <memory>
 #include <vector>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/executors.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/rate.hpp"
 #include "rclcpp/serialization.hpp"
+#include "rclcpp/serialized_message.hpp"
+#include "rclcpp/utilities.hpp"
 
 #include "rmw/types.h"
 

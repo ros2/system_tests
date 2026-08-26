@@ -25,7 +25,7 @@
 #include "gtest/gtest.h"
 
 #include "rcutils/macros.h"
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/executors.hpp"
 
 #ifdef RMW_IMPLEMENTATION
 # define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX

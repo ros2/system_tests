@@ -16,7 +16,10 @@
 #include <memory>
 #include <utility>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/executors.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/rate.hpp"
+#include "rclcpp/utilities.hpp"
 
 #include "test_communication/msg/u_int32.hpp"
 

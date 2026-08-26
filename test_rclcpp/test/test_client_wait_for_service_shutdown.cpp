@@ -16,7 +16,8 @@
 #include <thread>
 
 #include "gtest/gtest.h"
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/utilities.hpp"
 #include "rcpputils/scope_exit.hpp"
 #include "test_rclcpp/srv/add_two_ints.hpp"
 

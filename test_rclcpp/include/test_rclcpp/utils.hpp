@@ -23,7 +23,8 @@
 
 #include "gtest/gtest.h"
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/event.hpp"
+#include "rclcpp/node.hpp"
 
 namespace test_rclcpp
 {
