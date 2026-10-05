@@ -15,6 +15,7 @@
 // Regression test for https://github.com/ros2/rmw_fastrtps/issues/715
 
 #include <chrono>
+#include <cmath>
 #include <limits>
 #include <thread>
 
