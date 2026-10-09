@@ -128,8 +128,7 @@ int main(int argc, char ** argv)
   bool should_timeout =
     ((0 == strcmp(argv[2], "false")) || (0 == strcmp(argv[2], "0"))) ? false : true;
 
-  const char * args[] = {"--ros-args", "--enclave", "/subscriber"};
-  rclcpp::init(sizeof(args) / sizeof(char *), args);
+  rclcpp::init(argc, argv);
   std::shared_ptr<rclcpp::Node> node = nullptr;
   try {
     node = rclcpp::Node::make_shared(node_name, namespace_);

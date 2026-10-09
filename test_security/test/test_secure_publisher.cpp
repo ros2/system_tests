@@ -76,8 +76,7 @@ int main(int argc, char ** argv)
       "pass a message type\n");
     return 1;
   }
-  const char * args[] = {"--ros-args", "--enclave", "/publisher"};
-  rclcpp::init(sizeof(args) / sizeof(char *), args);
+  rclcpp::init(argc, argv);
   std::string message = argv[1];
   std::string namespace_ = argv[2];
   std::string node_name = "test_secure_publisher";
