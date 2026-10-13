@@ -187,6 +187,19 @@ if(BUILD_TESTING)
           TARGET test_nested_msgs__${rmw_impl}
           TIMEOUT 60
         )
+        ament_add_gtest(test_accel_topic_lifetime__${rmw_impl}
+          test/test_accel_topic_lifetime_fastrtps.cpp
+          ENV RMW_IMPLEMENTATION=${rmw_impl}
+          TIMEOUT 60
+        )
+        if(TARGET test_accel_topic_lifetime__${rmw_impl})
+          target_link_libraries(test_accel_topic_lifetime__${rmw_impl}
+            ament_cmake_ros_core::ament_ros_defaults
+            ${PROJECT_NAME}_impl
+            rclcpp::rclcpp
+            rmw_fastrtps_cpp::rmw_fastrtps_cpp
+          )
+        endif()
       endif()
     endforeach()
   endif()
