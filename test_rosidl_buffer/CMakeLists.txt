@@ -188,6 +188,18 @@ if(BUILD_TESTING)
           TIMEOUT 60
         )
       endif()
+
+      ament_add_gtest(test_buffer_qos_events__${rmw_impl}
+        test/test_buffer_qos_events.cpp
+        ENV RMW_IMPLEMENTATION=${rmw_impl}
+      )
+      if(TARGET test_buffer_qos_events__${rmw_impl})
+        target_link_libraries(test_buffer_qos_events__${rmw_impl}
+          ament_cmake_ros_core::ament_ros_defaults
+          ${PROJECT_NAME}_impl
+          rclcpp::rclcpp
+        )
+      endif()
     endforeach()
   endif()
 endif()

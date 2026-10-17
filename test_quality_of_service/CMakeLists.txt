@@ -70,6 +70,8 @@ if(BUILD_TESTING)
     add_custom_gtest(test_lifespan test/test_lifespan.cpp test/qos_utilities.cpp)
     add_custom_gtest(test_liveliness test/test_liveliness.cpp test/qos_utilities.cpp)
     add_custom_gtest(test_best_available test/test_best_available.cpp test/qos_utilities.cpp)
+    add_custom_gtest(test_uint8_sequence_qos_events
+      test/test_uint8_sequence_qos_events.cpp test/qos_utilities.cpp)
   endmacro()
 
   call_for_each_rmw_implementation(tests)
