@@ -121,6 +121,8 @@ if(BUILD_TESTING)
       set(index 0)
       # configure all non secure communication tests
       set(SUBSCRIBER_SHOULD_TIMEOUT "false")
+      set(PUBLISHER_ENCLAVE "/publisher")
+      set(SUBSCRIBER_ENCLAVE "/subscriber")
       while(index LESS ${n_non_secure_tests})
         # here we define all the variables needed for security template expansion
         list(GET non_secure_comm_PUBLISHER_ROS_SECURITY_ENABLE_LIST ${index} PUBLISHER_ROS_SECURITY_ENABLE)
@@ -163,6 +165,8 @@ if(BUILD_TESTING)
       set(SUBSCRIBER_SHOULD_TIMEOUT "false")
       set(PUBLISHER_ROS_SECURITY_KEYSTORE "${KEYSTORE_DIRECTORY_NATIVE_PATH}")
       set(SUBSCRIBER_ROS_SECURITY_KEYSTORE "${KEYSTORE_DIRECTORY_NATIVE_PATH}")
+      set(PUBLISHER_ENCLAVE "/publisher")
+      set(SUBSCRIBER_ENCLAVE "/subscriber")
       # configure all secure communication tests
       while(index LESS ${n_secure_communication_tests})
         # here we define all the variables needed for security template expansion
@@ -204,6 +208,8 @@ if(BUILD_TESTING)
       set(PUBLISHER_ROS_SECURITY_KEYSTORE "${KEYSTORE_DIRECTORY_NATIVE_PATH}")
       set(SUBSCRIBER_ROS_SECURITY_KEYSTORE "${KEYSTORE_DIRECTORY_NATIVE_PATH}")
       set(SUBSCRIBER_SHOULD_TIMEOUT "true")
+      set(PUBLISHER_ENCLAVE "/publisher")
+      set(SUBSCRIBER_ENCLAVE "/subscriber")
       # configure all not connecting tests
       while(index LESS ${n_not_connecting_tests})
         # here we define all the variables needed for security template expansion
@@ -213,6 +219,52 @@ if(BUILD_TESTING)
         list(GET not_connecting_SUBSCRIBER_ROS_SECURITY_STRATEGY_LIST ${index} SUBSCRIBER_ROS_SECURITY_STRATEGY)
 
         set(test_suffix "__${TEST_MESSAGE_TYPE}${suffix}__secure_not_connecting_${index}")
+        configure_file(
+          test/test_secure_publisher_subscriber.py.in
+          test_secure_publisher_subscriber${test_suffix}.py.configured
+          @ONLY
+        )
+        file(GENERATE
+          OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
+          INPUT "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}.py.configured"
+        )
+        math(EXPR index "${index} + 1")
+
+        add_launch_test(
+          "${CMAKE_CURRENT_BINARY_DIR}/test_secure_publisher_subscriber${test_suffix}_$<CONFIG>.py"
+          TARGET test_secure_publisher_subscriber${test_suffix}
+          APPEND_LIBRARY_DIRS "${append_library_dirs}"
+          ENV
+          PATH="${TEST_PATH}"
+          TIMEOUT 20
+        )
+        if(TEST test_secure_publisher_subscriber${test_suffix})
+          set_tests_properties(
+            test_secure_publisher_subscriber${test_suffix}
+            PROPERTIES DEPENDS "test_secure_publisher_cpp__${rmw_implementation};test_secure_subscriber_cpp__${rmw_implementation}"
+            FIXTURES_REQUIRED "sros_artifacts"
+          )
+        endif()
+      endwhile()
+
+      # Test suite for access control policies
+      set(index 0)
+      set(PUBLISHER_ROS_SECURITY_KEYSTORE "${KEYSTORE_DIRECTORY_NATIVE_PATH}")
+      set(SUBSCRIBER_ROS_SECURITY_KEYSTORE "${KEYSTORE_DIRECTORY_NATIVE_PATH}")
+      set(SUBSCRIBER_SHOULD_TIMEOUT "true")
+      set(access_control_PUBLISHER_ENCLAVE_LIST "/publisher_denied;/publisher")
+      set(access_control_SUBSCRIBER_ENCLAVE_LIST "/subscriber;/subscriber_denied")
+      list(LENGTH access_control_PUBLISHER_ENCLAVE_LIST n_access_control_tests)
+
+      while(index LESS ${n_access_control_tests})
+        set(PUBLISHER_ROS_SECURITY_ENABLE "true")
+        set(SUBSCRIBER_ROS_SECURITY_ENABLE "true")
+        set(PUBLISHER_ROS_SECURITY_STRATEGY "Enforce")
+        set(SUBSCRIBER_ROS_SECURITY_STRATEGY "Enforce")
+        list(GET access_control_PUBLISHER_ENCLAVE_LIST ${index} PUBLISHER_ENCLAVE)
+        list(GET access_control_SUBSCRIBER_ENCLAVE_LIST ${index} SUBSCRIBER_ENCLAVE)
+
+        set(test_suffix "__${TEST_MESSAGE_TYPE}${suffix}__access_control_${index}")
         configure_file(
           test/test_secure_publisher_subscriber.py.in
           test_secure_publisher_subscriber${test_suffix}.py.configured
