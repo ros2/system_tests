@@ -188,6 +188,18 @@ if(BUILD_TESTING)
           TIMEOUT 60
         )
       endif()
+
+      ament_add_gtest(test_acceptable_buffer_backends__${rmw_impl}
+        test/test_acceptable_buffer_backends.cpp
+        ENV RMW_IMPLEMENTATION=${rmw_impl}
+      )
+      if(TARGET test_acceptable_buffer_backends__${rmw_impl})
+        target_link_libraries(test_acceptable_buffer_backends__${rmw_impl}
+          ament_cmake_ros_core::ament_ros_defaults
+          rclcpp::rclcpp
+          ${PROJECT_NAME}_impl
+        )
+      endif()
     endforeach()
   endif()
 endif()
