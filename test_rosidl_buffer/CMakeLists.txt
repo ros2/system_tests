@@ -86,6 +86,7 @@ install(
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_lint_auto REQUIRED)
+  find_package(rcpputils REQUIRED)
   ament_lint_auto_find_test_dependencies()
 
   # ---------------------------------------------------------------------------
@@ -198,6 +199,7 @@ if(BUILD_TESTING)
           ament_cmake_ros_core::ament_ros_defaults
           ${PROJECT_NAME}_impl
           rclcpp::rclcpp
+          rcpputils::rcpputils
         )
       endif()
     endforeach()

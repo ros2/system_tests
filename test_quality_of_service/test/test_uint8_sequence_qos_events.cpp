@@ -21,6 +21,7 @@
 #include "gtest/gtest.h"
 
 #include "rclcpp/rclcpp.hpp"
+#include "rcpputils/scope_exit.hpp"
 #include "rmw/event.h"
 #include "std_msgs/msg/u_int8_multi_array.hpp"
 
@@ -79,6 +80,11 @@ TEST_F(QosRclcppTestFixture, test_deadline_for_uint8_sequence_type) {
 
   executor->add_node(node);
   std::thread spinner([this]() {executor->spin();});
+  RCPPUTILS_SCOPE_EXIT(
+  {
+    executor->cancel();
+    spinner.join();
+  });
 
   ASSERT_TRUE(wait_for([&]() {return pub->get_subscription_count() == 1u;}, 10s));
   publish_for_a_while(*pub);
@@ -89,9 +95,6 @@ TEST_F(QosRclcppTestFixture, test_deadline_for_uint8_sequence_type) {
   const bool reported = wait_for(
     [&]() {return offered_deadline_missed.load() > 0 && requested_deadline_missed.load() > 0;},
     kPeriod * 6);
-
-  executor->cancel();
-  spinner.join();
 
   EXPECT_GT(received.load(), 0);
   EXPECT_EQ(0, missed_while_publishing);
@@ -129,6 +132,11 @@ TEST_F(QosRclcppTestFixture, test_liveliness_for_uint8_sequence_type) {
 
   executor->add_node(node);
   std::thread spinner([this]() {executor->spin();});
+  RCPPUTILS_SCOPE_EXIT(
+  {
+    executor->cancel();
+    spinner.join();
+  });
 
   ASSERT_TRUE(wait_for([&]() {return pub->get_subscription_count() == 1u;}, 10s));
   publish_for_a_while(*pub);
@@ -137,9 +145,6 @@ TEST_F(QosRclcppTestFixture, test_liveliness_for_uint8_sequence_type) {
   // Stop publishing: the publisher loses liveliness.
   const bool reported = wait_for(
     [&]() {return liveliness_lost.load() > 0 && alive_count.load() == 0;}, kPeriod * 6);
-
-  executor->cancel();
-  spinner.join();
 
   EXPECT_GT(received.load(), 0);
   EXPECT_EQ(1, alive_while_publishing) << "the subscription never saw the publisher alive";

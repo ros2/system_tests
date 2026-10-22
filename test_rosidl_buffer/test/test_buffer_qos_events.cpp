@@ -26,6 +26,7 @@
 #include <vector>
 
 #include "rclcpp/rclcpp.hpp"
+#include "rcpputils/scope_exit.hpp"
 #include "rmw/event.h"
 #include "rosidl_buffer/buffer.hpp"
 #include "test_rosidl_buffer/msg/byte_array.hpp"
@@ -112,6 +113,11 @@ TEST_F(TestBufferQosEvents, deadline_and_liveliness_through_accelerated_backend)
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(node);
   std::thread spinner([&executor]() {executor.spin();});
+  RCPPUTILS_SCOPE_EXIT(
+  {
+    executor.cancel();
+    spinner.join();
+  });
 
   ASSERT_TRUE(wait_for([&]() {return pub->get_subscription_count() == 1u;}, 5s));
 
@@ -134,9 +140,6 @@ TEST_F(TestBufferQosEvents, deadline_and_liveliness_through_accelerated_backend)
              liveliness_lost.load() > 0 && alive_count.load() == 0;
     };
   EXPECT_TRUE(wait_for(all_events_reported, 2s));
-
-  executor.cancel();
-  spinner.join();
 
   EXPECT_EQ("test", received_backend);
   EXPECT_EQ(1, alive_while_publishing) << "the subscription never saw the publisher alive";
