@@ -15,6 +15,7 @@
 #ifndef TEST_ROSIDL_BUFFER__TEST_BUFFER_IMPL_HPP_
 #define TEST_ROSIDL_BUFFER__TEST_BUFFER_IMPL_HPP_
 
+#include <array>
 #include <atomic>
 #include <cstdint>
 #include <cstring>
@@ -24,6 +25,7 @@
 #include <utility>
 #include <vector>
 
+#include "rmw/types.h"
 #include "rosidl_buffer/buffer_impl_base.hpp"
 #include "rosidl_buffer/cpu_buffer_impl.hpp"
 #include "test_rosidl_buffer/msg/test_buffer_descriptor.hpp"
@@ -82,6 +84,18 @@ public:
   std::vector<T> & get_storage() {return storage_;}
   const std::vector<T> & get_storage() const {return storage_;}
 
+  /// GID of the publisher endpoint the backend received when it created this buffer
+  /// from a descriptor (zero otherwise).
+  const std::array<std::uint8_t, RMW_GID_STORAGE_SIZE> & get_source_endpoint_gid() const
+  {
+    return source_endpoint_gid_;
+  }
+
+  void set_source_endpoint_gid(const std::uint8_t * gid)
+  {
+    std::memcpy(source_endpoint_gid_.data(), gid, RMW_GID_STORAGE_SIZE);
+  }
+
   std::string get_backend_type() const override {return "test";}
 
   std::size_t size() const override {return storage_.size();}
@@ -138,6 +152,7 @@ public:
 
 private:
   std::vector<T> storage_;
+  std::array<std::uint8_t, RMW_GID_STORAGE_SIZE> source_endpoint_gid_{};
 };
 
 }  // namespace test_rosidl_buffer
