@@ -200,6 +200,18 @@ if(BUILD_TESTING)
           ${PROJECT_NAME}_impl
         )
       endif()
+
+      ament_add_gtest(test_buffer_serialize__${rmw_impl}
+        test/test_buffer_serialize.cpp
+        ENV RMW_IMPLEMENTATION=${rmw_impl}
+      )
+      if(TARGET test_buffer_serialize__${rmw_impl})
+        target_link_libraries(test_buffer_serialize__${rmw_impl}
+          ament_cmake_ros_core::ament_ros_defaults
+          rclcpp::rclcpp
+          ${PROJECT_NAME}_impl
+        )
+      endif()
     endforeach()
   endif()
 endif()
