@@ -86,6 +86,7 @@ install(
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_lint_auto REQUIRED)
+  find_package(rcpputils REQUIRED)
   ament_lint_auto_find_test_dependencies()
 
   # ---------------------------------------------------------------------------
@@ -185,6 +186,19 @@ if(BUILD_TESTING)
           RMW_IMPLEMENTATION=${rmw_impl}
         )
       endforeach()
+
+      ament_add_ros_isolated_gtest(test_buffer_qos_events__${rmw_impl}
+        test/test_buffer_qos_events.cpp
+        ENV RMW_IMPLEMENTATION=${rmw_impl}
+      )
+      if(TARGET test_buffer_qos_events__${rmw_impl})
+        target_link_libraries(test_buffer_qos_events__${rmw_impl}
+          ament_cmake_ros_core::ament_ros_defaults
+          ${PROJECT_NAME}_impl
+          rclcpp::rclcpp
+          rcpputils::rcpputils
+        )
+      endif()
 
       ament_add_ros_isolated_gtest(test_acceptable_buffer_backends__${rmw_impl}
         test/test_acceptable_buffer_backends.cpp
