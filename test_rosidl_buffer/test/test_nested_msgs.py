@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Launch test: nested ByteArray messages over FastRTPS.
+Launch test: nested ByteArray messages.
 
 Verifies that a message containing ByteArray[] round-trips nested uint8[]
 fields correctly when the publisher constructs each nested buffer with the
@@ -24,7 +24,6 @@ import time
 import unittest
 
 from launch import LaunchDescription
-from launch.actions import SetEnvironmentVariable
 from launch_ros.actions import Node
 import launch_testing
 import launch_testing.actions
@@ -62,15 +61,13 @@ def generate_test_description():
     )
 
     return LaunchDescription([
-        SetEnvironmentVariable('RMW_IMPLEMENTATION', 'rmw_fastrtps_cpp'),
-        SetEnvironmentVariable('RCL_ASSERT_RMW_ID_MATCHES', 'rmw_fastrtps_cpp'),
         publisher_node,
         subscriber_node,
         launch_testing.actions.ReadyToTest(),
     ])
 
 
-class TestNestedMsgsFastRTPS(unittest.TestCase):
+class TestNestedMsgs(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -127,7 +124,7 @@ class TestNestedMsgsFastRTPS(unittest.TestCase):
 
 
 @launch_testing.post_shutdown_test()
-class TestNestedMsgsFastRTPSShutdown(unittest.TestCase):
+class TestNestedMsgsShutdown(unittest.TestCase):
 
     def test_exit_codes(self, proc_info):
         launch_testing.asserts.assertExitCodes(proc_info)
