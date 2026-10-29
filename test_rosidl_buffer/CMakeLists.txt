@@ -198,7 +198,7 @@ if(BUILD_TESTING)
         )
       endif()
 
-      ament_add_gtest(test_buffer_serialize__${rmw_impl}
+      ament_add_ros_isolated_gtest(test_buffer_serialize__${rmw_impl}
         test/test_buffer_serialize.cpp
         ENV RMW_IMPLEMENTATION=${rmw_impl}
       )
