@@ -38,6 +38,7 @@ target_include_directories(${PROJECT_NAME}_impl INTERFACE
 )
 target_link_libraries(${PROJECT_NAME}_impl INTERFACE
   ${_cpp_ts}
+  rmw::rmw
   rosidl_buffer::rosidl_buffer
   rosidl_runtime_cpp::rosidl_runtime_cpp
 )
@@ -192,6 +193,18 @@ if(BUILD_TESTING)
       )
       if(TARGET test_acceptable_buffer_backends__${rmw_impl})
         target_link_libraries(test_acceptable_buffer_backends__${rmw_impl}
+          ament_cmake_ros_core::ament_ros_defaults
+          rclcpp::rclcpp
+          ${PROJECT_NAME}_impl
+        )
+      endif()
+
+      ament_add_ros_isolated_gtest(test_buffer_publisher_gid__${rmw_impl}
+        test/test_buffer_publisher_gid.cpp
+        ENV RMW_IMPLEMENTATION=${rmw_impl}
+      )
+      if(TARGET test_buffer_publisher_gid__${rmw_impl})
+        target_link_libraries(test_buffer_publisher_gid__${rmw_impl}
           ament_cmake_ros_core::ament_ros_defaults
           rclcpp::rclcpp
           ${PROJECT_NAME}_impl
