@@ -198,7 +198,7 @@ if(BUILD_TESTING)
         )
       endif()
 
-      ament_add_gtest(test_accel_endpoint_cleanup__${rmw_impl}
+      ament_add_ros_isolated_gtest(test_accel_endpoint_cleanup__${rmw_impl}
         test/test_accel_endpoint_cleanup.cpp
         ENV RMW_IMPLEMENTATION=${rmw_impl}
         TIMEOUT 120
