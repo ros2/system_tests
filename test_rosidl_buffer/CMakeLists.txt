@@ -104,10 +104,10 @@ if(BUILD_TESTING)
 
   # ---------------------------------------------------------------------------
   # Tier 2: launch tests, gated by RMWs that have end-to-end buffer-backend
-  # support. Today that is only rmw_fastrtps_cpp — extend this list as other
-  # RMWs land full backend support.
+  # support. Today that is only rmw_fastrtps_cpp and rmw_zenoh_cpp — extend this
+  # list as other RMWs land full backend support.
   # ---------------------------------------------------------------------------
-  set(_buffer_backend_capable_rmws rmw_fastrtps_cpp)
+  set(_buffer_backend_capable_rmws rmw_fastrtps_cpp rmw_zenoh_cpp)
 
   find_package(rmw_implementation_cmake REQUIRED)
   get_available_rmw_implementations(_available_rmws)
@@ -121,6 +121,7 @@ if(BUILD_TESTING)
   endforeach()
 
   if(_has_capable_rmw)
+    find_package(ament_cmake_ros REQUIRED)
     find_package(launch_testing_ament_cmake REQUIRED)
 
     # Pub/sub executables. Link only the header-only impl target and the
@@ -174,18 +175,26 @@ if(BUILD_TESTING)
         continue()
       endif()
 
-      if(rmw_impl STREQUAL "rmw_fastrtps_cpp")
-        add_launch_test(test/test_test_to_test_fastrtps.py
-          TARGET test_test_to_test__${rmw_impl}
+      foreach(_launch_test test_test_to_test test_test_to_cpu test_nested_msgs)
+        add_launch_test(test/${_launch_test}.py
+          TARGET ${_launch_test}__${rmw_impl}
           TIMEOUT 60
+          RUNNER "${ament_cmake_ros_DIR}/run_test_isolated.py"
+          ENV
+          RCL_ASSERT_RMW_ID_MATCHES=${rmw_impl}
+          RMW_IMPLEMENTATION=${rmw_impl}
         )
-        add_launch_test(test/test_test_to_cpu_fastrtps.py
-          TARGET test_test_to_cpu__${rmw_impl}
-          TIMEOUT 60
-        )
-        add_launch_test(test/test_nested_msgs_fastrtps.py
-          TARGET test_nested_msgs__${rmw_impl}
-          TIMEOUT 60
+      endforeach()
+
+      ament_add_ros_isolated_gtest(test_acceptable_buffer_backends__${rmw_impl}
+        test/test_acceptable_buffer_backends.cpp
+        ENV RMW_IMPLEMENTATION=${rmw_impl}
+      )
+      if(TARGET test_acceptable_buffer_backends__${rmw_impl})
+        target_link_libraries(test_acceptable_buffer_backends__${rmw_impl}
+          ament_cmake_ros_core::ament_ros_defaults
+          rclcpp::rclcpp
+          ${PROJECT_NAME}_impl
         )
       endif()
 
