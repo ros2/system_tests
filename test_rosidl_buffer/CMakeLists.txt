@@ -197,6 +197,19 @@ if(BUILD_TESTING)
           ${PROJECT_NAME}_impl
         )
       endif()
+
+      ament_add_ros_isolated_gtest(test_accel_endpoint_cleanup__${rmw_impl}
+        test/test_accel_endpoint_cleanup.cpp
+        ENV RMW_IMPLEMENTATION=${rmw_impl}
+        TIMEOUT 120
+      )
+      if(TARGET test_accel_endpoint_cleanup__${rmw_impl})
+        target_link_libraries(test_accel_endpoint_cleanup__${rmw_impl}
+          ament_cmake_ros_core::ament_ros_defaults
+          ${PROJECT_NAME}_impl
+          rclcpp::rclcpp
+        )
+      endif()
     endforeach()
   endif()
 endif()
