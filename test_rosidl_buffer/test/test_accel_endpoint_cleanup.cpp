@@ -111,13 +111,7 @@ using namespace std::chrono_literals;
 constexpr int kCycles = 5;
 // Leaving the publisher's or the subscription's middleware entities behind costs
 // thousands of allocations per cycle.
-// TODO(mini-1235): set this to 0 once Fast DDS releases payload pool registry
-// entries, see https://github.com/eProsima/Fast-DDS/pull/6573.
-// Its TopicPayloadPoolRegistry keeps an entry for every topic name ever used, and
-// each cycle here uses new topic names for the accelerated channel, which adds 3
-// allocations per cycle with rmw_fastrtps_cpp. Other RMWs, and Fast DDS with that
-// fixed, stay at 0.
-constexpr int64_t kMaxAllocationsPerCycle = 50;
+constexpr int64_t kMaxAllocationsPerCycle = 0;
 
 enum class DestroyOrder { SubscriptionFirst, PublisherFirst };
 
