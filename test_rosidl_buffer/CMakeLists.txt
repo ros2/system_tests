@@ -182,29 +182,7 @@ if(BUILD_TESTING)
           RCL_ASSERT_RMW_ID_MATCHES=${rmw_impl}
           RMW_IMPLEMENTATION=${rmw_impl}
         )
-<<<<<<< HEAD
-        add_launch_test(test/test_test_to_cpu_fastrtps.py
-          TARGET test_test_to_cpu__${rmw_impl}
-          TIMEOUT 60
-        )
-        add_launch_test(test/test_nested_msgs_fastrtps.py
-          TARGET test_nested_msgs__${rmw_impl}
-          TIMEOUT 60
-=======
       endforeach()
-
-      ament_add_ros_isolated_gtest(test_acceptable_buffer_backends__${rmw_impl}
-        test/test_acceptable_buffer_backends.cpp
-        ENV RMW_IMPLEMENTATION=${rmw_impl}
-      )
-      if(TARGET test_acceptable_buffer_backends__${rmw_impl})
-        target_link_libraries(test_acceptable_buffer_backends__${rmw_impl}
-          ament_cmake_ros_core::ament_ros_defaults
-          rclcpp::rclcpp
-          ${PROJECT_NAME}_impl
->>>>>>> 2b5d4d3 (Run test_rosidl_buffer tests on rmw_zenoh_cpp (#612))
-        )
-      endif()
     endforeach()
   endif()
 endif()
