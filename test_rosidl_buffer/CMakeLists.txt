@@ -102,6 +102,19 @@ if(BUILD_TESTING)
     )
   endif()
 
+  ament_add_gtest(test_nested_buffer_deserialize test/test_nested_buffer_deserialize.cpp)
+  if(TARGET test_nested_buffer_deserialize)
+    rosidl_get_typesupport_target(_c_ts ${PROJECT_NAME} "rosidl_generator_c")
+    rosidl_get_typesupport_target(_fastrtps_c_ts ${PROJECT_NAME} "rosidl_typesupport_fastrtps_c")
+    target_link_libraries(test_nested_buffer_deserialize
+      ament_cmake_ros_core::ament_ros_defaults
+      ${_c_ts}
+      ${_fastrtps_c_ts}
+      ${_fastrtps_ts}
+      rmw::rmw
+    )
+  endif()
+
   # ---------------------------------------------------------------------------
   # Tier 2: launch tests, gated by RMWs that have end-to-end buffer-backend
   # support. Today that is only rmw_fastrtps_cpp and rmw_zenoh_cpp — extend this
