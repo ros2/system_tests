@@ -110,7 +110,9 @@ public:
 
   std::unique_ptr<rosidl::BufferImplBase<T>> clone() const override
   {
-    return std::make_unique<TestBufferImpl<T>>(storage_);
+    auto c = std::make_unique<TestBufferImpl<T>>(storage_);
+    c->source_endpoint_gid_ = source_endpoint_gid_;
+    return c;
   }
 
   /// Serialise this impl into a TestBufferDescriptor message.
