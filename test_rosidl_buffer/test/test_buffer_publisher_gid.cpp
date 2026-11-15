@@ -42,7 +42,7 @@ protected:
   }
 };
 
-// The backend must receive the endpoint info of the publisher, not of the
+// The backend must receive the endpoint info of the main publisher, not of the
 // DataWriter or key the RMW used to send the descriptor.
 TEST_F(TestBufferPublisherGid, backend_receives_publisher_gid) {
   auto node = std::make_shared<rclcpp::Node>("test_buffer_publisher_gid");
