@@ -82,11 +82,12 @@ std::shared_ptr<void> TestBufferBackend::create_descriptor_with_endpoint(
 
 std::unique_ptr<void, void (*)(void *)> TestBufferBackend::from_descriptor_with_endpoint(
   const void * descriptor,
-  [[maybe_unused]] const rmw_topic_endpoint_info_t & endpoint_info) const
+  const rmw_topic_endpoint_info_t & endpoint_info) const
 {
-  (void)endpoint_info;
   const auto & desc = *static_cast<const msg::TestBufferDescriptor *>(descriptor);
   auto impl = TestBufferImpl<std::uint8_t>::from_descriptor(desc);
+  static_cast<TestBufferImpl<std::uint8_t> *>(impl.get())->set_source_endpoint_gid(
+    endpoint_info.endpoint_gid);
   return {
     impl.release(),
     [](void * p) {delete static_cast<rosidl::BufferImplBase<std::uint8_t> *>(p);}
