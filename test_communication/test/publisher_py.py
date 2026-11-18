@@ -39,7 +39,16 @@ def talker(message_name, number_of_cycles, namespace):
     while rclpy.ok() and cycle_count < number_of_cycles:
         msg_count = 0
         for msg in msgs:
-            chatter_pub.publish(msg)
+            try:
+                chatter_pub.publish(msg)
+            except Exception:
+                # The signal handler shuts down the context before KeyboardInterrupt is raised,
+                # so a publish racing with SIGINT fails with an invalid context.
+                if rclpy.ok():
+                    raise
+                print('talker: context shut down while publishing')
+                cycle_count = number_of_cycles
+                break
             msg_count += 1
             print('publishing message #%d' % msg_count)
             time.sleep(0.01)
