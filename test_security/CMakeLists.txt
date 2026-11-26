@@ -266,7 +266,6 @@ if(BUILD_TESTING)
       (rmw_implementation STREQUAL "rmw_connext_dynamic_cpp" AND NOT WIN32) OR
       (rmw_implementation STREQUAL "rmw_connextdds" AND NOT WIN32) OR
       rmw_implementation STREQUAL "rmw_fastrtps_cpp" OR
-      rmw_implementation STREQUAL "rmw_fastrtps_dynamic_cpp" OR
       rmw_implementation STREQUAL "rmw_cyclonedds_cpp"
     )
       custom_security_test_c(test_security_nodes_c

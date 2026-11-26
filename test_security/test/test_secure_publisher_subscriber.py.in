@@ -51,7 +51,7 @@ def generate_test_description():
     # previous tests kill a process using SIGTERM. (Issue #561)
     # Force UDPv4 transport to prevent the crash till we write an isolation plugin that cleans
     # those files before a test is run. 
-    if sys.platform == 'win32' and '@PUBLISHER_RMW@' in ('rmw_fastrtps_cpp', 'rmw_fastrtps_dynamic_cpp'):
+    if sys.platform == 'win32' and '@PUBLISHER_RMW@' == 'rmw_fastrtps_cpp':
         publisher_env['FASTDDS_BUILTIN_TRANSPORTS'] = 'UDPv4'
 
     launch_description.add_action(ExecuteProcess(
@@ -68,7 +68,7 @@ def generate_test_description():
     if '@SUBSCRIBER_RMW@' == 'rmw_connextdds':
         subscriber_env['RTI_MONITORING2_ENABLE'] = 'false'
     # See publisher comment above. (Issue #561)
-    if sys.platform == 'win32' and '@SUBSCRIBER_RMW@' in ('rmw_fastrtps_cpp', 'rmw_fastrtps_dynamic_cpp'):
+    if sys.platform == 'win32' and '@SUBSCRIBER_RMW@' == 'rmw_fastrtps_cpp':
         subscriber_env['FASTDDS_BUILTIN_TRANSPORTS'] = 'UDPv4'
 
     subscriber_process = ExecuteProcess(
