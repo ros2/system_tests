@@ -251,7 +251,6 @@ if(BUILD_TESTING)
       ament_add_ros_isolated_gtest(test_accel_endpoint_cleanup__${rmw_impl}
         test/test_accel_endpoint_cleanup.cpp
         ENV RMW_IMPLEMENTATION=${rmw_impl}
-        TIMEOUT 120
       )
       if(TARGET test_accel_endpoint_cleanup__${rmw_impl})
         target_link_libraries(test_accel_endpoint_cleanup__${rmw_impl}
