@@ -86,7 +86,7 @@ public:
   }
 
 private:
-  void on_msg(const test_rosidl_buffer::msg::ByteArray::SharedPtr msg)
+  void on_msg(const test_rosidl_buffer::msg::ByteArray::ConstSharedPtr msg)
   {
     ++received_;
     bool ok = true;
