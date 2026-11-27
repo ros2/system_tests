@@ -48,12 +48,12 @@ TEST_F(TestBufferPublisherGid, backend_receives_publisher_gid) {
   auto node = std::make_shared<rclcpp::Node>("test_buffer_publisher_gid");
   const auto qos = rclcpp::QoS(10).reliable();
 
-  std::vector<ByteArray::SharedPtr> received;
+  std::vector<ByteArray::ConstSharedPtr> received;
   rclcpp::SubscriptionOptions options;
   options.acceptable_buffer_backends = "any";
   auto sub = node->create_subscription<ByteArray>(
     "test_buffer_publisher_gid", qos,
-    [&received](ByteArray::SharedPtr msg) {received.push_back(msg);}, options);
+    [&received](ByteArray::ConstSharedPtr msg) {received.push_back(msg);}, options);
   auto pub = node->create_publisher<ByteArray>("test_buffer_publisher_gid", qos);
 
   rclcpp::executors::SingleThreadedExecutor executor;
