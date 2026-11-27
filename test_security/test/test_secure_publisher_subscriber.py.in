@@ -22,11 +22,13 @@ def generate_test_description():
     launch_description = LaunchDescription()
 
     publisher_cmd = [
-        '@TEST_PUBLISHER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@', namespace
+        '@TEST_PUBLISHER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@', namespace,
+        '--ros-args', '--enclave', '@PUBLISHER_ENCLAVE@'
     ]
     subscriber_cmd = [
         '@TEST_SUBSCRIBER_EXECUTABLE@', '@TEST_MESSAGE_TYPE@',
-        '@SUBSCRIBER_SHOULD_TIMEOUT@', namespace
+        '@SUBSCRIBER_SHOULD_TIMEOUT@', namespace,
+        '--ros-args', '--enclave', '@SUBSCRIBER_ENCLAVE@'
     ]
 
     publisher_env = dict(os.environ)
